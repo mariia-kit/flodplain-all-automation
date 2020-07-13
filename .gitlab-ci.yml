@@ -1,0 +1,118 @@
+image: gradle:6.3-jdk11
+services:
+   - docker:19.03.0-dind
+
+
+variables:
+  ENV: "dev"
+  #TASK_CM: "smokeCMTests"
+  #TASK_NS: "nsTestsSmoke"
+  CYCLE: "latest"
+  #SPARK_URL: "https://outlook.office.com/webhook/6371821a-7221-4e98-bfaa-a6f309aa9fe6@8a68f26d-b270-4ef3-ae78-bd695a909445/IncomingWebhook/1bdcdbaeb9c648758f7a9676a239dfb5/d45cc121-c9d1-44d9-893d-51382613cf7a"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+
+cache:
+  key: one-key-to-rule-them-all
+  paths:
+    - history_cm/
+    - history_ns/
+
+stages:
+  - test
+  - instrumental
+  - pages
+
+test_ns:
+  stage: test
+  rules:
+    - if: $TASK_NS
+  script:
+    - chown gradle:gradle ./ -R
+    - gradle $TASK_NS -Penv=$ENV -Dorg.gradle.workers.max=32
+    - gradle --stop
+  after_script:
+    - mkdir -p /build/reports_ns
+    - cp -TRv build/reports/allure-report/ build/reports_ns/ > /dev/null
+  artifacts:
+    name: "Report"
+    paths:
+      - index.html
+      - history_ns/
+      - build/reports_ns/
+    when: always
+    expire_in: 1 week
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  allow_failure: false
+
+test_cm:
+  stage: test
+  rules:
+    - if: $TASK_CM
+  script:
+    - chown gradle:gradle ./ -R
+    - gradle $TASK -Penv=$ENV
+    - gradle --stop
+  after_script:
+    - mkdir -p /build/reports_cm
+    - cp -TRv build/reports/allure-report/ build/reports_cm/ > /dev/null
+  artifacts:
+    name: "Report"
+    paths:
+      - index.html
+      - history_cm/
+      - build/reports_cm/
+    when: always
+    expire_in: 1 week
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  allow_failure: false
+
+zephyr_sync_ns:
+  stage: instrumental
+  dependencies:
+    - test_ns
+  script:
+    - chown gradle:gradle ./ -R
+    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE
+    - gradle --stop
+  when: manual
+  allow_failure: true
+
+zephyr_sync_cm:
+  stage: instrumental
+  dependencies:
+    - test_cm
+  script:
+    - chown gradle:gradle ./ -R
+    - gradle zephyrSyncTask -PENV=$ENV -Denv=$ENV -Dtest_cycle=$CYCLE
+    - gradle --stop
+  when: manual
+  allow_failure: true
+
+pages:
+  stage: pages
+  when: always
+  dependencies:
+    - test_ns
+    - test_cm
+  script:
+    - mkdir .public
+    - cp -v index.html .public
+    - if [ -d "build/reports_ns" ]; then
+    - mkdir -p .public/nsDeployReport
+    - cp -TRv build/reports_ns/ .public/nsDeployReport/
+    - fi
+    - if [ -d "build/reports_cm" ]; then
+    - mkdir -p .public/cmDeployReport
+    - cp -TRv build/reports_cm/ .public/cmDeployReport/
+    - fi
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+    expire_in: 5 days

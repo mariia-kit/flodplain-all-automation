@@ -1,5 +1,25 @@
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+.gradle
+build/
+/out/*
+/target/*
+/src/main/resources/config.properties
+**/*.avi
+*.java.orig
+*.iml
+.idea/
+!.idea/codeStyles
+
+# Allure
+**/history**/
+**/.allure
+**/allure-report
+**/allure-results
+
+src/**/resources/cm-access.properties

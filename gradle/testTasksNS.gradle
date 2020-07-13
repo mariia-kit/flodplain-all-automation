@@ -1,0 +1,132 @@
+def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+
+class TestNS extends Test {
+    TestNS() {
+        group "ns tests"
+
+        dependsOn "initTokensNS"
+
+        def env = hasProperty('env') ? env : 'dev'
+        int threads = hasProperty('threads') ? threads as Integer : 32
+
+        maxParallelForks = threads
+        forkEvery = 1
+        minHeapSize = "32m"
+        maxHeapSize = "64m"
+
+        useJUnitPlatform {
+            includeTags "neutral_server"
+            excludeTags "ignored", "ignored-$env", "consent_management", "e2e"
+        }
+
+        systemProperties = [
+                "allure.results.directory": "build/ns/allure-results",
+                "allure.report.directory" : "build/ns/allure-report"
+        ]
+        if (System.properties.containsKey('jira_sync')) {
+            def login = System.getProperty("jira_login") ?: jira_login_default
+            def pass = System.getProperty("jira_pass") ?: jira_pass_default
+            def cycle = System.getProperty("test_cycle") ?: test_cycle_default
+            systemProperty "jira_login", login
+            systemProperty "jira_pass", pass
+            systemProperty "test_cycle", cycle
+        }
+
+        finalizedBy "allureAggregatedReportNS", "cleanUpNS"
+    }
+}
+
+ext {
+    jira_login_default = "svc-ns-bot"
+    jira_pass_default = "HtSUxXwdb2aoVfkLfvAoMbPV"
+    test_cycle_default = "latest"
+}
+
+task initTokensNS(type: JavaExec) {
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", targetEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.ns.common.DataPreparationNS"
+}
+
+task cleanUpNS(type: JavaExec) {
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", targetEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.ns.common.DataCleanUpNS"
+}
+
+task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
+    group "ns tests"
+    systemProperty "env", targetEnv
+    useJUnitPlatform {
+        includeTags "neutral_server"
+    }
+    finalizedBy cleanUpNS
+}
+
+task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
+    group "ns tests"
+    systemProperty "env", targetEnv
+    useJUnitPlatform {
+        includeTags "smoke_ns"
+    }
+}
+
+task allureAggregatedReportNS {
+    doFirst {
+        copy {
+            description 'Copies the old NS history directory to the current test run data.'
+            println "Copy global history_ns to ${allure.resultsDir.absolutePath}/history"
+            mkdir "${allure.resultsDir.absolutePath}/history"
+            from "$rootDir/history_ns"
+            into "${allure.resultsDir.absolutePath}/history"
+        }
+        copy {
+            description 'Copies env variables to report'
+            println "Copy env prop from $rootDir/build/tmp/environment.properties to ${allure.resultsDir.absolutePath}/environment.properties"
+            from "$rootDir/build/tmp/environment.properties"
+            into "${allure.resultsDir.absolutePath}"
+        }
+    }
+    doLast {
+        copy {
+            description 'Copies the new NS history directory to folder to store.'
+            println "Copy local history_ns to $rootDir/history_ns"
+            from "${allure.reportDir.absolutePath}/history"
+            into "$rootDir/history_ns"
+        }
+    }
+    finalizedBy 'allureReport'
+}
+
+task zephyrSyncTaskNS(type: JavaExec) {
+    main = "com.here.platform.ns.instruments.Zephyroth"
+    description = "Run NS Sync test results into Zephyr test cycle"
+    classpath sourceSets.main.runtimeClasspath
+
+    def login = System.getProperty("jira_login") ?: jira_login_default
+    def pass = System.getProperty("jira_pass") ?: jira_pass_default
+    def cycle = System.getProperty("test_cycle") ?: test_cycle_default
+
+    def serviceName = System.getProperty("SERVICE") ?: 'null'
+    def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
+
+    def cycleValue = "$serviceName:$serviceVersion"
+
+    if (cycleValue == "null:null") {
+        cycleValue = cycle
+    }
+
+    println "Current user and service: $login $cycle"
+    args = [
+            "--username=${login}", "--password=${pass}", "--reportType=allure", "--projectKey=NS",
+            "--releaseVersion=Neutral Server v.0.4",
+            "--testCycle=${cycleValue}",
+            "--jiraUrl=https://saeljira.it.here.com/rest/",
+            "--reportPath=build/allure-results/",
+            "--autoCreateTestCycle=true"
+    ]
+}

@@ -1,0 +1,154 @@
+class TestCM extends Test {
+    TestCM() {
+        group "cm tests"
+
+        ignoreFailures = false
+
+        minHeapSize = '32m'
+        maxHeapSize = '256m'
+        maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+        forkEvery = 8
+
+        useJUnitPlatform() {
+            excludeTags "neutral_server", "e2e", "local", "smoke_cm", "ui", "userAccount"
+        }
+
+        systemProperties = [
+                "allure.results.directory"                                 : "build/cm/allure-results",
+                "allure.report.directory"                                  : "build/cm/allure-report",
+                "stg.access.key.id"                                        : System.getenv("AAA_ACCESS_KEY_ID_STAGING"),
+                "stg.access.key.secret"                                    : System.getenv("AAA_ACCESS_KEY_SECRET_STAGING"),
+                "prod.access.key.id"                                       : System.getenv("AAA_ACCESS_KEY_ID_PROD"),
+                "prod.access.key.secret"                                   : System.getenv("AAA_ACCESS_KEY_SECRET_PROD"),
+                'junit.jupiter.execution.parallel.enabled'                 : true,
+                'junit.jupiter.execution.parallel.mode.default'            : 'same_thread',
+                'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
+                'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
+                'junit.jupiter.execution.parallel.config.fixed.parallelism': 8
+        ]
+
+        finalizedBy "userAccount", "uiTests"
+
+        def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+        if (!dynamicEnvUrl) finalizedBy "allureAggregatedReportCM"
+    }
+}
+
+ext {
+    jira_login = "svc-ns-bot"
+    jira_pass = "HtSUxXwdb2aoVfkLfvAoMbPV"
+}
+
+def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+
+task initTokens(type: JavaExec) {
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", targetEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.DataPreparation"
+}
+
+task smokeCMTests(type: TestCM) {
+    //failFast true
+
+    if (!dynamicEnvUrl) {
+        systemProperty "env", targetEnv
+    } else {
+        println "Will be used dynamic url: $targetEnv"
+        systemProperty "dynamicUrl", dynamicEnvUrl
+        systemProperty "env", "dev"
+    }
+    useJUnitPlatform {
+        includeTags "smoke_cm"
+    }
+    if (!dynamicEnvUrl) finalizedBy "initTokens"
+}
+
+task userAccount(type: TestCM) {
+    maxParallelForks = 1
+    forkEvery = 0
+
+    systemProperty "env", targetEnv
+    useJUnitPlatform {
+        includeTags "userAccount"
+        excludeTags "ui"
+    }
+}
+
+task uiTests(type: TestCM) {
+    group "cm tests"
+
+    maxParallelForks = 1
+    forkEvery = 0
+
+    systemProperty "env", targetEnv
+    useJUnitPlatform {
+        includeTags "ui"
+    }
+}
+
+task devTests(type: TestCM, dependsOn: "smokeTests") {
+    systemProperty "env", "dev"
+}
+
+task sitTests(type: TestCM, dependsOn: "smokeTests") {
+    systemProperty "env", "sit"
+    systemProperty "jira_sync", "true"
+}
+
+task prodTests(type: TestCM, dependsOn: "smokeTests") {
+    group "cm tests"
+
+    systemProperty "env", "prod"
+}
+
+task zephyrSync(type: JavaExec) {
+    main = "lv.ctco.zephyr.Runner"
+    description = "Run Sync test results into Zephyr test cycle"
+    classpath sourceSets.main.runtimeClasspath
+
+    def serviceName = System.getProperty('SERVICE') ?: 'null'
+    def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
+
+    def cycleValue = "$serviceName:$serviceVersion"
+
+    if (cycleValue == "null:null") {
+        cycleValue = "CM:latest"
+    }
+
+    def resultsPath = System.getProperty("results_path")
+
+    println "Current user and service: $jira_login $cycleValue"
+    args = [
+            "--username=${jira_login}", "--password=${jira_pass}",
+            "--reportType=allure", "--projectKey=NS",
+            "--releaseVersion=Neutral Server v.0.4",
+            "--testCycle=${cycleValue}",
+            "--jiraUrl=https://saeljira.it.here.com/rest/",
+            "--reportPath=$resultsPath",
+            "--autoCreateTestCycle=true"
+    ]
+}
+
+task allureAggregatedReportCM {
+    doFirst {
+        copy {
+            description 'Copies the old history directory to the current test run data.'
+            println "Copy global history to ${allure.resultsDir.absolutePath}/history"
+            mkdir "${allure.resultsDir.absolutePath}/history"
+            from "$rootDir/history_cm"
+            into "${allure.resultsDir.absolutePath}/history"
+        }
+    }
+    doLast {
+        copy {
+            description 'Copies the new CM history directory to folder to store.'
+            println "Copy local history to $rootDir/history_cm"
+            from "${allure.reportDir.absolutePath}/history"
+            into "$rootDir/history_cm"
+        }
+    }
+    finalizedBy 'allureReport'
+}
