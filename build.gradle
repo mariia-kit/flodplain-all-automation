@@ -1,0 +1,47 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
+plugins {
+    id 'java'
+    id 'idea'
+    id "io.qameta.allure" version "2.8.1"
+    id 'org.hidetake.swagger.generator' version '2.18.1'
+    id "io.freefair.lombok" version "5.0.1"
+    id "de.undercouch.download" version "4.0.4"
+}
+
+group = "com.here.platform"
+version = "0.6"
+
+apply from: "gradle/swagger.gradle"
+apply from: "gradle/dependencies.gradle"
+apply from: "gradle/testTasksCM.gradle"
+apply from: "gradle/testTasksNS.gradle"
+
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+tasks.withType(Test) {
+    reports {
+        junitXml.enabled = true
+        html.enabled = false
+    }
+
+    outputs.upToDateWhen { false }
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat = TestExceptionFormat.FULL
+        events = ['passed', 'skipped', 'failed']
+    }
+}
+
+allure {
+    autoconfigure = true
+    aspectjweaver = true
+    version = allureVer
+    clean = true
+
+    useJUnit5 {
+        version = allureVer
+    }
+}

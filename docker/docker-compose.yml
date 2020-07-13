@@ -1,0 +1,68 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: main
+      POSTGRES_USERNAME: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../../docker_images/postgres/create_main_db.sql:/docker-entrypoint-initdb.d/test.sql
+      - ../../docker_images/postgres/create_hydra_db.sql:/docker-entrypoint-initdb.d/hydra.sql
+  consent-management-rest-service:
+    image: hcr.data.here.com/platform/openjdk-11
+    environment:
+      - CHAINCODES_NODE_SERVICE_HOST=http://mock-service:1080/api
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/main
+      - DATA_PROVIDERS_DAIMLER_REFRESH_URL=http://mock-service:1080/oidc10/auth/oauth/v2/token?grant_type=refresh_token&refresh_token=%s
+      - HYDRA_ADMIN_AUTH_URL=http://hydra:4445/oauth2/auth
+      - HYDRA_PUBLIC_AUTH_URL=http://hydra:4444/oauth2/auth
+    ports:
+      - 8080:8080
+      - 18000:18000
+    volumes:
+      - ../../consent-management-rest-service/target/consent-management-rest-service-3.0.0.jar:/consent-management-rest-service.jar
+    restart: on-failure
+    depends_on:
+      - mock-service
+      - postgres
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:18000 -jar consent-management-rest-service.jar
+  mock-service:
+    image: jamesdbloom/mockserver
+    ports:
+      - 1080:1080
+  hydra-migrate:
+    depends_on:
+      - postgres
+    image: oryd/hydra:latest
+    environment:
+      - DSN=postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    command:
+      migrate sql -e --yes
+    restart: on-failure
+  hydra:
+    depends_on:
+      - hydra-migrate
+    image: oryd/hydra:latest
+    command:
+      serve all --dangerous-force-http
+    ports:
+      - "4444:4444" # Public port
+      - "4445:4445" # Admin port
+    volumes:
+      - ./.hydra.yml:/.hydra.yaml
+    environment:
+      - URLS_SELF_ISSUER=http://127.0.0.1:4444
+      - URLS_CONSENT=http://127.0.0.1:8080/consent-service/v0/client/here/consent
+      - URLS_LOGIN=http://127.0.0.1:8080/consent-service/v0/client/here/login
+      - URLS_LOGOUT=http://127.0.0.1:8080/consent-service/v0/client/here/logout
+      - DSN=postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+      - SECRETS_SYSTEM=applicationSystemSecret
+    restart: unless-stopped
+volumes:
+  pgdata:
+    driver: local

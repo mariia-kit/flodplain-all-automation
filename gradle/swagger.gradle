@@ -1,0 +1,61 @@
+def mainResources = "src/main/resources"
+
+ext {
+    cmApiDir = file("$buildDir/cm-api")
+    cmSpecFile = file("$buildDir/cmSpec.json")
+}
+
+def cmEnvUrls = [
+        local: "http://localhost:8080",
+        dev  : "https://dev.consent.api.platform.in.here.com",
+        sit  : "https://sit.consent.api.platform.in.here.com",
+        prod : "https://consent.api.platform.here.com"
+]
+
+tasks.withType(GenerateSwaggerCode) {
+    wipeOutputDir = true
+    language = 'java'
+    components = ["models"]
+}
+
+static String getEnvUrlFromMap(def map, String env) {
+    return Objects.isNull(env) ? map["dev"] : map[env]
+}
+
+swaggerSources {
+    logging.captureStandardOutput LogLevel.QUIET
+
+    mkdir("build")
+
+    def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+    def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+
+    def cmHostByEnv
+    if (!dynamicEnvUrl) {
+        cmHostByEnv = getEnvUrlFromMap(cmEnvUrls, targetEnv)
+    } else {
+        cmHostByEnv = "https://$dynamicEnvUrl"
+    }
+    def cmUrl = "$cmHostByEnv/consent-service/api-docs?group=v1"
+    println "Generation CM models from: $cmUrl"
+    cmSpecFile.write(new URL(cmUrl).text)
+
+    cmApi {
+        inputFile = cmSpecFile
+
+        code {
+            configFile = file("$mainResources/cm-config.json")
+
+            outputDir = cmApiDir
+        }
+    }
+}
+
+generateSwaggerCode.doFirst { this.removeOutputDir }
+
+compileJava.dependsOn 'generateSwaggerCode'
+
+sourceSets.main {
+    java.srcDirs "${cmApiDir.path}/src/main/java"
+    resources.srcDirs "$cmApiDir/src/main/resources"
+}
