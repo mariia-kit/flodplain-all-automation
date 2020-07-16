@@ -45,6 +45,8 @@ public class DashboardTests extends BaseUITests {
 
     //todo add test for offers opening
 
+    //todo add tests to approve and revoke consents from dashboard
+
     @Test
     @DisplayName("Verify Dashboard page")
     void verifyDashBoardTest() {
