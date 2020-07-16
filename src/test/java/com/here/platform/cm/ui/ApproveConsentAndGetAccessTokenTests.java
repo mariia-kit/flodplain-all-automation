@@ -82,6 +82,8 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
             verifyFinalPage(mpConsumer, consentRequest, vin);
 
+            dataSubject.setBearerToken(getUICmToken());
+
             Selenide.clearBrowserCookies();
             Selenide.clearBrowserLocalStorage();
 
