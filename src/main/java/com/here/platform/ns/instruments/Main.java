@@ -15,13 +15,13 @@ public class Main {
     public static void main(String[] args) {
         if (args.length > 0) {
             if (args[0].contains("sit")) {
-                System.setProperty("environment", "sit");
+                System.setProperty("env", "sit");
             }
             if (args[0].contains("prod")) {
-                System.setProperty("environment", "prod");
+                System.setProperty("env", "prod");
             }
             if (args[0].contains("+subs")) {
-                String env = System.getProperty("environment");
+                String env = System.getProperty("env");
                 if (!"prod".equalsIgnoreCase(env)) {
                     new TestDataGeneration().createAllRequiredSubscription();
                 }
@@ -30,7 +30,7 @@ public class Main {
                 new TestDataGeneration().createBaseContainersIfNecessary();
             }
             if (args[0].contains("+clean")) {
-                String env = System.getProperty("environment");
+                String env = System.getProperty("env");
                 if (!"prod".equalsIgnoreCase(env)) {
                     new MarketplaceManageListingCall().providerCleanUp();
                     new CleanUp().deleteAllArtificialPoliciesBrute();
@@ -75,7 +75,7 @@ public class Main {
         Users.PROVIDER.getUser();
         Users.CONSUMER.getUser();
         Users.DAIMLER.getUser();
-        String env = System.getProperty("environment");
+        String env = System.getProperty("env");
         if (!"prod".equalsIgnoreCase(env)) {
             Users.AAA.getUser();
             Users.HERE_USER.getUser();

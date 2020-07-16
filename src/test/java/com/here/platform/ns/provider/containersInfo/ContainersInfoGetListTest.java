@@ -73,8 +73,7 @@ class ContainersInfoGetListTest extends BaseNSTest {
         new GetContainersListForProviderCall(DAIMLER_REFERENCE.getName())
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedCode(HttpStatus.SC_UNAUTHORIZED)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

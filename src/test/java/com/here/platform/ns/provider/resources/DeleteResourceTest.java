@@ -102,7 +102,7 @@ public class DeleteResourceTest extends BaseNSTest {
         new DeleteProviderResourceCall(provider, res.getName())
                 .withToken(Users.EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

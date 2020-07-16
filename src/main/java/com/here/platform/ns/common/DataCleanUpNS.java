@@ -9,7 +9,7 @@ import java.io.File;
 
 public class DataCleanUpNS {
     public static void main(String[] args) {
-        String env = System.getProperty("environment");
+        String env = System.getProperty("env");
         if (!"prod".equalsIgnoreCase(env)) {
             new MarketplaceManageListingCall().providerCleanUp();
             new CleanUp().deleteAllArtificialPoliciesBrute();

@@ -23,59 +23,170 @@ cache:
 
 stages:
   - test
+  - test_dev
+  - test_sit
   - instrumental
   - pages
 
-test_ns:
+.test_run:
   stage: test
-  rules:
-    - if: $TASK_NS
+  variables:
+    TASK: "smoke"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
   script:
     - chown gradle:gradle ./ -R
-    - gradle $TASK_NS -Penv=$ENV -Dorg.gradle.workers.max=32
-    - gradle --stop
-  after_script:
-    - mkdir -p /build/reports_ns
-    - cp -TRv build/reports/allure-report/ build/reports_ns/ > /dev/null
-  artifacts:
-    name: "Report"
-    paths:
-      - index.html
-      - history_ns/
-      - build/reports_ns/
-    when: always
-    expire_in: 1 week
-    reports:
-      junit: build/test-results/test/TEST-*.xml
-  allow_failure: false
-
-test_cm:
-  stage: test
-  rules:
-    - if: $TASK_CM
-  script:
-    - chown gradle:gradle ./ -R
+    - echo "gradle $TASK -Penv=$ENV"
     - gradle $TASK -Penv=$ENV
     - gradle --stop
   after_script:
-    - mkdir -p /build/reports_cm
-    - cp -TRv build/reports/allure-report/ build/reports_cm/ > /dev/null
+    - mkdir -p "/${REPORT_URL}"
+    - cp -TRv build/reports/allure-report/ "${REPORT_URL}/"
   artifacts:
     name: "Report"
     paths:
       - index.html
-      - history_cm/
-      - build/reports_cm/
+      - "${HISTORY_URL}/"
+      - "${REPORT_URL}/"
     when: always
     expire_in: 1 week
-    reports:
-      junit: build/test-results/test/TEST-*.xml
   allow_failure: false
 
+test_ns_auto:
+  extends: .test_run
+  rules:
+    - if: $TASK_NS
+  variables:
+    TASK: $TASK_NS
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+
+test_cm_auto:
+  extends: .test_run
+  rules:
+    - if: $TASK_CM
+  variables:
+    TASK: $TASK_CM
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+
+#dev operations
+test_ns_smoke_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "nsTestsSmoke"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_cm_smoke_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "smokeCMTests"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+  when: manual
+  allow_failure: true
+
+test_ns_regression_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "nsTestRegression"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_cm_regression_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "devTests"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_e2e_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "e2eTests"
+    REPORT_URL: "build/reports_e2e"
+    HISTORY_URL: "history_e2e"
+  when: manual
+  allow_failure: true
+
+#sit operations
+test_ns_smoke_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "nsTestsSmoke"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_cm_smoke_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "smokeCMTests"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+  when: manual
+  allow_failure: true
+
+test_ns_regression_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "nsTestRegression"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_cm_regression_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "sitTests"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  when: manual
+  allow_failure: true
+
+test_e2e_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "e2eTests"
+    REPORT_URL: "build/reports_e2e"
+    HISTORY_URL: "history_e2e"
+  when: manual
+  allow_failure: true
+
+#Instruments
 zephyr_sync_ns:
   stage: instrumental
   dependencies:
-    - test_ns
+    - test_ns_auto
   script:
     - chown gradle:gradle ./ -R
     - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE
@@ -86,10 +197,10 @@ zephyr_sync_ns:
 zephyr_sync_cm:
   stage: instrumental
   dependencies:
-    - test_cm
+    - test_cm_auto
   script:
     - chown gradle:gradle ./ -R
-    - gradle zephyrSyncTask -PENV=$ENV -Denv=$ENV -Dtest_cycle=$CYCLE
+    - gradle zephyrCMSync -Penv=$ENV -Dtest_cycle=$CYCLE
     - gradle --stop
   when: manual
   allow_failure: true
@@ -98,18 +209,36 @@ pages:
   stage: pages
   when: always
   dependencies:
-    - test_ns
-    - test_cm
+    - test_ns_auto
+    - test_cm_auto
+    - test_ns_smoke_dev
+    - test_ns_regression_dev
+    - test_cm_smoke_dev
+    - test_ns_regression_dev
+    - test_e2e_dev
+    - test_ns_smoke_sit
+    - test_ns_regression_sit
+    - test_cm_smoke_sit
+    - test_cm_regression_sit
+    - test_e2e_sit
   script:
+    - ls -all
     - mkdir .public
     - cp -v index.html .public
     - if [ -d "build/reports_ns" ]; then
+    - echo "copy NS report to pages"
     - mkdir -p .public/nsDeployReport
     - cp -TRv build/reports_ns/ .public/nsDeployReport/
     - fi
     - if [ -d "build/reports_cm" ]; then
+    - echo "copy CM report to pages"
     - mkdir -p .public/cmDeployReport
     - cp -TRv build/reports_cm/ .public/cmDeployReport/
+    - fi
+    - if [ -d "build/reports_e2e" ]; then
+    - echo "copy e2e report to pages"
+    - mkdir -p .public/e2eDeployReport
+    - cp -TRv build/reports_e2e/ .public/e2eDeployReport/
     - fi
     - mv .public public
   artifacts:

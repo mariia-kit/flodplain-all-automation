@@ -14,7 +14,7 @@ public class DataPreparationNS {
         Users.PROVIDER.getUser();
         Users.CONSUMER.getUser();
         Users.DAIMLER.getUser();
-        String env = System.getProperty("environment");
+        String env = System.getProperty("env");
         if (!"prod".equalsIgnoreCase(env)) {
             Users.AAA.getUser();
             Users.HERE_USER.getUser();

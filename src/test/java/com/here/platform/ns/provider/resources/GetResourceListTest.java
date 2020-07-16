@@ -93,8 +93,7 @@ public class GetResourceListTest extends BaseNSTest {
         new GetResourcesCall(provider)
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedCode(HttpStatus.SC_UNAUTHORIZED)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
 }

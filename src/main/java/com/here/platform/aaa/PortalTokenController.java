@@ -30,7 +30,7 @@ public class PortalTokenController {
         Date today = Calendar.getInstance().getTime();
         String nonce = dateFormatter.format(today) + " GMT+0200 (Eastern European Standard Time)";
 
-        String clientId = "prod".equalsIgnoreCase(System.getProperty("environment")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
+        String clientId = "prod".equalsIgnoreCase(System.getProperty("env")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
         String authorizeUrl = portalUrl + "/authorize?"
                 + "client_id=" + clientId + "&"

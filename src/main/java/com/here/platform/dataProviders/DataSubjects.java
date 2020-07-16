@@ -50,7 +50,6 @@ public enum DataSubjects {
         }
     }
 
-    @Step
     public String getBearerToken() {
         return FileIO.readFile(vinFile());
     }

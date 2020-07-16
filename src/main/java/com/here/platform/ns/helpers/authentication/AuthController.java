@@ -35,7 +35,7 @@ public class AuthController {
         String token = loadOrGenerate(user, () -> {
             switch (user.getType()) {
                 case NS:
-                    if ("prod".equalsIgnoreCase(System.getProperty("environment"))
+                    if ("prod".equalsIgnoreCase(System.getProperty("env"))
                             && user.getType().equals(UserType_NS.NS)) {
                         logger.info("------------- Creating new APP LIKE user token ------------");
                         String host = NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString();
