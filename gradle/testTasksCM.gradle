@@ -27,8 +27,6 @@ class TestCM extends Test {
                 'junit.jupiter.execution.parallel.config.fixed.parallelism': 8
         ]
 
-        finalizedBy "userAccount", "uiTests"
-
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
         if (!dynamicEnvUrl) finalizedBy "allureAggregatedReportCM"
     }
@@ -41,11 +39,21 @@ ext {
 
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+def finalEnv = "dev"
+if(targetEnv != null && !targetEnv.isEmpty()) {
+    finalEnv = targetEnv
+    println "Receive env from CI_ENVIRONMENT_SLUG ${targetEnv}"
+} else {
+    finalEnv = hasProperty('env') ? env : 'dev'
+    println "Receive env from property ${finalEnv}"
+}
+
+println "Run script for CM env >>>>> ${finalEnv}"
 
 task initTokens(type: JavaExec) {
     logging.captureStandardOutput(LogLevel.QUIET)
 
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.DataPreparation"
 }
@@ -54,9 +62,9 @@ task smokeCMTests(type: TestCM) {
     //failFast true
 
     if (!dynamicEnvUrl) {
-        systemProperty "env", targetEnv
+        systemProperty "env", finalEnv
     } else {
-        println "Will be used dynamic url: $targetEnv"
+        println "Will be used dynamic url: $finalEnv"
         systemProperty "dynamicUrl", dynamicEnvUrl
         systemProperty "env", "dev"
     }
@@ -70,41 +78,41 @@ task userAccount(type: TestCM) {
     maxParallelForks = 1
     forkEvery = 0
 
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "userAccount"
         excludeTags "ui"
     }
 }
 
-task uiTests(type: TestCM) {
+task uiTests(type: TestCM, dependsOn: "initTokens") {
     group "cm tests"
 
     maxParallelForks = 1
     forkEvery = 0
 
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "ui"
     }
 }
 
-task devTests(type: TestCM, dependsOn: "smokeTests") {
+task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "dev"
 }
 
-task sitTests(type: TestCM, dependsOn: "smokeTests") {
+task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
 }
 
-task prodTests(type: TestCM, dependsOn: "smokeTests") {
+task prodTests(type: TestCM, dependsOn: "smokeCMTests") {
     group "cm tests"
 
     systemProperty "env", "prod"
 }
 
-task zephyrSync(type: JavaExec) {
+task zephyrCMSync(type: JavaExec) {
     main = "lv.ctco.zephyr.Runner"
     description = "Run Sync test results into Zephyr test cycle"
     classpath sourceSets.main.runtimeClasspath

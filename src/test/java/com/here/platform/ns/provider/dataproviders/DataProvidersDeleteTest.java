@@ -70,8 +70,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new DeleteDataProviderCall(provider.getName())
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedCode(HttpStatus.SC_UNAUTHORIZED)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
+                .expectedSentryError(SentryErrorsList.FORBIDDEN);
 
         new GetDataProvidersListCall()
                 .call()

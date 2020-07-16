@@ -28,7 +28,7 @@ public class MarketplaceCMCreateConsentCall extends
 
         String body = "{\n"
                 + "  \"title\": \"" + container.getName() + " request\",\n"
-                + "  \"purpose\": \"Test Consent for " + container.getName() + "\"\n"
+                + "  \"purpose\": \"Test Consent for " + container.getName() + "\",\n"
                 + "  \"privacyPolicy\":\"tratata\",\n"
                 + "  \"additionalLinks\":["
                 + "  {\"title\":\"title1\",\"url\":\"link1\"},\n"
@@ -39,8 +39,7 @@ public class MarketplaceCMCreateConsentCall extends
                 + "  {\"title\":\"title6\",\"url\":\"link6\"},\n"
                 + "  {\"title\":\"title7\",\"url\":\"link7\"},\n"
                 + "  {\"title\":\"title8\",\"url\":\"link8\"},\n"
-                + "  {\"title\":\"title9\",\"url\":\"link9\"}"
-                + "]"
+                + "  {\"title\":\"title9\",\"url\":\"link9\"}]"
                 + "}";
         return () -> RestHelper.post(this, body);
     }

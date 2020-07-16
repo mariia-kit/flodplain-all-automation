@@ -66,7 +66,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         new DeleteContainerCall(container)
                 .withToken(Users.EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

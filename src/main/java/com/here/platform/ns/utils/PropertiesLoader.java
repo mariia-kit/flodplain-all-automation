@@ -26,7 +26,7 @@ public class PropertiesLoader {
 
     private PropertiesLoader() {
         mainProperties = new Properties();
-        String env = System.getProperty("environment");
+        String env = System.getProperty("env");
         if (StringUtils.isEmpty(env)) {
             env = "dev";
         }

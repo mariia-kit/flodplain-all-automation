@@ -1,14 +1,23 @@
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+def finalEnv = "dev"
+if(targetEnv != null && !targetEnv.isEmpty()) {
+    finalEnv = targetEnv
+    println "Receive env from CI_ENVIRONMENT_SLUG ${targetEnv}"
+} else {
+    finalEnv = hasProperty('env') ? env : 'dev'
+    println "Receive env from property ${finalEnv}"
+}
+
+
+println "Run script for NS env >>>>> ${finalEnv}"
+
 
 class TestNS extends Test {
     TestNS() {
         group "ns tests"
-
-        dependsOn "initTokensNS"
-
-        def env = hasProperty('env') ? env : 'dev'
+        
         int threads = hasProperty('threads') ? threads as Integer : 32
-
+        
         maxParallelForks = threads
         forkEvery = 1
         minHeapSize = "32m"
@@ -16,13 +25,13 @@ class TestNS extends Test {
 
         useJUnitPlatform {
             includeTags "neutral_server"
-            excludeTags "ignored", "ignored-$env", "consent_management", "e2e"
         }
 
         systemProperties = [
                 "allure.results.directory": "build/ns/allure-results",
                 "allure.report.directory" : "build/ns/allure-report"
         ]
+        
         if (System.properties.containsKey('jira_sync')) {
             def login = System.getProperty("jira_login") ?: jira_login_default
             def pass = System.getProperty("jira_pass") ?: jira_pass_default
@@ -45,7 +54,7 @@ ext {
 task initTokensNS(type: JavaExec) {
     logging.captureStandardOutput(LogLevel.QUIET)
 
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.ns.common.DataPreparationNS"
 }
@@ -53,26 +62,37 @@ task initTokensNS(type: JavaExec) {
 task cleanUpNS(type: JavaExec) {
     logging.captureStandardOutput(LogLevel.QUIET)
 
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.ns.common.DataCleanUpNS"
 }
 
 task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "neutral_server"
+        excludeTags "ignored", "ignored-$finalEnv", "consent_management"
     }
     finalizedBy cleanUpNS
 }
 
 task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
-    systemProperty "env", targetEnv
+    systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "smoke_ns"
+        excludeTags "ignored", "ignored-$finalEnv", "consent_management"
     }
+}
+
+task copyHistory(type: Copy) {
+    description 'Copies the new NS history directory to folder to store.'
+    println "Copy local history_ns to $rootDir/history_ns"
+    from "${allure.reportDir.absolutePath}/history"
+    into "$rootDir/history_ns"
+
+    shouldRunAfter 'allureReport'
 }
 
 task allureAggregatedReportNS {
@@ -91,15 +111,8 @@ task allureAggregatedReportNS {
             into "${allure.resultsDir.absolutePath}"
         }
     }
-    doLast {
-        copy {
-            description 'Copies the new NS history directory to folder to store.'
-            println "Copy local history_ns to $rootDir/history_ns"
-            from "${allure.reportDir.absolutePath}/history"
-            into "$rootDir/history_ns"
-        }
-    }
-    finalizedBy 'allureReport'
+
+    finalizedBy 'allureReport', 'copyHistory'
 }
 
 task zephyrSyncTaskNS(type: JavaExec) {
