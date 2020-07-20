@@ -15,10 +15,9 @@ println "Run script for NS env >>>>> ${finalEnv}"
 class TestNS extends Test {
     TestNS() {
         group "ns tests"
+
+        maxParallelForks = 32
         
-        int threads = hasProperty('threads') ? threads as Integer : 32
-        
-        maxParallelForks = threads
         forkEvery = 1
         minHeapSize = "32m"
         maxHeapSize = "64m"

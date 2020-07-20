@@ -62,7 +62,7 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         new GetContainerDataCall(container)
                 .withToken(Users.EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
     @Test

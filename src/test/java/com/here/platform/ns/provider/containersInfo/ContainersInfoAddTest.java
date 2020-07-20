@@ -64,7 +64,7 @@ class ContainersInfoAddTest extends BaseNSTest {
                 .withToken(EXTERNAL_USER)
                 .addContainer(container);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
     @Test

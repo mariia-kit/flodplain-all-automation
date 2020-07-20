@@ -14,12 +14,10 @@ class TestCM extends Test {
         }
 
         systemProperties = [
-                "allure.results.directory"                                 : "build/cm/allure-results",
-                "allure.report.directory"                                  : "build/cm/allure-report",
-                "stg.access.key.id"                                        : System.getenv("AAA_ACCESS_KEY_ID_STAGING"),
-                "stg.access.key.secret"                                    : System.getenv("AAA_ACCESS_KEY_SECRET_STAGING"),
-                "prod.access.key.id"                                       : System.getenv("AAA_ACCESS_KEY_ID_PROD"),
-                "prod.access.key.secret"                                   : System.getenv("AAA_ACCESS_KEY_SECRET_PROD"),
+                "stg.access.key.id"                                        : System.getenv("ACCESS_KEY_ID_STG"),
+                "stg.access.key.secret"                                    : System.getenv("ACCESS_KEY_SECRET_STG"),
+                "prod.access.key.id"                                       : System.getenv("ACCESS_KEY_ID_PROD"),
+                "prod.access.key.secret"                                   : System.getenv("ACCESS_KEY_SECRET_PROD"),
                 'junit.jupiter.execution.parallel.enabled'                 : true,
                 'junit.jupiter.execution.parallel.mode.default'            : 'same_thread',
                 'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',

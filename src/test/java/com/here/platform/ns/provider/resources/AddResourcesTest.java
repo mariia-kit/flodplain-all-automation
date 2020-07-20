@@ -73,7 +73,7 @@ public class AddResourcesTest extends BaseNSTest {
         new AddProviderResourceCall(provider, res.getName())
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
     @Test

@@ -48,6 +48,7 @@ stages:
       - index.html
       - "${HISTORY_URL}/"
       - "${REPORT_URL}/"
+      - build/allure-results/
     when: always
     expire_in: 1 week
   allow_failure: false
@@ -110,8 +111,8 @@ test_cm_regression_dev:
   variables:
     ENV: "dev"
     TASK: "devTests"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
   when: manual
   allow_failure: true
 
@@ -166,8 +167,8 @@ test_cm_regression_sit:
   variables:
     ENV: "sit"
     TASK: "sitTests"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
   when: manual
   allow_failure: true
 
@@ -187,6 +188,8 @@ zephyr_sync_ns:
   stage: instrumental
   dependencies:
     - test_ns_auto
+    - test_ns_smoke_dev
+    - test_ns_regression_dev
   script:
     - chown gradle:gradle ./ -R
     - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE
@@ -214,7 +217,7 @@ pages:
     - test_ns_smoke_dev
     - test_ns_regression_dev
     - test_cm_smoke_dev
-    - test_ns_regression_dev
+    - test_cm_regression_dev
     - test_e2e_dev
     - test_ns_smoke_sit
     - test_ns_regression_sit
@@ -222,7 +225,6 @@ pages:
     - test_cm_regression_sit
     - test_e2e_sit
   script:
-    - ls -all
     - mkdir .public
     - cp -v index.html .public
     - if [ -d "build/reports_ns" ]; then

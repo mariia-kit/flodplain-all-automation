@@ -181,6 +181,7 @@ public class ConsentRequestInfoTests extends BaseCMTest {
                         .containerDescription(testContainer.containerDescription)
                         .resources(testContainer.resources)
                         .purpose(testConsentRequest.getPurpose())
+                        .privacyPolicy(testConsentRequest.getPrivacyPolicy())
                         .consumerName(mpConsumer.getConsumerName())
                         .title(testConsentRequest.getTitle())
                 );
