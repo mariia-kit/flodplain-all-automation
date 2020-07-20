@@ -63,7 +63,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withToken(Users.EXTERNAL_USER)
                 .withCampaignId(ConsentManagerHelper.getValidConsentId())
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN);
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
     }
 
     @Test

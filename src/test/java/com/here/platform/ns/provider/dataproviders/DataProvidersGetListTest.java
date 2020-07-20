@@ -64,7 +64,7 @@ class DataProvidersGetListTest extends BaseNSTest {
         new GetDataProvidersListCall()
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
 }

@@ -70,7 +70,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new DeleteDataProviderCall(provider.getName())
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN);
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
 
         new GetDataProvidersListCall()
                 .call()

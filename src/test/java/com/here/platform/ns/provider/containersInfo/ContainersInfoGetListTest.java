@@ -73,7 +73,7 @@ class ContainersInfoGetListTest extends BaseNSTest {
         new GetContainersListForProviderCall(DAIMLER_REFERENCE.getName())
                 .withToken(EXTERNAL_USER)
                 .call()
-                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
     @Test

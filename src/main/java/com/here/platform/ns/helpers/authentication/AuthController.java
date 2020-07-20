@@ -8,6 +8,7 @@ import com.here.platform.aaa.HERECMTokenController;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.UserType_NS;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.utils.NS_Config;
 import com.here.platform.ns.utils.PropertiesLoader;
 import io.qameta.allure.Step;
@@ -35,13 +36,15 @@ public class AuthController {
         String token = loadOrGenerate(user, () -> {
             switch (user.getType()) {
                 case NS:
-                    if ("prod".equalsIgnoreCase(System.getProperty("env"))
-                            && user.getType().equals(UserType_NS.NS)) {
+                    if ("prod".equalsIgnoreCase(System.getProperty("env"))) {
                         logger.info("------------- Creating new APP LIKE user token ------------");
                         String host = NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString();
                         String clientIdValue = NS_Config.APP_KEY.toString();
                         String clientSecretValue = NS_Config.APP_SECRET.toString();
                         return ApplicationTokenController.createConsumerAppToken(host, clientIdValue, clientSecretValue);
+                    } else if (user.getEmail().contains("non-consumer-manager")) {
+                        logger.info("------------- Creating new portal user token ------------");
+                        return PortalTokenController.produceToken(user.getRealm(), user.getEmail(), user.getPass());
                     } else {
                         logger.info("------------- Creating new portal user token ------------");
                         return PortalTokenController.produceToken(user.getRealm(), user.getEmail(), user.getPass());

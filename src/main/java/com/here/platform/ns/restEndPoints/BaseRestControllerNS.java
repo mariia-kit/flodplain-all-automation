@@ -61,9 +61,10 @@ public abstract class BaseRestControllerNS<T extends BaseRestControllerNS<?>> {
             this.token = defaultUser.getToken();
         }
         //TODO: remove after refactor to new controller
-        if (!token.contains("Bearer")) {
+        if (!token.contains("Bearer") && !token.isEmpty()) {
             token = "Bearer " + token;
         }
+
     }
 
     @Step("Use query parameters {query}")

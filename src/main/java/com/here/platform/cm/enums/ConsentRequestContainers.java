@@ -4,6 +4,7 @@ import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApp
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
 
 import com.here.platform.common.EnumByEnv;
+import java.nio.charset.Charset;
 import java.util.List;
 import lombok.AllArgsConstructor;
 
@@ -52,7 +53,7 @@ public enum ConsentRequestContainers {
 
     CONNECTED_VEHICLE(
             "connectedvehicle", "connectedvehicle",
-            "This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars",
+            new String("This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars".getBytes(), Charset.forName("UTF-8")),
             "mb:user:pool:reader mb:vehicle:status:general",
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientId,
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientSecret,
