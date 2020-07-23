@@ -24,7 +24,6 @@ class ProdIntegrationTest extends BaseE2ETest{
     @DisplayName("Verify access service")
     @Tag("ignored-dev")
     @Tag("ignored-sit")
-    @Tag("ignored")
     @Tag("prod")
     void accessTest() {
         DataProvider provider = Providers.REFERENCE_PROVIDER_PROD.getProvider();
@@ -45,7 +44,6 @@ class ProdIntegrationTest extends BaseE2ETest{
     @DisplayName("Verify provider service")
     @Tag("ignored-dev")
     @Tag("ignored-sit")
-    @Tag("ignored")
     @Tag("prod")
     void providerTest() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();

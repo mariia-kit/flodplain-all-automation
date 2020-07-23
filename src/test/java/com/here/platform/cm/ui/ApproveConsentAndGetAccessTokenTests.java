@@ -11,6 +11,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.UserAccountController;
@@ -26,6 +27,7 @@ import com.here.platform.dataProviders.DataSubjects;
 import io.qameta.allure.Step;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -102,6 +104,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @DisplayName("Verify Purpose page")
     void verifyPurposePageTest() {
         var mpConsumer = MPConsumers.OLP_CONS_1;
+        var container = testContainer;
         var consentRequest = generateConsentData(mpConsumer);
         crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.vin);
 
@@ -113,7 +116,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         openStaticPurposePage();
         verifyStaticPurposeInfoPage();
         openPurposePageLink();
-        verifyPurposeInfoPage(mpConsumer, consentRequest);
+        verifyPurposeInfoPage(mpConsumer, consentRequest, container);
     }
 
     @Step
@@ -172,29 +175,62 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         switchTo().window("HERE Consent");
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);
-        $(".container-content h4").shouldHave(Condition.text("Purpose"));
-        $(".container-content p")
-                .shouldHave(Condition.text("This application has requested personal data/vehicle data."));
-        $(".container-content a")
-                .shouldHave(Condition.text("Consent Request details"))
+        $(".container-content h4").shouldHave(Condition.text("Purpose of the request"));
+
+        String rootUrl = ConsentPageUrl.getEnvUrlRoot().substring(0, ConsentPageUrl.getEnvUrlRoot().length() -1)
+                .replace("https://", StringUtils.EMPTY)
+                .replace("http://", StringUtils.EMPTY);
+
+        $(".container-content p:nth-child(3)")
+                .shouldHave(Condition.text("You can continue to manage and revoke your consents at " + rootUrl));
+        $(".container-content p:nth-child(3) a")
+                .shouldHave(Condition.attribute("href", ConsentPageUrl.getEnvUrlRoot()));
+
+        String pPolicyUrl = "https://legal.here.com/privacy/policy";
+        $(".container-content p:nth-child(4)")
+                .shouldHave(Condition.text("To learn more about privacy practices of HERE, see our privacy policy."));
+        $(".container-content p:nth-child(4) a")
+                .shouldHave(Condition.attribute("href", pPolicyUrl));
+
+        String faq = ConsentPageUrl.getEnvUrlRoot() + "faq";
+        $(".container-content p:nth-child(6)")
+                .shouldHave(Condition.text("To learn more about this concept, see our FAQ."));
+        $(".container-content p:nth-child(6) a")
+                .shouldHave(Condition.attribute("href", faq));
+
+        $(".container-content p:nth-child(5)")
+                .shouldHave(Condition.text("Consent Request"));
+        $(".container-content p:nth-child(5) a")
                 .shouldHave(Condition.attribute("href", purposePageUrl));
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest) {
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, ConsentRequestContainers container) {
         switchTo().window("HERE Consent");
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
         $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));
-        $(".purpose-content p").shouldHave(Condition.text(mpConsumer.getConsumerName()));
-        $(".purpose-content h4").shouldHave(Condition.text(consentRequest.getPurpose()));
-        $$(".source p").shouldHave(CollectionCondition.textsInAnyOrder(consentRequest.getContainerName()));
+        $(".purpose-content .from p").shouldHave(Condition.text(mpConsumer.getConsumerName()));
+        $(".purpose-content h4 + p").shouldHave(Condition.text(consentRequest.getPurpose()));
+        $(".source.description").shouldHave(Condition.text("Requested data\n" + String.join("\n", container.resources)));
+        $(".source p").shouldHave(Condition.text(container.containerDescription));
+
+        //TODO: uncomment when page fixed
+        /*
+        $(".source p a")
+                .shouldHave(Condition.attribute("href", ConsentPageUrl.getEnvUrlRoot()));
+        String pPolicyUrl = "https://legal.here.com/privacy/policy";
+        $(".purpose-content p:nth-child(6)")
+                .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getConsumerName() + ", visit their privacy policy."));
+        $(".purpose-content p:nth-child(6) a")
+                .shouldHave(Condition.attribute("href", pPolicyUrl));
+
+        */
     }
 
     @Step
     private void openPurposePageLink() {
-        $(".container-content a")
-                .shouldHave(Condition.text("Consent Request details"))
+        $(".container-content p:nth-child(5) a")
                 .click();
     }
 

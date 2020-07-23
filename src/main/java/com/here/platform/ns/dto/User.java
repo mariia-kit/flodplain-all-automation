@@ -37,4 +37,9 @@ public class User {
         this.setType(userType);
         return this;
     }
+
+    public User withToken(String tokenValue) {
+        this.setToken(tokenValue);
+        return this;
+    }
 }
