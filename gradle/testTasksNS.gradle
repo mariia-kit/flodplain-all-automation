@@ -85,6 +85,16 @@ task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
     }
 }
 
+task nsTestProd(type: TestNS, dependsOn: "initTokensNS") {
+    group "ns tests"
+    systemProperty "env", finalEnv
+    useJUnitPlatform {
+        includeTags "prod"
+        excludeTags "ignored", "ignored-$finalEnv", "consent_management"
+    }
+    finalizedBy cleanUpNS
+}
+
 task copyHistory(type: Copy) {
     description 'Copies the new NS history directory to folder to store.'
     println "Copy local history_ns to $rootDir/history_ns"

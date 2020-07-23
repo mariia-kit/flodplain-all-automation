@@ -34,7 +34,8 @@ public enum NS_Config {
     REFERENCE_J_PROV_URL("ref.j.provider.url"),
     REALM("realm"),
     CONSENT_MOCK("consent.mock"),
-    MARKETPLACE_MOCK("marketplace.mock");
+    MARKETPLACE_MOCK("marketplace.mock"),
+    EXTERNAL_USER_TOKEN("ns.non-consumer-manager.user.token");
 
     private String key;
 
