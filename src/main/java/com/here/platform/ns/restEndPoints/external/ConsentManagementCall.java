@@ -248,7 +248,7 @@ public class ConsentManagementCall {
                     + "/consentRequests?consumerId=" + CONSUMER.getUser().getRealm() + "&vin=" + vin;
             Response r = RestHelper.get("get all consent from CM for " + vin, url, token);
             r.jsonPath().getList(
-                    "findAll { it.containerName.startsWith('automatedtestcontainer')}.consentRequestId",
+                    "findAll { it.containerId.startsWith('automatedtestcontainer')}.consentRequestId",
                     String.class)
                     .forEach(id -> {
                         new ConsentManagementCall().deleteVinsHard(id, vin);

@@ -134,7 +134,13 @@ public enum Containers {
     REF_DAIMLER_CHARGE(
             new Container("stateofcharge", "stateofcharge", Providers.DAIMLER_REFERENCE.getName(),
                     "Automated Test Container", "stateofcharge", true, null)
-    );
+    ),
+    BMW_TEST_1(new Container("d00v010t942hi", "HERE Test Container 1",
+            Providers.BMW.getName(),
+            "This test container to be used for testing HERE Neutral Server integration with BMW CarData services",
+            "Mileage,Status of doors",
+            true,
+            ""));
 
     private final Container container;
 

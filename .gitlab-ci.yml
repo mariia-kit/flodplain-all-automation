@@ -54,6 +54,16 @@ stages:
     expire_in: 1 week
   allow_failure: false
 
+
+.push_allure_reports:
+  variables:
+    FILE1: "build/reports_cm/data/suites.csv"
+    FILE2: "build/reports_cm/widgets/summary.json"
+    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
+  script:
+    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1;minorEdit=true;comment=Latest Report" -F "file=@$FILE2;minorEdit=true;comment=Latest Report" $TO'
+  allow_failure: true
+
 test_ns_auto:
   extends: .test_run
   rules:
@@ -222,7 +232,35 @@ zephyr_sync_cm:
   when: manual
   allow_failure: true
 
+push_allure_reports_cm:
+  extends: .push_allure_reports
+  stage: instrumental
+  dependencies:
+    - test_cm_auto
+    - test_cm_smoke_dev
+    - test_cm_regression_dev
+    - test_cm_smoke_sit
+    - test_cm_regression_sit
+  variables:
+    FILE1: "build/reports_cm/data/suites.csv"
+    FILE2: "build/reports_cm/widgets/summary.json"
+    TO: "https://confluence.in.here.com/rest/api/content/795780540/child/attachment"
+  when: manual
 
+push_allure_reports_ns:
+  extends: .push_allure_reports
+  stage: instrumental
+  dependencies:
+    - test_ns_auto
+    - test_ns_smoke_dev
+    - test_ns_regression_dev
+    - test_ns_smoke_sit
+    - test_ns_regression_sit
+  variables:
+    FILE1: "build/reports_ns/data/suites.csv"
+    FILE2: "build/reports_ns/widgets/summary.json"
+    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
+  when: manual
 
 
 pages:

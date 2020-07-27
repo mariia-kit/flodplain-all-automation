@@ -40,7 +40,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
     private final ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
-            .containerName(testScope.id)
+            .containerId(testScope.id)
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .title(faker.gameOfThrones().quote());
@@ -104,7 +104,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
                     .purpose(testConsentRequestData.getPurpose())
                     .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                     .title(testConsentRequestData.getTitle())
-                    .containerName(testScope.id);
+                    .containerId(testScope.id);
 
             testFileWithVINs = new VinsToFile(testVin).json();
             consentRequestController.withConsumerToken(mpConsumer);

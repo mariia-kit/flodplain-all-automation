@@ -31,7 +31,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(testConsumerId)
             .providerId(testProviderId)
-            .containerName(testContainer.id)
+            .containerId(testContainer.id)
             .privacyPolicy(faker.internet().url())
             .purpose(faker.commerce().productName())
             .title(faker.gameOfThrones().quote());

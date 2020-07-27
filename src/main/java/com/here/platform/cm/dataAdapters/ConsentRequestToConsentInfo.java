@@ -12,7 +12,7 @@ public class ConsentRequestToConsentInfo {
         this.consentInfo = new ConsentInfo()
                 .title(consentRequestData.getTitle())
                 .purpose(consentRequestData.getPurpose())
-                .containerName(consentRequestData.getContainerName())
+                .containerName(consentRequestData.getContainerId())
                 .consentRequestId(crid);
     }
 

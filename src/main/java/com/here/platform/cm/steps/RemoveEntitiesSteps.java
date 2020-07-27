@@ -47,7 +47,7 @@ public class RemoveEntitiesSteps {
         var deleteProviderApplicationResponse = privateController.deleteProviderApplication(
                 consentRequestData.getProviderId(),
                 consentRequestData.getConsumerId(),
-                consentRequestData.getContainerName()
+                consentRequestData.getContainerId()
         );
         StepExpects.expectNOCONSTENTStatusCode(deleteProviderApplicationResponse);
 

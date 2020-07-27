@@ -38,7 +38,7 @@ class ProvidersTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testContainer.id);
+            .containerId(testContainer.id);
 
     @AfterEach
     void afterEach() {

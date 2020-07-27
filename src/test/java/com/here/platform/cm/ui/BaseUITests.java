@@ -74,7 +74,7 @@ public class BaseUITests extends BaseCMTest {
         return new ConsentRequestData()
                 .providerId(testContainer.provider.getName())
                 .consumerId(mpConsumer.getRealm())
-                .containerName(testContainer.id)
+                .containerId(testContainer.id)
                 .privacyPolicy(faker.internet().url())
                 .purpose(faker.commerce().productName() + "_purpose")
                 .title(faker.gameOfThrones().quote() + "_title");

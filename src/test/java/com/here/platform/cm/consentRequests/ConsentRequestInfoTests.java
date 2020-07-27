@@ -43,7 +43,7 @@ public class ConsentRequestInfoTests extends BaseCMTest {
             .providerId(MPProviders.DAIMLER_EXPERIMENTAL.getName())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testContainer.id);
+            .containerId(testContainer.id);
 
     private final ConsentStatusController consentStatusController = new ConsentStatusController();
     private final List<String> cridsToRemove = new ArrayList<>();

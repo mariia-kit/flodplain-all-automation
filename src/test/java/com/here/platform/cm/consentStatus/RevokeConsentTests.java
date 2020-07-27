@@ -136,7 +136,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         @DisplayName("Verify it is possible to approve similar to revoked consent")
         void approveSimilarToRevokedConsentsTest() {
             testConsentRequestData
-                    .containerName(testContainer.id)
+                    .containerId(testContainer.id)
                     .title(faker.gameOfThrones().quote())
                     .privacyPolicy(faker.internet().url())
                     .purpose(faker.commerce().productName());

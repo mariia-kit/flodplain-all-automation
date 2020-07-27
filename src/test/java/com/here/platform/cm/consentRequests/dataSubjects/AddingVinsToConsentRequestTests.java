@@ -37,7 +37,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testScope.id);
+            .containerId(testScope.id);
     private String crid;
     private File testFileWithVINs = null;
 

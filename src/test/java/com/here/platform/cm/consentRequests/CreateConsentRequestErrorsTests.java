@@ -31,7 +31,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testContainer.id);
+            .containerId(testContainer.id);
 
     @Test
     @ErrorHandler
@@ -98,7 +98,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                     .startsWith("Couldn't find provider by id: ProviderApplicationPK")
                     .contains(testConsentRequest.getConsumerId())
                     .contains(testConsentRequest.getProviderId())
-                    .contains(testConsentRequest.getContainerName());
+                    .contains(testConsentRequest.getContainerId());
         }
 
     }
