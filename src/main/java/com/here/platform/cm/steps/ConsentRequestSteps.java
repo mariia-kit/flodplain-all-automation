@@ -50,7 +50,7 @@ public class ConsentRequestSteps {
                 .addAdditionalLinksItem(
                         new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url())
                 )
-                .containerName(providerApplication.container.id);
+                .containerId(providerApplication.container.id);
 
         consentRequestController.withCMToken();
         var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);

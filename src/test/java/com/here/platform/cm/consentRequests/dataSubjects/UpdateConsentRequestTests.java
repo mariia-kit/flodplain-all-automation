@@ -45,7 +45,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testContainer.id);
+            .containerId(testContainer.id);
 
     private final String messageForbiddenToRemoveApproved =
             "All non-approved VINs have been deleted. "

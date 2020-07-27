@@ -39,7 +39,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
             .privacyPolicy(faker.internet().url())
             .addAdditionalLinksItem(
                     new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url()))
-            .containerName(testScope.id);
+            .containerId(testScope.id);
     private String crid;
     private File testFileWithVINs = null;
 

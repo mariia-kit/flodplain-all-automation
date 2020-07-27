@@ -23,8 +23,8 @@ class ContainersInfoAddTest extends BaseNSTest {
 
     @Test
     @Tag("smoke_ns")
-    @DisplayName("Verify create of Container Successful2")
-    void verifyAddNewContainer2() {
+    @DisplayName("Verify create of Container Successful")
+    void verifyAddNewContainer() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider);
 

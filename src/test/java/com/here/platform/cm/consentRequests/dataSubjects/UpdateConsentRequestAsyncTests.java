@@ -59,7 +59,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testContainer.id);
+            .containerId(testContainer.id);
     private String crid;
     private File testFileWithVINs = null;
 

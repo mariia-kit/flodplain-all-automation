@@ -31,7 +31,7 @@ public class ConsentRequestCreationMockTests extends BaseCMTest {
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerName(testScope.id);
+            .containerId(testScope.id);
     protected MockServerClient mockServerClient;
 
     @BeforeEach
