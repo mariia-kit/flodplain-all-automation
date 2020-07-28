@@ -63,8 +63,8 @@ stages:
     FILE2_ID: "942546866"
     TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
   script:
-    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1;minorEdit=true;comment=Latest Report" $TO/$FILE1_ID/data'
-    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE2;minorEdit=true;comment=Latest Report" $TO/$FILE2_ID/data'
+    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1" -F "comment=Latest Report" -F "minorEdit=true" $TO/$FILE1_ID/data'
+    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE2" -F "comment=Latest Report" -F "minorEdit=true" $TO/$FILE2_ID/data'
   allow_failure: true
 
 test_ns_auto:
@@ -246,10 +246,10 @@ push_allure_reports_cm:
     - test_cm_regression_sit
   variables:
     FILE1: "build/reports_ns/data/suites.csv"
-    FILE1_ID: "942025449"
+    FILE1_ID: "942546865"
     FILE2: "build/reports_ns/widgets/summary.json"
-    FILE2_ID: "942025448"
-    TO: "https://confluence.in.here.com/rest/api/content/795780540/child/attachment"
+    FILE2_ID: "942546866"
+    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
   when: manual
 
 push_allure_reports_ns:
@@ -263,10 +263,10 @@ push_allure_reports_ns:
     - test_ns_regression_sit
   variables:
     FILE1: "build/reports_ns/data/suites.csv"
-    FILE1_ID: "942546865"
+    FILE1_ID: "942025448"
     FILE2: "build/reports_ns/widgets/summary.json"
-    FILE2_ID: "942546866"
-    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
+    FILE2_ID: "942025449"
+    TO: "https://confluence.in.here.com/rest/api/content/795780540/child/attachment"
   when: manual
 
 
