@@ -245,7 +245,7 @@ push_allure_reports_cm:
     - test_cm_smoke_sit
     - test_cm_regression_sit
   variables:
-    FILE1: "build/reports_cm/data/suites.csv"
+    FILE1: "build/reports_cm/data/suites.json"
     FILE1_ID: "942546865"
     FILE2: "build/reports_cm/widgets/summary.json"
     FILE2_ID: "942546866"
@@ -262,7 +262,7 @@ push_allure_reports_ns:
     - test_ns_smoke_sit
     - test_ns_regression_sit
   variables:
-    FILE1: "build/reports_ns/data/suites.csv"
+    FILE1: "build/reports_ns/data/suites.json"
     FILE1_ID: "942025448"
     FILE2: "build/reports_ns/widgets/summary.json"
     FILE2_ID: "942025449"
