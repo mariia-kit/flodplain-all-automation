@@ -61,7 +61,8 @@ stages:
     FILE2: "build/reports_cm/widgets/summary.json"
     TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
   script:
-    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1;minorEdit=true;comment=Latest Report" -F "file=@$FILE2;minorEdit=true;comment=Latest Report" $TO'
+    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1;minorEdit=true;comment=Latest Report" $TO'
+    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE2;minorEdit=true;comment=Latest Report" $TO'
   allow_failure: true
 
 test_ns_auto:
