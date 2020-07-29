@@ -1,7 +1,10 @@
 package com.here.platform.ns.access.vehicleResources;
 
 
+import static com.here.platform.ns.dto.Users.CONSUMER;
+
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.access.VehicleResourceController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -12,8 +15,8 @@ import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetSingleResourceByVehicleCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +45,10 @@ public class GetSingleResourceByVehicleTest extends BaseNSTest {
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .call()
+        var getSingle1 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle1)
                 .expectedCode(HttpStatus.SC_OK);
     }
 
@@ -64,10 +68,11 @@ public class GetSingleResourceByVehicleTest extends BaseNSTest {
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=empty&additional-values=on")
-                .call()
+        var getSingle1 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .withQueryParam("empty", "on")
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle1)
                 .expectedCode(HttpStatus.SC_NO_CONTENT)
                 .expectedBody(StringUtils.EMPTY, "Expected empty body!");
     }

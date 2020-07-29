@@ -1,14 +1,16 @@
 package com.here.platform.e2e;
 
+import static com.here.platform.ns.dto.Users.CONSUMER;
+
+import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ProdAfterCleanUp;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -33,10 +35,10 @@ class ProdIntegrationTest extends BaseE2ETest{
                 .withResourceNames("payasyoudrive")
                 .withConsentRequired(false);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withToken(Users.CONSUMER)
-                .call()
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
     }
 

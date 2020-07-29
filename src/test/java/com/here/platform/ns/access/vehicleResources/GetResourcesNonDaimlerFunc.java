@@ -1,7 +1,12 @@
 package com.here.platform.ns.access.vehicleResources;
 
 
+import static com.here.platform.ns.dto.Users.CONSUMER;
+
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.access.ContainerDataController;
+import com.here.platform.ns.controllers.access.VehicleResourceAsyncController;
+import com.here.platform.ns.controllers.access.VehicleResourceController;
 import com.here.platform.ns.dto.*;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Vehicle;
@@ -9,12 +14,8 @@ import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetAllResourcesByVehicleCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetResourceAsyncResultCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetSingleResourceByVehicleCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.InitGetResourceAsyncCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -41,29 +42,32 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resource&additional-values=distancesincereset")
+        var response1 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resource", "distancesincereset")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response1)
                 .expectedEqualsISOContainerData(
                         Vehicle.getResourceMap(Vehicle.odometerResource, "distancesincereset"),
                         "Container data content not as expected!");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resourceName&additional-values=odometer")
+        var response2 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resourceName", "odometer")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response2)
                 .expectedEqualsISOContainerData(
                         Vehicle.odometerResource,
                         "Container data content not as expected!");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resourceName&additional-values=notrealres")
+        var response3 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resource", "notrealres")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response3)
                 .expectedEqualsISOContainerData(
                         Vehicle.empty,
                         "Container data content not as expected!");
@@ -84,29 +88,32 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resource&additional-values=distancesincereset")
+        var response1 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resource", "distancesincereset")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response1)
                 .expectedEqualsContainerData(
                         Vehicle.getResourceMap(Vehicle.odometerResource, "distancesincereset"),
                         "Container data content not as expected!");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resource&additional-values=odometer")
+        var response2 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resource", "odometer")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response2)
                 .expectedEqualsContainerData(
                         Vehicle.getResourceMap(Vehicle.odometerResource, "odometer"),
                         "Container data content not as expected!");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
-                .withQueryParam("additional-fields=resource&additional-values=notrealres")
+        var response3 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withQueryParam("resource", "notrealres")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response3)
                 .expectedEqualsContainerData(
                         Vehicle.empty,
                         "Container data content not as expected!");
@@ -128,29 +135,30 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=distancesincereset")
-                .call()
+        var getSingle1 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "distancesincereset")
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle1)
                 .expectedEqualsContainerData(
                         Vehicle.getResourceMap(Vehicle.odometerResource, "distancesincereset"),
                         "Container data content not as expected!");
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=odometer")
-                .call()
+        var getSingle2 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "odometer")
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle2)
                 .expectedEqualsContainerData(
                        Vehicle.getResourceMap(Vehicle.odometerResource, "odometer"),
                         "Resource data content not as expected!");
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=notrealres")
-                .call()
-                .expectedEqualsContainerData(
-                        Vehicle.empty,
-                        "Resource data content not as expected!");
+        var getSingle3 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "notrealres")
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle3)
+                .expectedEqualsContainerData(Vehicle.empty,"Resource data content not as expected!");
     }
 
     @Test
@@ -167,18 +175,19 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
-
-        new InitGetResourceAsyncCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=rangeliquid")
-                .call()
+        var asyncInit = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "rangeliquid")
+                .initGetVehicleResouce(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(asyncInit)
                 .expectedJsonContains("resourceReadout.resources[0].rangeliquid.value", "1648",
                         "Not expected res value!");
 
-        new InitGetResourceAsyncCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=notrealres")
-                .call()
+        var asyncInit2 = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "notrealres")
+                .initGetVehicleResouce(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(asyncInit2)
                 .expectedJsonContains("resourceReadout.resources", "[]",
                         "Not expected res value!");
     }
@@ -197,24 +206,28 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
-
-        String location = new InitGetResourceAsyncCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=resource&additional-values=rangeliquid")
-                .call()
+        var asyncInit = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "rangeliquid")
+                .initGetVehicleResouce(provider, Vehicle.validVehicleId, res1);
+        String location = new NeutralServerResponseAssertion(asyncInit)
                 .expectedCode(HttpStatus.SC_ACCEPTED)
                 .expectedHeaderIsPresent("Location")
                 .getResponse().getHeader("Location");
 
-        new GetResourceAsyncResultCall(location)
-                .withQueryParam("additional-fields=resource&additional-values=rangeliquid")
-                .call()
+        var asyncGet = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "rangeliquid")
+                .getVehicleResourceResult(location);
+        new NeutralServerResponseAssertion(asyncGet)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("resourceReadout.asyncStatus", "InProgress", "Not expected async State!");
         delay(5500L);
-        new GetResourceAsyncResultCall(location)
-                .withQueryParam("additional-fields=resource&additional-values=distancesincereset")
-                .call()
+        var asyncGet2 = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "distancesincereset")
+                .getVehicleResourceResult(location);
+        new NeutralServerResponseAssertion(asyncGet2)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("resourceReadout.asyncStatus", "Complete", "Not expected async State!")
                 .expectedJsonContains("resourceReadout.resources[0].distancesincereset.value", "1234", "Not expected res vale!")
@@ -235,9 +248,11 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         new AaaCall().createContainerPolicyWithGeneralAccess(container);
 
-        new GetAllResourcesByVehicleCall(provider.getName(), Vehicle.validVehicleId)
-                .withQueryParam("additional-fields=resource&additional-values=odometer")
-                .call()
+        var getAll = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .withQueryParam("resource", "odometer")
+                .getAllVehicleResources(provider, Vehicle.validVehicleId);
+        new NeutralServerResponseAssertion(getAll)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("[0].name", "odometer", "Not expected res vale!")
                 .expectedJsonContains("$.size()", "1", "Not expected res value!");
@@ -259,10 +274,11 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
 
-        new InitGetResourceAsyncCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .withQueryParam("additional-fields=empty&additional-values=on")
-                .call()
+        var asyncInit = new VehicleResourceAsyncController()
+                .withToken(CONSUMER)
+                .withQueryParam("empty", "on")
+                .initGetVehicleResouce(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(asyncInit)
                 .expectedCode(HttpStatus.SC_NO_CONTENT)
                 .expectedBody(StringUtils.EMPTY, "Expected empty body!");
     }

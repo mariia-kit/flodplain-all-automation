@@ -1,6 +1,8 @@
 package com.here.platform.e2e;
 
-import com.here.platform.ns.BaseNSTest;
+import static com.here.platform.ns.dto.Users.CONSUMER;
+
+import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -12,8 +14,8 @@ import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -41,11 +43,12 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleIdLong,
-                container.getId())
-                .withHeader("X-Correlation-ID", "X-corr-12345")
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .withXCorrelationId("X-corr-12345")
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
     }
@@ -64,10 +67,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
     }
@@ -87,10 +91,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .revokeConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleIdLong,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentRevokeError(crid));
     }
 
@@ -104,10 +109,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(StringUtils.EMPTY)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentNotFoundError(StringUtils.EMPTY));
     }
 
@@ -127,10 +133,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .revokeConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentRevokeError(crid));
     }
 
@@ -149,10 +156,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
 
@@ -164,10 +172,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(StringUtils.EMPTY)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
 
@@ -190,10 +199,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
     }
@@ -217,10 +227,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                otherContainer.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentNotFoundError(crid));
 
     }
@@ -243,16 +254,18 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response1 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(SecondCrid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response1)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response2 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(firstCrid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response2)
                 .expectedCode(HttpStatus.SC_OK);
 
     }

@@ -1,19 +1,22 @@
 package com.here.platform.ns.instruments;
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
 import static io.restassured.RestAssured.given;
 
+import com.here.platform.ns.controllers.provider.ContainerController;
+import com.here.platform.ns.controllers.provider.ProviderController;
+import com.here.platform.ns.controllers.provider.ResourceController;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
+import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.CleanUpHelper;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.AddContainerCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.AddDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.resources.AddProviderResourceCall;
 import com.here.platform.ns.utils.NS_Config;
 import java.util.Arrays;
 import org.apache.http.HttpStatus;
@@ -33,31 +36,40 @@ public class TestDataGeneration {
 
     public void createBaseContainersIfNecessary() {
         DataProvider provider0 = Providers.DAIMLER_REAL.getProvider();
-        new AddDataProviderCall(provider0)
-                .call()
+        var addDataProvider0 = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider0);
+        new NeutralServerResponseAssertion(addDataProvider0)
                 .expectedCode(HttpStatus.SC_OK);
         DataProvider provider1 = Providers.DAIMLER_EXPERIMENTAL.getProvider();
-        new AddDataProviderCall(provider1)
-                .call()
+        var addDataProvider1 = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider1);
+        new NeutralServerResponseAssertion(addDataProvider1)
                 .expectedCode(HttpStatus.SC_OK);
         DataProvider provider2 = Providers.DAIMLER_REFERENCE.getProvider();
-        new AddDataProviderCall(provider2)
-                .call()
+        var addDataProvider2 = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider2);
+        new NeutralServerResponseAssertion(addDataProvider2)
                 .expectedCode(HttpStatus.SC_OK);
         DataProvider provider3 = Providers.REFERENCE_PROVIDER.getProvider();
-        new AddDataProviderCall(provider3)
-                .call()
+        var addDataProvider3 = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider3);
+        new NeutralServerResponseAssertion(addDataProvider3)
                 .expectedCode(HttpStatus.SC_OK);
 
         Arrays.stream(Containers.values())
-                .forEach(container -> Arrays.asList(container.getContainer().getResourceNames().split(",")).forEach(resource -> new AddProviderResourceCall(
-                        container.getContainer().getDataProviderName(), resource)
-                        .call()
-                        .expectedCode(HttpStatus.SC_OK)));
+                .forEach(container -> Arrays.asList(container.getContainer().getResourceNames().split(",")).forEach(resource ->
+                        new ResourceController().withToken(PROVIDER)
+                                .addResource(Providers.generateNew().withName(container.getContainer().getDataProviderName()),
+                                        new ProviderResource(resource))));
 
         Arrays.stream(Containers.values()).forEach(containers ->
-                new AddContainerCall(containers.getContainer())
-                        .call()
+                new ContainerController()
+                .withToken(PROVIDER)
+                .addContainer(containers.getContainer())
         );
 
 //        Arrays.stream(ContainerResources.values())

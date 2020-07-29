@@ -1,6 +1,9 @@
 package com.here.platform.ns.provider.containersInfo;
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -9,8 +12,7 @@ import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.GetContainerDataCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -29,9 +31,10 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new GetContainerDataCall(container)
-                .withToken(Users.PROVIDER)
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedEqualsContainer(container, "Container content not as expected!");
     }
 
@@ -44,9 +47,10 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new GetContainerDataCall(container)
+        var response = new ContainerController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
     }
 
@@ -59,9 +63,10 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new GetContainerDataCall(container)
+        var response = new ContainerController()
                 .withToken(Users.EXTERNAL_USER)
-                .call()
+                .getContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
@@ -74,11 +79,16 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new GetContainerDataCall(container)
-                .call()
+
+        var verify = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainer(container);
+        new NeutralServerResponseAssertion(verify)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -92,8 +102,11 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.withDataProviderName("no_such_provider");
-        new GetContainerDataCall(container)
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -107,8 +120,11 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.withId("no_such_container");
-        new GetContainerDataCall(container)
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 

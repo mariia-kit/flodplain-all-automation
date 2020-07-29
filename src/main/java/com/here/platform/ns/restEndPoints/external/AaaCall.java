@@ -7,18 +7,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import com.here.platform.ns.helpers.CleanUpHelper;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetAllResourcesByVehicleCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetSingleResourceByVehicleCall;
 import com.here.platform.ns.utils.NS_Config;
 import com.here.platform.ns.utils.PropertiesLoader;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +20,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Assertions;
 
 
 public class AaaCall {
@@ -212,50 +205,6 @@ public class AaaCall {
     public void createContainerPolicyWithGeneralAccess(Container container) {
         String resHrn = new ProviderResource("general").generateGeneralResourceHrn(container.getDataProviderName());
         createResourcePermission(resHrn);
-    }
-
-    public void waitForPolicyIntegrationInSentry(String providerName, String resName) {
-        for (int i = 0; i < 10; i++) {
-            Response response = !StringUtils.isEmpty(resName) ?
-                    new GetSingleResourceByVehicleCall(providerName, Vehicle.validVehicleId, resName)
-                            .withHeader("X-Correlation-ID",
-                                    "Cor_" + providerName + "_" + i + "_" +  Instant.now().getEpochSecond())
-                            .call().getResponse() :
-                    new GetAllResourcesByVehicleCall(providerName, Vehicle.validVehicleId)
-                            .withHeader("X-Correlation-ID",
-                                    "Cor_" + providerName + "_" + i + "_" +  Instant.now().getEpochSecond())
-                            .call().getResponse();
-
-            if (response.getStatusCode() == HttpStatus.SC_OK ||
-                    !(response.jsonPath().get("error") != null && response.jsonPath().get("error").equals("Forbidden")))  {
-                return;
-            }
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Assertions.fail("Resource is not accessible after policy update for a long time!");
-    }
-
-    public void waitForContainerPolicyIntegrationInSentry(String providerName, String containerName) {
-        for (int i = 0; i < 10; i++) {
-                    Response response = new GetContainerDataByVehicleCall(providerName, Vehicle.validVehicleId, containerName)
-                            .withHeader("X-Correlation-ID",
-                                    "Cor_" + providerName + "_" + i + "_" +  Instant.now().getEpochSecond())
-                            .call().getResponse();
-            if (response.getStatusCode() == HttpStatus.SC_OK ||
-                    !(response.jsonPath().get("error") != null && response.jsonPath().get("error").equals("Forbidden")))  {
-                return;
-            }
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        Assertions.fail("Resource is not accessible after policy update for a long time!");
     }
 
     public String createPolicy(String resHrn) {

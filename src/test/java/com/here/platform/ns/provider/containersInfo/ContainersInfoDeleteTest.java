@@ -1,6 +1,9 @@
 package com.here.platform.ns.provider.containersInfo;
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -10,9 +13,7 @@ import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.GetContainerDataCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.GetContainersListForProviderCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -31,11 +32,16 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new GetContainerDataCall(container.getName(), container.getDataProviderName())
-                .call()
+
+        var verify = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainer(container);
+        new NeutralServerResponseAssertion(verify)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -48,10 +54,12 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
+        var response = new ContainerController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
+
     }
 
     @Test
@@ -63,9 +71,10 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
+        var response = new ContainerController()
                 .withToken(Users.EXTERNAL_USER)
-                .call()
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
@@ -79,8 +88,11 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.setDataProviderName("no_such_provider");
-        new DeleteContainerCall(container)
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -94,8 +106,11 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.setId("no_such_container");
-        new DeleteContainerCall(container)
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -111,8 +126,11 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.setDataProviderName(provider2.getName());
-        new DeleteContainerCall(container)
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -125,11 +143,16 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new DeleteContainerCall(container)
-                .call()
+
+        var secondResponse = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(secondResponse)
                 .expectedError(NSErrors.getContainersNotFoundError(container));
     }
 
@@ -145,11 +168,16 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularContainer(container1);
         Steps.createRegularContainer(container2);
 
-        new DeleteContainerCall(container1).call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container1);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetContainersListForProviderCall(provider.getName())
-                .call()
+        var verify = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName());
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
                         "Expected list should not be equals to 1!")
@@ -174,16 +202,23 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularContainer(container1);
         Steps.createRegularContainer(container2);
 
-        new DeleteContainerCall(container1).call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container1);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetContainersListForProviderCall(provider1.getName())
-                .call()
+        var verify = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider1.getName());
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedError(NSErrors.getContainersForProviderNotFoundError(provider1.getName()));
 
-        new GetContainersListForProviderCall(provider2.getName())
-                .call()
+        var verify2 = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider2.getName());
+        new NeutralServerResponseAssertion(verify2)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
                         "Expected list should not be equals to 1!")

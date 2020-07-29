@@ -16,7 +16,7 @@ class TestNS extends Test {
     TestNS() {
         group "ns tests"
 
-        maxParallelForks = 32
+        maxParallelForks = 16
         
         forkEvery = 1
         minHeapSize = "32m"

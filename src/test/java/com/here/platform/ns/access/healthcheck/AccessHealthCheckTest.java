@@ -1,9 +1,8 @@
 package com.here.platform.ns.access.healthcheck;
 
 import com.here.platform.ns.BaseNSTest;
-import com.here.platform.ns.restEndPoints.neutralServer.healthcheck.AccessDeepHealthCheckCall;
-import com.here.platform.ns.restEndPoints.neutralServer.healthcheck.AccessHealthCheckCall;
-import com.here.platform.ns.restEndPoints.neutralServer.healthcheck.AccessVersionCall;
+import com.here.platform.ns.controllers.access.AccessHealthController;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.utils.NS_Config;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +17,8 @@ class AccessHealthCheckTest extends BaseNSTest {
     @DisplayName("Verify Access service HealthCheck")
     @Tag("touch")
     void verifyProxyHealthCheck() {
-        new AccessHealthCheckCall()
-                .call()
+        var verify = new AccessHealthController().getHealth();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("status", "ok",
                         "Health check 'status' attribute is not equals to 'ok'!");
@@ -28,8 +27,8 @@ class AccessHealthCheckTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Access service Version")
     void verifyProxyVersionCheck() {
-        new AccessVersionCall()
-                .call()
+        var verify = new AccessHealthController().getVersion();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonTrue("apiVersion",
                         val -> val.matches(NS_Config.VERSION_PATTERN.toString()),
@@ -41,8 +40,8 @@ class AccessHealthCheckTest extends BaseNSTest {
     @DisplayName("Verify Access service Deep Health Check")
     @Tag("smoke_ns")
     void verifyProxyDeepHealthCheck() {
-        new AccessDeepHealthCheckCall()
-                .call()
+        var verify = new AccessHealthController().getHealthDeep();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("isHealthy", "true",
                         "Health check 'isHealthy' attribute is not equals to 'true'!")

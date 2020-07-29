@@ -6,6 +6,7 @@ import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -14,8 +15,7 @@ import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.GetContainersListForProviderCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +30,10 @@ class ContainersInfoGetListTest extends BaseNSTest {
     @DisplayName("Verify receive list of Containers Successful")
     @Tag("smoke_ns")
     void verifyGetContainersListCanBeRetrieved() {
-        new GetContainersListForProviderCall(DAIMLER_REAL.getName())
+        var response = new ContainerController()
                 .withToken(PROVIDER)
-                .call()
+                .getContainersList(DAIMLER_REAL.getName());
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
@@ -47,8 +48,11 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         Steps.createRegularProvider(provider);
 
-        new GetContainersListForProviderCall(provider.getName())
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName());
+
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedError(NSErrors.getContainersForProviderNotFoundError(provider.getName()));
     }
@@ -60,9 +64,10 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         Steps.createRegularProvider(provider);
 
-        new GetContainersListForProviderCall(provider.getName())
+        var response = new ContainerController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .getContainersList(provider.getName());
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
     }
@@ -70,19 +75,21 @@ class ContainersInfoGetListTest extends BaseNSTest {
     @Test
     @DisplayName("Verify receive list of Containers with invalid Token")
     void verifyGetContainersListWithWrongToken() {
-        new GetContainersListForProviderCall(DAIMLER_REFERENCE.getName())
+        var response = new ContainerController()
                 .withToken(EXTERNAL_USER)
-                .call()
+                .getContainersList(DAIMLER_REFERENCE.getName());
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
     @Test
     @DisplayName("Verify receive list of Containers with Provider not exist")
     void verifyGetContainersListWithNoProvider() {
-        new GetContainersListForProviderCall("no_such_provider_name")
-                .call()
-                .expectedError(
-                        NSErrors.getContainersForProviderNotFoundError("no_such_provider_name"));
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList("no_such_provider_name");
+        new NeutralServerResponseAssertion(response)
+                .expectedError(NSErrors.getContainersForProviderNotFoundError("no_such_provider_name"));
     }
 
     @Test
@@ -92,11 +99,11 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         Steps.createRegularProvider(provider);
 
-        new GetContainersListForProviderCall(provider.getName().toLowerCase())
-                .call()
-                .expectedError(
-                        NSErrors.getContainersForProviderNotFoundError(
-                                (provider.getName().toLowerCase())));
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName().toLowerCase());
+        new NeutralServerResponseAssertion(response)
+                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getName().toLowerCase())));
     }
 
     @Test
@@ -108,12 +115,15 @@ class ContainersInfoGetListTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container.getName(), container.getDataProviderName())
-                .call();
-        new GetContainersListForProviderCall(provider.getName())
-                .call()
-                .expectedError(
-                        NSErrors.getContainersForProviderNotFoundError((provider.getName())));
+        new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName());
+        new NeutralServerResponseAssertion(response)
+                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getName())));
     }
 
     @Test
@@ -126,8 +136,10 @@ class ContainersInfoGetListTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new GetContainersListForProviderCall(provider.getName())
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName());
+        new NeutralServerResponseAssertion(response)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
                 .expectedEqualsContainerInList(container, "No expected container in result!");
@@ -144,8 +156,11 @@ class ContainersInfoGetListTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         container.setConsentRequired(true);
-        new GetContainersListForProviderCall(provider.getName())
-                .call()
+
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .getContainersList(provider.getName());
+        new NeutralServerResponseAssertion(response)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
                 .expectedEqualsContainerInList(container, "No expected container in result!");

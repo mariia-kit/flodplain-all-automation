@@ -4,6 +4,7 @@ import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -12,9 +13,7 @@ import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.restEndPoints.provider.data_providers.AddDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.DeleteDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.GetDataProvidersListCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -31,12 +30,16 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.clearProviderResources(provider);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new GetDataProvidersListCall()
-                .call()
+
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should not be present!");
@@ -48,14 +51,17 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         Steps.createRegularProvider(provider);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND);
 
-        new GetDataProvidersListCall()
-                .call()
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should be present!");
@@ -67,13 +73,16 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         Steps.createRegularProvider(provider);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(EXTERNAL_USER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
 
-        new GetDataProvidersListCall()
-                .call()
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should be present!");
@@ -84,16 +93,20 @@ public class DataProvidersDeleteTest extends BaseNSTest {
     void verifyDeleteDataProvidersBindContainer() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider);
+
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
-                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getName(),
-                        container.getName()));
-        new GetDataProvidersListCall()
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
+                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getName(), container.getName()));
+
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should be present!");
@@ -110,11 +123,16 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         Steps.removeRegularContainer(container);
         Steps.clearProviderResources(provider);
 
-        new DeleteDataProviderCall(provider.getName())
-                .call()
+        var response = new ProviderController()
+                .withToken(PROVIDER)
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new GetDataProvidersListCall()
-                .call()
+
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should not be present!");
@@ -125,9 +143,10 @@ public class DataProvidersDeleteTest extends BaseNSTest {
     void verifyDeleteDataProvidersNotExist() {
         DataProvider provider = Providers.generateNew();
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedError(NSErrors.getProviderNotFoundError(provider));
     }
@@ -139,13 +158,16 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.clearProviderResources(provider);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new DeleteDataProviderCall(provider.getName())
+
+        var secondTry = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(secondTry)
                 .expectedError(NSErrors.getProviderNotFoundError(provider));
     }
 
@@ -153,16 +175,22 @@ public class DataProvidersDeleteTest extends BaseNSTest {
     @DisplayName("Verify deletion of DataProvider with no resource")
     void verifyDeleteDataProvidersNoResource() {
         DataProvider provider = Providers.generateNew();
-        new AddDataProviderCall(provider)
-                .call()
+
+        var create = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteDataProviderCall(provider.getName())
+        var response = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .deleteProvider(provider);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new GetDataProvidersListCall()
-                .call()
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
                         "Provider " + provider.getName() + "should not be present!");

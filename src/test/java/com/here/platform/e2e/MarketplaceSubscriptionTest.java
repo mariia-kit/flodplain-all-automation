@@ -1,6 +1,10 @@
 package com.here.platform.e2e;
 
-import com.here.platform.ns.BaseNSTest;
+import static com.here.platform.ns.dto.Users.CONSUMER;
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
+import com.here.platform.ns.controllers.access.ContainerDataController;
+import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -12,10 +16,8 @@ import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.AddContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -42,10 +44,11 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
     }
@@ -69,8 +72,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var delete = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
         new MarketplaceManageListingCall()
@@ -87,8 +92,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var delete = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getCantDeleteContainerWithSubs(container));
     }
 
@@ -101,8 +108,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListing(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var delete = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getCantDeleteContainerWithSubs(container));
     }
 
@@ -115,8 +124,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var delete = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getCantDeleteContainerWithSubs(container));
 
     }
@@ -131,8 +142,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createListingAndSubscriptionInProgress(container);
 
         container.withDescription("Edited description!");
-        new AddContainerCall(container)
-                .call()
+        var response = new ContainerController()
+                .withToken(PROVIDER)
+                .addContainer(container);
+        new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getCantEditContainerWithSubs(container));
     }
 
@@ -145,8 +158,10 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
 
-        new DeleteContainerCall(container)
-                .call()
+        var delete = new ContainerController()
+                .withToken(PROVIDER)
+                .deleteContainer(container);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
     }
 
@@ -159,10 +174,11 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListing(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(ConsentManagerHelper.getValidConsentId())
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
 
@@ -175,10 +191,11 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(ConsentManagerHelper.getValidConsentId())
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
     }
 
@@ -191,10 +208,11 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(ConsentManagerHelper.getValidConsentId())
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
 

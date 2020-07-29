@@ -1,8 +1,9 @@
 package com.here.platform.e2e;
 
+import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
-import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -13,6 +14,7 @@ import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceCMAddVinsCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceCMCreateConsentCall;
@@ -22,7 +24,6 @@ import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetContainerCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetContainerInfoCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetProvidersCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
 import io.restassured.http.Header;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
@@ -120,7 +121,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
 
         new MarketplaceNSGetContainerCall(provider.getName())
-                .withToken(Users.CONSUMER)
+                .withToken(CONSUMER)
                 .call()
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
 
@@ -251,10 +252,11 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                 .call().expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("approved", "1", "Consent status value not as expected");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(consentRequestId)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
     }
