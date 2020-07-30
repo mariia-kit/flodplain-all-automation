@@ -1,7 +1,7 @@
 package com.here.platform.ns.helpers;
 
-import com.here.platform.ns.controllers.access.AccessHealthController;
-import com.here.platform.ns.controllers.provider.ProviderHealthController;
+import com.here.platform.ns.controllers.access.AccessServiceController;
+import com.here.platform.ns.controllers.provider.ProviderServiceController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,15 +25,15 @@ public class EnvDataCollector {
     public static void create() {
         EnvDataCollector
                 .getCollectedData().put("BuildVersionProvider",
-                new ProviderHealthController().getVersion().getBody().print());
+                new ProviderServiceController().getVersion().getBody().print());
         EnvDataCollector
                 .getCollectedData().put("BuildVersionAccess",
-                new AccessHealthController().getVersion().getBody().print());
+                new AccessServiceController().getVersion().getBody().print());
         EnvDataCollector
                 .getCollectedData().put("ProviderHealth",
-                new ProviderHealthController().getVersion().getBody().print());
+                new ProviderServiceController().getVersion().getBody().print());
         EnvDataCollector.getCollectedData().put("AccessHealth",
-                new AccessHealthController().getHealth().getBody().print());
+                new AccessServiceController().getHealth().getBody().print());
 
         File yourFile = new File(fileURL);
         try {

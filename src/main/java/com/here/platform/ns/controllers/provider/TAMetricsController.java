@@ -13,14 +13,16 @@ public class TAMetricsController extends BaseNeutralService<TAMetricsController>
     @Step
     public Response getTaMetrics(String date) {
         return neutralServerClient(metricsBasePath)
-                .get("?date={date}", date);
+                .queryParam("date", date)
+                .get();
 
     }
 
     @Step
     public Response getTaMetricsStatistics(String date) {
         return neutralServerClient(metricsBasePath)
-                .get("/statistics?date={date}", date);
+                .queryParam("date", date)
+                .get("/statistics");
 
     }
 

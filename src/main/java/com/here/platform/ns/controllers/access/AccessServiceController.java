@@ -1,4 +1,4 @@
-package com.here.platform.ns.controllers.provider;
+package com.here.platform.ns.controllers.access;
 
 import com.here.platform.ns.controllers.BaseNeutralService;
 import com.here.platform.ns.utils.NS_Config;
@@ -6,9 +6,9 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
-public class ProviderHealthController extends BaseNeutralService<ProviderHealthController> {
+public class AccessServiceController extends BaseNeutralService<AccessServiceController> {
 
-    private final String serviceBasePath = NS_Config.SERVICE_PROVIDER.toString();
+    private final String serviceBasePath = NS_Config.SERVICE_ACCESS.toString();
 
     @Step
     public Response getHealth() {
@@ -27,4 +27,5 @@ public class ProviderHealthController extends BaseNeutralService<ProviderHealthC
         return neutralServerClient(serviceBasePath)
                 .get("/version");
     }
+
 }

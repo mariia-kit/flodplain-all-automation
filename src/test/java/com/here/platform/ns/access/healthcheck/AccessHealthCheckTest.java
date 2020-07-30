@@ -1,7 +1,7 @@
 package com.here.platform.ns.access.healthcheck;
 
 import com.here.platform.ns.BaseNSTest;
-import com.here.platform.ns.controllers.access.AccessHealthController;
+import com.here.platform.ns.controllers.access.AccessServiceController;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.utils.NS_Config;
 import org.apache.http.HttpStatus;
@@ -17,7 +17,7 @@ class AccessHealthCheckTest extends BaseNSTest {
     @DisplayName("Verify Access service HealthCheck")
     @Tag("touch")
     void verifyProxyHealthCheck() {
-        var verify = new AccessHealthController().getHealth();
+        var verify = new AccessServiceController().getHealth();
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("status", "ok",
@@ -27,7 +27,7 @@ class AccessHealthCheckTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Access service Version")
     void verifyProxyVersionCheck() {
-        var verify = new AccessHealthController().getVersion();
+        var verify = new AccessServiceController().getVersion();
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonTrue("apiVersion",
@@ -40,7 +40,7 @@ class AccessHealthCheckTest extends BaseNSTest {
     @DisplayName("Verify Access service Deep Health Check")
     @Tag("smoke_ns")
     void verifyProxyDeepHealthCheck() {
-        var verify = new AccessHealthController().getHealthDeep();
+        var verify = new AccessServiceController().getHealthDeep();
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("isHealthy", "true",

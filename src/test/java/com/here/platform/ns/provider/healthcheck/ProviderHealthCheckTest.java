@@ -1,7 +1,7 @@
 package com.here.platform.ns.provider.healthcheck;
 
 import com.here.platform.ns.BaseNSTest;
-import com.here.platform.ns.controllers.provider.ProviderHealthController;
+import com.here.platform.ns.controllers.provider.ProviderServiceController;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.utils.NS_Config;
 import org.apache.http.HttpStatus;
@@ -16,7 +16,7 @@ class ProviderHealthCheckTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Provider service HealthCheck")
     void verifyProviderHealthCheck() {
-        var verify = new ProviderHealthController().getHealth();
+        var verify = new ProviderServiceController().getHealth();
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
@@ -27,7 +27,7 @@ class ProviderHealthCheckTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Provider service Version")
     void verifyProviderVersionCheck() {
-        var verify = new ProviderHealthController().getVersion();
+        var verify = new ProviderServiceController().getVersion();
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
@@ -41,7 +41,7 @@ class ProviderHealthCheckTest extends BaseNSTest {
     @DisplayName("Verify Provider service Deep Health Check")
     @Tag("smoke_ns")
     void verifyProviderDeepHealthCheck() {
-        var verify = new ProviderHealthController().getHealthDeep();
+        var verify = new ProviderServiceController().getHealthDeep();
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
