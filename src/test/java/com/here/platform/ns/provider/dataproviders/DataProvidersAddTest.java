@@ -136,7 +136,7 @@ class DataProvidersAddTest extends BaseNSTest {
                 .addProvider(provider);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
-                .expectedEqualsProvider(provider, "Provider content not as expected!");;
+                .expectedEqualsProvider(provider, "Provider content not as expected!");
 
         var verify = new ProviderController()
                 .withToken(PROVIDER)
@@ -163,7 +163,7 @@ class DataProvidersAddTest extends BaseNSTest {
                 .addProvider(provider);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
-                .expectedEqualsProvider(provider, "Provider content not as expected!");;
+                .expectedEqualsProvider(provider, "Provider content not as expected!");
 
         var verify = new ProviderController()
                 .withToken(PROVIDER)
