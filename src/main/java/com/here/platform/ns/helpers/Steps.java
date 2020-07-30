@@ -13,18 +13,10 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.AddContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.AddDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.DeleteDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.resources.AddProviderResourceCall;
-import com.here.platform.ns.restEndPoints.provider.resources.DeleteProviderResourceCall;
 import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
-
-import javax.mail.Quota;
+import org.junit.jupiter.api.Assertions;
 
 
 public class Steps {
@@ -48,8 +40,8 @@ public class Steps {
         var response = new ResourceController()
                 .withToken(PROVIDER)
                 .addResource(provider, res);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_OK);
+        Assertions.assertTrue(response.getStatusCode() == HttpStatus.SC_OK || response.getStatusCode() == HttpStatus.SC_CONFLICT,
+                "Creation of resource was not successful! " + response.getBody().print());
     }
 
     @Step("Remove resources of Data Provider: {provider.name}")

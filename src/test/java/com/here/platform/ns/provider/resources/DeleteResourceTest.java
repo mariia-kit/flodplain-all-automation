@@ -1,8 +1,13 @@
 package com.here.platform.ns.provider.resources;
 
+import static com.here.platform.ns.dto.Users.CONSUMER;
+import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.access.VehicleResourceController;
+import com.here.platform.ns.controllers.provider.ProviderController;
+import com.here.platform.ns.controllers.provider.ResourceController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -10,19 +15,14 @@ import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.SentryErrorsList;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetSingleResourceByVehicleCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.AddDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.resources.AddProviderResourceCall;
-import com.here.platform.ns.restEndPoints.provider.resources.DeleteProviderResourceCall;
-import com.here.platform.ns.restEndPoints.provider.resources.GetResourcesCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -40,22 +40,28 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetResourcesCall(provider)
+        var verify = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider);
+        new NeutralServerResponseAssertion(verify)
                 .expected(DefaultResponses::isResponseListEmpty,
                         "Expected list should be empty!")
                 .expected(response -> !DefaultResponses
@@ -69,18 +75,22 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider, res.getName())
+        var delete = new ResourceController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
     }
 
@@ -90,18 +100,22 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider, res.getName())
-                .withToken(Users.EXTERNAL_USER)
-                .call()
+        var delete = new ResourceController()
+                .withToken(EXTERNAL_USER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 
@@ -111,18 +125,23 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
         provider.setName("no_such_provider");
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getProviderNotFoundError(provider));
     }
 
@@ -132,18 +151,23 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
         res.setName("no_such_container");
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
                         res.getName()));
     }
@@ -155,17 +179,27 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider2 = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
-                .call();
-        new AddDataProviderCall(provider2)
-                .call();
-
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var create = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
+                .expectedCode(HttpStatus.SC_OK);
+        var create2 = new ProviderController()
+                .withToken(PROVIDER)
+                .addProvider(provider2);
+        new NeutralServerResponseAssertion(create2)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider2, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
+                .expectedCode(HttpStatus.SC_OK);
+
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider2, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getProviderResourceNotFoundError(provider2.getName(),
                         res.getName()));
     }
@@ -176,19 +210,26 @@ public class DeleteResourceTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res.getName())
-                .call()
+        var add = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res);
+        new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete2 = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete2)
                 .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
                         res.getName()));
     }
@@ -200,25 +241,33 @@ public class DeleteResourceTest extends BaseNSTest {
         ProviderResource res1 = ProviderResource.generateNew();
         ProviderResource res2 = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider)
+        var create = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider);
+        new NeutralServerResponseAssertion(create)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider, res1.getName())
-                .call()
+        var add1 = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res1);
+        new NeutralServerResponseAssertion(add1)
                 .expectedCode(HttpStatus.SC_OK);
-        new AddProviderResourceCall(provider, res2.getName())
-                .call()
+        var add2 = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider, res2);
+        new NeutralServerResponseAssertion(add2)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider, res1.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res1);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetResourcesCall(provider)
+        var verify = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider);
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(response -> !DefaultResponses.isResponseListEmpty(response),
                         "Expected list should not be empty!")
@@ -238,35 +287,45 @@ public class DeleteResourceTest extends BaseNSTest {
         ProviderResource res1 = ProviderResource.generateNew();
         ProviderResource res2 = ProviderResource.generateNew();
 
-        new AddDataProviderCall(provider1)
+        var create1 = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider1);
+        new NeutralServerResponseAssertion(create1)
                 .expectedCode(HttpStatus.SC_OK);
-        new AddDataProviderCall(provider2)
+        var create2 = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .addProvider(provider2);
+        new NeutralServerResponseAssertion(create2)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new AddProviderResourceCall(provider1, res1.getName())
-                .call()
+        var add1 = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider1, res1);
+        new NeutralServerResponseAssertion(add1)
                 .expectedCode(HttpStatus.SC_OK);
-        new AddProviderResourceCall(provider2, res2.getName())
-                .call()
+        var add2 = new ResourceController()
+                .withToken(PROVIDER)
+                .addResource(provider2, res2);
+        new NeutralServerResponseAssertion(add2)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider1, res1.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider1, res1);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetResourcesCall(provider1)
+        var verify1 = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider1);
+        new NeutralServerResponseAssertion(verify1)
                 .expected(DefaultResponses::isResponseListEmpty,
                         "Expected list should be empty!");
 
-        new GetResourcesCall(provider2)
+        var verify2 = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider2);
+        new NeutralServerResponseAssertion(verify2)
                 .expected(response -> DefaultResponses.extractAsList(response).size() == 1,
                         "Expected list should not be empty!")
                 .expected(response -> DefaultResponses
@@ -286,13 +345,16 @@ public class DeleteResourceTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteProviderResourceCall(provider, res.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getResourceCantBeDeletedError(res, container));
 
-        new GetResourcesCall(provider)
+        var verify = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider);
+        new NeutralServerResponseAssertion(verify)
                 .expected(response -> DefaultResponses
                                 .isResourceInList(res, response),
                         "No expected resource is in result! " + res.getName());
@@ -312,13 +374,16 @@ public class DeleteResourceTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new DeleteProviderResourceCall(provider, res2.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res2);
+        new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new GetResourcesCall(provider)
+        var verify = new ResourceController()
                 .withToken(PROVIDER)
-                .call()
+                .getResourceList(provider);
+        new NeutralServerResponseAssertion(verify)
                 .expected(response -> !DefaultResponses
                                 .isResourceInList(res2, response),
                         "Not expected resource is in result! " + res2.getName());
@@ -328,27 +393,27 @@ public class DeleteResourceTest extends BaseNSTest {
     @DisplayName("Verify delete resource with subscription")
     void verifyDeleteResourcesWithSubs() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
-        Steps.createRegularProvider(provider);
-
         ProviderResource res1 = ContainerResources.FUEL.getResource();
-        new AddProviderResourceCall(provider, res1.getName())
-                .call();
-
         Container container = Containers.generateNew(provider)
                 .withResourceNames(res1.getName())
                 .withConsentRequired(false);
 
+        Steps.createRegularProvider(provider);
+        Steps.addResourceToProvider(Providers.REFERENCE_PROVIDER.getProvider(), res1);
         Steps.createRegularContainer(container);
 
         new AaaCall().createContainerPolicyWithRes(container, res1);
 
-        new GetSingleResourceByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                res1.getName())
-                .call()
+        var getSingle1 = new VehicleResourceController()
+                .withToken(CONSUMER)
+                .getVehicleResource(provider, Vehicle.validVehicleId, res1);
+        new NeutralServerResponseAssertion(getSingle1)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new DeleteProviderResourceCall(provider, res1.getName())
-                .call()
+        var delete = new ResourceController()
+                .withToken(PROVIDER)
+                .deleteResource(provider, res1);
+        new NeutralServerResponseAssertion(delete)
                 .expectedError(NSErrors.getCantDeleteResourceWithSubs(res1, provider));
     }
 

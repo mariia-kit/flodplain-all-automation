@@ -1,5 +1,8 @@
 package com.here.platform.ns.dto;
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
+import com.here.platform.ns.utils.NS_Config;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +61,10 @@ public class DataProvider {
     public DataProvider withResources(ProviderResource resource) {
         this.addResource(resource);
         return this;
+    }
+
+    public String generateHrn() {
+        return "hrn:" + NS_Config.REALM.toString() + ":neutral::" + PROVIDER.getUser().getRealm() + ":" + name;
     }
 
 }

@@ -4,12 +4,13 @@ import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.restEndPoints.provider.data_providers.GetDataProvidersListCall;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -23,9 +24,10 @@ class DataProvidersGetListTest extends BaseNSTest {
     @Test
     @DisplayName("Verify receive list of DataProviders Successful")
     void verifyGetDataProvidersListCanBeRetrieved() {
-        new GetDataProvidersListCall()
+        var verify = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!");
@@ -38,9 +40,10 @@ class DataProvidersGetListTest extends BaseNSTest {
         DataProvider provider = Providers.generateNew();
         Steps.createRegularProvider(provider);
 
-        new GetDataProvidersListCall()
+        var verify = new ProviderController()
                 .withToken(PROVIDER)
-                .call()
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
@@ -51,9 +54,10 @@ class DataProvidersGetListTest extends BaseNSTest {
     @Test
     @DisplayName("Verify receive list of DataProviders with empty Token")
     void verifyGetDataProvidersListWithEmptyToken() {
-        new GetDataProvidersListCall()
+        var verify = new ProviderController()
                 .withToken(StringUtils.EMPTY)
-                .call()
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
     }
@@ -61,9 +65,10 @@ class DataProvidersGetListTest extends BaseNSTest {
     @Test
     @DisplayName("Verify receive list of DataProviders with invalid Token")
     void verifyGetContainersListWithWrongToken() {
-        new GetDataProvidersListCall()
+        var verify = new ProviderController()
                 .withToken(EXTERNAL_USER)
-                .call()
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
     }
 

@@ -8,11 +8,11 @@ import io.restassured.response.Response;
 
 public class ProviderController extends BaseNeutralService<ProviderController> {
 
-    private final String containersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
+    private final String providersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
 
     @Step
     public Response addProvider(DataProvider provider) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .body(provider.generateBody())
                 .put("/{providerId}", provider.getName());
     }
@@ -24,13 +24,13 @@ public class ProviderController extends BaseNeutralService<ProviderController> {
 
     @Step
     public Response deleteProvider(String providerId) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .delete("/{providerId}", providerId);
     }
 
     @Step
     public Response getProviderList() {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .get();
     }
 }

@@ -12,12 +12,6 @@ import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.GetContainersListForProviderCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.DeleteDataProviderCall;
-import com.here.platform.ns.restEndPoints.provider.data_providers.GetDataProvidersListCall;
-import com.here.platform.ns.restEndPoints.provider.resources.DeleteProviderResourceCall;
-import com.here.platform.ns.restEndPoints.provider.resources.GetResourcesCall;
 import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,11 +107,13 @@ public class CleanUp {
         }
         Response allResources = new ResourceController().withToken(PROVIDER).getResourceList(providerName);
         Arrays.stream(allResources.getBody().as(ProviderResource[].class)).forEach(res -> {
-            Response delete = new DeleteProviderResourceCall(providerName, res.getName()).call()
-                    .getResponse();
+            new ResourceController()
+                    .withToken(PROVIDER)
+                    .deleteResource(new DataProvider(providerName, ""), res);
         });
-        new DeleteDataProviderCall(providerName)
-                .call();
+        new ProviderController()
+                .withToken(PROVIDER)
+                .deleteProvider(providerName);
     }
 
     public void deleteAllArtificialPolicies() {

@@ -9,32 +9,42 @@ import io.restassured.response.Response;
 
 public class ResourceController extends BaseNeutralService<ResourceController> {
 
-    private final String containersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
+    private final String providersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
 
     @Step
     public Response getResource(DataProvider dataProvider, String resourceId) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .get("/{providerId}/resources/{resourceId}", dataProvider.getName(), resourceId);
 
     }
 
     @Step
     public Response addResource(DataProvider dataProvider, ProviderResource resource) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .body(resource.generateBody())
                 .put("/{providerId}/resources/{resourceId}", dataProvider.getName(), resource.getName());
     }
 
     @Step
     public Response deleteResource(String providerId, String resourceId) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .delete("/{providerId}/resources/{resourceId}", providerId, resourceId);
     }
 
     @Step
+    public Response deleteResource(DataProvider dataProvider, ProviderResource resource) {
+        return deleteResource(dataProvider.getName(), resource.getName());
+    }
+
+    @Step
     public Response getResourceList(String providerId) {
-        return neutralServerClient(containersBasePath)
+        return neutralServerClient(providersBasePath)
                 .get("/{providerId}/resources", providerId);
+    }
+
+    @Step
+    public Response getResourceList(DataProvider dataProvider) {
+        return getResourceList(dataProvider.getName());
     }
 
 }

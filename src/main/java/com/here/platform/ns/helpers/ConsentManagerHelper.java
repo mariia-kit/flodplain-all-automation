@@ -1,12 +1,15 @@
 package com.here.platform.ns.helpers;
 
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
+import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.AddContainerCall;
 import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.math.BigInteger;
@@ -46,8 +49,11 @@ public class ConsentManagerHelper {
                     true,
                     null);
             container.setScope(container.generateScope());
-            new AddContainerCall(container)
-                    .call();
+            var response = new ContainerController()
+                    .withToken(PROVIDER)
+                    .addContainer(container);
+            new NeutralServerResponseAssertion(response)
+                    .expectedCode(HttpStatus.SC_OK);
             new ConsentManagementCall().addCMApplication(container, Providers.DAIMLER_REFERENCE.getName());
             String cmConsumerId = Users.CONSUMER.getUser().getRealm();
             String crid = new ConsentManagementCall()

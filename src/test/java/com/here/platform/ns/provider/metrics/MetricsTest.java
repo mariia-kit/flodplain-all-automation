@@ -1,8 +1,13 @@
 package com.here.platform.ns.provider.metrics;
 
+import static com.here.platform.ns.dto.Users.APPLICATION;
+import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
+import com.here.platform.ns.controllers.access.ContainerDataController;
+import com.here.platform.ns.controllers.provider.ContainerController;
+import com.here.platform.ns.controllers.provider.TAMetricsController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -12,10 +17,9 @@ import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
-import com.here.platform.ns.restEndPoints.neutralServer.resources.GetContainerDataByVehicleCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.AddContainerCall;
-import com.here.platform.ns.restEndPoints.provider.technicalAccountingService.taMetricsCall;
-import com.here.platform.ns.restEndPoints.provider.technicalAccountingService.taMetricsStatistics;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -30,8 +34,10 @@ public class MetricsTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Provider TA metrics")
     void verifyProviderTAMetrics() {
-        new taMetricsCall("2019-08-29")
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetrics("2019-08-29");
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("records[0].providerId", "daimler",
                         "TA Provider metrics not ok");
@@ -40,8 +46,10 @@ public class MetricsTest extends BaseNSTest {
     @Test
     @DisplayName("Verify Provider TA metrics statistics")
     void verifyProviderTAMetricsStatistics() {
-        new taMetricsStatistics("2019-08-29")
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics("2019-08-29");
+        new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEquals("records[0].apiCallCount", "1",
                         "TA Provider metrics statistics not ok");
@@ -56,8 +64,10 @@ public class MetricsTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        new taMetricsStatistics()
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         StringUtils.EMPTY, "Metric Statistic field value not as expected!");
@@ -67,27 +77,33 @@ public class MetricsTest extends BaseNSTest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var getContainer = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .withQueryParam("resource=distancesincereset")
-                .call()
+                .withQueryParam("resource", "distancesincereset")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new taMetricsStatistics()
-                .call()
+        var response2 = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response2)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         "1", "Metric Statistic field value not as expected!");
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var getContainer1 = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(getContainer1)
                 .expectedCode(HttpStatus.SC_OK);
 
-        new taMetricsStatistics()
-                .call()
+        var response3 = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response3)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         "2", "Metric Statistic field value not as expected!");
@@ -100,20 +116,24 @@ public class MetricsTest extends BaseNSTest {
         Container container = Containers.generateNew(provider).withResourceNames("oil");
 
         Steps.createRegularProvider(provider);
-        new AddContainerCall(container)
+        var addContainer = new ContainerController()
                 .withToken(PROVIDER)
-                .call()
+                .addContainer(container);
+        new NeutralServerResponseAssertion(addContainer)
                 .expectedCode(HttpStatus.SC_OK);
         Steps.createListingAndSubscription(container);
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var getContainer = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(ConsentManagerHelper.getValidConsentId())
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
 
-        new taMetricsStatistics()
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         StringUtils.EMPTY, "Metric Statistic field value not as expected!");
@@ -133,15 +153,18 @@ public class MetricsTest extends BaseNSTest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var getContainer = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .call()
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
 
 
-        new taMetricsStatistics()
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         "1", "Metric Statistic field value not as expected!");
@@ -161,15 +184,18 @@ public class MetricsTest extends BaseNSTest {
                 .approveConsent()
                 .getConsentRequestId();
 
-        new GetContainerDataByVehicleCall(provider.getName(), Vehicle.validVehicleId,
-                container.getId())
+        var getContainer = new ContainerDataController()
+                .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .withQueryParam("additional-fields=empty&additional-values=on")
-                .call()
+                .withQueryParam("empty", "on")
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new taMetricsStatistics()
-                .call()
+        var response = new TAMetricsController()
+                .withToken(APPLICATION)
+                .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        new NeutralServerResponseAssertion(response)
                 .expectedJsonContains("records.find {it.containerId == '" + container.getId()
                                 + "'}.apiCallCount",
                         StringUtils.EMPTY, "Metric Statistic field value not as expected!");

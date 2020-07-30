@@ -15,6 +15,7 @@ import static io.restassured.config.HeaderConfig.headerConfig;
 public abstract class BaseNeutralService<T> {
 
     private String authorizationToken = "";
+    private String xcorrId = null;
 
     protected RequestSpecification neutralServerClient(final String targetPath) {
         var baseService = given()
@@ -29,6 +30,10 @@ public abstract class BaseNeutralService<T> {
 
         if (!authorizationToken.isEmpty()) {
             baseService.header("Authorization", authorizationToken);
+        }
+
+        if (xcorrId != null) {
+            baseService.header("X-Correlation-ID", xcorrId);
         }
 
         return baseService;
@@ -49,10 +54,10 @@ public abstract class BaseNeutralService<T> {
         return (T) this;
     }
 
-//    public T withBody(String newBody) {
-//        setAuthorizationToken(users.getToken());
-//        return (T) this;
-//    }
+    public T withXCorrelationId(String xcorrId) {
+        this.xcorrId = xcorrId;
+        return (T) this;
+    }
 
     public void clearBearerToken() {
         this.authorizationToken = "";

@@ -1,12 +1,18 @@
 package com.here.platform.ns.instruments;
 
+import static com.here.platform.ns.dto.Users.PROVIDER;
+
+import com.here.platform.ns.controllers.provider.ContainerController;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.helpers.CleanUpHelper;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-import com.here.platform.ns.restEndPoints.provider.container_info.DeleteContainerCall;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -36,7 +42,12 @@ public class ProdAfterCleanUp implements AfterAllCallback {
         CleanUpHelper.getContainersList().stream().forEach(id ->
                 {
                     logger.info("Clean Containers with id:" + id);
-                    new DeleteContainerCall(id, Providers.DAIMLER_REFERENCE.getName()).call();
+                    Container container = Containers.generateNew(Providers.DAIMLER_REFERENCE.getName()).withId(id);
+                    var response = new ContainerController()
+                            .withToken(PROVIDER)
+                            .deleteContainer(container);
+                    new NeutralServerResponseAssertion(response)
+                            .expectedCode(HttpStatus.SC_NO_CONTENT);
                 }
         );
 
