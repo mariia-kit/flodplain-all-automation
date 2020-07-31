@@ -60,16 +60,14 @@ public class DashboardTests extends BaseUITests {
         var consentRequestId2 = secondConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId2);
 
-        var privateBearer = dataSubject.getBearerToken();
-        var userAccountController = new UserAccountController();
-        userAccountController.deleteConsumerForUser(mpConsumer.getRealm(), privateBearer);
-        userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
+        userAccountController.attachConsumerToUserAccount(consentRequestId1, dataSubject.getBearerToken());
+        userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
 
-        open(firstConsentRequest.getConsentRequestId());
-        System.out.println(Configuration.baseUrl + firstConsentRequest.getConsentRequestId());
-
+        open(ConsentPageUrl.getEnvUrlRoot());
         loginDataSubjectHERE(dataSubject);
-        submitVin(vin);
+
+        $(".offers-list").waitUntil(Condition.visible, 10000);
+
 
         dataSubject.setBearerToken(getUICmToken());
         updateSessionStorageData(consentRequestId1, vin);
@@ -80,6 +78,8 @@ public class DashboardTests extends BaseUITests {
 
         ConsentFlowSteps.approveConsentForVIN(consentRequestId1, testContainer, vin);
         ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin);
+
+        fuSleep();
 
         openDashboardAcceptedTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED);

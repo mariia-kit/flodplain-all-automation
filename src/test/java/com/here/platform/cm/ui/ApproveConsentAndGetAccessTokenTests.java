@@ -78,7 +78,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
             submitVin(vin);
             verifyConsentDetailsPage(mpConsumer, consentRequest, vin);
             acceptAndContinueConsent();
-            loginDataSubjectOnDaimlerSite(vin);
+            loginDataSubjectOnDaimlerSite(vehicle);
 
             approveDaimlerScopesAndSubmit();
 
@@ -134,14 +134,15 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void loginDataSubjectOnDaimlerSite(String vin) {
+    private void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
         refresh();
-        $("[name=username]").setValue(DataSubjects.getByVin(vin).username);
-        $("#password").setValue(DataSubjects.getByVin(vin).password);
+        $("[name=username]").setValue(dataSubject.username);
+        $("#password").setValue(dataSubject.password);
         $("#ciam-weblogin-auth-login-button").click();
     }
+
 
     @Step
     @SneakyThrows
@@ -177,17 +178,19 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
                 .shouldNot(Condition.appear);
         $(".container-content h4").shouldHave(Condition.text("Purpose of the request"));
 
-        String rootUrl = ConsentPageUrl.getEnvUrlRoot().substring(0, ConsentPageUrl.getEnvUrlRoot().length() -1)
+        String rootUrl = ConsentPageUrl.getEnvUrlRoot().substring(0, ConsentPageUrl.getEnvUrlRoot().length() - 1)
                 .replace("https://", StringUtils.EMPTY)
                 .replace("http://", StringUtils.EMPTY);
 
         $(".container-content p:nth-child(3)")
-                .shouldHave(Condition.text("You can continue to manage and revoke your consents at " + rootUrl));
+                .shouldHave(Condition
+                        .text("You can continue to manage and revoke your consents at Consent Management Dashboard."));
         $(".container-content p:nth-child(3) a")
-                .shouldHave(Condition.attribute("href", ConsentPageUrl.getEnvUrlRoot()));
+                .shouldHave(Condition.attribute("href", ConsentPageUrl.getAcceptedOffersUrl()));
 
         String pPolicyUrl = "https://legal.here.com/privacy/policy";
         $(".container-content p:nth-child(4)")
+
                 .shouldHave(Condition.text("To learn more about privacy practices of HERE, see our privacy policy."));
         $(".container-content p:nth-child(4) a")
                 .shouldHave(Condition.attribute("href", pPolicyUrl));
@@ -205,33 +208,30 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, ConsentRequestContainers container) {
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest,
+            ConsentRequestContainers container) {
         switchTo().window("HERE Consent");
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
         $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));
         $(".purpose-content .from p").shouldHave(Condition.text(mpConsumer.getConsumerName()));
         $(".purpose-content h4 + p").shouldHave(Condition.text(consentRequest.getPurpose()));
-        $(".source.description").shouldHave(Condition.text("Requested data\n" + String.join("\n", container.resources)));
+        $(".source.description")
+                .shouldHave(Condition.text("Requested data\n" + String.join("\n", container.resources)));
         $(".source p").shouldHave(Condition.text(container.containerDescription));
 
-        //TODO: uncomment when page fixed
-        /*
-        $(".source p a")
-                .shouldHave(Condition.attribute("href", ConsentPageUrl.getEnvUrlRoot()));
-        String pPolicyUrl = "https://legal.here.com/privacy/policy";
+        $(".source p a").shouldHave(Condition.attribute("href", ConsentPageUrl.getAcceptedOffersUrl()));
         $(".purpose-content p:nth-child(6)")
-                .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getConsumerName() + ", visit their privacy policy."));
+                .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getConsumerName()
+                        + ", visit their privacy policy."));
         $(".purpose-content p:nth-child(6) a")
-                .shouldHave(Condition.attribute("href", pPolicyUrl));
-
-        */
+                .shouldHave(Condition.attribute("href", "https://" + consentRequest.getPrivacyPolicy() + "/"));
     }
 
     @Step
     private void openPurposePageLink() {
-        $(".container-content p:nth-child(5) a")
-                .click();
+        $(".container-content p:nth-child(5) a").click();
     }
+
 
 }
