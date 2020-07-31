@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @DisplayName("Prod Integration Tests")
 @ExtendWith(ProdAfterCleanUp.class)
-class ProdIntegrationTest extends BaseE2ETest{
+class ProdIntegrationTest extends BaseE2ETest {
 
     @Test
     @DisplayName("Verify access service")

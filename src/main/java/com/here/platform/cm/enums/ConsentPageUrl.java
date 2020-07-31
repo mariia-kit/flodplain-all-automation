@@ -1,8 +1,9 @@
 package com.here.platform.cm.enums;
 
+import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
+
 import com.here.platform.common.EnumByEnv;
 import lombok.AllArgsConstructor;
-import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 
 @AllArgsConstructor
@@ -11,6 +12,7 @@ public enum ConsentPageUrl {
     LOCAL("http://localhost:8080/consent/"),
     DEV("https://portal.platform.in.here.com/consent/"),
     SIT("https://sit-web.consent.api.platform.in.here.com/"),
+    STG(SIT.envUrl),
     PROD("https://web.consent.api.platform.here.com/");
 
     private final String envUrl;

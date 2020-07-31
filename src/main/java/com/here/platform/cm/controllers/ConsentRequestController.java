@@ -10,7 +10,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class ConsentRequestController extends BaseConsentService {
+public class ConsentRequestController extends BaseConsentService<ConsentRequestController> {
 
     private final String consentRequestBasePath = "/consentRequests";
     private String consumerBearerToken = "";

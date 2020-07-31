@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 
-public class ConsentStatusController extends BaseConsentService {
+public class ConsentStatusController extends BaseConsentService<ConsentStatusController> {
 
     private final String consentsBasePath = "/consents";
     private String consumerBearerToken = "";

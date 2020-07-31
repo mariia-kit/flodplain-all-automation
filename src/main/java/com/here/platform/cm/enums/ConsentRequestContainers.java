@@ -4,7 +4,7 @@ import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApp
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
 
 import com.here.platform.common.EnumByEnv;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.AllArgsConstructor;
 
@@ -53,7 +53,9 @@ public enum ConsentRequestContainers {
 
     CONNECTED_VEHICLE(
             "connectedvehicle", "connectedvehicle",
-            new String("This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars".getBytes(), Charset.forName("UTF-8")),
+            new String(
+                    "This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars"
+                            .getBytes(), StandardCharsets.UTF_8),
             "mb:user:pool:reader mb:vehicle:status:general",
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientId,
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientSecret,
@@ -75,6 +77,7 @@ public enum ConsentRequestContainers {
         LOCAL("7ad8cbff-d257-4182-b41f-2a4afd013e47", "9d9b8e0a-04b3-4a78-aa8d-8143ccd0e6f3"),
         DEV("7ad8cbff-d257-4182-b41f-2a4afd013e47", "9d9b8e0a-04b3-4a78-aa8d-8143ccd0e6f3"),
         SIT("837df42f-500f-4b3d-be3d-c57e11b61f45", "240c3498-d266-4b30-a837-7d7220987cef"),
+        STG(SIT.clientId, SIT.clientSecret),
         PROD("93dc654d-eabe-4437-a3ae-fdb0ce32b58b", "3b789e8a-e472-4cd5-875a-f4c773f4bc4d");
         String clientId, clientSecret;
     }

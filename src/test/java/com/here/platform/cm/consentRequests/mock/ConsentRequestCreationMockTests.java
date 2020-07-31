@@ -1,16 +1,16 @@
 package com.here.platform.cm.consentRequests.mock;
 
-import static com.here.platform.cm.steps.OnboardingSteps.onboardApplicationProviderAndConsumer;
+import static com.here.platform.cm.steps.api.OnboardingSteps.onboardApplicationProviderAndConsumer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.common.ResponseAssertion;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.JConvert;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -28,12 +28,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
 public class GetSingleResourceByVehicleTest extends BaseNSTest {
 
+    private DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
+    private ProviderResource res1 = ContainerResources.FUEL.getResource();
+
 
     @Test
     @DisplayName("Verify single ContainerResources by vehicle Id no-PII")
     void verifySingleResourceRetrievedReferenceL() {
-        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
-        ProviderResource res1 = ContainerResources.FUEL.getResource();
         provider.addResource(res1);
         Steps.createRegularProvider(provider);
 
@@ -55,8 +56,6 @@ public class GetSingleResourceByVehicleTest extends BaseNSTest {
     @Test
     @DisplayName("Verify single ContainerResources by vehicle Id no-PII empty responce")
     void verifySingleResourceRetrievedReferenceEmpty() {
-        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
-        ProviderResource res1 = ContainerResources.FUEL.getResource();
         provider.addResource(res1);
         Steps.createRegularProvider(provider);
 

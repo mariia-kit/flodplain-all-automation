@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 
-public class ServiceController extends BaseConsentService {
+public class ServiceController extends BaseConsentService<ServiceController> {
 
     @Step("Perform GET call to the /health endpoint")
     public Response health() {

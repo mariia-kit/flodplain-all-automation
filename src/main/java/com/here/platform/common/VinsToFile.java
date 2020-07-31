@@ -7,7 +7,7 @@ import java.io.File;
 public class VinsToFile implements FileIO {
 
     private final String
-            fileName = Faker.instance().crypto().sha1();
+            fileName = Faker.instance().crypto().sha1().subSequence(0, 20).toString();
     private final String[] items;
 
     public VinsToFile(String... items) {

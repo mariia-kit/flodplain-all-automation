@@ -3,7 +3,7 @@ package com.here.platform.cm.bmw;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.rest.model.Health;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import io.qameta.allure.Issue;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 public class BmwRequestStatusTests extends BaseConsentStatusTests {
 
     private String crid;
-    private BMWController bmwController = new BMWController();
+    private final BMWController bmwController = new BMWController();
 
     @AfterEach
     void cleanUp() {
@@ -53,4 +53,5 @@ public class BmwRequestStatusTests extends BaseConsentStatusTests {
         var responseAfter = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
     }
+
 }

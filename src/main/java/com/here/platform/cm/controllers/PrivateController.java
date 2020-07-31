@@ -11,7 +11,7 @@ import io.restassured.specification.RequestSpecification;
 import java.util.List;
 
 
-public class PrivateController extends BaseConsentService {
+public class PrivateController extends BaseConsentService<PrivateController> {
 
     private final List<String>
             forbiddenToRemoveProviders = stream(MPProviders.values()).map(MPProviders::getName).collect(toList()),

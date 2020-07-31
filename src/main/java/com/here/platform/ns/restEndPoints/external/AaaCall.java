@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;

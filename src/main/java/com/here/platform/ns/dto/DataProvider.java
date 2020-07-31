@@ -6,6 +6,7 @@ import com.here.platform.ns.utils.NS_Config;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +49,10 @@ public class DataProvider {
         resources.add(resource);
     }
 
+    public void addResource(ContainerResources resource) {
+        resources.add(resource.getResource());
+    }
+
     public DataProvider withName(String name) {
         this.name = name;
         return this;
@@ -60,6 +65,11 @@ public class DataProvider {
 
     public DataProvider withResources(ProviderResource resource) {
         this.addResource(resource);
+        return this;
+    }
+
+    public DataProvider addResources(List<ContainerResources> resources) {
+        this.resources.addAll(resources.stream().map(ContainerResources::getResource).collect(Collectors.toList()));
         return this;
     }
 

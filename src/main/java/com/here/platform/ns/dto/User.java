@@ -1,23 +1,26 @@
 package com.here.platform.ns.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
 public class User {
 
-    private String email;
-    private String token;
-    private String refreshToken;
-    private String pass;
-    private String realm;
-    private String userId;
+    private String
+            email,
+            token,
+            refreshToken,
+            pass,
+            realm,
+            userId,
+            clientId,
+            clientSecret;
     private UserType_NS type;
-    private String clientId;
-    private String clientSecret;
 
     public User(String email, String pass, String realm, String userId) {
         this.email = email;
@@ -42,4 +45,5 @@ public class User {
         this.setToken(tokenValue);
         return this;
     }
+
 }

@@ -2,12 +2,12 @@ package com.here.platform.cm.userAccount;
 
 import com.here.platform.aaa.HereCMBearerAuthorization;
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.UserAccountData;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.dataProviders.DataSubjects;
 import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;

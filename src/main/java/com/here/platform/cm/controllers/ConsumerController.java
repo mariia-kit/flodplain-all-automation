@@ -5,7 +5,7 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
-public class ConsumerController extends BaseConsentService {
+public class ConsumerController extends BaseConsentService<ConsumerController> {
 
     private final String consumersBasePath = "/consumers";
 

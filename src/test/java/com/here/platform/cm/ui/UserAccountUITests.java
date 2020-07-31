@@ -6,14 +6,13 @@ import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
-import com.here.platform.common.annotations.CMFeatures.UserAccount;
-import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.steps.ConsentFlowSteps;
-import com.here.platform.cm.steps.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VIN;
+import com.here.platform.common.annotations.CMFeatures.UserAccount;
+import com.here.platform.hereAccount.LoginSteps;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,7 @@ public class UserAccountUITests extends BaseUITests {
     void createApproveConsentForUser() {
         consentRequestInfo = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, dataSubject.vin);
         crid = consentRequestInfo.getConsentRequestId();
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
+        userAccountController.attachConsumerToUserAccount(crid, dataSubject.generateBearerToken());
         userAccountController.attachVinToUserAccount(dataSubject.vin, dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.vin);
 
@@ -59,10 +58,9 @@ public class UserAccountUITests extends BaseUITests {
     @DisplayName("Second time opened the approved consent request link for registered user")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         open(crid);
-        loginDataSubjectHERE(dataSubject);
+        LoginSteps.loginDataSubject(dataSubject);
         $(".container-offers.current").waitUntil(Condition.visible, 10000);
         dataSubject.setBearerToken(getUICmToken());
-
         $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
         $("lui-status").shouldHave(Condition.textCaseSensitive("ACCEPTED"));
         $(".offer-box").click();
@@ -80,9 +78,8 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(secondVIN);
 
         open(crid);
-        System.out.println(Configuration.baseUrl + crid);
+        LoginSteps.loginDataSubject(dataSubject);
 
-        loginDataSubjectHERE(dataSubject);
         $(".container-offers.current").waitUntil(Condition.visible, 10000);
 
         dataSubject.setBearerToken(getUICmToken());

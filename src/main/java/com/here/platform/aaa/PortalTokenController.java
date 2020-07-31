@@ -2,7 +2,6 @@ package com.here.platform.aaa;
 
 import static io.restassured.RestAssured.given;
 
-import com.here.platform.ns.dto.User;
 import com.here.platform.ns.utils.NS_Config;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
@@ -17,10 +16,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-
 public class PortalTokenController {
-
-
 
     public static String produceToken(String realm, String login, String pass) {
         String portalUrl = NS_Config.GET_PORTAL_PATH.toString();
@@ -30,7 +26,8 @@ public class PortalTokenController {
         Date today = Calendar.getInstance().getTime();
         String nonce = dateFormatter.format(today) + " GMT+0200 (Eastern European Standard Time)";
 
-        String clientId = "prod".equalsIgnoreCase(System.getProperty("env")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
+        String clientId =
+                "prod".equalsIgnoreCase(System.getProperty("env")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
         String authorizeUrl = portalUrl + "/authorize?"
                 + "client_id=" + clientId + "&"
@@ -64,17 +61,17 @@ public class PortalTokenController {
         String csrfToken = body.substring(body.indexOf("csrf: \""), body.indexOf("\",\n"
                 + "            terms: {")).replace("csrf: \"", "");
 
-
         Response withPassResult = given()
                 .log().all()
                 .cookies(coo1)
                 .contentType(ContentType.JSON)
                 .config(RestAssured
-                        .config().encoderConfig(EncoderConfig.encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+                        .config().encoderConfig(EncoderConfig.encoderConfig()
+                                .appendDefaultContentCharsetToContentTypeIfUndefined(false)))
                 .header("Accept", "application/json")
                 .header("Accept-Encoding", "gzip, deflate, br")
                 .header("Accept-Language", "en-US,en;q=0.9,ru;q=0.8")
-                .header("Connection","keep-alive")
+                .header("Connection", "keep-alive")
                 .header("x-client", clientId)
                 .header("x-csrf-token", csrfToken)
                 .header("x-oidc", "true")
@@ -84,9 +81,10 @@ public class PortalTokenController {
                 .header("Sec-Fetch-Dest", "empty")
                 .header("Sec-Fetch-Mode", "cors")
                 .header("Sec-Fetch-Site", "same-origin")
-                .body("{\"realm\":\"" + realm + "\",\"email\":\"" + login + "\",\"password\":\"" + pass + "\",\"rememberMe\":true}")
+                .body("{\"realm\":\"" + realm + "\",\"email\":\"" + login + "\",\"password\":\"" + pass
+                        + "\",\"rememberMe\":true}")
                 .post(signInWithPassword)
-        .then().log().all()
+                .then().log().all()
                 .extract().response();
 
         return withPassResult.jsonPath().get("accessToken");

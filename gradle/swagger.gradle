@@ -9,6 +9,7 @@ def cmEnvUrls = [
         local: "http://localhost:8080",
         dev  : "https://dev.consent.api.platform.in.here.com",
         sit  : "https://sit.consent.api.platform.in.here.com",
+        stg  : "https://sit.consent.api.platform.in.here.com",
         prod : "https://consent.api.platform.here.com"
 ]
 

@@ -11,7 +11,7 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
 
-abstract class BaseConsentService {
+abstract class BaseConsentService<T> {
 
     private String authorizationToken = "";
 
@@ -36,8 +36,9 @@ abstract class BaseConsentService {
         this.authorizationToken = String.format("Bearer %s", tokenValue);
     }
 
-    public void withCMToken() {
+    public T withCMToken() {
         setAuthorizationToken(BearerAuthorization.init().getCmUserToken());
+        return (T) this;
     }
 
     public void clearBearerToken() {

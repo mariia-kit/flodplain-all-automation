@@ -1,17 +1,17 @@
 package com.here.platform.cm.consentStatus;
 
 
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
-import com.here.platform.common.annotations.Sentry;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.steps.ConsentFlowSteps;
-import com.here.platform.cm.steps.OnboardingSteps;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
+import com.here.platform.common.annotations.Sentry;
 import com.here.platform.dataProviders.DataSubjects;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;

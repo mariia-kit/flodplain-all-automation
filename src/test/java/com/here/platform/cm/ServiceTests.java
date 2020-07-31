@@ -2,13 +2,13 @@ package com.here.platform.cm;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.BaseService;
 import com.here.platform.cm.controllers.ServiceController;
 import com.here.platform.cm.controllers.ServiceController.ConsentManagementHealth;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.rest.model.Version;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.BaseService;
 import io.qameta.allure.Stories;
 import io.qameta.allure.Story;
 import java.io.FileOutputStream;

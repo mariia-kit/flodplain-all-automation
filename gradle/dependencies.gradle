@@ -16,7 +16,7 @@ ext {
     springVer = "4.3.9.RELEASE"
     testContainersVer = "1.12.5"
     jdbiVer = "3.9.1"
-    allureVer = "2.13.3"
+    allureVer = "2.13.5"
 }
 
 dependencies {
@@ -45,7 +45,9 @@ dependencies {
             "io.atlassian.fugue:fugue:4.7.2",
             "com.github.viclovsky.swagger.coverage:swagger-coverage-rest-assured:1.1.4",
             "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
-            "log4j:log4j:1.2.17"
+            "log4j:log4j:1.2.17",
+            "com.codeborne:selenide:5.13.0",
+            "io.qameta.allure:allure-selenide:$allureVer"
     )
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:$junit5Ver",
@@ -57,8 +59,6 @@ dependencies {
             "org.testcontainers:junit-jupiter:$testContainersVer",
             "org.postgresql:postgresql:42.2.5",
             "org.jdbi:jdbi3-postgres:$jdbiVer",
-            "com.codeborne:selenide:5.7.0",
-            "io.qameta.allure:allure-selenide:$allureVer"
     )
     
 

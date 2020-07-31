@@ -1,13 +1,13 @@
 package com.here.platform.cm.consentStatus;
 
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
-import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
+import com.here.platform.common.annotations.ErrorHandler;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class UserAccountController extends BaseConsentService {
+public class UserAccountController extends BaseConsentService<UserAccountController> {
 
     private final String userBasePath = "/user";
 

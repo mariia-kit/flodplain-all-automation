@@ -1,4 +1,4 @@
-package com.here.platform.cm.steps;
+package com.here.platform.cm.steps.api;
 
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.PrivateController;

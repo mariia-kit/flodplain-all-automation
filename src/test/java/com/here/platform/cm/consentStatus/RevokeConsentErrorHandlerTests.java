@@ -3,14 +3,14 @@ package com.here.platform.cm.consentStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.here.platform.aaa.HereCMBearerAuthorization;
+import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
+import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.common.ResponseAssertion;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
-import com.here.platform.cm.enums.CMErrorResponse;
-import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
