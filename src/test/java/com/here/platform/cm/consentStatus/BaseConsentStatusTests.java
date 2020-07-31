@@ -7,7 +7,7 @@ import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.cm.steps.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.DataSubjects;
 import java.io.File;

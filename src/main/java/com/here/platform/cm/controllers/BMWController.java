@@ -4,9 +4,9 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
-public class BMWController extends BaseConsentService {
+public class BMWController extends BaseConsentService<BMWController> {
 
-    private String bmwBasePath = "/bmw";
+    private final String bmwBasePath = "/bmw";
     private String bmwToken = "5a2404bede9252a1951a5b7783d6f872edc6377ca5faaf1afee055d852e61c92";
 
     private void withBMWToken(String tokenValue) {
@@ -27,4 +27,5 @@ public class BMWController extends BaseConsentService {
                 .header("Authorization", bmwToken)
                 .put("clearances/{clearanceId}/status/{clearanceStatus}", clearanceId, consentState);
     }
+
 }

@@ -2,9 +2,9 @@ package com.here.platform.cm;
 
 import com.github.javafaker.Crypto;
 import com.github.javafaker.Faker;
-import com.here.platform.common.TestResultLoggerExtension;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.ProvidersController;
+import com.here.platform.common.TestResultLoggerExtension;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;

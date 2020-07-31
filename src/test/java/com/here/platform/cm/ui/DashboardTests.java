@@ -7,23 +7,22 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
-import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.steps.ConsentFlowSteps;
-import com.here.platform.cm.steps.ConsentRequestSteps;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.hereAccount.LoginSteps;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,18 @@ public class DashboardTests extends BaseUITests {
     private final List<String> cridsToRemove = new ArrayList<>();
     private final ProviderApplications providerApplication = ProviderApplications.DAIMLER_CONS_1;
 
+    @BeforeEach
+    void beforeEach() {
+        var privateBearer = dataSubject.generateBearerToken();
+        userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
+        userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
+    }
+
     @AfterEach
     void afterEach() {
+        userAccountController.deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
+        userAccountController
+                .deleteConsumerForUser(providerApplication.consumer.getRealm(), dataSubject.getBearerToken());
         for (String crid : cridsToRemove) {
             RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.vin).json());
         }
@@ -46,6 +55,8 @@ public class DashboardTests extends BaseUITests {
     //todo add test for offers opening
 
     //todo add tests to approve and revoke consents from dashboard
+
+    //todo add test for new  Data Subject registration on HERE after open consent request URL and delete created account
 
     @Test
     @DisplayName("Verify Dashboard page")
@@ -64,22 +75,16 @@ public class DashboardTests extends BaseUITests {
         userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
 
         open(ConsentPageUrl.getEnvUrlRoot());
-        loginDataSubjectHERE(dataSubject);
+        LoginSteps.loginDataSubject(dataSubject);
 
         $(".offers-list").waitUntil(Condition.visible, 10000);
-
-
         dataSubject.setBearerToken(getUICmToken());
-        updateSessionStorageData(consentRequestId1, vin);
-        openDashBoardPage();
         openDashboardNewTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, PENDING);
         verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, PENDING);
 
         ConsentFlowSteps.approveConsentForVIN(consentRequestId1, testContainer, vin);
         ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin);
-
-        fuSleep();
 
         openDashboardAcceptedTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED);
@@ -91,11 +96,6 @@ public class DashboardTests extends BaseUITests {
         openDashboardRevokedTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, REVOKED);
         verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, REVOKED);
-    }
-
-    @Step
-    private void openDashBoardPage() {
-        open(ConsentPageUrl.getEnvUrlRoot() + "offers#new");
     }
 
     @Step

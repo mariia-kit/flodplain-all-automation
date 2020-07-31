@@ -1,10 +1,10 @@
 package com.here.platform.cm.consentStatus;
 
-import com.here.platform.common.ResponseAssertion;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import io.qameta.allure.Issue;

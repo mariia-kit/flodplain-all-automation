@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import java.util.Map;
 
 
-public class ProvidersController extends BaseConsentService {
+public class ProvidersController extends BaseConsentService<ProvidersController> {
 
     private final String providersBasePath = "/providers";
 

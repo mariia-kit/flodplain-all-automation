@@ -1,20 +1,20 @@
 package com.here.platform.cm.consentRequests;
 
-import static com.here.platform.cm.steps.OnboardingSteps.onboardApplicationProviderAndConsumer;
+import static com.here.platform.cm.steps.api.OnboardingSteps.onboardApplicationProviderAndConsumer;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import io.qameta.allure.TmsLink;
 import java.io.File;
 import org.junit.jupiter.api.AfterEach;

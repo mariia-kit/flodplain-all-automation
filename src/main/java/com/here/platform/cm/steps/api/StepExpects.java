@@ -1,4 +1,4 @@
-package com.here.platform.cm.steps;
+package com.here.platform.cm.steps.api;
 
 import static org.hamcrest.Matchers.equalTo;
 

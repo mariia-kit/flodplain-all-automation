@@ -2,7 +2,6 @@ package com.here.platform.dataProviders;
 
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.FileIO;
-import io.qameta.allure.Step;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.SneakyThrows;

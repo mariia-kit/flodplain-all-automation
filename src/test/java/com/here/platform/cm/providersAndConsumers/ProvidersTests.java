@@ -1,6 +1,6 @@
 package com.here.platform.cm.providersAndConsumers;
 
-import static com.here.platform.cm.steps.RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities;
+import static com.here.platform.cm.steps.api.RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.common.ResponseAssertion;
@@ -14,7 +14,7 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.cm.steps.OnboardingSteps;
+import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.common.JConvert;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import io.qameta.allure.TmsLink;

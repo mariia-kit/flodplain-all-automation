@@ -1,18 +1,18 @@
 package com.here.platform.cm.consentStatus;
 
 import com.here.platform.aaa.HereCMBearerAuthorization;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.dataProviders.DaimlerTokenController;
 import java.util.Arrays;
 import java.util.Objects;

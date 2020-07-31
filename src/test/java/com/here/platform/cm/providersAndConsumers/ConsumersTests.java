@@ -1,14 +1,14 @@
 package com.here.platform.cm.providersAndConsumers;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.OnBoardConsumer;
-import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.Consumer;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.OnBoardConsumer;
+import com.here.platform.common.annotations.ErrorHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

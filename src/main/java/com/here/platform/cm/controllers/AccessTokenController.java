@@ -5,7 +5,7 @@ import io.restassured.response.Response;
 import java.util.Map;
 
 
-public class AccessTokenController extends BaseConsentService {
+public class AccessTokenController extends BaseConsentService<AccessTokenController> {
 
     @Step
     public Response getAccessToken(String consentRequestId, String vin, String consumerId) {

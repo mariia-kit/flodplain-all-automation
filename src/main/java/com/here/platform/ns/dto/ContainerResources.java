@@ -46,14 +46,17 @@ public enum ContainerResources {
     doorstatusfrontleft(new ProviderResource("doorstatusfrontleft")),
     doorstatusfrontright(new ProviderResource("doorstatusfrontright")),
     doorstatusrearleft(new ProviderResource("doorstatusrearleft")),
-    doorstatusrearright(new ProviderResource("doorstatusrearright"));
+    doorstatusrearright(new ProviderResource("doorstatusrearright")),
+
+    payasyoudrive(new ProviderResource("payasyoudrive")),
+    fuelstatus(new ProviderResource("fuelstatus")),
+    oil(new ProviderResource("oil")),
+    vehicles(new ProviderResource("vehicles"));
 
 
+    private final ProviderResource resource;
 
-
-
-
-
-
-    private ProviderResource resource;
+    public String getName() {
+        return this.resource.getName();
+    }
 }

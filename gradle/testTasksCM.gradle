@@ -99,6 +99,11 @@ task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "dev"
 }
 
+task stgTests(type: TestCM, dependsOn: "smokeCMTests") {
+    systemProperty "env", "sit"
+    systemProperty "jira_sync", "true"
+}
+
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"

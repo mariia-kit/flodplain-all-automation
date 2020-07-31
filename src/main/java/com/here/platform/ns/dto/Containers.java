@@ -52,7 +52,6 @@ public enum Containers {
                     ContainerResources.CHARGE.getResource().getName(), true,
                     "mb:user:pool:reader mb:vehicle:status:general")
     ),
-
     DAIMLER_EXPERIMENTAL_CONNECTED_VEHICLE(
             new Container("connectedvehicle","connectedvehicle",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
@@ -60,14 +59,15 @@ public enum Containers {
                     String.join(",",
                             "odometer", "location"
                     ), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")),
-
+                    "mb:user:pool:reader mb:vehicle:status:general")
+    ),
     DAIMLER_PAYASYOUDRIVE(
             new Container("payasyoudrive", "payasyoudrive",
                     Providers.DAIMLER_REAL.getName(),
                     "Pay As You Drive Insurance service for view all Pay As You Drive Insurance vehicle data points",
                     ContainerResources.odo.getResource().getName(),
-                    true, "mb:vehicle:mbdata:payasyoudrive")),
+                    true, "mb:vehicle:mbdata:payasyoudrive")
+    ),
     DAIMLER_ELECTRICVEHICLE(
             new Container("electricvehicle", "electricvehicle",
                     Providers.DAIMLER_REAL.getName(),
@@ -98,7 +98,8 @@ public enum Containers {
                             ContainerResources.doorlockstatusgas.getResource().getName(),
                             ContainerResources.positionHeading.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:vehiclelockstatus")),
+                    true, "mb:vehicle:mbdata:vehiclelockstatus")
+    ),
     DAIMLER_VEHICLESTATUS(
             new Container("vehiclestatus", "vehiclestatus",
                     Providers.DAIMLER_REAL.getName(),
@@ -121,8 +122,8 @@ public enum Containers {
                             ContainerResources.windowstatusrearleft.getResource().getName(),
                             ContainerResources.windowstatusrearright.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:vehiclestatus")),
-
+                    true, "mb:vehicle:mbdata:vehiclestatus")
+    ),
     REF_DAIMLER_ODOMETER(
             new Container("odometer", "odometer", Providers.DAIMLER_REFERENCE.getName(),
                     "Automated Test Container", "odometer", true, null)

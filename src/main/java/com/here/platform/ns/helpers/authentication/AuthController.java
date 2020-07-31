@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 public class AuthController {
 
     private final static Logger logger = Logger.getLogger(AuthController.class);
-    private static String appToken = StringUtils.EMPTY;
 
     public synchronized static void setUserToken(User user) {
         String token = loadOrGenerate(user, () -> {
@@ -37,7 +36,7 @@ public class AuthController {
                     return PortalTokenController.produceToken(user.getRealm(), user.getEmail(), user.getPass());
                 case CM:
                     logger.info("------------- Creating new CM user token ------------");
-                    return HERECMTokenController.loginAndGenerateCMToken(user.getEmail(), user.getPass());
+                    return new HERECMTokenController().loginAndGenerateCMToken(user.getEmail(), user.getPass());
                 case APP:
                     logger.info("------------- Creating new APP LIKE user token ------------");
                     String host = NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString();

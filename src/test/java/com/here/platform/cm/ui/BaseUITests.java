@@ -1,11 +1,9 @@
 package com.here.platform.cm.ui;
 
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.junit5.TextReportExtension;
@@ -50,10 +48,8 @@ public class BaseUITests extends BaseCMTest {
         Configuration.baseUrl = ConsentPageUrl.getConsentRequestsUrl();
         Configuration.driverManagerEnabled = true;
         Configuration.pollingInterval = 400;
-        Configuration.holdBrowserOpen = true;
         Configuration.browserSize = "1366x1000";
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
-
     }
 
     final DataSubjects dataSubject = DataSubjects.getNext();
@@ -72,7 +68,6 @@ public class BaseUITests extends BaseCMTest {
         RemoteWebDriver driver = chrome.getWebDriver();
         WebDriverRunner.setWebDriver(driver);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
-
     }
 
     @AfterEach
@@ -102,24 +97,9 @@ public class BaseUITests extends BaseCMTest {
     }
 
     @Step
-    void loginDataSubjectHERE(DataSubjects dataSubject) {
-        $("#sign-in-email").setValue(dataSubject.username);
-        $("#sign-in-password-encrypted").setValue(dataSubject.password);
-        $("[for='sign-in-remember-me']").click();
-        $("#signInBtn").click();
-    }
-
-    @Step
     void acceptAndContinueConsent() {
         $("a[href='javascript:void(0)']").click();
     }
-
-    @Step
-    void submitVin(String vin) {
-        $("#vinNumber").waitUntil(Condition.visible, 10000).setValue(vin);
-        $(byText("Continue")).click();
-    }
-
 
     @Step
     void updateSessionStorageData(String consentRequestId, String vinNumber) {

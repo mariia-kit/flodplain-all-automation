@@ -2,37 +2,38 @@ package com.here.platform.aaa;
 
 import static io.restassured.RestAssured.given;
 
-import com.here.platform.ns.utils.NS_Config;
+import com.here.platform.cm.controllers.UserAccountController;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 public class HERECMTokenController {
 
+    private final UserAccountController userAccountController = new UserAccountController();
 
-    public static String generateHERECode(String userLogin, String userPass) {
-        String userAccAuthUrl = NS_Config.URL_EXTERNAL_CM + "/oauth";
-        Response hereLogin = given()
-                .redirects().follow(false)
-                .get(userAccAuthUrl)
-                .then()
-                .extract().response();
+    private MultiValueMap<String, String> fetchQueryParamsFromUrl(String uri) {
+        return UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
+    }
 
+    public String generateHERECode(String userLogin, String userPass) {
+        Response hereLogin = userAccountController.userAccountOauth();
         String authorizeUrl = hereLogin.getHeader("Location");
 
         String portalUrl = authorizeUrl.substring(0, authorizeUrl.indexOf("/authorize"));
 
         String nonce = String.valueOf(System.currentTimeMillis());
 
-        String clientId = authorizeUrl.substring(authorizeUrl.indexOf("client_id="), authorizeUrl.indexOf("&scope"))
-                .replace("client_id=", StringUtils.EMPTY);
+        String clientId = fetchQueryParamsFromUrl(authorizeUrl).getFirst("client_id");
+
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
 
         Response authorizeResp = given()
+                .noFilters()
                 .param("nonce", nonce)
                 .redirects().follow(false)
                 .get(authorizeUrl)
@@ -42,6 +43,7 @@ public class HERECMTokenController {
         String location = authorizeResp.getHeader("Location");
 
         Response signInResp = given()
+                .noFilters()
                 .cookies(coo)
                 .get(portalUrl + location)
                 .then()
@@ -53,6 +55,7 @@ public class HERECMTokenController {
                 + "            terms: {")).replace("csrf: \"", "");
 
         Response withPassResult = given()
+                .noFilters()
                 .cookies(coo1)
                 .contentType(ContentType.JSON)
                 .config(RestAssured.config().encoderConfig(EncoderConfig.encoderConfig()
@@ -62,6 +65,8 @@ public class HERECMTokenController {
                         "Accept-Encoding", "gzip, deflate, br",
                         "Accept-Language", "en-US,en;q=0.9,ru;q=0.8",
                         "Connection", "keep-alive",
+                        "Cache-Control", "no-cache",
+                        "Pragma", "no-cache",
                         "x-client", clientId,
                         "x-csrf-token", csrfToken,
                         "x-oidc", "true",
@@ -73,43 +78,35 @@ public class HERECMTokenController {
                         "Sec-Fetch-Site", "same-origin"
                 )
                 .body("{\"realm\":\"here\",\"email\":\"" + userLogin + "\",\"password\":\"" + userPass
-                        + "\",\"rememberMe\":true}")
+                        + "\",\"rememberMe\":false}")
                 .post(signInWithPassword)
-                .then().log().all()
+                .then()
                 .extract().response();
 
         Cookies coo2 = withPassResult.getDetailedCookies();
         Response sign2Result = given()
+                .noFilters()
                 .param("scope", "openid%20email%20phone%20profile%20readwrite%3Aha")
                 .redirects().follow(false)
                 .urlEncodingEnabled(false)
                 .cookies(coo2)
                 .get(authorizeUrl)
-                .then().log().all()
+                .then()
                 .extract().response();
 
         String callBackUrl = sign2Result.getHeader("Location");
 
-        String code = callBackUrl.substring(callBackUrl.indexOf("code="), callBackUrl.indexOf("&state="))
-                .replace("code=", StringUtils.EMPTY);
-        return code;
+        return fetchQueryParamsFromUrl(callBackUrl).getFirst("code");
     }
 
-    private static String generateCMToken(String authCode) {
-        String userSignInUrl = NS_Config.URL_EXTERNAL_CM + "/sign-in";
-        Response userSignIn = given().log().all()
-                .redirects().follow(false)
-                .header("Content-Type","application/json")
-                .header("Accept", "application/json")
-                .body("{\"authorizationCode\": \"" + authCode + "\"}")
-                .post(userSignInUrl)
-                .then().log().all()
-                .extract().response();
+    private String generateCMToken(String authCode) {
+        Response userSignIn = userAccountController.userAccountSignIn(authCode);
         return "Bearer " + userSignIn.jsonPath().get("cm_token");
     }
 
-    public static String loginAndGenerateCMToken(String userLogin, String userPass) {
+    public String loginAndGenerateCMToken(String userLogin, String userPass) {
         String authCode = generateHERECode(userLogin, userPass);
         return generateCMToken(authCode);
     }
+
 }

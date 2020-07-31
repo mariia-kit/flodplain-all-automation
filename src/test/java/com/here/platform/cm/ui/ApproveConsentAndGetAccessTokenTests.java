@@ -11,19 +11,20 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.common.ResponseAssertion;
 import com.here.platform.cm.controllers.AccessTokenController;
-import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.cm.steps.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.hereAccount.LoginSteps;
 import io.qameta.allure.Step;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -47,15 +48,14 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     @BeforeEach
     void beforeEach() {
-        var privateBearer = dataSubject.generateBearerToken();
-        var userAccountController = new UserAccountController();
+        var privateBearer = dataSubject.getBearerToken();
         userAccountController.deleteConsumerForUser(mpConsumer.getRealm(), privateBearer);
         userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
     }
 
     @AfterEach
     void afterEach() {
-        new UserAccountController().deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
+        userAccountController.deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
         RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.vin).json());
     }
 
@@ -65,20 +65,20 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     void e2eTest() {
         var consentRequest = generateConsentData(mpConsumer);
 
-        var vehicles = List.of(dataSubject);
+        var dataSubjects = List.of(dataSubject);
         crid = requestConsentAddVin(mpConsumer, consentRequest,
-                vehicles.stream().map(vehicle -> vehicle.vin).toArray(String[]::new));
+                dataSubjects.stream().map(vehicle -> vehicle.vin).toArray(String[]::new));
 
-        for (DataSubjects vehicle : vehicles) {
-            var vin = vehicle.vin;
+        for (DataSubjects targetDataSubject : dataSubjects) {
+            var vin = targetDataSubject.vin;
             open(crid);
             System.out.println(Configuration.baseUrl + crid);
 
-            loginDataSubjectHERE(vehicle);
-            submitVin(vin);
+            LoginSteps.loginDataSubject(targetDataSubject);
+            new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
             verifyConsentDetailsPage(mpConsumer, consentRequest, vin);
             acceptAndContinueConsent();
-            loginDataSubjectOnDaimlerSite(vehicle);
+            loginDataSubjectOnDaimlerSite(targetDataSubject);
 
             approveDaimlerScopesAndSubmit();
 
@@ -109,7 +109,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.vin);
 
         open(crid);
-        loginDataSubjectHERE(dataSubject);
+        LoginSteps.loginDataSubject(dataSubject);
         fuSleep();
         updateSessionStorageData(crid, dataSubject.vin);
         dataSubject.setBearerToken(getUICmToken());
@@ -142,7 +142,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         $("#password").setValue(dataSubject.password);
         $("#ciam-weblogin-auth-login-button").click();
     }
-
 
     @Step
     @SneakyThrows
@@ -232,6 +231,5 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     private void openPurposePageLink() {
         $(".container-content p:nth-child(5) a").click();
     }
-
 
 }

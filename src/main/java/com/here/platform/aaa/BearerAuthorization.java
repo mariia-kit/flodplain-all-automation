@@ -41,6 +41,7 @@ public class BearerAuthorization {
         LOCAL(AAAHosts.STAGE, "stg.access.key.id", "stg.access.key.secret"),
         DEV(LOCAL.host, LOCAL.keyId, LOCAL.keySecret),
         SIT(LOCAL.host, LOCAL.keyId, LOCAL.keySecret),
+        STG(LOCAL.host, LOCAL.keyId, LOCAL.keySecret),
         PROD(AAAHosts.PRODUCTION, "prod.access.key.id", "prod.access.key.secret");
 
         private final OAuth1ClientCredentialsProvider credentials;

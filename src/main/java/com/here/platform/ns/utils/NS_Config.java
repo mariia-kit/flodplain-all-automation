@@ -35,9 +35,10 @@ public enum NS_Config {
     REALM("realm"),
     CONSENT_MOCK("consent.mock"),
     MARKETPLACE_MOCK("marketplace.mock"),
+    MARKETPLACE_CALLBACK("marketplace.callbackUrl"),
     EXTERNAL_USER_TOKEN("ns.non-consumer-manager.user.token");
 
-    private String key;
+    private final String key;
 
     @Override
     public String toString() {
