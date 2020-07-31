@@ -45,7 +45,7 @@ public class OnboardingSteps {
                 .clientId(container.clientId)
                 .clientSecret(container.clientSecret)
                 .container(container.id)
-                .redirectUri(ConsentPageUrl.getEnvUrlRoot() + "oauth2/daimler/auth/callback");
+                .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
         var applicationResponse = this.providersController.onboardApplication(testApplication);
         StepExpects.expectCREATEDStatusCode(applicationResponse);

@@ -5,11 +5,13 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.junit5.TextReportExtension;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.html5.LocalStorage;
 import org.openqa.selenium.remote.RemoteExecuteMethod;
@@ -44,10 +47,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class BaseUITests extends BaseCMTest {
 
     static {
-        Configuration.baseUrl = ConsentPageUrl.getEnvUrl();
+        Configuration.baseUrl = ConsentPageUrl.getConsentRequestsUrl();
         Configuration.driverManagerEnabled = true;
         Configuration.pollingInterval = 400;
+        Configuration.holdBrowserOpen = true;
+        Configuration.browserSize = "1366x1000";
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
+
     }
 
     final DataSubjects dataSubject = DataSubjects.getNext();
@@ -58,11 +64,15 @@ public class BaseUITests extends BaseCMTest {
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
 
     protected ConsentRequestContainers testContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+    protected UserAccountController userAccountController = new UserAccountController();
+
 
     @BeforeEach
     void setUpBrowserContainer() {
         RemoteWebDriver driver = chrome.getWebDriver();
         WebDriverRunner.setWebDriver(driver);
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+
     }
 
     @AfterEach
@@ -106,9 +116,10 @@ public class BaseUITests extends BaseCMTest {
 
     @Step
     void submitVin(String vin) {
-        $("#vinNumber").setValue(vin);
+        $("#vinNumber").waitUntil(Condition.visible, 10000).setValue(vin);
         $(byText("Continue")).click();
     }
+
 
     @Step
     void updateSessionStorageData(String consentRequestId, String vinNumber) {

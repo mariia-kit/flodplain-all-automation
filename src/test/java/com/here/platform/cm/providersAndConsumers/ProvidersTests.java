@@ -71,7 +71,7 @@ class ProvidersTests extends BaseCMTest {
                 .clientId(crypto.sha1())
                 .clientSecret(crypto.sha1())
                 .container(testContainer.id)
-                .redirectUri(ConsentPageUrl.getEnvUrlRoot() + "/oauth2/daimler/auth/callback");
+                .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
         var applicationResponse = providerController.onboardApplication(testApplication);
         new ResponseAssertion(applicationResponse).statusCodeIsEqualTo(StatusCode.CREATED).responseIsEmpty();

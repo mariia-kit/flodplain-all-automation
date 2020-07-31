@@ -18,9 +18,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class DaimlerTokenController {
 
     private final static String
-            CALLBACK_URL = ConsentPageUrl.getEnvUrlRoot() + "oauth2/daimler/auth/callback",
+            CALLBACK_URL = ConsentPageUrl.getDaimlerCallbackUrl(),
             MERSEDES_API_URL = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2",
             LOGIN_MERSEDES_WL_URL = "https://login.secure.mercedes-benz.com/wl";
+
     private final DataSubjects targetVehicle;
     private final ConsentRequestContainers container;
     private Cookies mercedesCookies;

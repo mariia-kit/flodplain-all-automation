@@ -6,6 +6,7 @@ import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Test;
 @DisplayName("User Account")
 public class UserAccountUITests extends BaseUITests {
 
-    private final UserAccountController userAccountController = new UserAccountController();
     private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
     private final List<String> vinsToRemove = new ArrayList<>();
     private ConsentInfo consentRequestInfo;
@@ -60,8 +60,10 @@ public class UserAccountUITests extends BaseUITests {
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         open(crid);
         loginDataSubjectHERE(dataSubject);
-        $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
+        $(".container-offers.current").waitUntil(Condition.visible, 10000);
         dataSubject.setBearerToken(getUICmToken());
+
+        $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
         $("lui-status").shouldHave(Condition.textCaseSensitive("ACCEPTED"));
         $(".offer-box").click();
         $$(".container-content [data-cy='resource']")
@@ -78,10 +80,13 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(secondVIN);
 
         open(crid);
-        loginDataSubjectHERE(dataSubject);
+        System.out.println(Configuration.baseUrl + crid);
 
-        $(".vin-code", 1).shouldHave(Condition.text(new VIN(secondVIN).label()));
+        loginDataSubjectHERE(dataSubject);
+        $(".container-offers.current").waitUntil(Condition.visible, 10000);
+
         dataSubject.setBearerToken(getUICmToken());
+        $(".vin-code", 1).shouldHave(Condition.text(new VIN(secondVIN).label()));
     }
 
 }
