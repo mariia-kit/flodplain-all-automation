@@ -1,4 +1,4 @@
-package com.here.platform.hereAccount;
+package com.here.platform.hereAccount.ui;
 
 import com.here.platform.dataProviders.DataSubjects;
 import com.here.platform.ns.dto.User;

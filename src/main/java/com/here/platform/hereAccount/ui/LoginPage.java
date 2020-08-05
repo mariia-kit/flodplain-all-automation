@@ -1,4 +1,4 @@
-package com.here.platform.hereAccount;
+package com.here.platform.hereAccount.ui;
 
 import static com.codeborne.selenide.Selenide.$;
 

@@ -24,7 +24,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.DataSubjects;
-import com.here.platform.hereAccount.LoginSteps;
+import com.here.platform.hereAccount.ui.LoginSteps;
 import io.qameta.allure.Step;
 import java.util.List;
 import lombok.SneakyThrows;

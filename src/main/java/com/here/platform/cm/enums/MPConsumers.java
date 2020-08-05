@@ -1,13 +1,9 @@
 package com.here.platform.cm.enums;
 
-import com.here.platform.aaa.AAAHosts;
 import com.here.platform.common.FileIO;
-import com.here.platform.common.HttpClient;
-import com.here.platform.common.JConvert;
+import com.here.platform.hereAccount.controllers.HereUserManagerController;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import java.io.File;
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.util.Map;
 import lombok.Data;
 import lombok.Getter;
 
@@ -18,29 +14,20 @@ public enum MPConsumers {
     OLP_CONS_1(
             "olp-here-mrkt-cons-1",
             "OLP Market Place Consumer Realm - 1",
-            Map.of(
-                    "email", "ns-automated-data-consumer@here.com",
-                    "password", "g{#N2(mP(8",
-                    "clientId", "ha-test-app-1",
-                    "clientSecret", "ha-test-secret-1",
-                    "grantType", "password",
-                    "countryCode", "USA",
-                    "language", "en",
-                    "tokenFormat", "hN"
-            )
+            new HereUser("ns-automated-data-consumer@here.com", "g{#N2(mP(8", "olp-here-mrkt-cons-1")
     );
 
     private final String realm, consumerName;
-    private final Map<String, String> consumerCredentials;
+    private final HereUser hereUserRepresentation;
 
     MPConsumers(
             String realm,
             String consumerName,
-            Map<String, String> consumerCredentials
+            HereUser hereUserRepresentation
     ) {
         this.realm = realm;
         this.consumerName = consumerName;
-        this.consumerCredentials = consumerCredentials;
+        this.hereUserRepresentation = hereUserRepresentation;
     }
 
     public String getToken() {
@@ -52,20 +39,7 @@ public enum MPConsumers {
     }
 
     public String generateBearerToken() {
-        String stgHereOAuthTokenUrl = AAAHosts.STAGE; //dev and sit only
-
-        var consumerCredentials = getConsumerCredentials();
-
-        var oauth2TokenRequest = HttpRequest.newBuilder(URI.create(stgHereOAuthTokenUrl))
-                .header("x-ha-realm", getRealm())
-                .header("Content-Type", "application/json")
-                .POST(new JConvert(consumerCredentials).toBodyPublisher())
-                .build();
-
-        var accessToken = new JConvert(new HttpClient().basic().send(oauth2TokenRequest))
-                .responseBodyToObject(TokenResponse.class)
-                .getAccessToken();
-
+        var accessToken = new HereUserManagerController().getHereCurrentToken(getHereUserRepresentation());
         FileIO.writeStringToFile(consumerFile(), accessToken);
         return accessToken;
     }

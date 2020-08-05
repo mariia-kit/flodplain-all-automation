@@ -12,7 +12,7 @@ import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
-import com.here.platform.hereAccount.LoginSteps;
+import com.here.platform.hereAccount.ui.LoginSteps;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
