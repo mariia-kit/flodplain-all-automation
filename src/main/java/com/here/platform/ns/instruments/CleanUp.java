@@ -130,4 +130,5 @@ public class CleanUp {
         new AaaCall().wipeAllPolicies(Containers.getContainerNamePrefix());
         new AaaCall().wipeAllPolicies("/resources");
     }
+
 }

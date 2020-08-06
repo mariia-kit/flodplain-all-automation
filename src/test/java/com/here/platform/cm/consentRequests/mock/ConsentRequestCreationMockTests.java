@@ -5,7 +5,7 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class ConsentRequestCreationMockTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
+    private final DaimlerContainers testScope = DaimlerContainers.getRandom();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(MPConsumers.OLP_CONS_1.getRealm())
             .providerId(crypto.sha1())

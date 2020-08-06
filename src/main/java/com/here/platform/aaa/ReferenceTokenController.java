@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 
 public class ReferenceTokenController {
 
-    private static String CALLBACK_URL = "https://dev-web.consent.api.platform.in.here.com/oauth2/referenceProvider/auth/callback";
+    private static final String CALLBACK_URL = "https://dev-web.consent.api.platform.in.here.com/oauth2/referenceProvider/auth/callback";
 
     public static String produceConsentAuthCode(String vin, String scope) {
 
@@ -29,11 +29,7 @@ public class ReferenceTokenController {
                 .param("prompt", "consent,login")
                 .urlEncodingEnabled(false)
                 .redirects().follow(false)
-                .log().all().
-                        when()
-                .get(authorize).
-                        then().log().all()
-                .extract().response();
+                .when().get(authorize);
         String consentId = StringUtils.substringBetween(authResp.getBody().prettyPrint(),
                 "consent?consent_id=", "\">");
 
@@ -41,10 +37,7 @@ public class ReferenceTokenController {
         Response consentCall = given()
                 .param("consent_id", consentId)
                 .param("vin", vin)
-                .log().all()
-                .when().post(makeConsent).then()
-                .log().all()
-                .extract().response();
+                .when().post(makeConsent);
 
         Assertions.assertTrue(consentCall != null && !StringUtils.isEmpty(consentCall.getHeader("Location")),
                 "Can't allocate auth code for reference provider!");

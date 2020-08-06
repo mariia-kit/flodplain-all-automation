@@ -3,31 +3,31 @@ package com.here.platform.cm.ui;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.refresh;
 import static com.codeborne.selenide.Selenide.switchTo;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
+import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.steps.DLoginPages;
 import com.here.platform.hereAccount.ui.LoginSteps;
 import io.qameta.allure.Step;
-import java.util.List;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,9 +43,12 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     private static final String
             staticPageUrl = ConsentPageUrl.getEnvUrlRoot() + "purpose/info",
             purposePageUrl = ConsentPageUrl.getEnvUrlRoot() + "consentRequests/purpose";
-    private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
+    protected ProviderApplications providerApplication = ProviderApplications.DAIMLER_CONS_1;
+    private final MPConsumers mpConsumer = providerApplication.consumer;
+
     private String crid;
 
+    //todo refactor as extension https://www.baeldung.com/junit-5-extensions
     @BeforeEach
     void beforeEach() {
         var privateBearer = dataSubject.getBearerToken();
@@ -63,48 +66,44 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @Test
     @DisplayName("E2E create approve consent and get access token")
     void e2eTest() {
-        var consentRequest = generateConsentData(mpConsumer);
+        var consentRequest = ConsentRequestSteps
+                .createConsentRequestWithVINFor(providerApplication, dataSubject.vin);
 
-        var dataSubjects = List.of(dataSubject);
-        crid = requestConsentAddVin(mpConsumer, consentRequest,
-                dataSubjects.stream().map(vehicle -> vehicle.vin).toArray(String[]::new));
+        crid = consentRequest.getConsentRequestId();
 
-        for (DataSubjects targetDataSubject : dataSubjects) {
-            var vin = targetDataSubject.vin;
-            open(crid);
-            System.out.println(Configuration.baseUrl + crid);
+        var vin = dataSubject.vin;
+        open(crid);
+        System.out.println(Configuration.baseUrl + crid);
 
-            LoginSteps.loginDataSubject(targetDataSubject);
-            new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-            verifyConsentDetailsPage(mpConsumer, consentRequest, vin);
-            acceptAndContinueConsent();
-            loginDataSubjectOnDaimlerSite(targetDataSubject);
+        LoginSteps.loginDataSubject(dataSubject);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        this.dataSubject.setBearerToken(getUICmToken());
+        DLoginPages.loginDataSubjectOnDaimlerSite(dataSubject);
+        DLoginPages.approveDaimlerScopesAndSubmit();
 
-            approveDaimlerScopesAndSubmit();
+        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
 
-            verifyFinalPage(mpConsumer, consentRequest, vin);
+        Selenide.clearBrowserCookies();
+        Selenide.clearBrowserLocalStorage();
 
-            dataSubject.setBearerToken(getUICmToken());
+        var accessTokenController = new AccessTokenController();
+        accessTokenController.withCMToken();
+        var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, mpConsumer.getRealm());
 
-            Selenide.clearBrowserCookies();
-            Selenide.clearBrowserLocalStorage();
-
-            var accessTokenController = new AccessTokenController();
-            accessTokenController.withCMToken();
-            var accessTokenResponse = accessTokenController
-                    .getAccessToken(crid, vin, consentRequest.getConsumerId());
-
-            new ResponseAssertion(accessTokenResponse)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .bindAs(AccessTokenResponse.class);
-        }
+        new ResponseAssertion(accessTokenResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .bindAs(AccessTokenResponse.class);
     }
+
 
     @Test
     @DisplayName("Verify Purpose page")
     void verifyPurposePageTest() {
         var mpConsumer = MPConsumers.OLP_CONS_1;
         var container = testContainer;
+        //todo after implemented ConsentInfo.privacyPolicy/additionalLinks fields refactor to
+        // var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(providerApplication, dataSubject.vin)
         var consentRequest = generateConsentData(mpConsumer);
         crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.vin);
 
@@ -120,7 +119,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void verifyConsentDetailsPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, String vinNumber) {
+    private void verifyConsentDetailsPage(MPConsumers mpConsumer, ConsentInfo consentRequest) {
         $(".container-content [data-cy='title']").shouldHave(Condition.text(consentRequest.getTitle()));
         $(".container-content [data-cy='consumerName']")
                 .shouldHave(Condition.text("Offer from " + mpConsumer.getConsumerName()));
@@ -130,38 +129,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
                 .shouldHave(CollectionCondition.textsInAnyOrder(testContainer.resources));
 
         $(".container-content [data-cy='vin-code']")
-                .shouldHave(Condition.text("*********" + new VIN(vinNumber).label()));
-    }
-
-    @Step
-    private void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
-        Selenide.clearBrowserCookies();
-        Selenide.clearBrowserLocalStorage();
-        refresh();
-        $("[name=username]").setValue(dataSubject.username);
-        $("#password").setValue(dataSubject.password);
-        $("#ciam-weblogin-auth-login-button").click();
-    }
-
-    @Step
-    @SneakyThrows
-    private void approveDaimlerScopesAndSubmit() {
-        for (SelenideElement scope : $$("[name*='scope:mb']")) {
-            scope.click();
-        }
-        $("#consent-btn").click();
-    }
-
-    @Step
-    private void verifyFinalPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, String vinNumber) {
-        $("lui-notification[impact='negative'] div.notification > span")
-                .shouldNot(Condition.appear);
-        $(".container-offers.current .offer-box .main-details")
-                .shouldHave(Condition.text(consentRequest.getTitle()))
-                .shouldHave(Condition.text(consentRequest.getPurpose()))
-                .shouldHave(Condition.text(mpConsumer.getConsumerName()))
-                .shouldHave(Condition.text(new VIN(vinNumber).label()));
-        $(".container-offers.current .offer-box .status").shouldHave(Condition.text("APPROVED"));
+                .shouldHave(Condition.text("*********" + consentRequest.getVinLabel()));
     }
 
 
@@ -172,7 +140,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     @Step
     private void verifyStaticPurposeInfoPage() {
-        switchTo().window("HERE Consent");
+        switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);
         $(".container-content h4").shouldHave(Condition.text("Purpose of the request"));
@@ -207,9 +175,8 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest,
-            ConsentRequestContainers container) {
-        switchTo().window("HERE Consent");
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, DaimlerContainers container) {
+        switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
         $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));

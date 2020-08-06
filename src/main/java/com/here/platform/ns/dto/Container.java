@@ -59,7 +59,7 @@ public class Container {
         }
     }
 
-    public String generateBody()  {
+    public String generateBody() {
         JSONObject object = new JSONObject();
         try {
             if (this.getId() != null) {

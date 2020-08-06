@@ -262,4 +262,5 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
     }
+
 }

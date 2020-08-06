@@ -1,5 +1,8 @@
 package com.here.platform.ns.controllers;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.config.HeaderConfig.headerConfig;
+
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.restassured.AllureRestAssured;
@@ -8,9 +11,6 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
 
-
-import static io.restassured.RestAssured.given;
-import static io.restassured.config.HeaderConfig.headerConfig;
 
 public abstract class BaseNeutralService<T> {
 

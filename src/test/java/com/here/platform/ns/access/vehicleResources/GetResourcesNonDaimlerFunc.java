@@ -7,8 +7,12 @@ import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.access.VehicleResourceAsyncController;
 import com.here.platform.ns.controllers.access.VehicleResourceController;
-import com.here.platform.ns.dto.*;
+import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ContainerResources;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.dto.DataProvider;
+import com.here.platform.ns.dto.ProviderResource;
+import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.Steps;
@@ -150,7 +154,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .getVehicleResource(provider, Vehicle.validVehicleId, res1);
         new NeutralServerResponseAssertion(getSingle2)
                 .expectedEqualsContainerData(
-                       Vehicle.getResourceMap(Vehicle.odometerResource, "odometer"),
+                        Vehicle.getResourceMap(Vehicle.odometerResource, "odometer"),
                         "Resource data content not as expected!");
 
         var getSingle3 = new VehicleResourceController()
@@ -158,7 +162,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .withQueryParam("resource", "notrealres")
                 .getVehicleResource(provider, Vehicle.validVehicleId, res1);
         new NeutralServerResponseAssertion(getSingle3)
-                .expectedEqualsContainerData(Vehicle.empty,"Resource data content not as expected!");
+                .expectedEqualsContainerData(Vehicle.empty, "Resource data content not as expected!");
     }
 
     @Test
@@ -230,7 +234,8 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
         new NeutralServerResponseAssertion(asyncGet2)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("resourceReadout.asyncStatus", "Complete", "Not expected async State!")
-                .expectedJsonContains("resourceReadout.resources[0].distancesincereset.value", "1234", "Not expected res vale!")
+                .expectedJsonContains("resourceReadout.resources[0].distancesincereset.value", "1234",
+                        "Not expected res vale!")
                 .expectedJsonContains("resourceReadout.resources.size()", "1", "Not expected res value!");
     }
 
@@ -282,4 +287,5 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .expectedCode(HttpStatus.SC_NO_CONTENT)
                 .expectedBody(StringUtils.EMPTY, "Expected empty body!");
     }
+
 }

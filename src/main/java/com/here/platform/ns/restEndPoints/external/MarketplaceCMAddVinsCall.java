@@ -15,12 +15,11 @@ import java.util.function.Supplier;
 public class MarketplaceCMAddVinsCall extends
         BaseRestControllerNS<MarketplaceCMAddVinsCall> {
 
-    private String vin;
-    private String subsId;
+    private final String vin;
+    private final String subsId;
 
     public MarketplaceCMAddVinsCall(String subsId, String vin) {
-        callMessage = String
-                .format("Perform MP call to add vin numbers to ConsentRequest");
+        callMessage = "Perform MP call to add vin numbers to ConsentRequest";
         setDefaultUser(MP_CONSUMER);
         endpointUrl =
                 NS_Config.URL_EXTERNAL_MARKETPLACE + "/consent/subscriptions/" + subsId + "/request";
@@ -39,7 +38,9 @@ public class MarketplaceCMAddVinsCall extends
                 throw new RuntimeException("Error writing vins to file" + file.getAbsolutePath());
             }
 
-            Response resp = RestHelper.putFile("Add vin number to Consent", getEndpointUrl(), getToken(), file, "text/csv", "x-mp-addvins-" + subsId);
+            Response resp = RestHelper
+                    .putFile("Add vin number to Consent", getEndpointUrl(), getToken(), file, "text/csv",
+                            "x-mp-addvins-" + subsId);
             file.delete();
             return resp;
         };

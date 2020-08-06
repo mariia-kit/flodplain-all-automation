@@ -19,7 +19,7 @@ public class BaseCMTest {
     protected static Crypto crypto = faker.crypto();
 
     static {
-        //System.setProperty("env", "dev");
+        System.setProperty("env", "dev");
     }
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();

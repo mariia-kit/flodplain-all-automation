@@ -19,7 +19,7 @@ public class EnvDataCollector {
     private final static String fileURL = "build/tmp/environment.properties";
 
     @Getter
-    private static Map<String, String> collectedData = new HashMap<>();
+    private static final Map<String, String> collectedData = new HashMap<>();
 
 
     public static void create() {

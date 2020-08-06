@@ -5,7 +5,6 @@ import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;
@@ -25,10 +24,10 @@ import org.apache.http.HttpStatus;
 
 public class AaaCall {
 
-    private static String prodPolicy = "POLICY-c6be1029-573c-4d66-903e-e6be57178c45";
+    private static final String prodPolicy = "POLICY-c6be1029-573c-4d66-903e-e6be57178c45";
 
     public List<MutablePair<String, String>> getAllContainersPolicy() {
-        String url = NS_Config.URL_AUTH.toString() + "/search/policy?serviceId="  + NS_Config.AAA_SERVICE_ID.toString();
+        String url = NS_Config.URL_AUTH.toString() + "/search/policy?serviceId=" + NS_Config.AAA_SERVICE_ID.toString();
 
         List<MutablePair<String, String>> policy = new ArrayList<>();
 
@@ -55,20 +54,19 @@ public class AaaCall {
             parseData(res, policy);
         }
 
-        policy.stream()
-                .forEach(p -> System.out.println(">" + p.getLeft() + " - " + p.getRight()));
+        policy.forEach(p -> System.out.println(">" + p.getLeft() + " - " + p.getRight()));
         return policy;
     }
 
     private void parseData(JsonPath res, List<MutablePair<String, String>> policy) {
         List<JsonNode> data = res.getList("data", JsonNode.class);
         data.forEach(p -> {
-                    String policyId = p.get("id").toString().replace("\"", "");
-                    p.get("permissions").findValues("resource").stream()
-                            .map(val -> val.toString().replace("\"", ""))
-                            .forEach(policyRes ->
-                                    policy.add(new MutablePair(policyId, policyRes)));
-                });
+            String policyId = p.get("id").toString().replace("\"", "");
+            p.get("permissions").findValues("resource").stream()
+                    .map(val -> val.toString().replace("\"", ""))
+                    .forEach(policyRes ->
+                            policy.add(new MutablePair(policyId, policyRes)));
+        });
     }
 
     public void deletePolicy(String id) {

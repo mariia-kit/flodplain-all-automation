@@ -27,4 +27,5 @@ public class ProviderServiceController extends BaseNeutralService<ProviderServic
         return neutralServerClient(serviceBasePath)
                 .get("/version");
     }
+
 }

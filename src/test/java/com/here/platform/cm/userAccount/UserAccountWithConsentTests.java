@@ -1,6 +1,6 @@
 package com.here.platform.cm.userAccount;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
+
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -15,7 +15,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +119,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Get consent request with 2 consents for single user")
     void getConsentRequestWith2ConsentsForSingleUserTest() {
         var secondVin = VIN.generate(targetApplication.provider.vinLength);
-        var secondLogin = HereCMBearerAuthorization.getCmToken(dataSubject);
+        var secondLogin = dataSubject.getBearerToken();
         userAccountController.attachVinToUserAccount(secondVin, secondLogin);
         vinsToRemove.add(secondVin);
         ConsentRequestSteps.addVINsToConsentRequest(targetApplication, crid, secondVin);

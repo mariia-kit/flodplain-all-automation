@@ -1,6 +1,5 @@
 package com.here.platform.cm.ui;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -11,19 +10,18 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.io.File;
 import java.util.logging.Level;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -35,12 +33,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.html5.RemoteWebStorage;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @ExtendWith(TextReportExtension.class)
-@Testcontainers
+//@Testcontainers
 @Execution(ExecutionMode.SAME_THREAD)
 public class BaseUITests extends BaseCMTest {
 
@@ -53,17 +49,17 @@ public class BaseUITests extends BaseCMTest {
     }
 
     final DataSubjects dataSubject = DataSubjects.getNext();
-    @Container
+    //    @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
 
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+    protected DaimlerContainers testContainer = DaimlerContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
     protected UserAccountController userAccountController = new UserAccountController();
 
 
-    @BeforeEach
+    //    @BeforeEach
     void setUpBrowserContainer() {
         RemoteWebDriver driver = chrome.getWebDriver();
         WebDriverRunner.setWebDriver(driver);
@@ -97,11 +93,6 @@ public class BaseUITests extends BaseCMTest {
     }
 
     @Step
-    void acceptAndContinueConsent() {
-        $("a[href='javascript:void(0)']").click();
-    }
-
-    @Step
     void updateSessionStorageData(String consentRequestId, String vinNumber) {
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();
@@ -109,7 +100,8 @@ public class BaseUITests extends BaseCMTest {
         storage.setItem("CONSENT_REQUEST_ID", consentRequestId);
     }
 
-    String getUICmToken() {
+    //todo extract to IPlatformPages
+    public static String getUICmToken() {
         sleep(1000);
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();

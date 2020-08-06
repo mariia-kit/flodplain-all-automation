@@ -1,10 +1,9 @@
 package com.here.platform.cm.enums;
 
-import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_ID;
-import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
+import static com.here.platform.cm.enums.DaimlerContainers.RealDaimlerApplication.CLIENT_ID;
+import static com.here.platform.cm.enums.DaimlerContainers.RealDaimlerApplication.CLIENT_SECRET;
 
 import com.here.platform.common.EnumByEnv;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,9 @@ import lombok.AllArgsConstructor;
  * Possible to use as a container name for provider's applications
  */
 @AllArgsConstructor
-public enum ConsentRequestContainers {
+public enum DaimlerContainers {
+
+    //todo: refactor to reuse all data
 
     PAY_AS_YOU_DRIVE(
             "payasyoudrive", "Pay as you drive insurance", "Pay as you drive insurance",
@@ -51,29 +52,72 @@ public enum ConsentRequestContainers {
             List.of("odometer"),
             MPProviders.DAIMLER
     ),
-
-    CONNECTED_VEHICLE(
-            "connectedvehicle", "connectedvehicle",
-            new String(
-                    "This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars"
-                            .getBytes(), StandardCharsets.UTF_8),
+    DAIMLER_EXPERIMENTAL_ODOMETER(
+            "odometer", "odometer",
+            "Provides odometer specific information.",
             "mb:user:pool:reader mb:vehicle:status:general",
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientId,
             EnumByEnv.get(ConnectedVehicleCredentials.class).clientSecret,
-            List.of("odometer", "location"),
+            List.of("odometer"),
+            MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    DAIMLER_EXPERIMENTAL_FUEL(
+            "fuel", "fuel",
+            "Provides fuel specific information.",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            List.of("fuel"),
+            MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    DAIMLER_EXPERIMENTAL_TIRES(
+            "tires", "tires",
+            "Provides information about the tire pressure.",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            List.of("tires"),
+            MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    DAIMLER_EXPERIMENTAL_DOORS(
+            "doors", "doors",
+            "Provides information about the doors status.",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            List.of("doors"),
+            MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    DAIMLER_EXPERIMENTAL_LOCATION(
+            "location", "location",
+            "Provides location information about vehicle.",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            List.of("location"),
+            MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    DAIMLER_EXPERIMENTAL_CHARGE(
+            "stateofcharge", "stateofcharge",
+            "Provides charge status of the battery pack.",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
+            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            List.of("charge"),
             MPProviders.DAIMLER_EXPERIMENTAL
     );
-    //TODO implement reusing of provider from container for consent request creation and onboarding
 
     public final String id, name, containerDescription, scopeValue, clientId, clientSecret;
+
+    //TODO implement reusing of provider from container for consent request creation and onboarding
     public List<String> resources;
     public MPProviders provider;
 
-    public static ConsentRequestContainers getRandom() {
+    public static DaimlerContainers getRandom() {
         return values()[(int) (Math.random() * values().length - 1)]; //except CONNECTED_VEHICLE
     }
 
-    public static ConsentRequestContainers getById(String containerId) {
+    public static DaimlerContainers getById(String containerId) {
         return Arrays.stream(values()).filter(containers -> containers.id.equals(containerId)).findFirst().get();
     }
 

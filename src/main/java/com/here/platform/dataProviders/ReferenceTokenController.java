@@ -3,7 +3,8 @@ package com.here.platform.dataProviders;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.restassured.http.Cookies;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,10 +22,10 @@ public class ReferenceTokenController {
     private Cookies mercedesCookies;
     private String sessionId, sessionData;
     private final DataSubjects targetVehicle;
-    private final ConsentRequestContainers container;
+    private final DaimlerContainers container;
 
 
-    public ReferenceTokenController(String targetVehicle, ConsentRequestContainers container) {
+    public ReferenceTokenController(String targetVehicle, DaimlerContainers container) {
         this.targetVehicle = DataSubjects.getByVin(targetVehicle);
         this.container = container;
     }

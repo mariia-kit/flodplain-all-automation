@@ -1,6 +1,6 @@
 package com.here.platform.cm.userAccount;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
+
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -10,7 +10,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.common.annotations.ErrorHandler;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class UserAccountVINTests extends BaseCMTest {
     private final UserAccountController userAccountController = new UserAccountController();
 
     private final DataSubjects dataSubject = DataSubjects.getNext();
-    private final String privateBearer = HereCMBearerAuthorization.getCmToken(dataSubject);
+    private final String privateBearer = dataSubject.getBearerToken();
     private final List<String> userVINsToRemove = new ArrayList<>();
 
 
@@ -90,7 +90,7 @@ public class UserAccountVINTests extends BaseCMTest {
         var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
 
-        var secondUserLogin = HereCMBearerAuthorization.getCmToken(DataSubjects.getNext());
+        var secondUserLogin = DataSubjects.getNext().getBearerToken();
 
         var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, secondUserLogin);
         new ResponseAssertion(secondAdd)

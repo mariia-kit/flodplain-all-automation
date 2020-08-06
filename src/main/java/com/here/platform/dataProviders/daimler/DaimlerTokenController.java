@@ -1,9 +1,9 @@
-package com.here.platform.dataProviders;
+package com.here.platform.dataProviders.daimler;
 
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
 import java.util.HashMap;
@@ -23,11 +23,11 @@ public class DaimlerTokenController {
             LOGIN_MERSEDES_WL_URL = "https://login.secure.mercedes-benz.com/wl";
 
     private final DataSubjects targetVehicle;
-    private final ConsentRequestContainers container;
+    private final DaimlerContainers container;
     private Cookies mercedesCookies;
     private String sessionId, sessionData;
 
-    public DaimlerTokenController(String targetVehicle, ConsentRequestContainers container) {
+    public DaimlerTokenController(String targetVehicle, DaimlerContainers container) {
         this.targetVehicle = DataSubjects.getByVin(targetVehicle);
         this.container = container;
     }

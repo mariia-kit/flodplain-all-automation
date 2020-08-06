@@ -25,5 +25,5 @@ public enum SentryErrorsList {
             "Forbidden",
             "These credentials do not authorize access"));
 
-    private SentryError error;
+    private final SentryError error;
 }

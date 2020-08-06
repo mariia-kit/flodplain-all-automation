@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getRandom();
+    private final DaimlerContainers testContainer = DaimlerContainers.getRandom();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(crypto.sha1())
             .providerId(crypto.sha1())

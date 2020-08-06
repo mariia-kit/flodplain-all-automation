@@ -13,12 +13,11 @@ import java.util.function.Supplier;
 public class MarketplaceCMCreateConsentCall extends
         BaseRestControllerNS<MarketplaceCMCreateConsentCall> {
 
-    private Container container;
+    private final Container container;
 
     public MarketplaceCMCreateConsentCall(String subsId, Container container) {
         this.container = container;
-        callMessage = String
-                .format("Perform MP call to create CM ConsentRequest");
+        callMessage = "Perform MP call to create CM ConsentRequest";
         setDefaultUser(CONSUMER);
         endpointUrl = NS_Config.URL_EXTERNAL_MARKETPLACE + "/consent/subscriptions/" + subsId + "/request";
     }
@@ -43,4 +42,5 @@ public class MarketplaceCMCreateConsentCall extends
                 + "}";
         return () -> RestHelper.post(this, body);
     }
+
 }

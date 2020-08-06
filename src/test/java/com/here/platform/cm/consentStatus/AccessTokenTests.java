@@ -2,7 +2,6 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -14,7 +13,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
-import com.here.platform.dataProviders.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,7 +107,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
                     .authorizationCode(secondDaimlerToken)
                     .build();
 
-            var privateBearer = HereCMBearerAuthorization.getCmToken(vehicle);
+            var privateBearer = dataSubject.getBearerToken();
 
             var secondApprovedConsentResponse = consentStatusController
                     .approveConsent(secondConsumerConsent, privateBearer);

@@ -13,6 +13,7 @@ import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +28,10 @@ public class ConsentManagerHelper {
 
     private final static Logger logger = Logger.getLogger(ConsentManagerHelper.class);
     private static String masterConsentRequestId = StringUtils.EMPTY;
-    private Container container;
-    private List<String> vinNumbers;
+    private final Container container;
+    private final List<String> vinNumbers;
     private String consentRequestId = StringUtils.EMPTY;
-    private String cmConsumer;
+    private final String cmConsumer;
 
     public ConsentManagerHelper(Container container, String... vinNumbers) {
         this.container = container;
@@ -136,13 +137,13 @@ public class ConsentManagerHelper {
         return this;
     }
 
-    public static String getSHA512(String input){
+    public static String getSHA512(String input) {
 
         String toReturn = null;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-512");
             digest.reset();
-            digest.update(input.getBytes("utf8"));
+            digest.update(input.getBytes(StandardCharsets.UTF_8));
             toReturn = String.format("%0128x", new BigInteger(1, digest.digest()));
         } catch (Exception e) {
             e.printStackTrace();

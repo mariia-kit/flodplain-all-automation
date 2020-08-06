@@ -8,9 +8,10 @@ import static com.here.platform.ns.utils.NS_Config.URL_EXTERNAL_MARKETPLACE_UI;
 import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Configuration;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.LoginPage;
 import com.here.platform.hereAccount.ui.LoginSteps;
 import com.here.platform.mp.controllers.ListingsController;
@@ -34,10 +35,23 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class E2EUITest extends BaseE2ETest {
 
+    static {
+        System.setProperty("env", "prod");
+    }
+
     private final ListingsListPage listingsPage = new ListingsListPage();
+    private final DataSubjects targetDataSubject = DataSubjects.getNext();
+    private final User
+            targetDataProvider = MP_PROVIDER.getUser(),
+            targetDataConsumer = MP_CONSUMER.getUser();
 
     @BeforeEach
     void beforeEach() {
+        var userAccountController = new UserAccountController();
+        userAccountController.deleteVINForUser(targetDataSubject.vin, targetDataSubject.generateBearerToken())
+                .prettyPrint();
+        userAccountController.deleteConsumerForUser(targetDataConsumer.getRealm(), targetDataSubject.getBearerToken())
+                .prettyPrint();
         Configuration.baseUrl = URL_EXTERNAL_MARKETPLACE_UI.toString().replace("marketplace", "");
         Configuration.browserSize = "1366x1000";
         open("marketplace");
@@ -46,14 +60,10 @@ public class E2EUITest extends BaseE2ETest {
     @Test
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        var targetDataProvider = MP_PROVIDER.getUser();
-        var targetDataConsumer = MP_CONSUMER.getUser();
         var listingName = "[E2E test] " + faker.company().buzzword();
-        var targetDataSubject = DataSubjects.getNext();
 
-        step("Login Data Provider", () -> {
-            LoginSteps.loginMPUser(targetDataProvider);
-        });
+        step("Login Data Provider", () -> LoginSteps.loginMPUser(targetDataProvider));
+
         step("Create listing for daimler experimental container", () -> {
             var testManufacturer = Providers.DAIMLER_EXPERIMENTAL;
 
@@ -117,7 +127,8 @@ public class E2EUITest extends BaseE2ETest {
 
         step("Subscribe to listing Data Consumer", () -> {
             open("marketplace/consumer/listings/");
-            listingsPage.isLoaded().openListingWithName(listingName);
+            listingsPage.isLoaded()
+                    .openListingWithName(listingName);
 
             var consumerListingPage = new ConsumerListingPage().isLoaded();
             consumerListingPage
@@ -151,10 +162,34 @@ public class E2EUITest extends BaseE2ETest {
             LoginSteps.loginDataSubject(targetDataSubject);
         });
 
-        step("Fill VIN by Data Subject", () -> {
-            new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject.vin);
-        });
+        step("Fill VIN by Data Subject", () ->
+                new VINEnteringPage().isLoaded()
+                        .fillVINAndContinue(targetDataSubject.vin));
 
+        //todo fulfill ConsentInfo for further steps
+        /*OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        this.targetDataSubject.setBearerToken(getUICmToken());
+        DLoginPages.loginDataSubjectOnDaimlerSite(targetDataSubject);
+        DLoginPages.approveDaimlerScopesAndSubmit();
+
+        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+
+        Selenide.clearBrowserCookies();
+        Selenide.clearBrowserLocalStorage();
+
+        var accessTokenController = new AccessTokenController();
+        accessTokenController.withCMToken();
+        var accessTokenResponse = accessTokenController.getAccessToken(
+                crid,
+                targetDataSubject.vin,
+                targetDataConsumer.getRealm()
+        );
+
+        new ResponseAssertion(accessTokenResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .bindAs(AccessTokenResponse.class);
+        */
     }
 
     private CreateInvite getInvite(String listingHrn, User targetUser) {

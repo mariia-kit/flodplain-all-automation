@@ -2,7 +2,6 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.common.ResponseAssertion;
@@ -37,7 +36,7 @@ public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {
     @MethodSource("consentRequestIdAndVins")
     @ErrorHandler
     void revokeConsentErrorHandlerTest(String crid, String vin, String cause) {
-        var privateBearer = HereCMBearerAuthorization.getCmToken(vehicle);
+        var privateBearer = dataSubject.getBearerToken();
         var revokedConsentResponse = consentStatusController
                 .revokeConsent(
                         NewConsent.builder().consentRequestId(crid).vinHash(new VIN(vin).hashed()).build(),

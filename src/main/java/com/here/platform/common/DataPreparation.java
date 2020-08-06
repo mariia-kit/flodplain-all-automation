@@ -1,6 +1,6 @@
 package com.here.platform.common;
 
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 
 
 public class DataPreparation {

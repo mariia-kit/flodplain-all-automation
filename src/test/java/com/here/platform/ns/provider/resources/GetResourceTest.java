@@ -173,4 +173,5 @@ public class GetResourceTest extends BaseNSTest {
                 .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
                         "no_such_res"));
     }
+
 }

@@ -10,10 +10,12 @@ import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
 
+//todo implent extension to use for DEV and SIT environment
 public class HereUserManagerController extends BaseHereAccountController {
 
     public void createHereUser(HereUser hereUser) {
-        Assertions.assertEquals("here", hereUser.getRealm(), "Not all realms allow to create users without invite. Please, use 'here'");
+        Assertions.assertEquals("here", hereUser.getRealm(),
+                "Not all realms allow to create users without invite. Please, use 'here'");
         createHereAccount(hereUser);
         String reAcceptanceToken = getHereCurrentToken(hereUser);
         acceptHereTerms(hereUser, reAcceptanceToken);
@@ -32,8 +34,7 @@ public class HereUserManagerController extends BaseHereAccountController {
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response();
 
-        String userId = create.body().jsonPath().get("userId");
-        return userId;
+        return create.body().jsonPath().get("userId");
     }
 
     public void deleteHereAccount(String bearerToken) {
@@ -51,7 +52,7 @@ public class HereUserManagerController extends BaseHereAccountController {
                 .post();
         if (tokenResponse.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED) {
             return tokenResponse.jsonPath().get("termsReacceptanceToken");
-        } else if (tokenResponse.getStatusCode() == HttpStatus.SC_OK){
+        } else if (tokenResponse.getStatusCode() == HttpStatus.SC_OK) {
             return tokenResponse.jsonPath().get("accessToken");
         } else {
             Assertions.fail("Error receiving token or acceptance token! " + tokenResponse.getBody().prettyPrint());
@@ -70,6 +71,7 @@ public class HereUserManagerController extends BaseHereAccountController {
 
     @Data
     public static class HereUser {
+
         private String
                 firstname,
                 email,
@@ -96,6 +98,7 @@ public class HereUserManagerController extends BaseHereAccountController {
             clientId = "ha-test-app-1";
             clientSecret = "ha-test-secret-1";
         }
+
     }
 
     @Data
@@ -132,10 +135,12 @@ public class HereUserManagerController extends BaseHereAccountController {
             inviteToken = "";
             sendWelcomeEmail = false;
         }
+
     }
 
     @Data
     public static class GetCurrentTokenRequest {
+
         String grantType,
                 email,
                 password,
@@ -155,10 +160,12 @@ public class HereUserManagerController extends BaseHereAccountController {
             clientSecret = user.getClientSecret();
             tokenFormat = "hN";
         }
+
     }
 
     @Data
     public static class AcceptTermsRequest {
+
         String termsReacceptanceToken,
                 clientId,
                 clientSecret;
@@ -168,6 +175,7 @@ public class HereUserManagerController extends BaseHereAccountController {
             clientId = user.getClientId();
             clientSecret = user.getClientSecret();
         }
+
     }
 
 }

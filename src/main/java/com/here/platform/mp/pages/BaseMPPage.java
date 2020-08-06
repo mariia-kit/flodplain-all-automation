@@ -19,6 +19,7 @@ abstract class BaseMPPage {
         $(targetElement).find(byText(targetOption)).click();
     }
 
+    //todo extract to IPlatformPages
     public String fetchHereAccessToken() {
         var hereAccessCookieName = System.getProperty("env").equals("prod") ? "here_access" : "here_access_st";
         return WebDriverRunner.getWebDriver().manage().getCookieNamed(hereAccessCookieName).getValue();

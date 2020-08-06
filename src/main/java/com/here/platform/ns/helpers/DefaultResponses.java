@@ -3,7 +3,6 @@ package com.here.platform.ns.helpers;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,8 +106,8 @@ public class DefaultResponses {
         if (response.getStatusCode() == 200) {
             List<HashMap<String, HashMap>> resSets = response.getBody().jsonPath().getList("$");
             resSets.forEach(resObj ->
-                res.putAll(resObj.entrySet().stream().collect(Collectors
-                        .toMap(Entry::getKey, resMap -> resMap.getValue().get("value").toString())))
+                    res.putAll(resObj.entrySet().stream().collect(Collectors
+                            .toMap(Entry::getKey, resMap -> resMap.getValue().get("value").toString())))
 
             );
         }

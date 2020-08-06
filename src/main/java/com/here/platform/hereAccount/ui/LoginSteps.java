@@ -1,6 +1,6 @@
 package com.here.platform.hereAccount.ui;
 
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;

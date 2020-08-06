@@ -12,6 +12,7 @@ public class VINEnteringPage extends BaseCMPage {
 
     private final SelenideElement vinNumberInput = $("#vinNumber");
 
+    @Step("VIN entering page is loaded")
     public VINEnteringPage isLoaded() {
         this.vinNumberInput.waitUntil(Condition.visible, 10000);
         return this;

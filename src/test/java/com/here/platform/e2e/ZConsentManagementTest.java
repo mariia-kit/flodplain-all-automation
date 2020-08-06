@@ -295,7 +295,8 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         new ConsentManagementCall().deleteCMCache();
         oauthUrl = new ConsentManagementCall().getOAuthState(crid).getHeader("Location");
-        Assertions.assertTrue(oauthUrl.contains(newScope), "Scope " + newScope + " not detected in OAuth url:" + oauthUrl);
+        Assertions.assertTrue(oauthUrl.contains(newScope),
+                "Scope " + newScope + " not detected in OAuth url:" + oauthUrl);
     }
 
     @Test
@@ -324,7 +325,8 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         new ConsentManagementCall().deleteCMCache();
         oauthUrl = new ConsentManagementCall().getOAuthState(crid).getHeader("Location");
-        Assertions.assertTrue(oauthUrl.contains(newScope), "Scope " + newScope + " not detected in OAuth url:" + oauthUrl);
+        Assertions.assertTrue(oauthUrl.contains(newScope),
+                "Scope " + newScope + " not detected in OAuth url:" + oauthUrl);
     }
 
     @Test
@@ -351,4 +353,5 @@ public class ZConsentManagementTest extends BaseE2ETest {
         oauthUrl = new ConsentManagementCall().getOAuthState(crid).getHeader("Location");
         Assertions.assertTrue(oauthUrl.contains(scope), "Scope " + scope + " not detected in OAuth url:" + oauthUrl);
     }
+
 }

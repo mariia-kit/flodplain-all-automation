@@ -1,7 +1,6 @@
 package com.here.platform.ns.helpers;
 
 import io.qameta.allure.Step;
-
 import java.util.logging.Logger;
 
 

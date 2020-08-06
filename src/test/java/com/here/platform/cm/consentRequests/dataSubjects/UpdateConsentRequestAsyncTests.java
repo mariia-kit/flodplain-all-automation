@@ -6,7 +6,7 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
@@ -24,7 +24,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,7 +52,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin1 = VIN.generate(vinLength),
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
-    private final ConsentRequestContainers testContainer = targetApp.container;
+    private final DaimlerContainers testContainer = targetApp.container;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())

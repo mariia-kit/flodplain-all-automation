@@ -29,7 +29,7 @@ public class TestDataGeneration {
                 .filter(containers -> Providers.DAIMLER_REFERENCE
                         .getName().equals(containers.getContainer().getDataProviderName()))
                 .forEach(containers -> new MarketplaceManageListingCall().fullFlowContainer(containers.getContainer())
-        );
+                );
         CleanUpHelper.getSubsList().clear();
         CleanUpHelper.getListingList().clear();
     }
@@ -61,15 +61,17 @@ public class TestDataGeneration {
                 .expectedCode(HttpStatus.SC_OK);
 
         Arrays.stream(Containers.values())
-                .forEach(container -> Arrays.asList(container.getContainer().getResourceNames().split(",")).forEach(resource ->
-                        new ResourceController().withToken(PROVIDER)
-                                .addResource(Providers.generateNew().withName(container.getContainer().getDataProviderName()),
-                                        new ProviderResource(resource))));
+                .forEach(container -> Arrays.asList(container.getContainer().getResourceNames().split(","))
+                        .forEach(resource ->
+                                new ResourceController().withToken(PROVIDER)
+                                        .addResource(Providers.generateNew()
+                                                        .withName(container.getContainer().getDataProviderName()),
+                                                new ProviderResource(resource))));
 
         Arrays.stream(Containers.values()).forEach(containers ->
                 new ContainerController()
-                .withToken(PROVIDER)
-                .addContainer(containers.getContainer())
+                        .withToken(PROVIDER)
+                        .addContainer(containers.getContainer())
         );
 
 //        Arrays.stream(ContainerResources.values())
@@ -91,7 +93,7 @@ public class TestDataGeneration {
     public void setVehicleTokenForDaimler() {
         String token = Users.DAIMLER.getToken().split(":")[0];
         String refresh = Users.DAIMLER.getToken().split(":")[1];
-        for(String vin: Arrays.asList(Vehicle.validVehicleIdLong, Vehicle.validVehicleId)) {
+        for (String vin : Arrays.asList(Vehicle.validVehicleIdLong, Vehicle.validVehicleId)) {
             String url = NS_Config.URL_NS.toString() + NS_Config.SERVICE_ACCESS.toString() + "token?" +
                     "access_token=" + token +
                     "&refresh_token=" + refresh +

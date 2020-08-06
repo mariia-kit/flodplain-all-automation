@@ -8,7 +8,6 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.utils.NS_Config;
 import com.here.platform.ns.utils.PropertiesLoader;
 import java.util.function.Supplier;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 

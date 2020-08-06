@@ -5,16 +5,14 @@ import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.aaa.DaimlerTokenController;
+import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.ConsentManagerHelper;
-import com.here.platform.aaa.DaimlerTokenController;
-import com.here.platform.aaa.HERECMTokenController;
-import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.utils.NS_Config;
 import com.here.platform.ns.utils.PropertiesLoader;
@@ -24,27 +22,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Base64;
-
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 
 
 public class ConsentManagementCall {
-
-    public synchronized static void initApproverToken(User user) {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
-            String currentT = PropertiesLoader.getInstance().loadToken(user.getEmail() + "_" + user.getRealm());
-            if (StringUtils.isEmpty(currentT)) {
-                String newToken = new HERECMTokenController().loginAndGenerateCMToken(user.getEmail(), user.getPass());
-                PropertiesLoader.getInstance().saveToken(user.getEmail() + "_" + user.getRealm(), newToken);
-                user.setToken(newToken);
-            } else {
-                user.setToken(currentT);
-            }
-        } else {
-            user.setToken("Bearer DummyToken");
-        }
-    }
 
     public String initConsentRequestStrict(Container container, String cmConsumerId) {
         String token = "Bearer " + CM_CONSUMER.getUser().getToken();
@@ -57,7 +38,8 @@ public class ConsentManagementCall {
                 + "  \"containerName\": \"" + container.getId() + "\",\n"
                 + "  \"title\": \"qa_test_" + container.getId() + "\"\n"
                 + "}";
-        Response resp = RestHelper.post("Init Consent Campaign Id", url, token, body, new Header("X-Correlation-ID", "x-cons-init-" + container.getName()));
+        Response resp = RestHelper.post("Init Consent Campaign Id", url, token, body,
+                new Header("X-Correlation-ID", "x-cons-init-" + container.getName()));
         Assertions.assertEquals(201, resp.getStatusCode(),
                 "Error during init of consent for " + container.getName());
         String consentId = resp.getBody().jsonPath().get("consentRequestId").toString();
@@ -71,12 +53,13 @@ public class ConsentManagementCall {
         File file = new File("VIN_" + consentId + ".csv");
 
         try (FileWriter writer = new FileWriter(file)) {
-                writer.write(vin);
+            writer.write(vin);
         } catch (IOException ex) {
             throw new RuntimeException("Error writing vins to file" + file.getAbsolutePath());
         }
 
-        Response resp = RestHelper.putFile("Add vin number to Consent", url, token, file, "text/csv", "x-cons-addvins-" + consentId);
+        Response resp = RestHelper
+                .putFile("Add vin number to Consent", url, token, file, "text/csv", "x-cons-addvins-" + consentId);
         CleanUpHelper.addToVinsList(consentId, vin);
         file.delete();
         Assertions.assertEquals(200, resp.getStatusCode(),
@@ -126,9 +109,11 @@ public class ConsentManagementCall {
 
     public Response approveConsentRequestNew(String consentRequestId, String vinNumber,
             String authToken, Container container) {
-        String authCode = container.getDataProviderName().equals(Providers.REFERENCE_PROVIDER.getName()) || container.getDataProviderName().equals(
-                Providers.DAIMLER_REFERENCE.getName()) ?
-                ReferenceTokenController.produceConsentAuthCode(vinNumber, container.getId() + ":" + container.getResourceNames()) :
+        String authCode = container.getDataProviderName().equals(Providers.REFERENCE_PROVIDER.getName()) || container
+                .getDataProviderName().equals(
+                        Providers.DAIMLER_REFERENCE.getName()) ?
+                ReferenceTokenController
+                        .produceConsentAuthCode(vinNumber, container.getId() + ":" + container.getResourceNames()) :
                 DaimlerTokenController.produceConsentAuthCode(
                         PropertiesLoader.getInstance().mainProperties.getProperty("daimler.clientId"),
                         PropertiesLoader.getInstance().mainProperties.getProperty("daimler.clientSecret"),
@@ -143,7 +128,8 @@ public class ConsentManagementCall {
                 + "  \"vinHash\": \"" + ConsentManagerHelper.getSHA512(vinNumber) + "\"\n"
                 + "}";
         return RestHelper
-                .put("Approve Consent Campaign Id:" + consentRequestId, url, authToken, body, new Header("X-Correlation-ID", "x-cons-appr-" + consentRequestId));
+                .put("Approve Consent Campaign Id:" + consentRequestId, url, authToken, body,
+                        new Header("X-Correlation-ID", "x-cons-appr-" + consentRequestId));
     }
 
     public Response revokeConsentRequest(String consentRequestId, String vinNumber,
@@ -188,7 +174,8 @@ public class ConsentManagementCall {
 
         String authToken = "Bearer " + PROVIDER.getUser().getToken();
         String consumerId = CONSUMER.getUser().getRealm();
-        String provider = providerId.equals(Providers.DAIMLER_REFERENCE.getName()) || providerId.equals(Providers.REFERENCE_PROVIDER.getName()) ? "exelsior" : "daimler";
+        String provider = providerId.equals(Providers.DAIMLER_REFERENCE.getName()) || providerId
+                .equals(Providers.REFERENCE_PROVIDER.getName()) ? "exelsior" : "daimler";
         String clientId = PropertiesLoader.getInstance().mainProperties.getProperty(provider + ".clientId");
         String clientSecret = PropertiesLoader.getInstance().mainProperties.getProperty(provider + ".clientSecret");
         String redirectUri = PropertiesLoader.getInstance().mainProperties.getProperty(provider + ".callbackurl");
@@ -236,14 +223,15 @@ public class ConsentManagementCall {
             throw new RuntimeException("Error writing vins to file" + file.getAbsolutePath());
         }
 
-        Response resp = RestHelper.putFile("Hard delete vins from CM ", url, token, file, "text/csv", "x-corr-" + consentId);
+        Response resp = RestHelper
+                .putFile("Hard delete vins from CM ", url, token, file, "text/csv", "x-corr-" + consentId);
         file.delete();
 
     }
 
     public void deleteAllAutomatedConsentsHard() {
         String token = "Bearer " + CM_CONSUMER.getUser().getToken();
-        for (String vin: new String[] {Vehicle.validVehicleIdLong, Vehicle.validVehicleId}) {
+        for (String vin : new String[]{Vehicle.validVehicleIdLong, Vehicle.validVehicleId}) {
             String url = NS_Config.URL_EXTERNAL_CM
                     + "/consentRequests?consumerId=" + CONSUMER.getUser().getRealm() + "&vin=" + vin;
             Response r = RestHelper.get("get all consent from CM for " + vin, url, token);
@@ -259,6 +247,7 @@ public class ConsentManagementCall {
 
     public Response getConsentInfo(String vin) {
         String url = NS_Config.URL_EXTERNAL_CM + "/consents/" + vin + "/info?state=PENDING";
-        return RestHelper.get("Get consent info for " + vin , url, "");
+        return RestHelper.get("Get consent info for " + vin, url, "");
     }
+
 }

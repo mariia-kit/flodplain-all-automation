@@ -10,7 +10,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
-import com.here.platform.dataProviders.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @Execution(ExecutionMode.SAME_THREAD)
 public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
-    private final String privateBearer = vehicle.getBearerToken();
+    private final String privateBearer = dataSubject.getBearerToken();
     private final List<String> cridsToRemove = new ArrayList<>();
     private NewConsent consentToApprove;
     private String crid;

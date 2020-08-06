@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Assertions;
 public class NeutralServerResponseAssertion {
 
     @Getter
-    private Response response;
+    private final Response response;
 
     public NeutralServerResponseAssertion(Response response) {
         response.then().log().all();
@@ -62,7 +62,7 @@ public class NeutralServerResponseAssertion {
 
     @Step("Verify response value equals to Container resource.")
     public NeutralServerResponseAssertion expectedEqualsContainerData(Map<String, String> expected,
-                                                                      String message) {
+            String message) {
         Assertions
                 .assertEquals(expected, DefaultResponses.extractAsContainerData(response), message);
         return this;
@@ -70,7 +70,7 @@ public class NeutralServerResponseAssertion {
 
     @Step("Verify response value equals to ISO Container resource.")
     public NeutralServerResponseAssertion expectedEqualsISOContainerData(Map<String, String> expected,
-                                                                         String message) {
+            String message) {
         Assertions
                 .assertEquals(expected, DefaultResponses.extractAsISOContainerData(response), message);
         return this;
@@ -78,7 +78,7 @@ public class NeutralServerResponseAssertion {
 
     @Step("Verify response value by json path {jsonPath} contains value '{expected}'")
     public NeutralServerResponseAssertion expectedJsonContains(String jsonPath, String expected,
-                                                               String message) {
+            String message) {
         Object value = response.getBody().jsonPath().get(jsonPath);
         String actual = value == null ? StringUtils.EMPTY : value.toString();
         Assertions.assertTrue(actual.contains(expected), message + " '" + actual + "'");
@@ -87,7 +87,7 @@ public class NeutralServerResponseAssertion {
 
     @Step("Verify response value by json path {jsonPath} are correct.")
     public NeutralServerResponseAssertion expectedJsonTrue(String jsonPath, Predicate<String> condition,
-                                                           String message) {
+            String message) {
         Object value = response.getBody().jsonPath().get(jsonPath);
         String actual = value == null ? StringUtils.EMPTY : value.toString();
         Assertions.assertTrue(condition.test(actual), message + " '" + actual + "'");
@@ -160,7 +160,7 @@ public class NeutralServerResponseAssertion {
 
     @Step("Verify response value body equals to expected {expected}")
     public NeutralServerResponseAssertion expectedBody(String expected,
-                                                       String message) {
+            String message) {
         Assertions.assertEquals(expected, response.getBody().print(), message);
         return this;
     }

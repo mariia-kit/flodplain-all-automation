@@ -1,7 +1,7 @@
 package com.here.platform.ns.dto;
 
-import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.ContainerResourcesHelper;
+import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.UniqueId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,7 +53,7 @@ public enum Containers {
                     "mb:user:pool:reader mb:vehicle:status:general")
     ),
     DAIMLER_EXPERIMENTAL_CONNECTED_VEHICLE(
-            new Container("connectedvehicle","connectedvehicle",
+            new Container("connectedvehicle", "connectedvehicle",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "This experimental product allows you to get access to important telematics data, status info and vehicle functions from virtual Mercedes–Benz cars",
                     String.join(",",

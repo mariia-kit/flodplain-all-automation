@@ -6,6 +6,7 @@ import com.here.platform.ns.instruments.TestDataGeneration;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import com.here.platform.ns.utils.NS_Config;
 
+
 public class DataPreparationNS {
 
     public static void main(String[] args) {
@@ -25,4 +26,5 @@ public class DataPreparationNS {
             new TestDataGeneration().setVehicleTokenForDaimler();
         }
     }
+
 }

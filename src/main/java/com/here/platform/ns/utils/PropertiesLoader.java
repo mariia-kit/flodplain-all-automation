@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
-
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 
 public class PropertiesLoader {
+
     private final static Logger logger = Logger.getLogger(PropertiesLoader.class);
     public final Properties mainProperties;
 

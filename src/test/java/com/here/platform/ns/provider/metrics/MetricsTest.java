@@ -160,7 +160,6 @@ public class MetricsTest extends BaseNSTest {
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
 
-
         var response = new TAMetricsController()
                 .withToken(APPLICATION)
                 .getTaMetricsStatistics(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
@@ -202,4 +201,5 @@ public class MetricsTest extends BaseNSTest {
 
 
     }
+
 }

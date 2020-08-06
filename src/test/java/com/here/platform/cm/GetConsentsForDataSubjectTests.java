@@ -3,7 +3,7 @@ package com.here.platform.cm;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.here.platform.cm.enums.CMErrorResponse;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequest;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -36,7 +36,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
     private final String
             testVin = VIN.generate(17);
-    ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
+    DaimlerContainers testScope = DaimlerContainers.getRandom();
     private final ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())

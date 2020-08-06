@@ -40,21 +40,17 @@ public class PortalTokenController {
                 + "sign-in-screen-config=password";
 
         Response authorizeResp = given()
-                .log().all().when()
+                .when()
                 .param("nonce", nonce)
                 .redirects().follow(false)
-                .get(authorizeUrl)
-                .then().log().all()
-                .extract().response();
+                .get(authorizeUrl);
         Cookies coo = authorizeResp.getDetailedCookies();
         String location = authorizeResp.getHeader("Location");
 
         Response signInResp = given()
-                .log().all().when()
+                .when()
                 .cookies(coo)
-                .get(portalUrl + location)
-                .then().log().all()
-                .extract().response();
+                .get(portalUrl + location);
         Cookies coo1 = signInResp.getDetailedCookies();
 
         String body = signInResp.getBody().prettyPrint();
@@ -62,7 +58,6 @@ public class PortalTokenController {
                 + "            terms: {")).replace("csrf: \"", "");
 
         Response withPassResult = given()
-                .log().all()
                 .cookies(coo1)
                 .contentType(ContentType.JSON)
                 .config(RestAssured
@@ -83,9 +78,7 @@ public class PortalTokenController {
                 .header("Sec-Fetch-Site", "same-origin")
                 .body("{\"realm\":\"" + realm + "\",\"email\":\"" + login + "\",\"password\":\"" + pass
                         + "\",\"rememberMe\":true}")
-                .post(signInWithPassword)
-                .then().log().all()
-                .extract().response();
+                .post(signInWithPassword);
 
         return withPassResult.jsonPath().get("accessToken");
     }

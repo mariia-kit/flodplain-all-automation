@@ -2,10 +2,10 @@ package com.here.platform.cm.steps.api;
 
 
 import com.here.platform.cm.controllers.ConsentStatusController;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.common.VIN;
-import com.here.platform.dataProviders.DaimlerTokenController;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
 
@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 public class ConsentFlowSteps {
 
     @Step
-    public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN) {
+    public void approveConsentForVIN(String crid, DaimlerContainers container, String targetVIN) {
         var validDaimlerToken = new DaimlerTokenController(targetVIN, container).generateAuthorizationCode();
         final var consentToApprove = ConsentStatusController.NewConsent.builder()
                 .vinHash(new VIN(targetVIN).hashed())

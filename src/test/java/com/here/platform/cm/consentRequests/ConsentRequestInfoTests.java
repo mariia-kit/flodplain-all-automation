@@ -3,7 +3,8 @@ package com.here.platform.cm.consentRequests;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
@@ -14,9 +15,12 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
+import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.extension.ConsentRequestRemoveExtension;
-import com.here.platform.common.extension.OnboardApplicationExtension;
-import com.here.platform.common.extension.ProviderApplicationRemoveExtension;
+import com.here.platform.dataProviders.daimler.DataSubjects;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +35,7 @@ public class ConsentRequestInfoTests extends BaseCMTest {
     final ConsentRequestRemoveExtension requestRemoveExtension = new ConsentRequestRemoveExtension();
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+    private final DaimlerContainers testContainer = DaimlerContainers.DAIMLER_EXPERIMENTAL_FUEL;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(testContainer.provider.getName())

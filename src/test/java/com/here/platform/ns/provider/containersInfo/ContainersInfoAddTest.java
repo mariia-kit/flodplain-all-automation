@@ -5,7 +5,12 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.provider.ContainerController;
-import com.here.platform.ns.dto.*;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.dto.DataProvider;
+import com.here.platform.ns.dto.ProviderResource;
+import com.here.platform.ns.dto.Providers;
+import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
@@ -15,7 +20,6 @@ import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 
 
 @DisplayName("Verify creation of Container")
@@ -472,4 +476,5 @@ class ContainersInfoAddTest extends BaseNSTest {
         new NeutralServerResponseAssertion(data)
                 .expectedCode(HttpStatus.SC_OK);
     }
+
 }

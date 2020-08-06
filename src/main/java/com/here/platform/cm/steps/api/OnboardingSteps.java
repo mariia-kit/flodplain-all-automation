@@ -4,7 +4,7 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
@@ -29,7 +29,7 @@ public class OnboardingSteps {
     public static void onboardApplicationProviderAndConsumer(
             String providerId,
             String consumerId,
-            ConsentRequestContainers scope
+            DaimlerContainers scope
     ) {
         var onboardingSteps = new OnboardingSteps(providerId, consumerId);
         onboardingSteps.onboardTestProvider();
@@ -38,7 +38,7 @@ public class OnboardingSteps {
     }
 
     @Step
-    public void onboardTestProviderApplicationForScope(ConsentRequestContainers container) {
+    public void onboardTestProviderApplicationForScope(DaimlerContainers container) {
         var testApplication = new ProviderApplication()
                 .providerId(this.providerId)
                 .consumerId(this.consumerId)

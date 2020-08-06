@@ -2,7 +2,7 @@ package com.here.platform.cm.consentRequests.dataSubjects;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
-import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.DaimlerContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -19,7 +19,7 @@ import com.here.platform.common.annotations.AAA;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
             vin1 = VIN.generate(vinLength),
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
-    private final ConsentRequestContainers testContainer = targetApp.container;
+    private final DaimlerContainers testContainer = targetApp.container;
     private final MPConsumers mpConsumer = targetApp.consumer;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())

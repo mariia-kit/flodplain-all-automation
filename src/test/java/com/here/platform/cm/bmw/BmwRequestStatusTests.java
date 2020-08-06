@@ -40,7 +40,7 @@ public class BmwRequestStatusTests extends BaseConsentStatusTests {
     void setClearanceStatusByBMW() {
         crid = createValidConsentRequest();
 
-        var privateBearer = vehicle.getBearerToken();
+        var privateBearer = dataSubject.getBearerToken();
         var responseBefore = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
 

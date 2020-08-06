@@ -1,6 +1,6 @@
 package com.here.platform.cm.consentStatus;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
+
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
@@ -13,7 +13,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
-import com.here.platform.dataProviders.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Arrays;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
@@ -48,7 +48,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .build();
 
         fuSleep();
-        var privateBearer = HereCMBearerAuthorization.getCmToken(vehicle);
+        var privateBearer = dataSubject.getBearerToken();
         var revokedConsentResponse = consentStatusController.revokeConsent(consentToRevoke, privateBearer);
 
         new ResponseAssertion(revokedConsentResponse)
@@ -104,7 +104,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .vinHash(new VIN(testVin).hashed())
                 .build();
 
-        var privateBearer = vehicle.getBearerToken();
+        var privateBearer = dataSubject.getBearerToken();
         var approveResponse = consentStatusController.revokeConsent(consentToRevoke, privateBearer);
         new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.NOT_FOUND);
 
@@ -128,7 +128,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
         @BeforeEach
         void generateDaimlerAuthorisationTokenForTestCar() {
-            privateBearer = HereCMBearerAuthorization.getCmToken(vehicle);
+            privateBearer = dataSubject.getBearerToken();
             validDaimlerToken = new DaimlerTokenController(testVin, testContainer).generateAuthorizationCode();
         }
 

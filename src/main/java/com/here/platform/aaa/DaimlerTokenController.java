@@ -2,25 +2,22 @@ package com.here.platform.aaa;
 
 import static io.restassured.RestAssured.given;
 
-import com.here.platform.ns.utils.NS_Config;
-import com.here.platform.ns.utils.PropertiesLoader;
 import io.restassured.http.Cookie;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 
 public class DaimlerTokenController {
 
-    public static String produceConsentAuthCode(String clientId, String clientSecret, String login, String pass, String callbackUrl) {
+    public static String produceConsentAuthCode(String clientId, String clientSecret, String login, String pass,
+            String callbackUrl) {
 
         String scope = "mb:user:pool:reader%20mb:vehicle:status:general";
         String authorize = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize";
@@ -40,11 +37,8 @@ public class DaimlerTokenController {
                 .param("prompt", "consent%20login")
                 .urlEncodingEnabled(false)
                 .redirects().follow(false)
-                .log().all().
-                        when()
-                .get(authorize).
-                        then().log().all()
-                .extract().response();
+                .when()
+                .get(authorize);
         Cookies coo = authResp.detailedCookies();
         String location = authResp.getHeader("Location");
 
@@ -94,10 +88,7 @@ public class DaimlerTokenController {
                 .formParam("lang", "en_US")
                 .cookies(coo)
                 .redirects().follow(false)
-                .log().all().
-                        when().post(consentDo).
-                        then().log().all()
-                .extract().response();
+                .when().post(consentDo);
         coo = mergeCookies(coo, loginCall.detailedCookies());
         String newData = StringUtils.substringBetween(consentCall.getBody().prettyPrint(),
                 "name=\"sessionData\" value=\"", "\"/>");
@@ -113,10 +104,7 @@ public class DaimlerTokenController {
                 .formParam("sessionData", newData)
                 .cookies(coo)
                 .redirects().follow(false)
-                .log().all().
-                        when().post(authoriseConsent).
-                        then().log().all()
-                .extract().response();
+                .when().post(authoriseConsent);
 
         return consentCodeCall.getHeader("Location")
                 .replace(callbackUrl + "?code=", StringUtils.EMPTY);
@@ -132,9 +120,8 @@ public class DaimlerTokenController {
                 .formParam("grant_type", "authorization_code")
                 .formParam("code", authCode)
                 .formParam("redirect_uri", callbackUrl)
-                .log().all().
-                        when().post(url).
-                        then().log().all()
+                .when().post(url)
+                .then()
                 .statusCode(200)
                 .extract().response();
         return temp.jsonPath().get("access_token") + ":" + temp.jsonPath().get("refresh_token");
@@ -150,16 +137,14 @@ public class DaimlerTokenController {
     }
 
     private static Map<String, String> parseQueryPairs(String location) {
-        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+        Map<String, String> query_pairs = new LinkedHashMap<>();
         String[] pairs = location.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
-            try {
-                query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
-                        URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            query_pairs.put(
+                    URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
+                    URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8)
+            );
         }
         return query_pairs;
     }

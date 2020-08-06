@@ -22,7 +22,8 @@ public class ReferenceProviderCall {
         String token = StringUtils.EMPTY;
         String url = NS_Config.REFERENCE_J_PROV_URL + "/admin/wipe";
         Response resp = RestHelper.get("Wipe all reference provider data", url, token);
-        Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(), "Wipe reference provider response not as expected!");
+        Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(),
+                "Wipe reference provider response not as expected!");
         Container manual = Containers.generateNew(Providers.REFERENCE_PROVIDER.getName())
                 .withName("manual-testing-marketplace-1")
                 .withId("manual-testing-marketplace-1")
@@ -71,7 +72,8 @@ public class ReferenceProviderCall {
                 .map(item -> "\"" + item + "\"").collect(Collectors.joining(",\n")) + "\n"
                 + "    ]\n"
                 + "  }";
-        Response r = RestHelper.post("Create new Container on Reference Provider side:" + container.getName(), url, authToken, body);
+        Response r = RestHelper
+                .post("Create new Container on Reference Provider side:" + container.getName(), url, authToken, body);
         Assertions.assertEquals(HttpStatus.SC_OK, r.getStatusCode(),
                 "Create new Container on Reference Provider side response not as expected!");
     }
