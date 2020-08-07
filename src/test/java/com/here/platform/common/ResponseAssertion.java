@@ -16,6 +16,7 @@ public class ResponseAssertion {
     };
     private final Response targetResponse;
 
+    //todo try to create and use kotlin extension function to assert responses
     public ResponseAssertion(Response targetResponse) {
         this.targetResponse = targetResponse;
     }
