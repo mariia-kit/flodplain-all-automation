@@ -10,12 +10,11 @@ import io.restassured.specification.RequestSpecification;
 public class BaseHereAccountController {
 
     protected RequestSpecification hereAccountClient(final String targetPath) {
-        var baseService = given()
-                .log().all()
+        return given()
                 .baseUri(NS_Config.URL_AUTH.toString())
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON);
-        return baseService;
     }
+
 }

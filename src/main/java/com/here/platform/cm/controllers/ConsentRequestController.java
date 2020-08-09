@@ -115,10 +115,21 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     }
 
     @Step
-    public Response getConsentRequestPurpose(String consentRequestId, String privateBearerToken) {
+    public Response getConsentRequestPurpose(String consentRequestId, String cmBearerToken) {
         return consentServiceClient(consentRequestBasePath)
-                .header("Authorization", privateBearerToken)
+                .header("Authorization", cmBearerToken)
                 .get("/{consentRequestId}/purpose", consentRequestId);
+    }
+
+    @Step
+    public Response getConsentRequestPurpose(String consumerId, String containerId, String cmBearerToken) {
+        return consentServiceClient(consentRequestBasePath)
+                .header("Authorization", cmBearerToken)
+                .queryParams(
+                        "consumerId", consumerId,
+                        "containerId", containerId
+                )
+                .get("/purpose");
     }
 
     private String getContentTypeByFile(File targetFile) {

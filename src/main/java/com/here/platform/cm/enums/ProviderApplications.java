@@ -3,6 +3,7 @@ package com.here.platform.cm.enums;
 /**
  * Provider application that must be on-boarded by default
  */
+//todo extend as builder to simplify onboarding and removing for tests
 public enum ProviderApplications {
 
     DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.CONNECTED_VEHICLE);

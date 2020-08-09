@@ -5,6 +5,7 @@ import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApp
 
 import com.here.platform.common.EnumByEnv;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
 
@@ -70,6 +71,10 @@ public enum ConsentRequestContainers {
 
     public static ConsentRequestContainers getRandom() {
         return values()[(int) (Math.random() * values().length - 1)]; //except CONNECTED_VEHICLE
+    }
+
+    public static ConsentRequestContainers getById(String containerId) {
+        return Arrays.stream(values()).filter(containers -> containers.id.equals(containerId)).findFirst().get();
     }
 
     @AllArgsConstructor

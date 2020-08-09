@@ -30,6 +30,7 @@ public class RemoveEntitiesSteps {
 
     @Step
     public void forceRemoveConsentRequestWithConsents(String crid, File fileWithVINs) {
+        if (crid == null) return;
         if (fileWithVINs != null) {
             consentRequestController
                     .withConsumerToken(MPConsumers.OLP_CONS_1)
