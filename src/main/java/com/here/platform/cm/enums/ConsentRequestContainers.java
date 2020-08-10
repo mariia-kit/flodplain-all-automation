@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -50,6 +51,14 @@ public enum ConsentRequestContainers {
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
+    ),
+
+    BMW_MILEAGE(
+            "S00I000M001OK", "bmwcardata_mileage", "Vehicle mileage",
+            "",
+            StringUtils.EMPTY, StringUtils.EMPTY,
+            List.of("mileage"),
+            MPProviders.BMW_TEST
     ),
 
     CONNECTED_VEHICLE(

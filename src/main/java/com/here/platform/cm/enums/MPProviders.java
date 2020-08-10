@@ -6,12 +6,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum MPProviders {
 
-    DAIMLER_EXPERIMENTAL(18), DAIMLER(17), EXCELSIOR(17); //todo separate name and id for provider
+    DAIMLER_EXPERIMENTAL("daimler_experimental", 18),
+    DAIMLER("daimler", 17),
+    EXCELSIOR("exelsior", 17),
+    BMW_TEST("test-bmw", 17);
 
+    private String name;
     public int vinLength;
 
     public String getName() {
-        return name().toLowerCase();
+        return name;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.here.platform.cm.bmw;
 
-import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -13,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
-public class BmwRequestStatusTests extends BaseConsentStatusTests {
+public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
     private String crid;
     private final BMWController bmwController = new BMWController();
@@ -38,7 +37,7 @@ public class BmwRequestStatusTests extends BaseConsentStatusTests {
     @Issue("NS-2427")
     @DisplayName("BMW set status of consent clearance")
     void setClearanceStatusByBMW() {
-        crid = createValidConsentRequest();
+        crid = createValidBmwConsentRequest();
 
         var privateBearer = vehicle.getBearerToken();
         var responseBefore = consentStatusController
