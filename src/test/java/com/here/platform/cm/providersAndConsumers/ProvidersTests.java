@@ -5,7 +5,7 @@ import static com.here.platform.cm.steps.api.RemoveEntitiesSteps.forceRemoveAppl
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 @Tag("smoke_cm")
 class ProvidersTests extends BaseCMTest {
 
-    private final DaimlerContainers testContainer = DaimlerContainers.DAIMLER_EXPERIMENTAL_LOCATION;
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_LOCATION;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(MPConsumers.OLP_CONS_1.getRealm())
             .providerId(crypto.sha1())

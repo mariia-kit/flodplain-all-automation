@@ -6,7 +6,7 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
@@ -52,7 +52,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin1 = VIN.generate(vinLength),
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
-    private final DaimlerContainers testContainer = targetApp.container;
+    private final ConsentRequestContainers testContainer = targetApp.container;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())

@@ -1,4 +1,4 @@
-package com.here.platform.common.extension;
+package com.here.platform.common.extensions;
 
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.VinsToFile;

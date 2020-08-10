@@ -3,7 +3,7 @@ package com.here.platform.cm.consentRequests.dataSubjects;
 import static com.here.platform.cm.enums.CMErrorResponse.CONSENT_REQUEST_UPDATE;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final DaimlerContainers testScope = DaimlerContainers.getRandom();
+    private final ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())

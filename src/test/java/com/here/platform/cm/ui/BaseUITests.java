@@ -10,7 +10,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -55,7 +55,7 @@ public class BaseUITests extends BaseCMTest {
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
 
-    protected DaimlerContainers testContainer = DaimlerContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
     protected UserAccountController userAccountController = new UserAccountController();
 
 

@@ -3,7 +3,7 @@ package com.here.platform.cm.consentStatus;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -25,7 +25,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
 
     protected File testFileWithVINs = null;
 
-    protected DaimlerContainers testContainer = targetApp.container;
+    protected ConsentRequestContainers testContainer = targetApp.container;
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()

@@ -6,13 +6,13 @@ package com.here.platform.cm.enums;
 //todo extend as builder to simplify onboarding and removing for tests
 public enum ProviderApplications {
 
-    DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, DaimlerContainers.DAIMLER_EXPERIMENTAL_CHARGE);
+    DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE);
 
     public final MPProviders provider;
     public final MPConsumers consumer;
-    public DaimlerContainers container;
+    public ConsentRequestContainers container;
 
-    ProviderApplications(MPConsumers consumer, DaimlerContainers container) {
+    ProviderApplications(MPConsumers consumer, ConsentRequestContainers container) {
         this.provider = container.provider;
         this.consumer = consumer;
         this.container = container;

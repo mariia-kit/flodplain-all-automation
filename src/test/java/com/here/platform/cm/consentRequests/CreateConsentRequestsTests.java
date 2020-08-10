@@ -3,7 +3,7 @@ package com.here.platform.cm.consentRequests;
 import static com.here.platform.cm.steps.api.OnboardingSteps.onboardApplicationProviderAndConsumer;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class CreateConsentRequestsTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final DaimlerContainers testScope = DaimlerContainers.getRandom();
+    private final ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())

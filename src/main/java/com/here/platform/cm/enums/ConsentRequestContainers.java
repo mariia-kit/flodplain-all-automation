@@ -1,7 +1,7 @@
 package com.here.platform.cm.enums;
 
-import static com.here.platform.cm.enums.DaimlerContainers.RealDaimlerApplication.CLIENT_ID;
-import static com.here.platform.cm.enums.DaimlerContainers.RealDaimlerApplication.CLIENT_SECRET;
+import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_ID;
+import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
 
 import com.here.platform.common.EnumByEnv;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
  * Possible to use as a container name for provider's applications
  */
 @AllArgsConstructor
-public enum DaimlerContainers {
+public enum ConsentRequestContainers {
 
     //todo: refactor to reuse all data
 
@@ -113,11 +113,11 @@ public enum DaimlerContainers {
     public List<String> resources;
     public MPProviders provider;
 
-    public static DaimlerContainers getRandom() {
+    public static ConsentRequestContainers getRandom() {
         return values()[(int) (Math.random() * values().length - 1)]; //except CONNECTED_VEHICLE
     }
 
-    public static DaimlerContainers getById(String containerId) {
+    public static ConsentRequestContainers getById(String containerId) {
         return Arrays.stream(values()).filter(containers -> containers.id.equals(containerId)).findFirst().get();
     }
 

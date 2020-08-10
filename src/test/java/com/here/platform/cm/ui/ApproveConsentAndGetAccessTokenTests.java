@@ -11,7 +11,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.DaimlerContainers;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
@@ -175,7 +175,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, DaimlerContainers container) {
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, ConsentRequestContainers container) {
         switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
