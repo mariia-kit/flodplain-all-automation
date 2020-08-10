@@ -4,9 +4,11 @@ import com.here.platform.aaa.HereCMBearerAuthorization;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
+import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
+import com.here.platform.cm.rest.model.ErrorResponse;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -165,8 +167,8 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         }
 
         @Test
-        @DisplayName("Verify it is possible to approve revoked consent")
-        void possibleToApproveRevokedConsentTest() {
+        @DisplayName("Verify it is not possible to approve revoked consent")
+        void isNotPossibleToApproveRevokedConsentTest() {
             crid = createValidConsentRequest();
 
             var consentUnderTest = NewConsent.builder()
@@ -179,15 +181,11 @@ class RevokeConsentTests extends BaseConsentStatusTests {
             consentStatusController.revokeConsent(consentUnderTest, privateBearer);
             fuSleep();
             var approveResponse = consentStatusController.approveConsent(consentUnderTest, privateBearer);
-            new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.OK);
+            ErrorResponse errorResponse = new ResponseAssertion(approveResponse)
+                    .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
+                    .expectedErrorResponse(CMErrorResponse.CONSENT_ALREADY_REVOKED);
 
-            final var expectedConsentRequestStatus = new ConsentRequestStatus().approved(1).pending(0).revoked(0);
-            consentRequestController.withCMToken();
-            var actualConsentRequest = consentRequestController.getStatusForConsentRequestById(crid);
-
-            new ResponseAssertion(actualConsentRequest)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .responseIsEqualToObject(expectedConsentRequestStatus);
+            Assertions.assertThat(errorResponse.getCause()).isEqualTo("Consent already revoked");
         }
 
     }
