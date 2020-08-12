@@ -32,11 +32,10 @@ public class AaaCall {
         List<MutablePair<String, String>> policy = new ArrayList<>();
 
         JsonPath res = given()
-                .log().all()
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when().get(url)
-                .then().log().all()
+                .then()
                 .extract().response().getBody().jsonPath();
 
         int total = res.getInt("total");
@@ -45,11 +44,10 @@ public class AaaCall {
 
         for (int i = 1; i <= iterations; i++) {
             res = given()
-                    .log().all()
                     .headers("Content-Type", "application/json",
                             "Authorization", "Bearer " + Users.AAA.getToken())
                     .when().get(url + "&startIndex=" + (i * 100))
-                    .then().log().all()
+                    .then()
                     .extract().response().getBody().jsonPath();
             parseData(res, policy);
         }
@@ -72,11 +70,10 @@ public class AaaCall {
     public void deletePolicy(String id) {
         String url = NS_Config.URL_AUTH.toString() + "/policy/" + id;
         given()
-                .log().all()
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when().delete(url)
-                .then().log().all()
+                .then()
                 .extract().response();
     }
 
@@ -135,14 +132,14 @@ public class AaaCall {
                 + "    ]\n"
                 + "}";
         return given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .filter(new AllureRestAssuredCustom("Add group to Policy:" + policyId))
                 .when()
                 .body(body)
                 .post(url)
-                .then().log().all()
+                .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract().response().jsonPath().get("policies.find {it.policyId == '" + policyId + "'}.id");
     }
@@ -150,11 +147,11 @@ public class AaaCall {
     public void removeGroupFromPolicy(String groupId, String policyId) {
         String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId + "/policies/" + policyId;
         given()
-                .log().all()
+
                 .headers("Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
                 .delete(url)
-                .then().log().all()
+                .then()
                 .extract().response();
     }
 
@@ -223,14 +220,14 @@ public class AaaCall {
                 + "    \"allowUpdates\": true\n"
                 + "}";
         return given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .filter(new AllureRestAssuredCustom("Create AA Policy " + resHrn))
                 .when()
                 .body(body)
                 .post(url)
-                .then().log().all()
+                .then()
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response().jsonPath().get("id");
     }
@@ -251,13 +248,13 @@ public class AaaCall {
                 + "    \"allowUpdates\": true\n"
                 + "}";
         return given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
                 .body(body)
                 .post(url)
-                .then().log().all()
+                .then()
                 .extract().response().jsonPath().get("id");
     }
 
@@ -265,36 +262,36 @@ public class AaaCall {
         String url = NS_Config.URL_AUTH.toString() + "/policy/" + policyId;
 
         return given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
                 .get(url)
-                .then().log().all()
+                .then()
                 .extract().response().body().prettyPrint();
     }
 
     public String getPolicyLink(String groupId, String policyId) {
         String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId;
         return given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
                 .get(url)
-                .then().log().all()
+                .then()
                 .extract().response().jsonPath().get("policies.find {it.policyId == '" + policyId + "'}.id");
     }
 
     public Map<String, String> getAllPolicyLink(String groupId) {
         String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId;
         JsonPath responce = given()
-                .log().all()
+
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
                 .get(url)
-                .then().log().all()
+                .then()
                 .extract().response().jsonPath();
         List<JsonNode> data = responce.getList("policies", JsonNode.class);
         Map<String, String> res = new HashMap<>();

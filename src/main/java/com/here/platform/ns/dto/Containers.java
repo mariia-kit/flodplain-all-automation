@@ -125,23 +125,31 @@ public enum Containers {
                     true, "mb:vehicle:mbdata:vehiclestatus")
     ),
     REF_DAIMLER_ODOMETER(
-            new Container("odometer", "odometer", Providers.DAIMLER_REFERENCE.getName(),
-                    "Automated Test Container", "odometer", true, null)
+            new Container(
+                    "odometer", "odometer", Providers.DAIMLER_REFERENCE.getName(),
+                    "Automated Test Container", "odometer", true, null
+            )
     ),
     REF_DAIMLER_FUELSTATUS(
-            new Container("fuel", "fuel", Providers.DAIMLER_REFERENCE.getName(),
-                    "Automated Test Container", "fuel", true, null)
+            new Container(
+                    "fuel", "fuel", Providers.DAIMLER_REFERENCE.getName(),
+                    "Automated Test Container", "fuel", true, null
+            )
     ),
     REF_DAIMLER_CHARGE(
-            new Container("stateofcharge", "stateofcharge", Providers.DAIMLER_REFERENCE.getName(),
-                    "Automated Test Container", "stateofcharge", true, null)
+            new Container(
+                    "stateofcharge", "stateofcharge", Providers.DAIMLER_REFERENCE.getName(),
+                    "Automated Test Container", "stateofcharge", true, null
+            )
     ),
-    BMW_TEST_1(new Container("d00v010t942hi", "HERE Test Container 1",
-            Providers.BMW.getName(),
-            "This test container to be used for testing HERE Neutral Server integration with BMW CarData services",
-            "Mileage,Status of doors",
-            true,
-            ""));
+    BMW_TEST_1(
+            new Container(
+                    "d00v010t942hi", "HERE Test Container 1", Providers.BMW.getName(),
+                    "This test container to be used for testing HERE Neutral Server integration with BMW CarData services",
+                    "Mileage,Status of doors",
+                    true, ""
+            )
+    );
 
     private final Container container;
 

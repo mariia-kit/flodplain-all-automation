@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 
-public class MarketplaceCMAddVinsCall extends
-        BaseRestControllerNS<MarketplaceCMAddVinsCall> {
+public class MarketplaceCMAddVinsCall extends BaseRestControllerNS<MarketplaceCMAddVinsCall> {
 
     private final String vin;
     private final String subsId;

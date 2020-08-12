@@ -102,12 +102,11 @@ public class TestDataGeneration {
                     "&vehicle_id=" + vin +
                     "&scope=mb:user:pool:reader mb:vehicle:status:general";
             given()
-                    .log().all()
                     .headers("Content-Type", "application/json",
                             "Authorization", Users.PROVIDER.getToken())
                     .when()
                     .post(url)
-                    .then().log().all()
+                    .then()
                     .extract().response();
         }
 

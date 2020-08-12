@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SuccessConsentPageSteps {
 
-    @Step
+    @Step("Verify Success Consent page content")
     public void verifyFinalPage(ConsentInfo consentRequest) {
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);

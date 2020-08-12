@@ -62,10 +62,9 @@ public class DaimlerTokenController {
                 .param("username", login)
                 .param("password", pass)
                 .param("lang", "en_US")
-                .cookies(coo)
-                .log().all().
+                .cookies(coo).
                         when().post(loginDaimlerDo).
-                        then().log().all()
+                        then()
                 .extract().response();
 
         coo = mergeCookies(coo, loginCall.detailedCookies());

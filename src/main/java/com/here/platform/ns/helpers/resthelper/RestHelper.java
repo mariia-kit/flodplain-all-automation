@@ -87,7 +87,6 @@ public class RestHelper {
                 .header("Content-Type", "multipart/form-data")
                 .header("Authorization", token)
                 .header("X-Correlation-ID", xCorrId)
-                .log().all()
                 .multiPart("vins", file, mimeType)
                 .filter(new AllureRestAssuredCustom(requestName))
                 .when()

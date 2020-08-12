@@ -10,8 +10,7 @@ import io.restassured.response.Response;
 import java.util.function.Supplier;
 
 
-public class MarketplaceCMCreateConsentCall extends
-        BaseRestControllerNS<MarketplaceCMCreateConsentCall> {
+public class MarketplaceCMCreateConsentCall extends BaseRestControllerNS<MarketplaceCMCreateConsentCall> {
 
     private final Container container;
 

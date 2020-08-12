@@ -2,8 +2,6 @@ package com.here.platform.mp.pages;
 
 import static com.codeborne.selenide.Selenide.$;
 
-import com.here.platform.ns.dto.ProviderResource;
-import com.here.platform.ns.dto.Providers;
 import io.qameta.allure.Step;
 import lombok.AllArgsConstructor;
 
@@ -17,14 +15,14 @@ public class CreateListingPage extends BaseMPPage {
     }
 
     @Step
-    public CreateListingPage selectManufacturer(Providers provider) {
-        selectGalOption("listing-form-listing-ns-provider-select", provider.getName());
+    public CreateListingPage selectManufacturer(String provider) {
+        selectGalOption("listing-form-listing-ns-provider-select", provider);
         return this;
     }
 
     @Step
-    public CreateListingPage selectDataContainer(ProviderResource containerResource) {
-        selectGalOption("listing-form-listing-ns-container", containerResource.getName());
+    public CreateListingPage selectDataContainer(String containerResource) {
+        selectGalOption("listing-form-listing-ns-container", containerResource);
 
         return this;
     }

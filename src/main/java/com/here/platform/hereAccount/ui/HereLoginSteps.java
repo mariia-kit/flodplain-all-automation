@@ -1,5 +1,7 @@
 package com.here.platform.hereAccount.ui;
 
+import static com.codeborne.selenide.Selenide.open;
+
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
@@ -7,11 +9,11 @@ import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
-public class LoginSteps {
+public class HereLoginSteps {
 
-    private final LoginPage loginPage = new LoginPage();
+    private final HereLoginPage loginPage = new HereLoginPage();
 
-    @Step
+    @Step("Login data subject")
     public void loginDataSubject(DataSubjects dataSubjects) {
         loginPage
                 .isLoaded()
@@ -20,7 +22,7 @@ public class LoginSteps {
                 .clickSignIn();
     }
 
-    @Step
+    @Step("Login marketplace user")
     public void loginMPUser(User mpUser) {
         loginPage
                 .isLoaded()
@@ -29,6 +31,12 @@ public class LoginSteps {
                 .fillUserEmail(mpUser.getEmail())
                 .fillUserPassword(mpUser.getPass())
                 .clickSignIn();
+    }
+
+    @Step
+    public void logout() {
+        open("logout");
+        loginPage.isLoaded();
     }
 
 }

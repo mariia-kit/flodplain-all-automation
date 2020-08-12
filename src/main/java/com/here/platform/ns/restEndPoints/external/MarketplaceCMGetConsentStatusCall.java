@@ -9,12 +9,10 @@ import io.restassured.response.Response;
 import java.util.function.Supplier;
 
 
-public class MarketplaceCMGetConsentStatusCall extends
-        BaseRestControllerNS<MarketplaceCMGetConsentStatusCall> {
+public class MarketplaceCMGetConsentStatusCall extends BaseRestControllerNS<MarketplaceCMGetConsentStatusCall> {
 
     public MarketplaceCMGetConsentStatusCall(String subsId) {
-        callMessage = String
-                .format("Perform MP call to get CM ConsentRequest Status");
+        callMessage = "Perform MP call to get CM ConsentRequest Status";
         setDefaultUser(CONSUMER);
         endpointUrl = NS_Config.URL_EXTERNAL_MARKETPLACE + "/consent/subscriptions/" + subsId + "/requestStatus";
     }

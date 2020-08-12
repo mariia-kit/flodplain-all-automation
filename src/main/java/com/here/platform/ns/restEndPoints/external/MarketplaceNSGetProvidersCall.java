@@ -9,12 +9,10 @@ import io.restassured.response.Response;
 import java.util.function.Supplier;
 
 
-public class MarketplaceNSGetProvidersCall extends
-        BaseRestControllerNS<MarketplaceNSGetProvidersCall> {
+public class MarketplaceNSGetProvidersCall extends BaseRestControllerNS<MarketplaceNSGetProvidersCall> {
 
     public MarketplaceNSGetProvidersCall() {
-        callMessage = String
-                .format("Perform MP call to gather NS Data Providers info");
+        callMessage = "Perform MP call to gather NS Data Providers info";
         setDefaultUser(PROVIDER);
         endpointUrl = NS_Config.URL_EXTERNAL_MARKETPLACE + "/neutral_server/providers";
     }

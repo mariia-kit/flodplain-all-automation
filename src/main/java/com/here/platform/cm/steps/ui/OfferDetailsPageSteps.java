@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class OfferDetailsPageSteps {
 
-    @Step
+    @Step("Verify consent details page and continue")
     public void verifyConsentDetailsPageAndCountinue(ConsentInfo consentInfo) {
         $(".container-content [data-cy=title]").shouldHave(Condition.text(consentInfo.getTitle()));
         $(".container-content [data-cy=consumerName]")
@@ -22,7 +22,7 @@ public class OfferDetailsPageSteps {
         acceptAndContinueConsent();
     }
 
-    @Step
+    @Step("Accept with HERE and continue to data provider site")
     private void acceptAndContinueConsent() {
         $("a[href='javascript:void(0)']").click();
     }

@@ -48,9 +48,7 @@ public class MarketplaceManageListingCall {
     @Step("Create marketplace listing for container {container.name}")
     public NeutralServerResponseAssertion createListing(Container container, String resRealm) {
         Random r = new Random();
-        String containerTitle = String
-                .format("[NS] Container Listing %s %s", container.getName(),
-                        r.nextInt(10000));
+        String containerTitle = String.format("[NS] Container Listing %s %s", container.getName(), r.nextInt(10000));
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings";
         String body = "{\n" +

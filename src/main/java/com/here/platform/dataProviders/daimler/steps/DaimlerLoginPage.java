@@ -12,9 +12,9 @@ import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
-public class DLoginPages {
+public class DaimlerLoginPage {
 
-    @Step
+    @Step("Login data subject on Mercedes.me site")
     public void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
@@ -24,7 +24,7 @@ public class DLoginPages {
         $("#ciam-weblogin-auth-login-button").click();
     }
 
-    @Step
+    @Step("Accept consent scopes")
     public void approveDaimlerScopesAndSubmit() {
         for (SelenideElement scope : $$("[name*='scope:mb']")) {
             scope.click();

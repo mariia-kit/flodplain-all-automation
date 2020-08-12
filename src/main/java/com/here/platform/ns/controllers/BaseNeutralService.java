@@ -25,7 +25,6 @@ public abstract class BaseNeutralService<T> {
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .log().all()
                 .filters(new AllureRestAssured());
 
         if (!authorizationToken.isEmpty()) {

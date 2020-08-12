@@ -25,8 +25,8 @@ import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.daimler.steps.DLoginPages;
-import com.here.platform.hereAccount.ui.LoginSteps;
+import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
+import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Step;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -75,12 +75,12 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
 
-        LoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubject);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
         this.dataSubject.setBearerToken(getUICmToken());
-        DLoginPages.loginDataSubjectOnDaimlerSite(dataSubject);
-        DLoginPages.approveDaimlerScopesAndSubmit();
+        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(dataSubject);
+        DaimlerLoginPage.approveDaimlerScopesAndSubmit();
 
         SuccessConsentPageSteps.verifyFinalPage(consentRequest);
 
@@ -108,7 +108,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.vin);
 
         open(crid);
-        LoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubject);
         fuSleep();
         updateSessionStorageData(crid, dataSubject.vin);
         dataSubject.setBearerToken(getUICmToken());

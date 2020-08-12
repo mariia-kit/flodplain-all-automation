@@ -17,7 +17,7 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.hereAccount.ui.LoginSteps;
+import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class DashboardTests extends BaseUITests {
         userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
 
         open(ConsentPageUrl.getEnvUrlRoot());
-        LoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubject);
 
         $(".offers-list").waitUntil(Condition.visible, 10000);
         dataSubject.setBearerToken(getUICmToken());
