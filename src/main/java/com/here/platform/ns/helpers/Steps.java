@@ -76,7 +76,7 @@ public class Steps {
                 .withToken(PROVIDER)
                 .addContainer(container);
         if ((response.getStatusCode() != HttpStatus.SC_OK) && (response.getStatusCode() != HttpStatus.SC_CONFLICT)) {
-            throw new RuntimeException("Error creating container:" + response.getStatusCode());
+            throw new RuntimeException("Error creating container:" + response.getStatusCode() + " " + response.getBody().prettyPrint());
         }
     }
 

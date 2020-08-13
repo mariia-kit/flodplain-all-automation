@@ -144,8 +144,8 @@ public class AaaCall {
                 .extract().response().jsonPath().get("policies.find {it.policyId == '" + policyId + "'}.id");
     }
 
-    public void removeGroupFromPolicy(String groupId, String policyId) {
-        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId + "/policies/" + policyId;
+    public void removeGroupFromPolicy(String groupId, String policyLinkId) {
+        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId + "/policies/" + policyLinkId;
         given()
 
                 .headers("Authorization", "Bearer " + Users.AAA.getToken())

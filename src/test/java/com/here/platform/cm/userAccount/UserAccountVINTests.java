@@ -94,7 +94,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
         var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, secondUserLogin);
         new ResponseAssertion(secondAdd)
-                .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
+                .statusCodeIsEqualTo(StatusCode.CONFLICT)
                 .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
     }
 
@@ -108,7 +108,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
         var addExistentVINResponse = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
         new ResponseAssertion(addExistentVINResponse)
-                .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
+                .statusCodeIsEqualTo(StatusCode.CONFLICT)
                 .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
     }
 

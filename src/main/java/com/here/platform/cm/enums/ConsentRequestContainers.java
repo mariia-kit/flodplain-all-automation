@@ -7,6 +7,7 @@ import com.here.platform.common.EnumByEnv;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -105,6 +106,13 @@ public enum ConsentRequestContainers {
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
             List.of("charge"),
             MPProviders.DAIMLER_EXPERIMENTAL
+    ),
+    BMW_MILEAGE(
+            "S00I000M001OK", "bmwcardata_mileage", "Vehicle mileage",
+            "",
+            StringUtils.EMPTY, StringUtils.EMPTY,
+            List.of("mileage"),
+            MPProviders.BMW_TEST
     );
 
     public final String id, name, containerDescription, scopeValue, clientId, clientSecret;

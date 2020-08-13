@@ -51,7 +51,8 @@ public enum CMErrorResponse {
     TOO_LARGE_EXCEPTION("E503124", "Content is too large", "Write less data"),
     CONSENT_UPDATE_INFO_NOT_FOUND("E503136", "ConsentRequestAsyncUpdateInfo is not found", CORRECT_DATA),
     VIN_NOT_FOUND_EXCEPTION("E503142", "VIN not found", CORRECT_DATA),
-    ALREADY_EXIST_EXCEPTION("E503143", "Entity already exist", CORRECT_DATA);
+    ALREADY_EXIST_EXCEPTION("E503143", "Entity already exist", CORRECT_DATA),
+    CONSENT_ALREADY_REVOKED("E503148", "Revoked consent couldn't be approved", CORRECT_DATA);
 
 
     private final String code, title, action;
