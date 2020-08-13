@@ -10,6 +10,7 @@ import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -37,14 +38,24 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.utils.PropertiesLoader;
+import io.qameta.allure.selenide.AllureSelenide;
+import io.qameta.allure.selenide.LogType;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
@@ -52,10 +63,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class E2EUITest extends BaseE2ETest {
 
     static {
-        System.setProperty("env", "sit");
-
         Configuration.baseUrl = URL_EXTERNAL_MARKETPLACE_UI.toString().replace("marketplace", "");
+        Configuration.driverManagerEnabled = true;
+        Configuration.pollingInterval = 400;
         Configuration.browserSize = "1366x1000";
+        SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
     private final ListingsListPage listingsPage = new ListingsListPage();
@@ -63,7 +75,6 @@ public class E2EUITest extends BaseE2ETest {
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();
-
     private final Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_FUEL.getContainer();
     private final ConsentInfo consentRequest =
             new ConsentInfo()
@@ -75,6 +86,12 @@ public class E2EUITest extends BaseE2ETest {
                     .resources(List.of(targetContainer.getResourceNames()))
                     .vinLabel(new VIN(targetDataSubject.vin).label());
     private final AtomicReference<String> subscriptionId = new AtomicReference<>("");
+
+    @org.testcontainers.junit.jupiter.Container
+    public BrowserWebDriverContainer chrome =
+            new BrowserWebDriverContainer()
+                    .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
+                    .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
     @RegisterExtension
     ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
     @RegisterExtension
@@ -82,6 +99,13 @@ public class E2EUITest extends BaseE2ETest {
             .targetDataSubject(targetDataSubject)
             .build();
     private String listingHrn;
+
+    @BeforeEach
+    void setUpBrowserContainer() {
+        RemoteWebDriver driver = chrome.getWebDriver();
+        WebDriverRunner.setWebDriver(driver);
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+    }
 
     @AfterEach
     void afterEach() {

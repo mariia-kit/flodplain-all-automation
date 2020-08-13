@@ -22,6 +22,7 @@ import io.qameta.allure.selenide.LogType;
 import java.io.File;
 import java.util.logging.Level;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -33,10 +34,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.html5.RemoteWebStorage;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @ExtendWith(TextReportExtension.class)
-//@Testcontainers
+@Testcontainers
 @Execution(ExecutionMode.SAME_THREAD)
 public class BaseUITests extends BaseCMTest {
 
@@ -48,22 +51,29 @@ public class BaseUITests extends BaseCMTest {
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
-    final DataSubjects dataSubject = DataSubjects.getNext();
-    //    @Container
+    @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
+    final DataSubjects dataSubject = DataSubjects.getNext();
 
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
-    protected UserAccountController userAccountController = new UserAccountController();
-
-
-    //    @BeforeEach
+    @BeforeEach
     void setUpBrowserContainer() {
         RemoteWebDriver driver = chrome.getWebDriver();
         WebDriverRunner.setWebDriver(driver);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+    }
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
+
+    protected UserAccountController userAccountController = new UserAccountController();
+    //todo extract to IPlatformPages
+
+    public static String getUICmToken() {
+        sleep(1000);
+        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
+        LocalStorage storage = webStorage.getLocalStorage();
+        return "Bearer " + storage.getItem("CM_TOKEN");
     }
 
     @AfterEach
@@ -98,14 +108,6 @@ public class BaseUITests extends BaseCMTest {
         LocalStorage storage = webStorage.getLocalStorage();
         storage.setItem("VIN_NUMBER", vinNumber);
         storage.setItem("CONSENT_REQUEST_ID", consentRequestId);
-    }
-
-    //todo extract to IPlatformPages
-    public static String getUICmToken() {
-        sleep(1000);
-        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
-        LocalStorage storage = webStorage.getLocalStorage();
-        return "Bearer " + storage.getItem("CM_TOKEN");
     }
 
 }
