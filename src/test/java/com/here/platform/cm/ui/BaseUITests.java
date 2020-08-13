@@ -51,29 +51,28 @@ public class BaseUITests extends BaseCMTest {
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
+    final DataSubjects dataSubject = DataSubjects.getNext();
     @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    final DataSubjects dataSubject = DataSubjects.getNext();
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
+    protected UserAccountController userAccountController = new UserAccountController();
+
+    public static String getUICmToken() {
+        //todo extract to IPlatformPages
+        sleep(1000);
+        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
+        LocalStorage storage = webStorage.getLocalStorage();
+        return "Bearer " + storage.getItem("CM_TOKEN");
+    }
 
     @BeforeEach
     void setUpBrowserContainer() {
         RemoteWebDriver driver = chrome.getWebDriver();
         WebDriverRunner.setWebDriver(driver);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
-    }
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
-
-    protected UserAccountController userAccountController = new UserAccountController();
-    //todo extract to IPlatformPages
-
-    public static String getUICmToken() {
-        sleep(1000);
-        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
-        LocalStorage storage = webStorage.getLocalStorage();
-        return "Bearer " + storage.getItem("CM_TOKEN");
     }
 
     @AfterEach
