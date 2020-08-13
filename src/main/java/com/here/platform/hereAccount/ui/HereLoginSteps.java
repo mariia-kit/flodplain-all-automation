@@ -2,6 +2,7 @@ package com.here.platform.hereAccount.ui;
 
 import static com.codeborne.selenide.Selenide.open;
 
+import com.codeborne.selenide.Selenide;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
@@ -37,6 +38,8 @@ public class HereLoginSteps {
     public void logout() {
         open("logout");
         loginPage.isLoaded();
+        Selenide.clearBrowserCookies();
+        Selenide.clearBrowserLocalStorage();
     }
 
 }

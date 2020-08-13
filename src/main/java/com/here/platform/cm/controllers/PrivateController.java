@@ -18,18 +18,8 @@ public class PrivateController extends BaseConsentService<PrivateController> {
             forbiddenToRemoveConsumers = stream(MPConsumers.values()).map(MPConsumers::getRealm).collect(toList());
 
 
-    public static String getPrivateBearer() {
-        return "Bearer temp";
-    }
-
     private RequestSpecification basePrivateController() {
         return consentServiceClient("private");
-    }
-
-    @Step
-    public Response hardDeleteConsentRequest(final String consentRequestId) {
-        return basePrivateController()
-                .delete("/consentRequest/{consentRequestId}", consentRequestId);
     }
 
     @Step

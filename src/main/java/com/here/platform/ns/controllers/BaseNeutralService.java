@@ -48,6 +48,11 @@ public abstract class BaseNeutralService<T> {
         return (T) this;
     }
 
+    public T withBearerToken(String userToken) {
+        setAuthorizationToken(userToken);
+        return (T) this;
+    }
+
     public T withToken(Users users) {
         setAuthorizationToken(users.getToken());
         return (T) this;

@@ -22,7 +22,6 @@ public class NeutralServerResponseAssertion {
     private final Response response;
 
     public NeutralServerResponseAssertion(Response response) {
-        response.then().log().all();
         this.response = response;
     }
 

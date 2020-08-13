@@ -30,7 +30,7 @@ public class ReferenceTokenController {
                 .urlEncodingEnabled(false)
                 .redirects().follow(false)
                 .when().get(authorize);
-        String consentId = StringUtils.substringBetween(authResp.getBody().prettyPrint(),
+        String consentId = StringUtils.substringBetween(authResp.asString(),
                 "consent?consent_id=", "\">");
 
         String makeConsent = NS_Config.REFERENCE_J_PROV_URL.toString() + "/consent";

@@ -3,7 +3,6 @@ package com.here.platform.hereAccount.ui;
 import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
 
 
@@ -12,8 +11,6 @@ public class HereLoginPage {
     @Step
     public HereLoginPage isLoaded() {
         $("#sign-in-form").waitUntil(Condition.visible, 10000);
-        Selenide.clearBrowserCookies();
-        Selenide.clearBrowserLocalStorage();
         return this;
     }
 

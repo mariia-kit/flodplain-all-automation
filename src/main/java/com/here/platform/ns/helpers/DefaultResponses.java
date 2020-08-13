@@ -76,8 +76,7 @@ public class DefaultResponses {
             return response.getBody().as(Container.class);
         } catch (ClassCastException | IllegalStateException e) {
             throw new RuntimeException(
-                    "No sign of Container in result body detected!" + response.getBody()
-                            .prettyPrint());
+                    "No sign of Container in result body detected!" + response.asString());
         }
     }
 
@@ -86,8 +85,7 @@ public class DefaultResponses {
             return response.getBody().as(DataProvider.class);
         } catch (ClassCastException | IllegalStateException e) {
             throw new RuntimeException(
-                    "No sign of DataProvider in result body detected!" + response.getBody()
-                            .prettyPrint());
+                    "No sign of DataProvider in result body detected!" + response.asString());
         }
     }
 

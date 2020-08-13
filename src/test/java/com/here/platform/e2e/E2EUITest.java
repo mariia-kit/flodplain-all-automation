@@ -9,7 +9,7 @@ import static com.here.platform.ns.utils.NS_Config.URL_EXTERNAL_MARKETPLACE_UI;
 import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Configuration;
-import com.here.platform.cm.controllers.UserAccountController;
+import com.codeborne.selenide.WebDriverRunner;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -18,6 +18,7 @@ import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.UserAccountExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
@@ -34,10 +35,12 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
+import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.ns.utils.PropertiesLoader;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -50,6 +53,9 @@ public class E2EUITest extends BaseE2ETest {
 
     static {
         System.setProperty("env", "sit");
+
+        Configuration.baseUrl = URL_EXTERNAL_MARKETPLACE_UI.toString().replace("marketplace", "");
+        Configuration.browserSize = "1366x1000";
     }
 
     private final ListingsListPage listingsPage = new ListingsListPage();
@@ -57,6 +63,7 @@ public class E2EUITest extends BaseE2ETest {
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();
+
     private final Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_FUEL.getContainer();
     private final ConsentInfo consentRequest =
             new ConsentInfo()
@@ -67,28 +74,33 @@ public class E2EUITest extends BaseE2ETest {
                     .containerDescription(targetContainer.getDescription())
                     .resources(List.of(targetContainer.getResourceNames()))
                     .vinLabel(new VIN(targetDataSubject.vin).label());
+    private final AtomicReference<String> subscriptionId = new AtomicReference<>("");
     @RegisterExtension
     ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
-
-    @BeforeEach
-    void beforeEach() {
-        var userAccountController = new UserAccountController();
-        userAccountController.deleteVINForUser(targetDataSubject.vin, targetDataSubject.generateBearerToken());
-        userAccountController.deleteConsumerForUser(targetDataConsumer.getRealm(), targetDataSubject.getBearerToken());
-        Configuration.baseUrl = URL_EXTERNAL_MARKETPLACE_UI.toString().replace("marketplace", "");
-        Configuration.browserSize = "1366x1000";
-        open("marketplace");
-    }
+    @RegisterExtension
+    UserAccountExtension userAccountCleanUpExtension = UserAccountExtension.builder()
+            .targetDataSubject(targetDataSubject)
+            .build();
+    private String listingHrn;
 
     @AfterEach
     void afterEach() {
-        //todo implement subscription cancellation and listing deletion
+        if (StringUtils.isBlank(subscriptionId.get())) {
+            return;
+        }
+        PropertiesLoader.getInstance().resetUserLogins();
+
+        var mpListings = new MarketplaceManageListingCall();
+        mpListings.beginCancellation(subscriptionId.get());
+        mpListings.deleteListing(listingHrn);
     }
 
     @Test
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
         var listingName = "[E2E test] " + faker.company().buzzword();
+
+        step("Open Marketplace", () -> open("marketplace/provider/listings"));
 
         step("Login Data Provider", () -> HereLoginSteps.loginMPUser(targetDataProvider));
 
@@ -122,14 +134,14 @@ public class E2EUITest extends BaseE2ETest {
             });
         });
 
-        String listingHrn = listingsPage.isLoaded()
+        listingHrn = listingsPage.isLoaded()
                 .getHrnForListingByName(listingName);
 
         String providerBearerToken = listingsPage.fetchHereAccessToken();
 
         var listingController = new ListingsController();
         var createdInvite = listingController
-                .withToken(providerBearerToken)
+                .withBearerToken(providerBearerToken)
                 .inviteConsumerToListing(getInvite(listingHrn, targetDataConsumer));
 
         step("Logout Data Provider", HereLoginSteps::logout);
@@ -144,7 +156,7 @@ public class E2EUITest extends BaseE2ETest {
 
         step("Accept invite by data consumer", () -> {
             listingController
-                    .withToken(consumerBearerToken)
+                    .withBearerToken(consumerBearerToken)
                     .acceptInvite(createdInvite.getId());
         });
 
@@ -162,9 +174,11 @@ public class E2EUITest extends BaseE2ETest {
                     .confirmSubscriptionActivation();
         });
 
-        AtomicReference<String> consentRequestUrl = new AtomicReference<>("");
+        var consentRequestUrl = new AtomicReference<>("");
         step("Create consent request by Data Consumer", () -> {
             var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();
+            subscriptionId.set(getSubscriptionIdFromUrl());
+
             consumerSubscriptionPage
                     .createConsentRequest()
                     .fillConsentRequestTitle(consentRequest.getTitle())
@@ -200,7 +214,7 @@ public class E2EUITest extends BaseE2ETest {
 
         step("Get vehicle resources by Data Consumer from Data Provider", () -> {
             var response = new ContainerDataController()
-                    .withToken(MPConsumers.OLP_CONS_1.generateBearerToken()) //todo reuse targetDataProvider
+                    .withBearerToken(MPConsumers.OLP_CONS_1.generateToken())
                     .withCampaignId(crid)
                     .getContainerForVehicle(
                             targetContainer.getDataProviderByName(),
@@ -209,6 +223,13 @@ public class E2EUITest extends BaseE2ETest {
                     );
             new NeutralServerResponseAssertion(response).expectedCode(200);
         });
+    }
+
+    private String getSubscriptionIdFromUrl() {
+        var pathSegments = UriComponentsBuilder.fromUriString(WebDriverRunner.url()).build()
+                .getPathSegments();
+
+        return pathSegments.get(pathSegments.size() - 2);
     }
 
     private String getCridFromUrl(String consentRequestUrl) {

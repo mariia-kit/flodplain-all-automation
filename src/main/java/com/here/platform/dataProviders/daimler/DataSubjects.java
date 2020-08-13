@@ -5,6 +5,7 @@ import com.here.platform.common.FileIO;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 
 public enum DataSubjects {
@@ -49,9 +50,12 @@ public enum DataSubjects {
         }
     }
 
-    //todo refactor as extension https://www.baeldung.com/junit-5-extensions
     public String getBearerToken() {
-        return FileIO.readFile(vinFile());
+        String cmToken = FileIO.readFile(vinFile());
+        if (StringUtils.isBlank(cmToken)) {
+            return generateBearerToken();
+        }
+        return cmToken;
     }
 
     public void setBearerToken(String targetToken) {

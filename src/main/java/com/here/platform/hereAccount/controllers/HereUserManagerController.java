@@ -55,7 +55,7 @@ public class HereUserManagerController extends BaseHereAccountController {
         } else if (tokenResponse.getStatusCode() == HttpStatus.SC_OK) {
             return tokenResponse.jsonPath().get("accessToken");
         } else {
-            Assertions.fail("Error receiving token or acceptance token! " + tokenResponse.getBody().prettyPrint());
+            Assertions.fail("Error receiving token or acceptance token! " + tokenResponse.asString());
             return null;
         }
     }

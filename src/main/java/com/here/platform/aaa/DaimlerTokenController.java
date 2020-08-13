@@ -89,7 +89,7 @@ public class DaimlerTokenController {
                 .redirects().follow(false)
                 .when().post(consentDo);
         coo = mergeCookies(coo, loginCall.detailedCookies());
-        String newData = StringUtils.substringBetween(consentCall.getBody().prettyPrint(),
+        String newData = StringUtils.substringBetween(consentCall.asString(),
                 "name=\"sessionData\" value=\"", "\"/>");
 
         String authoriseConsent = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize/consent";

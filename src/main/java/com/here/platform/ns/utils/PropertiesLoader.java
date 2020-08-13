@@ -2,6 +2,7 @@ package com.here.platform.ns.utils;
 
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.UserType_NS;
+import com.here.platform.ns.dto.Users;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,10 +20,9 @@ import org.apache.log4j.Logger;
 public class PropertiesLoader {
 
     private final static Logger logger = Logger.getLogger(PropertiesLoader.class);
-    public final Properties mainProperties;
-
     @Getter
     private final static String TOKEN_URL = "build/tmp/tokens.txt";
+    public final Properties mainProperties;
 
     private PropertiesLoader() {
         mainProperties = new Properties();
@@ -87,6 +87,16 @@ public class PropertiesLoader {
             logger.error("Error loading token for " + userEmail, e);
         }
         return res;
+    }
+
+    public void resetUserLogins() {
+        System.out.println("PropertiesLoader.resetUserLogins");
+        new File(TOKEN_URL).delete();
+        boolean exists = new File(TOKEN_URL).exists();
+        System.out.println("exists = " + exists);
+        for (Users user : Users.values()) {
+            user.getUser().setToken("");
+        }
     }
 
 

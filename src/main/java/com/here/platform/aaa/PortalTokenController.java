@@ -53,7 +53,7 @@ public class PortalTokenController {
                 .get(portalUrl + location);
         Cookies coo1 = signInResp.getDetailedCookies();
 
-        String body = signInResp.getBody().prettyPrint();
+        String body = signInResp.getBody().asString();
         String csrfToken = body.substring(body.indexOf("csrf: \""), body.indexOf("\",\n"
                 + "            terms: {")).replace("csrf: \"", "");
 

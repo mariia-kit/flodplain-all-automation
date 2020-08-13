@@ -262,13 +262,13 @@ public class AaaCall {
         String url = NS_Config.URL_AUTH.toString() + "/policy/" + policyId;
 
         return given()
-
-                .headers("Content-Type", "application/json",
-                        "Authorization", "Bearer " + Users.AAA.getToken())
+                .headers(
+                        "Content-Type", "application/json",
+                        "Authorization", "Bearer " + Users.AAA.getToken()
+                )
                 .when()
                 .get(url)
-                .then()
-                .extract().response().body().prettyPrint();
+                .asString();
     }
 
     public String getPolicyLink(String groupId, String policyId) {
