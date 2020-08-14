@@ -15,7 +15,7 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.common.extensions.OnboardApplicationExtension;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.common.extensions.ProviderApplicationRemoveExtension;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -39,8 +39,8 @@ public class ConsentRequestInfoTests extends BaseCMTest {
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);
     @RegisterExtension
-    final OnboardApplicationExtension applicationExtension =
-            OnboardApplicationExtension.builder().consentRequestData(testConsentRequest).build();
+    final OnboardAndRemoveApplicationExtension applicationExtension =
+            OnboardAndRemoveApplicationExtension.builder().consentRequestData(testConsentRequest).build();
 
     @RegisterExtension
     final ProviderApplicationRemoveExtension applicationRemoveExtension =

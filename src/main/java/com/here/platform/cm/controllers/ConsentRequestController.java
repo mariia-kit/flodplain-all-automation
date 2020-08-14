@@ -16,7 +16,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     private String consumerBearerToken = "";
 
     public ConsentRequestController withConsumerToken(MPConsumers consumer) {
-        this.consumerBearerToken = "Bearer " + consumer.getToken();
+        this.consumerBearerToken = String.join(" ", "Bearer", consumer.getToken());
         return this;
     }
 
@@ -134,8 +134,8 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
 
     @Step
     public Response deleteConsentRequest(final String consentRequestId) {
-        return consentServiceClient("consentRequestBasePath")
-                .delete("{consentRequestId}", consentRequestId);
+        return consentServiceClient(consentRequestBasePath)
+                .delete(consentRequestId);
     }
 
     private String getContentTypeByFile(File targetFile) {

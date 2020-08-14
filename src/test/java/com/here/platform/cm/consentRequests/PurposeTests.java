@@ -12,7 +12,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.common.extensions.OnboardApplicationExtension;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -72,8 +72,8 @@ public class PurposeTests extends BaseCMTest {
                 .consumerId(faker.crypto().md5())
                 .containerId(targetContainer.id);
         @RegisterExtension
-        final OnboardApplicationExtension onboardApplicationExtension =
-                OnboardApplicationExtension.builder().consentRequestData(targetConsentRequest).build();
+        final OnboardAndRemoveApplicationExtension onboardApplicationExtension =
+                OnboardAndRemoveApplicationExtension.builder().consentRequestData(targetConsentRequest).build();
 
         private String crid;
 
