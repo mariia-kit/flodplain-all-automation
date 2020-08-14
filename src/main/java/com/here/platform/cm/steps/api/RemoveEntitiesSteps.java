@@ -38,8 +38,9 @@ public class RemoveEntitiesSteps {
                     .withConsumerToken(MPConsumers.OLP_CONS_1)
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
         }
-        privateController.withCMToken();
-        var deleteConsentRequestResponse = consentRequestController.deleteConsentRequest(crid);
+        var deleteConsentRequestResponse = privateController
+                .withCMToken()
+                .hardDeleteConsentRequest(crid);
         StepExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
 

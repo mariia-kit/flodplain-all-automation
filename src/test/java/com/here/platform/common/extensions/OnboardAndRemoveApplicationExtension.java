@@ -7,12 +7,15 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import lombok.Builder;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+
 @Builder
-public class OnboardApplicationExtension implements BeforeEachCallback {
+public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final ConsentRequestData consentRequestData;
 
@@ -23,6 +26,11 @@ public class OnboardApplicationExtension implements BeforeEachCallback {
                 consentRequestData.getConsumerId(),
                 ConsentRequestContainers.getById(consentRequestData.getContainerId())
         );
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) {
+        RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities(consentRequestData);
     }
 
     public Consumer getOnboardedConsumer() {

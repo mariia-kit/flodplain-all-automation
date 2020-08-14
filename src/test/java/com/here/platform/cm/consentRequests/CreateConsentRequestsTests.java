@@ -1,7 +1,5 @@
 package com.here.platform.cm.consentRequests;
 
-import static com.here.platform.cm.steps.api.OnboardingSteps.onboardApplicationProviderAndConsumer;
-
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
@@ -9,19 +7,20 @@ import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import io.qameta.allure.TmsLink;
 import java.io.File;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Create consent request")
@@ -40,28 +39,24 @@ public class CreateConsentRequestsTests extends BaseCMTest {
             .addAdditionalLinksItem(
                     new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url()))
             .containerId(testScope.id);
+
+    @RegisterExtension
+    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
+            .consentRequestData(testConsentRequest).build();
+    @RegisterExtension
+    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
+
     private String crid;
-    private File testFileWithVINs = null;
 
     @BeforeEach
     void beforeEach() {
-        onboardApplicationProviderAndConsumer(
-                testConsentRequest.getProviderId(),
-                testConsentRequest.getConsumerId(),
-                testScope
-        );
-
         consentRequestController.withCMToken();
         final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
         crid = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class)
                 .getConsentRequestId();
-    }
-
-    @AfterEach
-    void cleanUp() {
-        RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequest);
+        consentRequestRemoveExtension.cridToRemove(crid);
     }
 
     @Test
@@ -86,7 +81,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
     @TmsLink("NS-1382")
     void addVinsToEmptyConsentRequestViaFileTest() {
         var testVin = VIN.generate(17);
-        testFileWithVINs = new VinsToFile(
+        File testFileWithVINs = new VinsToFile(
                 testVin,
                 VIN.generate(17)
         ).json();
@@ -106,6 +101,8 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         new ResponseAssertion(statusForConsentRequestByIdResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
+
+        consentRequestRemoveExtension.fileWithVINsToRemove(testFileWithVINs);
     }
 
 }

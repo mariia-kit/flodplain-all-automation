@@ -52,6 +52,12 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         return basePrivateController().delete("/provider/{providerId}", providerId);
     }
 
+    @Step
+    public Response hardDeleteConsentRequest(final String consentRequestId) {
+        return basePrivateController()
+                .delete("/consentRequest/{consentRequestId}", consentRequestId);
+    }
+
     private boolean isForbiddenToRemoveProvider(String providerId) {
         return forbiddenToRemoveProviders.contains(providerId.toLowerCase());
     }
@@ -59,6 +65,5 @@ public class PrivateController extends BaseConsentService<PrivateController> {
     private boolean isForbiddenToRemoveConsumer(String consumerId) {
         return consumerId == null || forbiddenToRemoveConsumers.contains(consumerId.toLowerCase());
     }
-
 
 }

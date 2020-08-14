@@ -13,6 +13,7 @@ import org.hamcrest.Matchers;
 class StepExpects {
 
     private void expectStatusCodeFor(StatusCode statusCode, Response targetResponse) {
+        //ignore if forbidden to execute the request, for example deleteProvider, dataConsumer
         if (targetResponse == null) {
             return;
         }
