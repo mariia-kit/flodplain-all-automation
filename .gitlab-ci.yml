@@ -71,6 +71,8 @@ test_ns_auto:
   extends: .test_run
   rules:
     - if: $TASK_NS
+      when: delayed
+      start_in: 5 minutes
   variables:
     TASK: $TASK_NS
     REPORT_URL: "build/reports_ns"
@@ -94,7 +96,10 @@ test_ns_smoke_dev:
     TASK: "nsTestsSmoke"
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_cm_smoke_dev:
@@ -105,7 +110,10 @@ test_cm_smoke_dev:
     TASK: "smokeCMTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_ns_regression_dev:
@@ -116,7 +124,10 @@ test_ns_regression_dev:
     TASK: "nsTestRegression"
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_cm_regression_dev:
@@ -127,7 +138,10 @@ test_cm_regression_dev:
     TASK: "devTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_e2e_dev:
@@ -138,7 +152,10 @@ test_e2e_dev:
     TASK: "e2eTests"
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 #sit operations
@@ -150,7 +167,10 @@ test_ns_smoke_sit:
     TASK: "nsTestsSmoke"
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_cm_smoke_sit:
@@ -161,7 +181,10 @@ test_cm_smoke_sit:
     TASK: "smokeCMTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_ns_regression_sit:
@@ -172,7 +195,10 @@ test_ns_regression_sit:
     TASK: "nsTestRegression"
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_cm_regression_sit:
@@ -183,7 +209,10 @@ test_cm_regression_sit:
     TASK: "sitTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_e2e_sit:
@@ -194,7 +223,10 @@ test_e2e_sit:
     TASK: "e2eTests"
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 test_ns_prod:
@@ -205,7 +237,10 @@ test_ns_prod:
     TASK: "nsTestProd"
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
-  when: manual
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
   allow_failure: true
 
 #Instruments
