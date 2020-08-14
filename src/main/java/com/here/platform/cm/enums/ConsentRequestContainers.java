@@ -104,7 +104,7 @@ public enum ConsentRequestContainers {
             "mb:user:pool:reader mb:vehicle:status:general",
             DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
-            List.of("charge"),
+            List.of("stateofcharge"),
             MPProviders.DAIMLER_EXPERIMENTAL
     ),
     BMW_MILEAGE(
