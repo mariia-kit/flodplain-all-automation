@@ -5,6 +5,7 @@ import com.here.account.http.apache.ApacheHttpClientProvider;
 import com.here.account.oauth2.ClientCredentialsGrantRequest;
 import com.here.account.oauth2.HereAccount;
 
+
 public class ApplicationTokenController {
 
     public synchronized static String createConsumerAppToken(String host, String clientIdValue, String clientSecretValue) {
@@ -17,4 +18,5 @@ public class ApplicationTokenController {
 
         return freshToken.get().getAccessToken();
     }
+
 }

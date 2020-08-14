@@ -1,4 +1,4 @@
-package com.here.platform.dataProviders;
+package com.here.platform.dataProviders.daimler;
 
 import static io.restassured.RestAssured.given;
 

@@ -4,10 +4,11 @@ import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.instruments.CleanUp;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-
 import java.io.File;
 
+
 public class DataCleanUpNS {
+
     public static void main(String[] args) {
         String env = System.getProperty("env");
         if (!"prod".equalsIgnoreCase(env)) {
@@ -26,4 +27,5 @@ public class DataCleanUpNS {
         }
 
     }
+
 }

@@ -1,15 +1,17 @@
-package com.here.platform.dataProviders;
+package com.here.platform.dataProviders.daimler;
 
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.FileIO;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 
 public enum DataSubjects {
 
-    _26CFFF5D2475F27C70("26CFFF5D2475F27C70", "noxohi7910@aprimail.com", "7wdh@#*EDjdk"), //only for autotests user
+    //todo clean up dev/sit/prod "vin" table for CM
+    _26CFFF5D2475F27C70("26CFFF5D2475F27C70", "noxohi7910@aprimail.com", "7wdh@#*EDjdk"),
     B9B1096165AF65FBB2("B9B1096165AF65FBB2", "bogix@appmail24.com", "$GAB.km_A2v6a@#"),
     CED702C914AA587F98("CED702C914AA587F98", "birahe7954@etcone.net", "GK9?TgFBsR9#ajt"),
     CF42CFD028810C284E("CF42CFD028810C284E", "xeviy@5sun.net", "ZD9ZnnvKt@&sd6t"),
@@ -21,8 +23,7 @@ public enum DataSubjects {
     B978FB280D54D80444("B978FB280D54D80444", "riyeyij632@lywenw.com", "%6Lx_8uUnYHC%As"),
     _8AB90888E052A342F2("8AB90888E052A342F2", "kowemok405@lywenw.com", "Ayepa9W$+jCvkNg"),
     CC7F49BF608F46D1DB("CC7F49BF608F46D1DB", "cadaji7867@lefaqr5.com", "#-8Z8-2?4t!WLBt"),
-    AD1D74EE1D30352A5E("AD1D74EE1D30352A5E", "tegiro9762@seberkd.com",
-            "f,aeEP_84_B.H5&"); //todo remove AD1D74EE1D30352A5 for this user on the prod
+    AD1D74EE1D30352A5E("AD1D74EE1D30352A5E", "tegiro9762@seberkd.com", "f,aeEP_84_B.H5&");
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(-1);
     public final String vin, username, password;
@@ -50,7 +51,11 @@ public enum DataSubjects {
     }
 
     public String getBearerToken() {
-        return FileIO.readFile(vinFile());
+        String cmToken = FileIO.readFile(vinFile());
+        if (StringUtils.isBlank(cmToken)) {
+            return generateBearerToken();
+        }
+        return cmToken;
     }
 
     public void setBearerToken(String targetToken) {

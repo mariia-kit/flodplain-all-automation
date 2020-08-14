@@ -9,6 +9,7 @@ import static lv.ctco.zephyr.util.Utils.log;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lv.ctco.zephyr.Config;
 import lv.ctco.zephyr.Runner.CliConfigLoader;
@@ -60,8 +61,8 @@ public class Zephyroth {
         zephyrService.linkExecutionsToTestCycle(metaInfo, testCases);
 
         int max = 20;
-        long uniqKeys = testCases.stream().map(test -> test.getId()).distinct().count();
-        while(max > 0) {
+        long uniqKeys = testCases.stream().map(TestCase::getId).distinct().count();
+        while (max > 0) {
             max--;
             int currentIssues = getAllExecutionsCount(config);
             log(format("Test cases linked to Cycle %s\n", currentIssues));
@@ -78,7 +79,7 @@ public class Zephyroth {
         log("Fetching JIRA Test Executions for the project");
         int skip = 0;
         String search = "project='" + config.getValue(PROJECT_KEY) + "'%20and%20fixVersion='"
-                + URLEncoder.encode(config.getValue(RELEASE_VERSION), "UTF-8") + "'%20and%20cycleName='" + config.getValue(TEST_CYCLE) + "'";
+                + URLEncoder.encode(config.getValue(RELEASE_VERSION), StandardCharsets.UTF_8) + "'%20and%20cycleName='" + config.getValue(TEST_CYCLE) + "'";
 
         ExecutionResponse executionResponse = searchInZQL(config, search);
         if (executionResponse == null || executionResponse.getExecutions().isEmpty()) {
@@ -92,4 +93,5 @@ public class Zephyroth {
         String response = getAndReturnBody(config, "zapi/latest/zql/executeSearch?zqlQuery=" + search);
         return ObjectTransformer.deserialize(response, ExecutionResponse.class);
     }
+
 }

@@ -12,7 +12,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
 import com.here.platform.common.annotations.Sentry;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

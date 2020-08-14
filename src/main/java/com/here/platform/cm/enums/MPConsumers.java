@@ -33,12 +33,12 @@ public enum MPConsumers {
     public String getToken() {
         var tokenValue = FileIO.readFile(consumerFile());
         if (tokenValue.isBlank()) {
-            tokenValue = generateBearerToken();
+            tokenValue = generateToken();
         }
         return tokenValue;
     }
 
-    public String generateBearerToken() {
+    public String generateToken() {
         var accessToken = new HereUserManagerController().getHereCurrentToken(getHereUserRepresentation());
         FileIO.writeStringToFile(consumerFile(), accessToken);
         return accessToken;

@@ -42,8 +42,7 @@ public class NSErrors {
                 "Provide correct data");
     }
 
-    public static NSError getResourceDataManipulationError(ProviderResource resource,
-                                                           DataProvider provider) {
+    public static NSError getResourceDataManipulationError(ProviderResource resource, DataProvider provider) {
         return new NSError("Data manipulation failed",
                 HttpStatus.SC_BAD_REQUEST,
                 "E502118",
@@ -64,7 +63,7 @@ public class NSErrors {
         return new NSError("Input data failed validation",
                 HttpStatus.SC_BAD_REQUEST,
                 "E502117",
-                "Container property '" + fieldName+"' must be matched with '[a-z0-9\\-]{1,100}' regex",
+                "Container property '" + fieldName + "' must be matched with '[a-z0-9\\-]{1,100}' regex",
                 "Request a valid container id");
     }
 
@@ -77,7 +76,7 @@ public class NSErrors {
     }
 
     public static NSError getCouldntDeleteProviderError(String providerName,
-                                                        String containersNames) {
+            String containersNames) {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_CONFLICT,
                 "E502108",
@@ -136,7 +135,7 @@ public class NSErrors {
     }
 
     public static NSError getProviderResourceNotFoundError(String providerName,
-                                                           String resourceName) {
+            String resourceName) {
         return new NSError("Provider resource not found",
                 HttpStatus.SC_NOT_FOUND,
                 "E502106",
@@ -202,7 +201,7 @@ public class NSErrors {
     }
 
     public static NSError getResourceIsMissingInProviderError(ProviderResource res,
-                                                              DataProvider provider) {
+            DataProvider provider) {
         return new NSError("Provider does not have specified resource",
                 HttpStatus.SC_BAD_REQUEST,
                 "E502107",

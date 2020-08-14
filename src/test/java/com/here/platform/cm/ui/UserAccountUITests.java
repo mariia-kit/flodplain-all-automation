@@ -12,7 +12,7 @@ import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
-import com.here.platform.hereAccount.ui.LoginSteps;
+import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class UserAccountUITests extends BaseUITests {
     @DisplayName("Second time opened the approved consent request link for registered user")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         open(crid);
-        LoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubject);
         $(".container-offers.current").waitUntil(Condition.visible, 10000);
         dataSubject.setBearerToken(getUICmToken());
         $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
@@ -78,7 +78,7 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(secondVIN);
 
         open(crid);
-        LoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubject);
 
         $(".container-offers.current").waitUntil(Condition.visible, 10000);
 

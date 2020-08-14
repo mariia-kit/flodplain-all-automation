@@ -13,8 +13,8 @@ import io.restassured.internal.support.Prettifier;
 import io.restassured.response.Response;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,9 +22,9 @@ import java.util.Objects;
 
 public class AllureRestAssuredCustom implements OrderedFilter {
 
+    private final String requestName;
     private String requestTemplatePath = "http-request.ftl";
     private String responseTemplatePath = "http-response.ftl";
-    private String requestName;
 
     public AllureRestAssuredCustom(String requestName) {
         this.requestName = requestName;
@@ -48,8 +48,7 @@ public class AllureRestAssuredCustom implements OrderedFilter {
     }
 
     /**
-     * @deprecated use {@link #setRequestTemplate(String)} instead. Scheduled for removal in 3.0
-     * release.
+     * @deprecated use {@link #setRequestTemplate(String)} instead. Scheduled for removal in 3.0 release.
      */
     @Deprecated
     public AllureRestAssuredCustom withRequestTemplate(final String templatePath) {
@@ -57,8 +56,7 @@ public class AllureRestAssuredCustom implements OrderedFilter {
     }
 
     /**
-     * @deprecated use {@link #setResponseTemplate(String)} instead. Scheduled for removal in 3.0
-     * release.
+     * @deprecated use {@link #setResponseTemplate(String)} instead. Scheduled for removal in 3.0 release.
      */
     @Deprecated
     public AllureRestAssuredCustom withResponseTemplate(final String templatePath) {
@@ -71,11 +69,7 @@ public class AllureRestAssuredCustom implements OrderedFilter {
             final FilterContext filterContext) {
         final Prettifier prettifier = new Prettifier();
         String uri = requestSpec.getURI();
-        try {
-            uri = URLDecoder.decode(uri, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        uri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
         final HttpRequestAttachment.Builder requestAttachmentBuilder = create(requestName, uri)
                 .setMethod(requestSpec.getMethod())
                 .setHeaders(toMapConverter(requestSpec.getHeaders()))

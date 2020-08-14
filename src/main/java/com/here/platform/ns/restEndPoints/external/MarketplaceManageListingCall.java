@@ -48,9 +48,7 @@ public class MarketplaceManageListingCall {
     @Step("Create marketplace listing for container {container.name}")
     public NeutralServerResponseAssertion createListing(Container container, String resRealm) {
         Random r = new Random();
-        String containerTitle = String
-                .format("[NS] Container Listing %s %s", container.getName(),
-                        r.nextInt(10000));
+        String containerTitle = String.format("[NS] Container Listing %s %s", container.getName(), r.nextInt(10000));
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings";
         String body = "{\n" +
@@ -75,7 +73,8 @@ public class MarketplaceManageListingCall {
                 "      \"title\": \"\",\n" +
                 "      \"summary\": \"\",\n" +
                 "      \"description\": \"\",\n" +
-                "      \"resourceHrn\": \"" + container.generateHrn(resRealm, MP_PROVIDER.getUser().getRealm()) + "\"\n" +
+                "      \"resourceHrn\": \"" + container.generateHrn(resRealm, MP_PROVIDER.getUser().getRealm()) + "\"\n"
+                +
                 "    }\n" +
                 "  ],\n" +
                 "  \"subscriptionOptions\":[\n"
@@ -160,7 +159,8 @@ public class MarketplaceManageListingCall {
 
         Response resp = RestHelper
                 .post("Acknowledge subscription by Provider : " + subsId, url, providerToken, body);
-        Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(), "Acknowledge subscription {subsId} by Provider");
+        Assertions
+                .assertEquals(HttpStatus.SC_OK, resp.getStatusCode(), "Acknowledge subscription {subsId} by Provider");
     }
 
     @Step("Acknowledge subscription {subsId} by Consumer")
@@ -169,8 +169,9 @@ public class MarketplaceManageListingCall {
         String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId + "/ack";
         String body = "{}";
         Response resp = RestHelper.post("Acknowledge subscription terms by Consumer : "
-                        + subsId, url, providerToken, body);
-        Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(), "Acknowledge subscription {subsId} by Consumer failed!");
+                + subsId, url, providerToken, body);
+        Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(),
+                "Acknowledge subscription {subsId} by Consumer failed!");
     }
 
     @Step("Begin cancellation of subscription {subsId}")
@@ -226,8 +227,7 @@ public class MarketplaceManageListingCall {
                 .post("Invite Consumer " + MP_CONSUMER.getUser().getEmail() + " to Listing "
                                 + listingHrn, url, providerToken,
                         body);
-        String id = resp.getBody().jsonPath().get("[0].id");
-        return id;
+        return resp.getBody().jsonPath().get("[0].id");
     }
 
     @Step("Invite Consumer to Listing")
@@ -256,4 +256,5 @@ public class MarketplaceManageListingCall {
         String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/admin/provider_cleanup";
         RestHelper.post("Delete all MP data", url, providerToken, "");
     }
+
 }

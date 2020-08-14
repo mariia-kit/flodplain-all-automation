@@ -132,6 +132,12 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .get("/purpose");
     }
 
+    @Step
+    public Response deleteConsentRequest(final String consentRequestId) {
+        return consentServiceClient("consentRequestBasePath")
+                .delete("{consentRequestId}", consentRequestId);
+    }
+
     private String getContentTypeByFile(File targetFile) {
         if (targetFile.getName().endsWith("json")) {
             return "application/json";

@@ -24,7 +24,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;

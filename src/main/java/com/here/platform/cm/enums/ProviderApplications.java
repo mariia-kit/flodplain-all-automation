@@ -6,7 +6,7 @@ package com.here.platform.cm.enums;
 //todo extend as builder to simplify onboarding and removing for tests
 public enum ProviderApplications {
 
-    DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.CONNECTED_VEHICLE),
+    DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER),
     BMW_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.BMW_MILEAGE);
 
     public final MPProviders provider;

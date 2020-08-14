@@ -47,9 +47,10 @@ public enum CallsUrl {
     MARKETPLACE_VERSION_CHECK(NS_Config.URL_PROVIDER, NS_Config.SERVICE_PROVIDER, "version"),
     MARKETPLACE_DEEP_HEALTH_CHECK(NS_Config.URL_PROVIDER, NS_Config.SERVICE_PROVIDER, "healthDeep");
 
-    private String host;
-    private String serviceUrl;
-    private String pattern;
+    private final String
+            host,
+            serviceUrl,
+            pattern;
 
     CallsUrl(NS_Config host, NS_Config serviceUrl, String pattern) {
         this.host = host.toString();

@@ -30,15 +30,17 @@ public class RemoveEntitiesSteps {
 
     @Step
     public void forceRemoveConsentRequestWithConsents(String crid, File fileWithVINs) {
-        if (crid == null) return;
+        if (crid == null) {
+            return;
+        }
         if (fileWithVINs != null) {
             consentRequestController
                     .withConsumerToken(MPConsumers.OLP_CONS_1)
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
         }
         privateController.withCMToken();
-        var hardDeleteConsentRequestResponse = privateController.hardDeleteConsentRequest(crid);
-        StepExpects.expectNOCONSTENTStatusCode(hardDeleteConsentRequestResponse);
+        var deleteConsentRequestResponse = consentRequestController.deleteConsentRequest(crid);
+        StepExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
 
     @Step

@@ -1,5 +1,8 @@
 package com.here.platform.ns.controllers;
 
+import static io.restassured.RestAssured.given;
+import static io.restassured.config.HeaderConfig.headerConfig;
+
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.restassured.AllureRestAssured;
@@ -8,9 +11,6 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
 
-
-import static io.restassured.RestAssured.given;
-import static io.restassured.config.HeaderConfig.headerConfig;
 
 public abstract class BaseNeutralService<T> {
 
@@ -25,7 +25,6 @@ public abstract class BaseNeutralService<T> {
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .log().all()
                 .filters(new AllureRestAssured());
 
         if (!authorizationToken.isEmpty()) {
@@ -46,6 +45,11 @@ public abstract class BaseNeutralService<T> {
 
     public T withToken(String token) {
         this.authorizationToken = token;
+        return (T) this;
+    }
+
+    public T withBearerToken(String userToken) {
+        setAuthorizationToken(userToken);
         return (T) this;
     }
 

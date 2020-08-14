@@ -11,7 +11,7 @@ public enum MPProviders {
     EXCELSIOR("exelsior", 17),
     BMW_TEST("test-bmw", 17);
 
-    private String name;
+    private final String name;
     public int vinLength;
 
     public String getName() {

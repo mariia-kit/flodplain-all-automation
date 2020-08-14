@@ -31,7 +31,7 @@ public abstract class BaseMPController<T> {
         return baseService;
     }
 
-    public T withToken(final String token) {
+    public T withBearerToken(final String token) {
         authorizationToken = String.format("Bearer %s", token);
         return (T) this;
     }

@@ -13,11 +13,11 @@ import lombok.RequiredArgsConstructor;
 public class VehicleDataDto {
 
     @NonNull
-    private String providerName;
+    private final String providerName;
     @NonNull
-    private String vehicleID;
+    private final String vehicleID;
     @NonNull
-    private String containerID;
+    private final String containerID;
 
     private Map<String, String> resultMap;
 

@@ -12,12 +12,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 
-public class MarketplaceNSGetContainerInfoCall extends
-        BaseRestControllerNS<MarketplaceNSGetContainerInfoCall> {
+public class MarketplaceNSGetContainerInfoCall extends BaseRestControllerNS<MarketplaceNSGetContainerInfoCall> {
 
     public MarketplaceNSGetContainerInfoCall(String containerHrn) {
-        callMessage = String
-                .format("Perform MP call to gather NS Containers info");
+        callMessage = "Perform MP call to gather NS Containers info";
         setDefaultUser(PROVIDER);
         String urlEncoded;
         try {

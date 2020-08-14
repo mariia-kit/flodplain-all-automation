@@ -57,7 +57,8 @@ task initTokens(type: JavaExec) {
 }
 
 task smokeCMTests(type: TestCM) {
-    //failFast true
+    failFast true
+    //todo add execution for all tests except Sentry checkers
 
     if (!dynamicEnvUrl) {
         systemProperty "env", finalEnv

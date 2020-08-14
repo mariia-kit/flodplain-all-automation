@@ -44,7 +44,7 @@ public class GetConsentInfoTests extends BaseConsentStatusTests {
     @Issue("NS-1706")
     @DisplayName("Get consent info")
     void getConsentInfoTest() {
-        var privateBearer = vehicle.getBearerToken();
+        var privateBearer = dataSubject.getBearerToken();
         var response = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
 

@@ -11,9 +11,9 @@ public enum ConsentPageUrl {
 
     LOCAL("http://localhost:8080/consent/"),
     DEV("https://portal.platform.in.here.com/consent/"),
-    SIT("https://sit-web.consent.api.platform.in.here.com/"),
+    SIT("https://platform.in.here.com/consent/"),
     STG(SIT.envUrl),
-    PROD("https://web.consent.api.platform.here.com/");
+    PROD("https://platform.here.com/consent/");
 
     private final String envUrl;
 
@@ -30,7 +30,7 @@ public enum ConsentPageUrl {
     }
 
     public static String getAcceptedOffersUrl() {
-        return fromUriString(getEnvUrlRoot()).path("offers#accepted").toUriString();
+        return getEnvUrlRoot() + "offers#accepted";
     }
 
 }

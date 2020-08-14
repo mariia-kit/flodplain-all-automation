@@ -9,7 +9,7 @@ import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.io.File;
 
 
@@ -17,11 +17,11 @@ public class BaseConsentStatusTests extends BaseCMTest {
 
     private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
-    protected DataSubjects vehicle = DataSubjects.getNext();
+    protected DataSubjects dataSubject = DataSubjects.getNext();
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),
-            testVin = vehicle.vin;
+            testVin = dataSubject.vin;
 
     protected File testFileWithVINs = null;
 

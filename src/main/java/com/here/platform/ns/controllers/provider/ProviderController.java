@@ -6,6 +6,7 @@ import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
+
 public class ProviderController extends BaseNeutralService<ProviderController> {
 
     private final String providersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
@@ -33,4 +34,5 @@ public class ProviderController extends BaseNeutralService<ProviderController> {
         return neutralServerClient(providersBasePath)
                 .get();
     }
+
 }

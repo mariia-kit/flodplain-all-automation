@@ -14,9 +14,9 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
-import com.here.platform.common.extension.ConsentRequestRemoveExtension;
-import com.here.platform.common.extension.OnboardApplicationExtension;
-import com.here.platform.common.extension.ProviderApplicationRemoveExtension;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.OnboardApplicationExtension;
+import com.here.platform.common.extensions.ProviderApplicationRemoveExtension;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ public class ConsentRequestInfoTests extends BaseCMTest {
     final ConsentRequestRemoveExtension requestRemoveExtension = new ConsentRequestRemoveExtension();
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_FUEL;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(testContainer.provider.getName())

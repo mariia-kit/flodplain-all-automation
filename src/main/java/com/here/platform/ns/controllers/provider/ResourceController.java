@@ -7,6 +7,7 @@ import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
+
 public class ResourceController extends BaseNeutralService<ResourceController> {
 
     private final String providersBasePath = NS_Config.SERVICE_PROVIDER + "providers";

@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ConsentApp {
+
     String providerId;
     String containerId;
+
 }

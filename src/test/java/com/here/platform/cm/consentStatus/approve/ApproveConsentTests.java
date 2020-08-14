@@ -1,6 +1,6 @@
 package com.here.platform.cm.consentStatus.approve;
 
-import com.here.platform.aaa.HereCMBearerAuthorization;
+
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -15,7 +15,7 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import com.here.platform.dataProviders.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 @ApproveConsent
 class ApproveConsentTests extends BaseConsentStatusTests {
 
-    private final String privateBearer = HereCMBearerAuthorization.getCmToken(vehicle);
+    private final String privateBearer = dataSubject.getBearerToken();
     private String crid;
 
 

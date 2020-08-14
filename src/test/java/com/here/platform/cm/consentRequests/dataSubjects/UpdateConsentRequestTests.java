@@ -19,7 +19,7 @@ import com.here.platform.common.annotations.AAA;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

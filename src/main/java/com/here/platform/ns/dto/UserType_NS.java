@@ -15,5 +15,5 @@ public enum UserType_NS {
     DAIMLER("dm"),
     APP("app");
 
-    private String prefix;
+    private final String prefix;
 }

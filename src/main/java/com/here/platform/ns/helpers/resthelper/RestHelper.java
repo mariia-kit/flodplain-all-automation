@@ -23,16 +23,13 @@ import org.apache.http.HttpStatus;
 
 public class RestHelper {
 
-    private static ResponseSpecification responseSpec = new ResponseSpecBuilder()
+    private static final ResponseSpecification responseSpec = new ResponseSpecBuilder()
             .log(LogDetail.ALL)
             .build();
 
     public static Headers generateHeaders(String token, List<Header> headers) {
-        List<Header> list = new ArrayList<>();
-        list.addAll(getBaseHeaders(token).asList());
-        for (Header hd : headers) {
-            list.add(hd);
-        }
+        List<Header> list = new ArrayList<>(getBaseHeaders(token).asList());
+        list.addAll(headers);
         return new Headers(list);
     }
 
@@ -87,10 +84,9 @@ public class RestHelper {
     @Step("{requestName}")
     public static Response putFile(String requestName, String url, String token, File file, String mimeType, String xCorrId) {
         return RestHelper.gatewayWrapper(() -> given()
-                .header("Content-Type","multipart/form-data")
+                .header("Content-Type", "multipart/form-data")
                 .header("Authorization", token)
                 .header("X-Correlation-ID", xCorrId)
-                .log().all()
                 .multiPart("vins", file, mimeType)
                 .filter(new AllureRestAssuredCustom(requestName))
                 .when()
@@ -137,7 +133,6 @@ public class RestHelper {
                 .spec(responseSpec)
                 .extract().response());
     }
-
 
 
     @Step("{requestName}")
@@ -202,4 +197,5 @@ public class RestHelper {
         }
         return result;
     }
+
 }

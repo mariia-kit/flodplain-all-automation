@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 public class VehicleResourceAsyncController extends BaseNeutralServerAccessController<VehicleResourceAsyncController> {
+
     private final String serviceBasePath = NS_Config.SERVICE_ACCESS.toString();
 
     @Step
@@ -23,4 +24,5 @@ public class VehicleResourceAsyncController extends BaseNeutralServerAccessContr
                 .baseUri(location)
                 .get();
     }
+
 }

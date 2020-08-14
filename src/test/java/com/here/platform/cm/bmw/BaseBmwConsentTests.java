@@ -8,7 +8,7 @@ import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.io.File;
 
 
@@ -16,7 +16,7 @@ public class BaseBmwConsentTests {
 
     private final ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
-    protected DataSubjects vehicle = DataSubjects.getNext();
+    protected DataSubjects dataSubject = DataSubjects.getNext();
     protected static Faker faker = new Faker();
 
     String

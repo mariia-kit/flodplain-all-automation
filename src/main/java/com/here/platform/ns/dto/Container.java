@@ -5,6 +5,7 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import java.beans.ConstructorProperties;
+import java.util.Arrays;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,7 +60,7 @@ public class Container {
         }
     }
 
-    public String generateBody()  {
+    public String generateBody() {
         JSONObject object = new JSONObject();
         try {
             if (this.getId() != null) {
@@ -166,6 +167,12 @@ public class Container {
         return String.format(
                 "ContainerInfo(id=%s, name=%s, dataProviderName=%s, description=%s, resourceNames=%s, consentRequired=%s, scope=%s)",
                 id, name, dataProviderName, description, resourceNames, consentRequired, scope);
+    }
+
+    public DataProvider getDataProviderByName() {
+        return Arrays.stream(Providers.values()).filter(p -> p.getProvider().getName().equals(this.dataProviderName))
+                .findFirst().get()
+                .getProvider();
     }
 
 }

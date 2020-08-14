@@ -22,9 +22,9 @@ public class NSError {
     private String correlationId;
 
     @ConstructorProperties({"title", "status", "code", "cause", "action", "correlationId",
-    "exveNote", "exveErrorId", "exveErrorMsg", "exveErrorRef"})
+            "exveNote", "exveErrorId", "exveErrorMsg", "exveErrorRef"})
     public NSError(String title, int status, String code, String cause, String action,
-                   String correlationId, String a1, String a2, String a3, String a4) {
+            String correlationId, String a1, String a2, String a3, String a4) {
         this.title = title;
         this.status = status;
         this.code = code;

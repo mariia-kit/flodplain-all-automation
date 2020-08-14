@@ -1,4 +1,4 @@
-package com.here.platform.common.extension;
+package com.here.platform.common.extensions;
 
 import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.controllers.ProvidersController;
@@ -10,7 +10,6 @@ import com.here.platform.cm.steps.api.OnboardingSteps;
 import lombok.Builder;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
 
 @Builder
 public class OnboardApplicationExtension implements BeforeEachCallback {

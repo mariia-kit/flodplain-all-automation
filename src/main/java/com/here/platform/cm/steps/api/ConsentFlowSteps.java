@@ -4,8 +4,8 @@ package com.here.platform.cm.steps.api;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.VIN;
-import com.here.platform.dataProviders.DaimlerTokenController;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.dataProviders.daimler.DaimlerTokenController;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
 

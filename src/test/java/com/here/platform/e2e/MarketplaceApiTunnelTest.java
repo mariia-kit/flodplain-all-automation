@@ -212,11 +212,12 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         new MarketplaceCMGetConsentCall(subs)
                 .call()
-        .expectedCode(HttpStatus.SC_OK)
-        .expectedJsonContains("consentRequestId", consentRequestId, "Consent id in response not as expected");
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedJsonContains("consentRequestId", consentRequestId, "Consent id in response not as expected");
 
         new MarketplaceCMGetConsentStatusCall(subs)
-                .call().expectedCode(HttpStatus.SC_OK).expectedJsonContains("pending", "0", "Consent status value not as expected");
+                .call().expectedCode(HttpStatus.SC_OK)
+                .expectedJsonContains("pending", "0", "Consent status value not as expected");
 
     }
 
@@ -243,8 +244,11 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         new ConsentManagementCall().addVinNumbers(consentRequestId, Vehicle.validVehicleId);
 
+        //todo refactor authorisation to reuse HereUserManagerController
         Response res = new ConsentManagementCall()
-                .approveConsentRequestNew(consentRequestId, Vehicle.validVehicleId, Users.HERE_USER.getToken(), container);
+                .approveConsentRequestNew(consentRequestId, Vehicle.validVehicleId, Users.HERE_USER.getToken(),
+                        container);
+
         Assertions.assertEquals(HttpStatus.SC_OK, res.getStatusCode(),
                 "Error during approve of consent " + consentRequestId + " for vin " + Vehicle.validVehicleId);
 
@@ -318,4 +322,5 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                 .expectedJsonContains("pending", "1", "Consent status value not as expected");
 
     }
+
 }

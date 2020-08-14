@@ -3,9 +3,7 @@ package com.here.platform.ns.dto;
 import com.here.platform.ns.helpers.authentication.AuthController;
 import com.here.platform.ns.utils.NS_Config;
 import com.here.platform.ns.utils.PropertiesLoader;
-
 import java.util.Base64;
-
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +24,7 @@ public enum Users {
     HERE_USER(new User(NS_Config.CM_HERE_LOGIN.toString(), NS_Config.CM_HERE_PASS.toString(), "HERE", StringUtils.EMPTY).withUserType(UserType_NS.CM)),
     CM_CONSUMER(PropertiesLoader.getInstance().loadUser(UserType_NS.MP, "consumer"));
 
-    private User user;
+    private final User user;
 
     public User getUser() {
         if (StringUtils.isEmpty(user.getToken())) {

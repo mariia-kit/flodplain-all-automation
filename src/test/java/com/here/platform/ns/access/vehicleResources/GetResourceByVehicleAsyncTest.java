@@ -5,11 +5,11 @@ import static com.here.platform.ns.dto.Users.CONSUMER;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.VehicleResourceAsyncController;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
@@ -62,7 +62,8 @@ public class GetResourceByVehicleAsyncTest extends BaseNSTest {
         new NeutralServerResponseAssertion(asyncGet2)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("resourceReadout.asyncStatus", "Complete", "Not expected async State!")
-                .expectedJsonContains("resourceReadout.resources[0].stateofcharge.value", "0.8", "Not expected res vale!");
+                .expectedJsonContains("resourceReadout.resources[0].stateofcharge.value", "0.8",
+                        "Not expected res vale!");
     }
 
     @Test
@@ -86,7 +87,8 @@ public class GetResourceByVehicleAsyncTest extends BaseNSTest {
         new NeutralServerResponseAssertion(asyncInit)
                 .expectedCode(HttpStatus.SC_CREATED)
                 .expectedJsonContains("resourceReadout.asyncStatus", "Complete", "Not expected async State!")
-                .expectedJsonContains("resourceReadout.resources[0].rangeliquid.value", "1648", "Not expected res value!");
+                .expectedJsonContains("resourceReadout.resources[0].rangeliquid.value", "1648",
+                        "Not expected res value!");
     }
 
     @Test
@@ -134,7 +136,7 @@ public class GetResourceByVehicleAsyncTest extends BaseNSTest {
                 .getResponse().getHeader("Location");
         var asyncGet = new VehicleResourceAsyncController()
                 .withToken(CONSUMER)
-                .getVehicleResourceResult(location+ "some_bad_request_id");
+                .getVehicleResourceResult(location + "some_bad_request_id");
         new NeutralServerResponseAssertion(asyncGet)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
 

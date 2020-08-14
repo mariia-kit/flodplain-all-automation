@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ConsentVin {
+
     String crid;
     String vin;
+
 }

@@ -11,9 +11,9 @@ import com.here.platform.cm.rest.model.ConsentRequestPurposeData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.ErrorHandler;
-import com.here.platform.common.extension.ConsentRequestRemoveExtension;
-import com.here.platform.common.extension.OnboardApplicationExtension;
-import com.here.platform.dataProviders.DataSubjects;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.OnboardApplicationExtension;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,7 +64,7 @@ public class PurposeTests extends BaseCMTest {
     public class ConsentRequestPurpose {
 
         private final String privateBearer = DataSubjects.getNext().generateBearerToken();
-        private final ConsentRequestContainers targetContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+        private final ConsentRequestContainers targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE;
 
 
         private final ConsentRequestData targetConsentRequest = getBaseConsentRequestData()

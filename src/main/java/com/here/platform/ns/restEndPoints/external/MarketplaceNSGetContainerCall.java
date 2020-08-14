@@ -9,12 +9,10 @@ import io.restassured.response.Response;
 import java.util.function.Supplier;
 
 
-public class MarketplaceNSGetContainerCall extends
-        BaseRestControllerNS<MarketplaceNSGetContainerCall> {
+public class MarketplaceNSGetContainerCall extends BaseRestControllerNS<MarketplaceNSGetContainerCall> {
 
     public MarketplaceNSGetContainerCall(String providerName) {
-        callMessage = String
-                .format("Perform MP call to gather NS Containers list info");
+        callMessage = "Perform MP call to gather NS Containers list info";
         setDefaultUser(MP_PROVIDER);
         endpointUrl = NS_Config.URL_EXTERNAL_MARKETPLACE + "/neutral_server/providers/" + providerName
                 + "/containers";

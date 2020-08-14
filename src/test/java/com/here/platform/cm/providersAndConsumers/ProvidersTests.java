@@ -3,8 +3,6 @@ package com.here.platform.cm.providersAndConsumers;
 import static com.here.platform.cm.steps.api.RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -16,7 +14,9 @@ import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.common.JConvert;
+import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
 import io.qameta.allure.TmsLink;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 @Tag("smoke_cm")
 class ProvidersTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.CONNECTED_VEHICLE;
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_LOCATION;
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(MPConsumers.OLP_CONS_1.getRealm())
             .providerId(crypto.sha1())
