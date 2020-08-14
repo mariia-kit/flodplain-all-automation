@@ -82,6 +82,8 @@ test_cm_auto:
   extends: .test_run
   rules:
     - if: $TASK_CM
+      when: delayed
+      start_in: 5 minutes
   variables:
     TASK: $TASK_CM
     REPORT_URL: "build/reports_cm"
