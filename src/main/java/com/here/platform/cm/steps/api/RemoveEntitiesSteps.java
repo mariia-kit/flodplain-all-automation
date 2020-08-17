@@ -46,6 +46,10 @@ public class RemoveEntitiesSteps {
 
     @Step
     public void forceRemoveApplicationProviderConsumerEntities(ConsentRequestData consentRequestData) {
+        if (consentRequestData == null) {
+            return;
+        }
+
         privateController.withCMToken();
 
         var deleteProviderApplicationResponse = privateController.deleteProviderApplication(

@@ -53,13 +53,12 @@ dependencies {
             "org.junit.jupiter:junit-jupiter-api:$junit5Ver",
             "org.junit.jupiter:junit-jupiter-params:$junit5Ver",
             "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
-            "io.github.artsok:rerunner-jupiter:+",
             "org.assertj:assertj-core:3.11.1",
             "org.testcontainers:selenium:$testContainersVer",
             "org.testcontainers:junit-jupiter:$testContainersVer",
             "org.postgresql:postgresql:42.2.5",
             "org.jdbi:jdbi3-postgres:$jdbiVer",
+            "org.junit-pioneer:junit-pioneer:0.9.0"
     )
-    
 
 }

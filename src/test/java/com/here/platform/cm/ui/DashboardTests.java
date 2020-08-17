@@ -37,7 +37,7 @@ public class DashboardTests extends BaseUITests {
 
     @BeforeEach
     void beforeEach() {
-        var privateBearer = dataSubject.generateBearerToken();
+        var privateBearer = dataSubject.getBearerToken();
         userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
         userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
     }

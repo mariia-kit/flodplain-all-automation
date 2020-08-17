@@ -32,7 +32,7 @@ public class UserAccountExtension implements BeforeEachCallback, AfterEachCallba
     @Step("Remove all VINs and data consumers for the user")
     private void dataSubjectCleanUp() {
         var userAccountController = new UserAccountController();
-        var cmToken = targetDataSubject.generateBearerToken();
+        var cmToken = targetDataSubject.getBearerToken();
 
         userAccountController.deleteVINForUser(targetDataSubject.vin, cmToken);
 
