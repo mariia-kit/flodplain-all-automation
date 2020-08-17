@@ -11,7 +11,7 @@ import com.here.platform.cm.rest.model.ConsentRequestPurposeData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.ErrorHandler;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +22,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 public class PurposeTests extends BaseCMTest {
-
-    @RegisterExtension
-    final ConsentRequestRemoveExtension requestRemoveExtension = new ConsentRequestRemoveExtension();
 
     @Test
     @ErrorHandler
@@ -63,18 +60,21 @@ public class PurposeTests extends BaseCMTest {
     @DisplayName("Get consent request purpose")
     public class ConsentRequestPurpose {
 
-        private final String privateBearer = DataSubjects.getNext().generateBearerToken();
+        private final String privateBearer = DataSubjects.getNext().getBearerToken();
         private final ConsentRequestContainers targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE;
-
-
         private final ConsentRequestData targetConsentRequest = getBaseConsentRequestData()
                 .providerId(targetContainer.provider.getName())
                 .consumerId(faker.crypto().md5())
                 .containerId(targetContainer.id);
-        @RegisterExtension
-        final OnboardAndRemoveApplicationExtension onboardApplicationExtension =
-                OnboardAndRemoveApplicationExtension.builder().consentRequestData(targetConsentRequest).build();
 
+        @RegisterExtension
+        ConsentRequestCascadeRemoveExtension requestRemoveExtension = new ConsentRequestCascadeRemoveExtension();
+        @RegisterExtension
+        OnboardAndRemoveApplicationExtension onboardApplicationExtension =
+                OnboardAndRemoveApplicationExtension.builder()
+                        .cleanUpAfter(false)
+                        .consentRequestData(targetConsentRequest)
+                        .build();
         private String crid;
 
         @BeforeEach
@@ -86,6 +86,7 @@ public class PurposeTests extends BaseCMTest {
                     .getConsentRequestId();
 
             requestRemoveExtension.cridToRemove(crid);
+            requestRemoveExtension.consentRequestToCleanUp(targetConsentRequest);
         }
 
         @Test

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final ConsentRequestData consentRequestData;
+    private final boolean cleanUpAfter;
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -30,6 +31,9 @@ public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback,
 
     @Override
     public void afterEach(ExtensionContext context) {
+        if (!cleanUpAfter) {
+            return;
+        }
         RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities(consentRequestData);
     }
 

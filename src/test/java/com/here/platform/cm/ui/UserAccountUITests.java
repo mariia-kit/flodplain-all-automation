@@ -37,7 +37,7 @@ public class UserAccountUITests extends BaseUITests {
     void createApproveConsentForUser() {
         consentRequestInfo = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, dataSubject.vin);
         crid = consentRequestInfo.getConsentRequestId();
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.generateBearerToken());
+        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
         userAccountController.attachVinToUserAccount(dataSubject.vin, dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.vin);
 
