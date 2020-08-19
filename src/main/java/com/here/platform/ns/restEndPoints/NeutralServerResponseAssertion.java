@@ -25,13 +25,13 @@ public class NeutralServerResponseAssertion {
         this.response = response;
     }
 
-    @Step("Verify response correspond to special condition: {message}.")
+    @Step("Expected response correspond to special condition: {message}.")
     public NeutralServerResponseAssertion expected(Predicate<Response> condition, String message) {
         Assertions.assertTrue(condition.test(response), message);
         return this;
     }
 
-    @Step("Verify response value by json path {jsonPath} equals to '{expected}'")
+    @Step("Expected response value by json path {jsonPath} equals to '{expected}'")
     public NeutralServerResponseAssertion expectedEquals(String jsonPath, String expected, String message) {
         Object value = response.getBody().jsonPath().get(jsonPath);
         String actual = value == null ? StringUtils.EMPTY : value.toString();
@@ -39,13 +39,13 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value equals to Container: '{expected.name}'")
+    @Step("Expected response value equals to Container: '{expected.name}'")
     public NeutralServerResponseAssertion expectedEqualsContainer(Container expected, String message) {
         Assertions.assertEquals(expected, DefaultResponses.extractAsContainer(response), message);
         return this;
     }
 
-    @Step("Verify response value in Container list equals to Container: '{expected.name}'")
+    @Step("Expected response value in Container list equals to Container: '{expected.name}'")
     public NeutralServerResponseAssertion expectedEqualsContainerInList(Container expected, String message) {
         Assertions.assertEquals(expected,
                 DefaultResponses.extractContainerPresentInList(expected.getName(), response),
@@ -53,13 +53,13 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value equals to DataProvider: '{expected.name}'")
+    @Step("Expected response value equals to DataProvider: '{expected.name}'")
     public NeutralServerResponseAssertion expectedEqualsProvider(DataProvider expected, String message) {
         Assertions.assertEquals(expected, DefaultResponses.extractAsProvider(response), message);
         return this;
     }
 
-    @Step("Verify response value equals to Container resource.")
+    @Step("Expected response value equals to Container resource.")
     public NeutralServerResponseAssertion expectedEqualsContainerData(Map<String, String> expected,
             String message) {
         Assertions
@@ -67,7 +67,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value equals to ISO Container resource.")
+    @Step("Expected response value equals to ISO Container resource.")
     public NeutralServerResponseAssertion expectedEqualsISOContainerData(Map<String, String> expected,
             String message) {
         Assertions
@@ -75,7 +75,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value by json path {jsonPath} contains value '{expected}'")
+    @Step("Expected response value by json path {jsonPath} contains value '{expected}'")
     public NeutralServerResponseAssertion expectedJsonContains(String jsonPath, String expected,
             String message) {
         Object value = response.getBody().jsonPath().get(jsonPath);
@@ -84,7 +84,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value by json path {jsonPath} are correct.")
+    @Step("Expected response value by json path {jsonPath} are correct.")
     public NeutralServerResponseAssertion expectedJsonTrue(String jsonPath, Predicate<String> condition,
             String message) {
         Object value = response.getBody().jsonPath().get(jsonPath);
@@ -93,14 +93,14 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response code equals to '{responseCode}'")
+    @Step("Expected response code equals to '{responseCode}'")
     public NeutralServerResponseAssertion expectedCode(int responseCode) {
         Assertions.assertEquals(responseCode, response.getStatusCode(),
                 "Response code not as expected!");
         return this;
     }
 
-    @Step("Verify response contains correct header '{header.name} - {header.value}'")
+    @Step("Expected response contains correct header '{header.name} - {header.value}'")
     public NeutralServerResponseAssertion expectedHeader(Header header) {
         Assertions.assertNotNull(response.getHeader(header.getName()),
                 "No header " + header.getName() + " detected in response:" + response.headers()
@@ -110,7 +110,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response contains header '{headerName}'")
+    @Step("Expected response contains header '{headerName}'")
     public NeutralServerResponseAssertion expectedHeaderIsPresent(String headerName) {
         Assertions.assertNotNull(response.getHeader(headerName),
                 "No header " + headerName + " detected in response:" + response.headers()
@@ -118,7 +118,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response contains NS error {error.status} {error.title}")
+    @Step("Expected response contains NS error {error.status} {error.title}")
     public NeutralServerResponseAssertion expectedError(NSError error) {
         if (response.getStatusCode() == error.getStatus()) {
             try {
@@ -138,7 +138,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response contains Sentry error {error.status} {error.error}")
+    @Step("Expected response contains Sentry error {error.status} {error.error}")
     public NeutralServerResponseAssertion expectedSentryError(SentryError error) {
         if (response.getStatusCode() == error.getStatus()) {
             try {
@@ -157,9 +157,8 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Verify response value body equals to expected {expected}")
-    public NeutralServerResponseAssertion expectedBody(String expected,
-            String message) {
+    @Step("Expected response value body equals to expected {expected}")
+    public NeutralServerResponseAssertion expectedBody(String expected, String message) {
         Assertions.assertEquals(expected, response.getBody().print(), message);
         return this;
     }

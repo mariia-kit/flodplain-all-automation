@@ -19,6 +19,7 @@ public class BaseCMTest {
     protected static Crypto crypto = faker.crypto();
 
     static {
+        //To run on specific environment CM tests use following "env" values: dev, sit, prod
         //System.setProperty("env", "dev");
     }
 

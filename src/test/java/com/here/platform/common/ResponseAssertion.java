@@ -21,7 +21,7 @@ public class ResponseAssertion {
         this.targetResponse = targetResponse;
     }
 
-    @Step("Verify status code of call is equal to \"{expectedStatusCode}\"")
+    @Step("Expected status code of call is equal to \"{expectedStatusCode}\"")
     public ResponseAssertion statusCodeIsEqualTo(StatusCode expectedStatusCode) {
         var statusCodeAssertionMessage = new ResponseExpectMessages(targetResponse)
                 .expectedStatuesCode(expectedStatusCode);
@@ -53,14 +53,14 @@ public class ResponseAssertion {
         return bindAs(expectedClass);
     }
 
-    @Step("Verify response object is equal to \r\n\"{expectedObject}\"")
+    @Step("Expected response object is equal to \r\n\"{expectedObject}\"")
     public void responseIsEqualToObject(Object expectedObject) {
         var objectUnderTest = bindAs(expectedObject.getClass());
 
         Assertions.assertThat(objectUnderTest).isEqualTo(expectedObject);
     }
 
-    @Step("Verify response object is equal to \r\n\"{expectedObject}\" ignoring time fields.")
+    @Step("Expected response object is equal to \r\n\"{expectedObject}\" ignoring time fields.")
     public void responseIsEqualToObjectIgnoringTimeFields(Object expectedObject) {
         var objectUnderTest = bindAs(expectedObject.getClass());
 

@@ -51,7 +51,7 @@ public class BaseUITests extends BaseCMTest {
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
-    final DataSubjects dataSubject = DataSubjects.getNext();
+    final DataSubjects dataSubject = DataSubjects._8AF07AED81A33D2C36;
     @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()

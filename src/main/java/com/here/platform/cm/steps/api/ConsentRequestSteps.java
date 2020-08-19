@@ -57,7 +57,9 @@ public class ConsentRequestSteps {
         StepExpects.expectCREATEDStatusCode(consentRequestResponse);
 
         var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
-        return new ConsentRequestToConsentInfo(consentRequestId, targetConsentRequest).consentInfo();
+        return new ConsentRequestToConsentInfo(consentRequestId, targetConsentRequest)
+                .consentInfo()
+                .consumerName(providerApplication.consumer.getConsumerName());
     }
 
 }
