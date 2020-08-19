@@ -38,8 +38,8 @@ public class UserAccountUITests extends BaseUITests {
         consentRequestInfo = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, dataSubject.getVin());
         crid = consentRequestInfo.getConsentRequestId();
         userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
-        userAccountController.attachVinToUserAccount(dataSubject.vin, dataSubject.getBearerToken());
-        vinsToRemove.add(dataSubject.vin);
+        userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
+        vinsToRemove.add(dataSubject.getVin());
 
         consentRequestInfo.resources(targetApp.container.resources);
         ConsentFlowSteps.approveConsentForVIN(crid, testContainer, dataSubject.getVin());
