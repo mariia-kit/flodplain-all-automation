@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Tag;
 @Tag("e2e")
 public class BaseE2ETest {
 
+    static {
+        //To run on specific environment E2E tests use following "env" values: sit, prod
+        //System.setProperty("env", "sit");
+    }
+
     Faker faker = new Faker();
 
 }

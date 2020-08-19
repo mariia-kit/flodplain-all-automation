@@ -19,6 +19,10 @@ public class BaseNSTest {
     public static void suiteSetup1() {
     }
 
+    static {
+        //To run on specific environment NS tests use following "env" values: dev, sit, prod
+        //System.setProperty("env", "dev");
+    }
 
     @AfterAll
     public static void cleanUp() {
