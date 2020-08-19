@@ -21,7 +21,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),
-            testVin = dataSubject.vin;
+            testVin = dataSubject.getVin();
 
     protected File testFileWithVINs = null;
 

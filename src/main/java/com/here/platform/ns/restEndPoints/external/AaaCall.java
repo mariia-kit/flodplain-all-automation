@@ -4,13 +4,12 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import com.here.platform.ns.helpers.CleanUpHelper;
-import com.here.platform.ns.utils.NS_Config;
-import com.here.platform.ns.utils.PropertiesLoader;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class AaaCall {
     private static final String prodPolicy = "POLICY-c6be1029-573c-4d66-903e-e6be57178c45";
 
     public List<MutablePair<String, String>> getAllContainersPolicy() {
-        String url = NS_Config.URL_AUTH.toString() + "/search/policy?serviceId=" + NS_Config.AAA_SERVICE_ID.toString();
+        String url = Conf.ns().getAuthUrlBase() + "/search/policy?serviceId=" + Conf.nsUsers().getAaService().getAppId();
 
         List<MutablePair<String, String>> policy = new ArrayList<>();
 
@@ -68,7 +67,7 @@ public class AaaCall {
     }
 
     public void deletePolicy(String id) {
-        String url = NS_Config.URL_AUTH.toString() + "/policy/" + id;
+        String url = Conf.ns().getAuthUrlBase() + "/policy/" + id;
         given()
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
@@ -78,10 +77,9 @@ public class AaaCall {
     }
 
     public void wipeAllPolicies(String query) {
-        String groupId = PropertiesLoader.getInstance().mainProperties.getProperty("ns.consumer.group.id");
+        String groupId = Conf.nsUsers().getConsumerGroupId();
         List<MutablePair<String, String>> policy = getAllContainersPolicy();
         Map<String, String> pLinks = getAllPolicyLink(groupId);
-        //Map<String, String> pLinksDev = getAllPolicyLink("GROUP-9a2cd6e4-299a-432d-a464-e70558bbe8ee");
         policy.stream()
                 .filter(p -> p.getRight().contains("hrn:here-dev:neutral::" + Users.MP_PROVIDER.getUser().getRealm()))
                 .filter(p -> p.getRight().toLowerCase().contains(query.toLowerCase()))
@@ -123,7 +121,7 @@ public class AaaCall {
     }
 
     public String addGroupToPolicy(String groupId, String policyId) {
-        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId + "/policies";
+        String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId + "/policies";
         String body = "{\n"
                 + "    \"policies\": [\n"
                 + "        {\n"
@@ -145,7 +143,7 @@ public class AaaCall {
     }
 
     public void removeGroupFromPolicy(String groupId, String policyLinkId) {
-        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId + "/policies/" + policyLinkId;
+        String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId + "/policies/" + policyLinkId;
         given()
 
                 .headers("Authorization", "Bearer " + Users.AAA.getToken())
@@ -156,7 +154,7 @@ public class AaaCall {
     }
 
     public void createResourcePermission(Container container) {
-        createResourcePermission(container.generateHrn(NS_Config.REALM.toString(), MP_PROVIDER.getUser().getRealm()));
+        createResourcePermission(container.generateHrn(Conf.ns().getRealm(), MP_PROVIDER.getUser().getRealm()));
     }
 
     public void createResourcePermissionForResource(ProviderResource providerResource, String providerName) {
@@ -171,7 +169,7 @@ public class AaaCall {
             e.printStackTrace();
         }
         CleanUpHelper.getArtificialPolicy().put(policyId, StringUtils.EMPTY);
-        String groupId = PropertiesLoader.getInstance().mainProperties.getProperty("ns.consumer.group.id");
+        String groupId = Conf.nsUsers().getConsumerGroupId();
         String policyLink = addGroupToPolicy(groupId, policyId);
         CleanUpHelper.getArtificialPolicy().put(policyId, policyLink);
         try {
@@ -182,7 +180,7 @@ public class AaaCall {
     }
 
     public void removeResourcePermission(String policyId, String policyLink) {
-        String groupId = PropertiesLoader.getInstance().mainProperties.getProperty("ns.consumer.group.id");
+        String groupId = Conf.nsUsers().getConsumerGroupId();
         removeGroupFromPolicy(groupId, policyLink);
         try {
             Thread.sleep(3000);
@@ -204,11 +202,11 @@ public class AaaCall {
     }
 
     public String createPolicy(String resHrn) {
-        String url = NS_Config.URL_AUTH.toString() + "/policy";
+        String url = Conf.ns().getAuthUrlBase() + "/policy";
         String body = "{\n"
                 + "    \"name\": \"NS_CONTAINER Policy\",\n"
                 + "    \"scope\": {\n"
-                + "        \"serviceId\": \"" + NS_Config.AAA_SERVICE_ID.toString() + "\"\n"
+                + "        \"serviceId\": \"" + Conf.nsUsers().getAaService().getAppId() + "\"\n"
                 + "    },\n"
                 + "    \"permissions\": [\n"
                 + "        {\n"
@@ -233,11 +231,11 @@ public class AaaCall {
     }
 
     public String createAdminPolicy() {
-        String url = NS_Config.URL_AUTH.toString() + "/policy";
+        String url = Conf.ns().getAuthUrlBase() + "/policy";
         String body = "{\n"
                 + "    \"name\": \"NS Provider Admin Policy\",\n"
                 + "    \"scope\": {\n"
-                + "        \"serviceId\": \"" + NS_Config.AAA_SERVICE_ID.toString() + "\"\n"
+                + "        \"serviceId\": \"" + Conf.nsUsers().getAaService().getAppId() + "\"\n"
                 + "    },\n"
                 + "    \"permissions\": [\n"
                 + "      {\n"
@@ -259,7 +257,7 @@ public class AaaCall {
     }
 
     public String getPolicy(String policyId) {
-        String url = NS_Config.URL_AUTH.toString() + "/policy/" + policyId;
+        String url = Conf.ns().getAuthUrlBase() + "/policy/" + policyId;
 
         return given()
                 .headers(
@@ -272,7 +270,7 @@ public class AaaCall {
     }
 
     public String getPolicyLink(String groupId, String policyId) {
-        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId;
+        String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId;
         return given()
 
                 .headers("Content-Type", "application/json",
@@ -284,7 +282,7 @@ public class AaaCall {
     }
 
     public Map<String, String> getAllPolicyLink(String groupId) {
-        String url = NS_Config.URL_AUTH.toString() + "/group/" + groupId;
+        String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId;
         JsonPath responce = given()
 
                 .headers("Content-Type", "application/json",
@@ -299,7 +297,7 @@ public class AaaCall {
             String serviceId = p.get("serviceId").toString().replace("\"", "");
             String policyId = p.get("policyId").toString().replace("\"", "");
             String linkId = p.get("id").toString().replace("\"", "");
-            if (serviceId.equals(NS_Config.AAA_SERVICE_ID.toString())) {
+            if (serviceId.equals(Conf.nsUsers().getAaService().getAppId())) {
                 res.put(policyId, linkId);
             }
         });

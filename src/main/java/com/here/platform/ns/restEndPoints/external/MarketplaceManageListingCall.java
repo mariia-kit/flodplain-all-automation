@@ -3,11 +3,11 @@ package com.here.platform.ns.restEndPoints.external;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Random;
@@ -17,8 +17,10 @@ import org.junit.jupiter.api.Assertions;
 
 public class MarketplaceManageListingCall {
 
+    private static final String baseMpUrl = Conf.mp().getMarketplaceUrl();
+
     public String createNewListing(Container container) {
-        String RES_REALM = NS_Config.REALM.toString();
+        String RES_REALM = Conf.ns().getRealm();
         NeutralServerResponseAssertion listing = createListing(container, RES_REALM)
                 .expectedCode(HttpStatus.SC_OK);
         String hrn = listing.getResponse().getBody().jsonPath().get("hrn");
@@ -50,7 +52,7 @@ public class MarketplaceManageListingCall {
         Random r = new Random();
         String containerTitle = String.format("[NS] Container Listing %s %s", container.getName(), r.nextInt(10000));
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings";
+        String url = baseMpUrl + "/listings";
         String body = "{\n" +
                 "  \"visibility\": \"PRIVATE\",\n" +
                 "  \"state\": \"ACTIVE\",\n" +
@@ -108,7 +110,7 @@ public class MarketplaceManageListingCall {
     @Step("Request access to subscription {subsId}")
     private Response req_access(String subsId) {
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId + "/access";
+        String url = baseMpUrl + "/subscriptions/" + subsId + "/access";
         String body = "{\"message\":\"asd\"}";
         return RestHelper
                 .post("Request access on subscription " + subsId, url, providerToken, body);
@@ -118,7 +120,7 @@ public class MarketplaceManageListingCall {
     @Step("Get listing by hrn {hrn}")
     private Response getListingByHRN(String hrn) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings/" + hrn + "/as_provider";
+        String url = baseMpUrl + "/listings/" + hrn + "/as_provider";
         return RestHelper
                 .get("Get listing by hrn " + hrn, url, providerToken);
     }
@@ -129,7 +131,7 @@ public class MarketplaceManageListingCall {
         String subsOptionId = listing.jsonPath().getString("subscriptionOptions[0].id");
 
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings/" + listingHrn + "/access";
+        String url = baseMpUrl + "/listings/" + listingHrn + "/access";
         String body = "{\"message\":\"asd\",\"subscriptionOptionId\":" + subsOptionId + "}";
         Response resp = RestHelper
                 .post("Request subscription for hrn: " + listingHrn, url, providerToken, body);
@@ -146,7 +148,7 @@ public class MarketplaceManageListingCall {
     @Step("Negotiate for subscription {subsId}")
     private void negotiate(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId + "/negotiate";
+        String url = baseMpUrl + "/subscriptions/" + subsId + "/negotiate";
         String body = "{}";
         RestHelper.post("Negotiate for subscription : " + subsId, url, providerToken, body);
     }
@@ -154,7 +156,7 @@ public class MarketplaceManageListingCall {
     @Step("Acknowledge subscription {subsId} by Provider")
     private void ack_prov(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId + "/ack";
+        String url = baseMpUrl + "/subscriptions/" + subsId + "/ack";
         String body = "{}";
 
         Response resp = RestHelper
@@ -166,7 +168,7 @@ public class MarketplaceManageListingCall {
     @Step("Acknowledge subscription {subsId} by Consumer")
     private void ack_cons(String subsId) {
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId + "/ack";
+        String url = baseMpUrl + "/subscriptions/" + subsId + "/ack";
         String body = "{}";
         Response resp = RestHelper.post("Acknowledge subscription terms by Consumer : "
                 + subsId, url, providerToken, body);
@@ -177,7 +179,7 @@ public class MarketplaceManageListingCall {
     @Step("Begin cancellation of subscription {subsId}")
     public NeutralServerResponseAssertion beginCancellation(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId
+        String url = baseMpUrl + "/subscriptions/" + subsId
                 + "/cancel";
         String body = "{}";
         Response response = RestHelper
@@ -192,7 +194,7 @@ public class MarketplaceManageListingCall {
     @Step("Reject subscription {subsId}")
     public NeutralServerResponseAssertion rejectSubscribtion(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/subscriptions/" + subsId
+        String url = baseMpUrl + "/subscriptions/" + subsId
                 + "/reject/as_provider";
         String body = "{\n"
                 + "  \"message\": \"ManualProviderReject\"\n"
@@ -205,7 +207,7 @@ public class MarketplaceManageListingCall {
     @Step("Delete Listing {listingHrn}")
     public NeutralServerResponseAssertion deleteListing(String listingHrn) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings/" + listingHrn;
+        String url = baseMpUrl + "/listings/" + listingHrn;
         Response response = RestHelper.delete("Delete listing: " + listingHrn, url, providerToken);
         CleanUpHelper.getListingList().remove(listingHrn);
         return new NeutralServerResponseAssertion(response);
@@ -214,14 +216,14 @@ public class MarketplaceManageListingCall {
     @Step("Invite Consumer to Listing {listingHrn}")
     private String inviteConsumer(String listingHrn) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings/invites";
+        String url = baseMpUrl + "/listings/invites";
         String body = "{\n"
                 + "  \"listingHrn\": \"" + listingHrn + "\",\n"
                 + "  \"deliveryMethod\": \"EMAIL\",\n"
                 + "  \"emails\": [\n"
                 + "    \"" + MP_CONSUMER.getUser().getEmail() + "\"\n"
                 + "  ],\n"
-                + "  \"callbackUrl\": \"" + NS_Config.URL_EXTERNAL_MARKETPLACE_UI + "/consumer\"\n"
+                + "  \"callbackUrl\": \"" + Conf.mp().getMarketplaceUiUrl() + "/consumer\"\n"
                 + "}";
         Response resp = RestHelper
                 .post("Invite Consumer " + MP_CONSUMER.getUser().getEmail() + " to Listing "
@@ -233,7 +235,7 @@ public class MarketplaceManageListingCall {
     @Step("Invite Consumer to Listing")
     private void inviteClicked(String inviteId) {
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/listings/invites/" + inviteId + "/clicked";
+        String url = baseMpUrl + "/listings/invites/" + inviteId + "/clicked";
         String body = "{}";
         Response resp = RestHelper
                 .post("Consumer click invite with id " + inviteId, url, providerToken,
@@ -253,7 +255,7 @@ public class MarketplaceManageListingCall {
     @Step("Delete all Provider data from MP.")
     public void providerCleanUp() {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = NS_Config.URL_EXTERNAL_MARKETPLACE + "/admin/provider_cleanup";
+        String url = baseMpUrl + "/admin/provider_cleanup";
         RestHelper.post("Delete all MP data", url, providerToken, "");
     }
 

@@ -1,16 +1,16 @@
 package com.here.platform.ns.controllers.provider;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.BaseNeutralService;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
 public class ResourceController extends BaseNeutralService<ResourceController> {
 
-    private final String providersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
+    private final String providersBasePath = Conf.ns().getNsUrlProvider() + "providers";
 
     @Step
     public Response getResource(DataProvider dataProvider, String resourceId) {

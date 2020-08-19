@@ -2,7 +2,7 @@ package com.here.platform.ns.dto;
 
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
-import com.here.platform.ns.utils.NS_Config;
+import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class Container {
     }
 
     public String generateHrn() {
-        return generateHrn(NS_Config.REALM.toString(), MP_PROVIDER.getUser().getRealm());
+        return generateHrn(Conf.ns().getRealm(), MP_PROVIDER.getUser().getRealm());
     }
 
     public String generateScope() {

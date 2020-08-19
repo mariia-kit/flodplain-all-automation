@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.yaml:snakeyaml:1.26"
+    }
+}
+
 def mainResources = "src/main/resources"
 
 ext {
@@ -5,13 +14,7 @@ ext {
     cmSpecFile = file("$buildDir/cmSpec.json")
 }
 
-def cmEnvUrls = [
-        local: "http://localhost:8080",
-        dev  : "https://dev.consent.api.platform.in.here.com",
-        sit  : "https://sit.consent.api.platform.in.here.com",
-        stg  : "https://sit.consent.api.platform.in.here.com",
-        prod : "https://consent.api.platform.here.com"
-]
+
 
 tasks.withType(GenerateSwaggerCode) {
     wipeOutputDir = true
@@ -19,8 +22,15 @@ tasks.withType(GenerateSwaggerCode) {
     components = ["models"]
 }
 
-static String getEnvUrlFromMap(def map, String env) {
-    return Objects.isNull(env) ? map["dev"] : map[env]
+static String getEnvUrl(String resourcesUrl, String env) {
+    def finalEnv = Objects.isNull(env) ? "dev" : env
+    if( finalEnv == "stg" ) {
+        finalEnv = "sit"
+    }
+    
+    def cfg = new org.yaml.snakeyaml.Yaml().load( new File("${resourcesUrl}/" + finalEnv + "/cm.yaml").newInputStream() )
+    return "${cfg.serviceUrl}"
+    
 }
 
 swaggerSources {
@@ -33,7 +43,7 @@ swaggerSources {
     
     def cmHostByEnv
     if (!dynamicEnvUrl) {
-        cmHostByEnv = getEnvUrlFromMap(cmEnvUrls, targetEnv)
+        cmHostByEnv = getEnvUrl(mainResources, targetEnv)
     } else {
         cmHostByEnv = "https://$dynamicEnvUrl"
     }
@@ -45,7 +55,7 @@ swaggerSources {
         inputFile = cmSpecFile
 
         code {
-            configFile = file("$mainResources/cm-config.json")
+            configFile = file("$mainResources/swagger/cm-config.json")
 
             outputDir = cmApiDir
         }

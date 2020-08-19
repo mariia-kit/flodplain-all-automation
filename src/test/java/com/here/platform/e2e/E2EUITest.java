@@ -4,8 +4,6 @@ import static com.codeborne.selenide.Selenide.open;
 import static com.here.platform.cm.ui.BaseUITests.getUICmToken;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
-import static com.here.platform.ns.utils.NS_Config.MARKETPLACE_CALLBACK;
-import static com.here.platform.ns.utils.NS_Config.URL_EXTERNAL_MARKETPLACE_UI;
 import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Configuration;
@@ -18,6 +16,7 @@ import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.UserAccountExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
@@ -37,7 +36,7 @@ import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-import com.here.platform.ns.utils.PropertiesLoader;
+import com.here.platform.ns.helpers.TokenManager;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.io.File;
@@ -63,7 +62,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class E2EUITest extends BaseE2ETest {
 
     static {
-        Configuration.baseUrl = URL_EXTERNAL_MARKETPLACE_UI.toString().replace("marketplace", "");
+        Configuration.baseUrl = Conf.mp().getMarketplaceUiBaseUrl();
         Configuration.driverManagerEnabled = true;
         Configuration.pollingInterval = 400;
         Configuration.browserSize = "1366x1000";
@@ -84,7 +83,7 @@ public class E2EUITest extends BaseE2ETest {
                     .containerName(targetContainer.getName())
                     .containerDescription(targetContainer.getDescription())
                     .resources(List.of(targetContainer.getResourceNames()))
-                    .vinLabel(new VIN(targetDataSubject.vin).label());
+                    .vinLabel(new VIN(targetDataSubject.getVin()).label());
     private final AtomicReference<String> subscriptionId = new AtomicReference<>("");
 
     @org.testcontainers.junit.jupiter.Container
@@ -112,7 +111,7 @@ public class E2EUITest extends BaseE2ETest {
         if (StringUtils.isBlank(subscriptionId.get())) {
             return;
         }
-        PropertiesLoader.getInstance().resetUserLogins();
+        TokenManager.resetUserLogins();
 
         var mpListings = new MarketplaceManageListingCall();
         mpListings.beginCancellation(subscriptionId.get());
@@ -207,7 +206,7 @@ public class E2EUITest extends BaseE2ETest {
                     .createConsentRequest()
                     .fillConsentRequestTitle(consentRequest.getTitle())
                     .fillConsentRequestDescription(consentRequest.getPurpose())
-                    .attachFileWithVINs(new VinsToFile(targetDataSubject.vin).csv())
+                    .attachFileWithVINs(new VinsToFile(targetDataSubject.getVin()).csv())
                     .saveConsentRequest();
 
             consentRequestUrl.set(new ConsumerConsentRequestPage().isLoaded().copyConsentRequestURLViaClipboard());
@@ -221,11 +220,11 @@ public class E2EUITest extends BaseE2ETest {
         });
 
         var crid = getCridFromUrl(consentRequestUrl.get());
-        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.vin);
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
         step("Fill VIN by Data Subject", () ->
                 new VINEnteringPage().isLoaded()
-                        .fillVINAndContinue(targetDataSubject.vin));
+                        .fillVINAndContinue(targetDataSubject.getVin()));
 
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
 
@@ -242,7 +241,7 @@ public class E2EUITest extends BaseE2ETest {
                     .withCampaignId(crid)
                     .getContainerForVehicle(
                             targetContainer.getDataProviderByName(),
-                            targetDataSubject.vin,
+                            targetDataSubject.getVin(),
                             targetContainer
                     );
             new NeutralServerResponseAssertion(response).expectedCode(200);
@@ -266,7 +265,7 @@ public class E2EUITest extends BaseE2ETest {
                 .listingHrn(listingHrn)
                 .deliveryMethod("EMAIL")
                 .emails(List.of(targetUser.getEmail()))
-                .callbackUrl(MARKETPLACE_CALLBACK.toString())
+                .callbackUrl(Conf.mp().getMarketplaceCallbackUrl())
                 .build();
     }
 

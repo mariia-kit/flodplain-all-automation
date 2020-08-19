@@ -3,7 +3,7 @@ package com.here.platform.hereAccount.controllers;
 
 import com.github.javafaker.Faker;
 import com.here.platform.common.JConvert;
-import com.here.platform.ns.utils.NS_Config;
+import com.here.platform.common.config.Conf;
 import io.restassured.response.Response;
 import lombok.Data;
 import org.apache.http.HttpStatus;
@@ -46,7 +46,7 @@ public class HereUserManagerController extends BaseHereAccountController {
     }
 
     public String getHereCurrentToken(HereUser hereUser) {
-        Response tokenResponse = hereAccountClient(NS_Config.GET_TOKEN_PATH.toString())
+        Response tokenResponse = hereAccountClient(Conf.ns().getAuthUrlGetToken())
                 .header("x-ha-realm", hereUser.getRealm())
                 .when().body(new JConvert(new GetCurrentTokenRequest(hereUser)).toJson())
                 .post();

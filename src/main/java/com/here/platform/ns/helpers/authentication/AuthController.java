@@ -4,9 +4,9 @@ import com.here.platform.aaa.ApplicationTokenController;
 import com.here.platform.aaa.DaimlerTokenController;
 import com.here.platform.aaa.HERECMTokenController;
 import com.here.platform.aaa.PortalTokenController;
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.utils.NS_Config;
-import com.here.platform.ns.utils.PropertiesLoader;
+import com.here.platform.ns.helpers.TokenManager;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,9 +22,9 @@ public class AuthController {
                 case NS:
                     if ("prod".equalsIgnoreCase(System.getProperty("env"))) {
                         logger.info("------------- Creating new APP LIKE user token ------------");
-                        String host = NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString();
-                        String clientIdValue = NS_Config.APP_KEY.toString();
-                        String clientSecretValue = NS_Config.APP_SECRET.toString();
+                        String host = Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken();
+                        String clientIdValue = Conf.nsUsers().getConsumerApp().getAppKeyId();
+                        String clientSecretValue = Conf.nsUsers().getConsumerApp().getAppKeySecret();
                         return ApplicationTokenController.createConsumerAppToken(host, clientIdValue, clientSecretValue);
                     } else {
                         logger.info("------------- Creating new portal user token ------------");
@@ -38,15 +38,16 @@ public class AuthController {
                     return new HERECMTokenController().loginAndGenerateCMToken(user.getEmail(), user.getPass());
                 case APP:
                     logger.info("------------- Creating new APP LIKE user token ------------");
-                    String host = NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString();
-                    String clientIdValue = NS_Config.APP_KEY.toString();
-                    String clientSecretValue = NS_Config.APP_SECRET.toString();
+                    String host = Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken();
+                    String clientIdValue = Conf.nsUsers().getConsumerApp().getAppKeyId();
+                    String clientSecretValue = Conf.nsUsers().getConsumerApp().getAppKeySecret();
                     return ApplicationTokenController.createConsumerAppToken(host, clientIdValue, clientSecretValue);
                 case DAIMLER:
                     logger.info("------------- Creating new Daimler user token ------------");
-                    String clientId = PropertiesLoader.getInstance().mainProperties.getProperty("daimler.clientId");
-                    String clientSecret = PropertiesLoader.getInstance().mainProperties.getProperty("daimler.clientSecret");
-                    String callbackUrl = PropertiesLoader.getInstance().mainProperties.getProperty("daimler.callbackurl");
+
+                    String clientId = Conf.ns().getDaimlerApp().getClientId();
+                    String clientSecret = Conf.ns().getDaimlerApp().getClientSecret();
+                    String callbackUrl = Conf.ns().getDaimlerApp().getCallBackUrl();
                     String code = DaimlerTokenController.produceConsentAuthCode(
                             clientId,
                             clientSecret,
@@ -56,9 +57,9 @@ public class AuthController {
                 case AA:
                     logger.info("------------- Creating new AA user token ------------");
                     return ApplicationTokenController.createConsumerAppToken(
-                            NS_Config.URL_AUTH.toString() + NS_Config.GET_TOKEN_PATH.toString(),
-                            NS_Config.AAA_ID.toString(),
-                            NS_Config.AAA_SECRET.toString());
+                            Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken(),
+                            Conf.nsUsers().getAaService().getAppKeyId(),
+                            Conf.nsUsers().getAaService().getAppKeySecret());
                 default:
                     return StringUtils.EMPTY;
             }
@@ -67,10 +68,10 @@ public class AuthController {
     }
 
     public static String loadOrGenerate(User user, Supplier<String> supplier) {
-        String currentT = PropertiesLoader.getInstance().loadToken(user.getEmail() + "_" + user.getRealm());
+        String currentT = TokenManager.loadToken(user.getEmail() + "_" + user.getRealm());
         if (StringUtils.isEmpty(currentT)) {
             String token = supplier.get();
-            PropertiesLoader.getInstance().saveToken(user.getEmail() + "_" + user.getRealm(), token);
+            TokenManager.saveToken(user.getEmail() + "_" + user.getRealm(), token);
             return token;
         } else {
             return currentT;

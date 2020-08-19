@@ -1,0 +1,39 @@
+
+#------------------NS URL's--------------------
+nsUrlBaseAccess: https://ns.api.platform.here.com/
+nsUrlBaseProvider: https://provider.ns.api.platform.here.com/
+nsUrlAccess: access/v1/
+nsUrlProvider: provider/v1/
+
+#------------------AA URL's--------------------
+authUrlBase: https://account.api.here.com
+authUrlValidate:
+authUrlToken: /user/me
+authUrlAccess: /verify/accessToken
+authUrlGetToken: /oauth2/token
+portalUrl: https://account.here.com
+versionPattern: "1.\\d.\\d.\\d+"
+realm: here
+
+#------------------Marketplace target--------------------
+marketplaceMock: false
+
+#------------------Consent Manager Target Endpoint---------------------------------------------
+consentMock: false
+consentUrl: https://consent.api.platform.here.com/consent-service/v1
+
+#------------------Reference Provider--------------------------------------------------
+refProviderName: exelsior
+refProviderUrl: https://reference-data-provider.ost.solo-experiments.com
+
+
+#------------------Daimler App Credentials--------------------------------------------------
+daimlerApp:
+  clientId: 88440bf1-2fff-42b6-8f99-0510b6b5e6f8
+  clientSecret: 2d839912-c5e6-4cfb-8543-9a1bed38efe6
+  callBackUrl: https://platform.in.here.com/consent/oauth2/daimler/auth/callback
+
+referenceApp:
+  clientId: consent_mediator
+  clientSecret: 123
+  callBackUrl: https://platform.in.here.com/consent/oauth2/referenceProvider/auth/callback

@@ -18,8 +18,8 @@ public class HereLoginSteps {
     public void loginDataSubject(DataSubjects dataSubjects) {
         loginPage
                 .isLoaded()
-                .fillUserEmail(dataSubjects.username)
-                .fillUserPassword(dataSubjects.password)
+                .fillUserEmail(dataSubjects.getUserName())
+                .fillUserPassword(dataSubjects.getPass())
                 .clickSignIn();
     }
 

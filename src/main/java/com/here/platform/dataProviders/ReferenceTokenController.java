@@ -13,7 +13,7 @@ public class ReferenceTokenController {
 
     private final static String
             CALLBACK_URL =
-            ConsentPageUrl.getEnvUrlRoot() + "oauth2/referenceProvider/auth/callback",
+            ConsentPageUrl.getDaimlerCallbackUrl(),
             REFERENCE_URL = "https://data-reference-provider-dev.ns.api.platform.in.here.com/",
             REFERENCE_AUTH_URL = REFERENCE_URL + "auth/oauth/v2",
             CLIENT_ID = "consent_mediator",
@@ -32,7 +32,7 @@ public class ReferenceTokenController {
 
     public String generateAuthorizationCode() {
         String referenceConsentId = authoriseClient();
-        return approveConsentReferenceSide(referenceConsentId, targetVehicle.vin);
+        return approveConsentReferenceSide(referenceConsentId, targetVehicle.getVin());
 
     }
 

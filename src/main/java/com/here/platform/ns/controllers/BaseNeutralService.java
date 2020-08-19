@@ -3,8 +3,8 @@ package com.here.platform.ns.controllers;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.HeaderConfig.headerConfig;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -21,7 +21,7 @@ public abstract class BaseNeutralService<T> {
         var baseService = given()
                 .config(RestAssuredConfig.config()
                         .headerConfig(headerConfig().overwriteHeadersWithName("Authorization", "Content-Type")))
-                .baseUri(NS_Config.URL_NS.toString())
+                .baseUri(Conf.ns().getNsUrlBaseAccess())
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)

@@ -1,0 +1,20 @@
+
+#------------------MP Consumer Credentials---------------------------------------------
+mpConsumer:
+  email: ns-automated-data-consumer@here.com
+  pass: g{#N2(mP(8
+  realm: olp-mrkt-cons-dev-1
+  userId: HERE-ef200b27-50f5-452f-b9a4-58473a22692c
+  clientId: ha-test-app-1
+  clientSecret: ha-test-secret-1
+  type: MP
+
+#------------------MP Providers Credentials---------------------------------------------
+mpProvider:
+  email: ns-automated-data-provider@here.com
+  pass: 5@R$PfULnx
+  realm: olp-mrkt-prov-dev-1
+  userId: HERE-25514a15-b4ff-4b1a-983a-1ccb8c0a8442
+  clientId: ha-test-app-1
+  clientSecret: ha-test-secret-1
+  type: MP

@@ -1,0 +1,6 @@
+---
+#----ConsentManagementServiceUrl------
+serviceUrl: https://consent.api.platform.here.com
+
+#----ConsentPageUrl---
+consentPageUrl: https://platform.here.com/consent/

@@ -121,7 +121,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @ApproveConsent
     @DisplayName("Force remove approved consents from consent request")
     void forceRemoveApprovedDataSubjectsTest() {
-        var vinToApprove = DataSubjects.getNext().vin;
+        var vinToApprove = DataSubjects.getNext().getVin();
         consentRequestController
                 .withConsumerToken(mpConsumer)
                 .addVinsToConsentRequest(crid, new VinsToFile(vinToApprove, vin2, vin3).json());
@@ -149,7 +149,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @RevokeConsent
     void forceRemoveRevokedConsentsTest() {
         var vehicle = DataSubjects.getNext();
-        var vinToRevoke = vehicle.vin;
+        var vinToRevoke = vehicle.getVin();
         consentRequestController.withConsumerToken(mpConsumer);
         consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(vinToRevoke, vin2, vin3).json());
 
@@ -182,7 +182,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @RevokeConsent
     void removeRevokedConsentsTest() {
         var targetDataSubject = DataSubjects.getNext();
-        var vinToRevoke = targetDataSubject.vin;
+        var vinToRevoke = targetDataSubject.getVin();
         consentRequestController
                 .withConsumerToken(mpConsumer)
                 .addVinsToConsentRequest(crid, new VinsToFile(vinToRevoke, vin2, vin3).csv());
@@ -212,7 +212,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @ApproveConsent
     @DisplayName("Forbidden to remove approved consent")
     void forbiddenToRemoveApprovedDataSubjects() {
-        var vinToApprove = DataSubjects.getNext().vin;
+        var vinToApprove = DataSubjects.getNext().getVin();
         consentRequestController.withConsumerToken(mpConsumer);
         consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(vinToApprove, vin2, vin3).csv());
 

@@ -1,6 +1,7 @@
 package com.here.platform.e2e;
 
 import static com.here.platform.ns.dto.Users.CONSUMER;
+import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
@@ -36,7 +37,7 @@ class ProdIntegrationTest extends BaseE2ETest {
                 .withConsentRequired(false);
 
         var response = new ContainerDataController()
-                .withToken(CONSUMER)
+                .withToken(MP_CONSUMER)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
