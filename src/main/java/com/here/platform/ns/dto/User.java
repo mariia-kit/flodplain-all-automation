@@ -36,6 +36,10 @@ public class User {
         this.userId = StringUtils.EMPTY;
     }
 
+    public User() {
+
+    }
+
     public User withUserType(UserType_NS userType) {
         this.setType(userType);
         return this;

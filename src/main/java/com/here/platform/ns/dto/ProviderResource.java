@@ -2,9 +2,9 @@ package com.here.platform.ns.dto;
 
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.UniqueId;
-import com.here.platform.ns.utils.NS_Config;
 import java.beans.ConstructorProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,7 +47,7 @@ public class ProviderResource implements Cloneable {
 
     public String generateHrn(String providerName) {
         return String
-                .format("hrn:%s:neutral::%s:%s/resources/%s", NS_Config.REALM.toString(),
+                .format("hrn:%s:neutral::%s:%s/resources/%s", Conf.ns().getRealm(),
                         MP_PROVIDER.getUser().getRealm(),
                         providerName,
                         getName());
@@ -55,7 +55,7 @@ public class ProviderResource implements Cloneable {
 
     public String generateGeneralResourceHrn(String providerName) {
         return String
-                .format("hrn:%s:neutral::%s:%s/resources", NS_Config.REALM.toString(),
+                .format("hrn:%s:neutral::%s:%s/resources", Conf.ns().getRealm(),
                         MP_PROVIDER.getUser().getRealm(),
                         providerName);
     }

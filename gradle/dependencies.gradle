@@ -47,7 +47,8 @@ dependencies {
             "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
             "log4j:log4j:1.2.17",
             "com.codeborne:selenide:5.13.0",
-            "io.qameta.allure:allure-selenide:$allureVer"
+            "io.qameta.allure:allure-selenide:$allureVer",
+            "org.yaml:snakeyaml:1.26"
     )
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:$junit5Ver",

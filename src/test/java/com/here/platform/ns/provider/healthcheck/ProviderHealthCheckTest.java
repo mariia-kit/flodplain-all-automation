@@ -1,9 +1,9 @@
 package com.here.platform.ns.provider.healthcheck;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.provider.ProviderServiceController;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
-import com.here.platform.ns.utils.NS_Config;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -32,9 +32,9 @@ class ProviderHealthCheckTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonTrue("apiVersion",
-                        val -> val.matches(NS_Config.VERSION_PATTERN.toString()),
+                        val -> val.matches(Conf.ns().getVersionPattern()),
                         "App version is not as expected, or empty! Pattern "
-                                + NS_Config.VERSION_PATTERN.toString());
+                                + Conf.ns().getVersionPattern());
     }
 
     @Test

@@ -53,13 +53,13 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     void beforeEach() {
         var privateBearer = dataSubject.getBearerToken();
         userAccountController.deleteConsumerForUser(mpConsumer.getRealm(), privateBearer);
-        userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
+        userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
     }
 
     @AfterEach
     void afterEach() {
-        userAccountController.deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
-        RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.vin).json());
+        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
+        RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.getVin()).json());
     }
 
 
@@ -67,11 +67,11 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @DisplayName("E2E create approve consent and get access token")
     void e2eTest() {
         var consentRequest = ConsentRequestSteps
-                .createConsentRequestWithVINFor(providerApplication, dataSubject.vin);
+                .createConsentRequestWithVINFor(providerApplication, dataSubject.getVin());
 
         crid = consentRequest.getConsentRequestId();
 
-        var vin = dataSubject.vin;
+        var vin = dataSubject.getVin();
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
 
@@ -105,12 +105,12 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         //todo after implemented ConsentInfo.privacyPolicy/additionalLinks fields refactor to
         // var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(providerApplication, dataSubject.vin)
         var consentRequest = generateConsentData(mpConsumer);
-        crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.vin);
+        crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.getVin());
 
         open(crid);
         HereLoginSteps.loginDataSubject(dataSubject);
         fuSleep();
-        updateSessionStorageData(crid, dataSubject.vin);
+        updateSessionStorageData(crid, dataSubject.getVin());
         dataSubject.setBearerToken(getUICmToken());
         openStaticPurposePage();
         verifyStaticPurposeInfoPage();

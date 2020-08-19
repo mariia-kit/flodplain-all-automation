@@ -19,8 +19,8 @@ public class DaimlerLoginPage {
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
         refresh();
-        $("[name=username]").setValue(dataSubject.username);
-        $("#password").setValue(dataSubject.password);
+        $("[name=username]").setValue(dataSubject.getUserName());
+        $("#password").setValue(dataSubject.getPass());
         $("#ciam-weblogin-auth-login-button").click();
     }
 

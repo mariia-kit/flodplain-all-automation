@@ -2,9 +2,9 @@ package com.here.platform.ns.restEndPoints.external;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
-import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -23,8 +23,7 @@ public class MarketplaceNSGetContainerInfoCall extends BaseRestControllerNS<Mark
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("Error encoding hrn for api request", ex.getCause());
         }
-        endpointUrl =
-                NS_Config.URL_EXTERNAL_MARKETPLACE + "/neutral_server/containers/" + urlEncoded;
+        endpointUrl = Conf.mp().getMarketplaceUrl() + "/neutral_server/containers/" + urlEncoded;
     }
 
     @Override

@@ -69,8 +69,8 @@ public class DaimlerTokenController {
                         "SMAUTHREASON", "", "target", "", "acr_values", "", "t", "",
                         "sessionID", sessionId,
                         "sessionData", sessionData,
-                        "username", targetVehicle.username,
-                        "password", targetVehicle.password,
+                        "username", targetVehicle.getUserName(),
+                        "password", targetVehicle.getPass(),
                         "app-id", "ONEAPI.PROD", "lang", "en_US")
                 .cookies(mercedesCookies)
                 .when().post()

@@ -2,7 +2,7 @@ package com.here.platform.ns.dto;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
-import com.here.platform.ns.utils.NS_Config;
+import com.here.platform.common.config.Conf;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class DataProvider {
     }
 
     public String generateHrn() {
-        return "hrn:" + NS_Config.REALM.toString() + ":neutral::" + PROVIDER.getUser().getRealm() + ":" + name;
+        return "hrn:" + Conf.ns().getRealm() + ":neutral::" + PROVIDER.getUser().getRealm() + ":" + name;
     }
 
 }

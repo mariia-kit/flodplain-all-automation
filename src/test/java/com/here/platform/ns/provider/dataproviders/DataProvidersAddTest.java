@@ -3,6 +3,9 @@ package com.here.platform.ns.provider.dataproviders;
 import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+
+import com.here.platform.common.config.Conf;
+import com.here.platform.common.config.NsUserConfig;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.Container;
@@ -28,6 +31,7 @@ class DataProvidersAddTest extends BaseNSTest {
     @DisplayName("Verify create new DataProvider Successful")
     @Tag("smoke_ns")
     void verifyDataProviderCanBeCreated() {
+        NsUserConfig c = Conf.nsUsers();
         DataProvider provider = Providers.generateNew();
 
         var response = new ProviderController()

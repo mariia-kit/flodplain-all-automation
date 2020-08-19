@@ -2,6 +2,7 @@ package com.here.platform.ns.helpers;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.controllers.provider.ResourceController;
@@ -13,7 +14,6 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -97,7 +97,7 @@ public class Steps {
 
     @Step("Create regular Listing and Subscription for {container.name}")
     public static void createListingAndSubscription(Container container) {
-        if (!NS_Config.MARKETPLACE_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isMarketplaceMock()) {
             String listing = new MarketplaceManageListingCall()
                     .createNewListing(container);
             new MarketplaceManageListingCall()

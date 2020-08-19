@@ -34,7 +34,7 @@ public class UserAccountExtension implements BeforeEachCallback, AfterEachCallba
         var userAccountController = new UserAccountController();
         var cmToken = targetDataSubject.getBearerToken();
 
-        userAccountController.deleteVINForUser(targetDataSubject.vin, cmToken);
+        userAccountController.deleteVINForUser(targetDataSubject.getVin(), cmToken);
 
         var userAccountInfo = userAccountController
                 .userAccountGetInfo(cmToken)

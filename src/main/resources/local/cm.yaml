@@ -1,0 +1,6 @@
+---
+#----ConsentManagementServiceUrl------
+serviceUrl: http://localhost:8080
+
+#----ConsentPageUrl---
+consentPageUrl: http://localhost:8080/consent/

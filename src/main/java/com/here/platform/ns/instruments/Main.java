@@ -1,12 +1,12 @@
 package com.here.platform.ns.instruments;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.EnvDataCollector;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
-import com.here.platform.ns.utils.NS_Config;
 import java.io.File;
 
 
@@ -53,7 +53,7 @@ public class Main {
                 ReferenceProviderCall.wipeAllData();
                 setAllTokens();
                 EnvDataCollector.create();
-                if (NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+                if (Conf.ns().isConsentMock()) {
                     new TestDataGeneration().setVehicleTokenForDaimler();
                 }
             }

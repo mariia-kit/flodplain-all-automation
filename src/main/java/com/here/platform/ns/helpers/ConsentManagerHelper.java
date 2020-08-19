@@ -3,6 +3,7 @@ package com.here.platform.ns.helpers;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Providers;
@@ -10,7 +11,6 @@ import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
-import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +41,7 @@ public class ConsentManagerHelper {
     }
 
     private static synchronized String produceMasterConsent() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             Container container = new Container("cmmastercontainer",
                     "cmmastercontainer",
                     Providers.DAIMLER_REFERENCE.getName(),
@@ -102,7 +102,7 @@ public class ConsentManagerHelper {
     }
 
     public ConsentManagerHelper createConsentRequestWithAppAndVin() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             String vin =
                     vinNumbers.size() == 1 ? vinNumbers.get(0) : String.join(",", vinNumbers);
             createApplicationForContainer();
@@ -115,7 +115,7 @@ public class ConsentManagerHelper {
     }
 
     public ConsentManagerHelper createConsentRequest() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             consentRequestId = new ConsentManagementCall()
                     .initConsentRequestStrict(container, cmConsumer);
             waitForConsentInit();
@@ -124,7 +124,7 @@ public class ConsentManagerHelper {
     }
 
     public ConsentManagerHelper approveConsent() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             String authToken = Users.HERE_USER.getToken();
 
             vinNumbers.forEach(vin -> {
@@ -153,7 +153,7 @@ public class ConsentManagerHelper {
     }
 
     public ConsentManagerHelper revokeConsent() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             String authToken = Users.HERE_USER.getToken();
             vinNumbers.forEach(vin -> {
                 Response res = new ConsentManagementCall()
@@ -166,7 +166,7 @@ public class ConsentManagerHelper {
     }
 
     public String getConsentRequestId() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             return consentRequestId;
         } else {
             return "ANY_ID";
@@ -174,7 +174,7 @@ public class ConsentManagerHelper {
     }
 
     public ConsentManagerHelper createApplicationForContainer() {
-        if (!NS_Config.CONSENT_MOCK.toString().equalsIgnoreCase("true")) {
+        if (!Conf.ns().isConsentMock()) {
             new ConsentManagementCall().addCMApplication(container, container.getDataProviderName());
             CleanUpHelper.addToAppsList(container.getDataProviderName(), container.getName());
         }

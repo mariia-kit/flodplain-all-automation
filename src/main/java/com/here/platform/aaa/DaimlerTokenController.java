@@ -22,10 +22,6 @@ public class DaimlerTokenController {
         String scope = "mb:user:pool:reader%20mb:vehicle:status:general";
         String authorize = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize";
         Response authResp = given()
-                .header("Accept",
-                        "text/html,applicat\"prompt\", \"consent%20login\")\n"
-                                + "        .urlEncodingEnabled(false)\n"
-                                + "        .redirects().follow(false)ion/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                 .header("Accept-Encoding", "gzip, deflate, br")
                 .header("Sec-Fetch-Mode", "navigate")
                 .header("Accept-Language", "en-US,en;q=0.9,ru;q=0.8")
@@ -90,7 +86,7 @@ public class DaimlerTokenController {
                 .when().post(consentDo);
         coo = mergeCookies(coo, loginCall.detailedCookies());
         String newData = StringUtils.substringBetween(consentCall.asString(),
-                "name=\"sessionData\" value=\"", "\"/>");
+                "name=\"sessionData\" value=\"", "\">");
 
         String authoriseConsent = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize/consent";
 

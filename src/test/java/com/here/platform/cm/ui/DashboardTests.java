@@ -39,16 +39,16 @@ public class DashboardTests extends BaseUITests {
     void beforeEach() {
         var privateBearer = dataSubject.getBearerToken();
         userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
-        userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
+        userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
     }
 
     @AfterEach
     void afterEach() {
-        userAccountController.deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
+        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
         userAccountController
                 .deleteConsumerForUser(providerApplication.consumer.getRealm(), dataSubject.getBearerToken());
         for (String crid : cridsToRemove) {
-            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.vin).json());
+            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.getVin()).json());
         }
     }
 
@@ -62,7 +62,7 @@ public class DashboardTests extends BaseUITests {
     @DisplayName("Verify Dashboard page")
     void verifyDashBoardTest() {
         var mpConsumer = providerApplication.consumer;
-        var vin = dataSubject.vin;
+        var vin = dataSubject.getVin();
 
         var firstConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(providerApplication, vin);
         var consentRequestId1 = firstConsentRequest.getConsentRequestId();

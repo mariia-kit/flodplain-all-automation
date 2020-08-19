@@ -37,7 +37,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @BeforeEach
     void beforeEach() {
-        userVINsToRemove.add(dataSubject.vin);
+        userVINsToRemove.add(dataSubject.getVin());
         for (String vinToRemove : userVINsToRemove) {
             userAccountController.deleteVINForUser(vinToRemove, privateBearer);
         }
@@ -53,20 +53,20 @@ public class UserAccountVINTests extends BaseCMTest {
     @Test
     @DisplayName("Add VIN to the user")
     void addVinToUserTest() {
-        var addVinsResponse = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
+        var addVinsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
 
         var actualVinLabels = new ResponseAssertion(addVinsResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .bindAs(UserAccountData.class).getVinLabels();
 
-        Assertions.assertThat(actualVinLabels).contains(new VIN(dataSubject.vin).label());
+        Assertions.assertThat(actualVinLabels).contains(new VIN(dataSubject.getVin()).label());
     }
 
     @Test
     @DisplayName("Add several VINs to the User")
     void addSeveralVINsToUserTest() {
-        var firstAddVINsResponse = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
-        userVINsToRemove.add(dataSubject.vin);
+        var firstAddVINsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
+        userVINsToRemove.add(dataSubject.getVin());
         new ResponseAssertion(firstAddVINsResponse)
                 .statusCodeIsEqualTo(StatusCode.OK);
 
@@ -78,7 +78,7 @@ public class UserAccountVINTests extends BaseCMTest {
                 .bindAs(UserAccountData.class).getVinLabels();
 
         Assertions.assertThat(vinLabels).contains(
-                new VIN(dataSubject.vin).label(), new VIN(secondVIN).label()
+                new VIN(dataSubject.getVin()).label(), new VIN(secondVIN).label()
         );
     }
 
@@ -87,12 +87,12 @@ public class UserAccountVINTests extends BaseCMTest {
     @Issue("NS-1888")
     @DisplayName("Forbidden to add one VIN for another user")
     void forbiddenToAddVINToAnotherUserTest() {
-        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
+        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
 
         var secondUserLogin = DataSubjects.getNext().getBearerToken();
 
-        var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, secondUserLogin);
+        var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), secondUserLogin);
         new ResponseAssertion(secondAdd)
                 .statusCodeIsEqualTo(StatusCode.CONFLICT)
                 .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
@@ -103,10 +103,10 @@ public class UserAccountVINTests extends BaseCMTest {
     @Issue("NS-1888")
     @DisplayName("Add existent VIN for the user is forbidden")
     void addExistentVINForUserTest() {
-        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
+        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
 
-        var addExistentVINResponse = userAccountController.attachVinToUserAccount(dataSubject.vin, privateBearer);
+        var addExistentVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(addExistentVINResponse)
                 .statusCodeIsEqualTo(StatusCode.CONFLICT)
                 .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
@@ -116,7 +116,7 @@ public class UserAccountVINTests extends BaseCMTest {
     @ErrorHandler
     @DisplayName("Forbidden to add VIN without Bearer token")
     void forbiddenToAddVINWithoutBearerTokenTest() {
-        var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.vin, "");
+        var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), "");
         new ResponseAssertion(addVINResponse)
                 .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
                 .expectedErrorResponse(CMErrorResponse.TOKEN_VALIDATION);
@@ -126,7 +126,7 @@ public class UserAccountVINTests extends BaseCMTest {
     @ErrorHandler
     @DisplayName("VIN not found if twice remove the VIN")
     void VINNotFoundTest() {
-        var removeVinResponse = userAccountController.deleteVINForUser(dataSubject.vin, privateBearer);
+        var removeVinResponse = userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(removeVinResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
                 .expectedErrorResponse(CMErrorResponse.VIN_NOT_FOUND_EXCEPTION);

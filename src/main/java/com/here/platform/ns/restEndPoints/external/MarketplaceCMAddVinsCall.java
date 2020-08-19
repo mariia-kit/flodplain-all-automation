@@ -2,9 +2,9 @@ package com.here.platform.ns.restEndPoints.external;
 
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
-import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,8 +20,7 @@ public class MarketplaceCMAddVinsCall extends BaseRestControllerNS<MarketplaceCM
     public MarketplaceCMAddVinsCall(String subsId, String vin) {
         callMessage = "Perform MP call to add vin numbers to ConsentRequest";
         setDefaultUser(MP_CONSUMER);
-        endpointUrl =
-                NS_Config.URL_EXTERNAL_MARKETPLACE + "/consent/subscriptions/" + subsId + "/request";
+        endpointUrl = Conf.mp().getMarketplaceUrl() + "/consent/subscriptions/" + subsId + "/request";
         this.vin = vin;
         this.subsId = subsId;
     }

@@ -2,27 +2,19 @@ package com.here.platform.cm.enums;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
-import com.here.platform.common.EnumByEnv;
+import com.here.platform.common.config.Conf;
 import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public enum ConsentPageUrl {
-
-    LOCAL("http://localhost:8080/consent/"),
-    DEV("https://portal.platform.in.here.com/consent/"),
-    SIT("https://platform.in.here.com/consent/"),
-    STG(SIT.envUrl),
-    PROD("https://platform.here.com/consent/");
-
-    private final String envUrl;
+public class ConsentPageUrl {
 
     public static String getConsentRequestsUrl() {
         return fromUriString(getEnvUrlRoot()).path("/requests/").toUriString();
     }
 
     public static String getEnvUrlRoot() {
-        return EnumByEnv.get(ConsentPageUrl.class).envUrl;
+       return Conf.cm().getConsentPageUrl();
     }
 
     public static String getDaimlerCallbackUrl() {

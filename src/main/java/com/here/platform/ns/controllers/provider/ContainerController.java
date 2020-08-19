@@ -1,15 +1,15 @@
 package com.here.platform.ns.controllers.provider;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.BaseNeutralService;
 import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
 public class ContainerController extends BaseNeutralService<ContainerController> {
 
-    private final String containersBasePath = NS_Config.SERVICE_PROVIDER + "providers";
+    private final String containersBasePath = Conf.ns().getNsUrlProvider() + "providers";
 
     @Step
     public Response getContainer(Container container) {

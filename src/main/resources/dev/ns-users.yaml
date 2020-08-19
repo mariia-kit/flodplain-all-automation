@@ -1,0 +1,62 @@
+
+#------------------Consumer Credentials---------------------------------------------
+consumer:
+  email: ns-automated-data-consumer@here.com
+  pass: g{#N2(mP(8
+  realm: olp-mrkt-cons-dev-1
+  userId: HERE-ef200b27-50f5-452f-b9a4-58473a22692c
+  clientId: ha-test-app-1
+  clientSecret: ha-test-secret-1
+  type: NS
+
+#------------------Providers Credentials---------------------------------------------
+provider:
+  email: ns-automated-data-provider@here.com
+  pass: 5@R$PfULnx
+  realm: olp-mrkt-prov-dev-1
+  userId: HERE-25514a15-b4ff-4b1a-983a-1ccb8c0a8442
+  clientId: ha-test-app-1
+  clientSecret: ha-test-secret-1
+  type: NS
+
+#------------------Non-Consumer Manager Credentials----------------------------------
+nonConsumerManager:
+  email: non-consumer-manager@here.com
+  pass: B>xHP!A8x7
+  realm: olp-mrkt-cons-dev-1
+  userId: HERE-47adb802-9f25-42c4-acb0-be759fda0d2b
+  token: h1.RRRRRR_oVurVoPdo_pOBBbaw.Sl2EyesJ4uFofTlJizl078Aqg3rEEv8ijLoKT733335u98JupKjqFBFef-Cd5n4sxH49P1B_stOjGA8zQpH7uk-3PKNIX2UcRUyRkUzN9DPQ3ubQD68LfuYTV_ZYUN1KGaQxNUNvg-m3NX5LjNcGniqRajh0TAv7yz4hw5NYI2bZ4Qfa15VvpSIhCFyJGyCmhg9v6bBmG5HLckpuDTlGxxum99t4dHyaKqLb8Dgwb138SSnNyxmF7lZ7Hya5tZv4JaSUvnqGxiJYmYHx9D2-te6V_V2GsH0g5qcRMb1bwUfvMYyCbACu2OP_560sOOGJmMHTlAgriMse2pMY7wdi7bdUwKJbDxUm1BlnAvWI_Jb9GRasbPK88tktOJ1DmRbRnZ2CXllpeuTOIuJUHuPiI2XJwHUNlo4Hmrd-H1zZlu6Tmh47-qvgRuLdgNpuPkwJmt_ECdlymMifPy1r2mg.Z6c-6tkubHU-s8LMLcZD2hQ6L8flQERKYvYAGitXFIFTaHrZVkbnHLgbgv_kSnrUKKHjWlEzmPYAzmIgLN4HFGEv6d47nUKU1R-TGM28zrTj25XGVdRyKCMCgqM5C4UuSuY9UWZnMU9nn0hQxWPVgVKDhN07Bh-lmG54Ixla2jlsHgVRVLVqhefkT19HzV9HD6y_NXFofhEoHPSw7uEYylfpm7b2BersvYTn8xzOzwfzoYhlEvwdY-BKO7jdH4kf5584m1UeM3nJRWZ-GSsJEO-cGnVpdR5isLRjVsJ8iOCsn6opDmRrRNyB9TcWnDiQeeEYY_JqmjAYAyUgfSjSVQ
+  type: NS
+
+#  group.name: Consumer Management
+consumerGroupId: GROUP-9a2cd6e4-299a-432d-a464-e70558bbe8ee
+#  ns.provider.group.name: Provider Management
+providerGroupId: GROUP-4cd9f1a8-114d-4dd7-bd82-730b01c01479
+
+#------------------Here User Credentials---------------------------------------------
+daimlerUser:
+  email: ZXh0LXZhbGVyaWkuc3VzaGtvdkBoZXJlLmNvbQ==
+  pass: VnBub2pzMDAxIw==
+  vin: 2AD190A6AD057824ED
+
+#------------------Here User Credentials---------------------------------------------
+hereUser:
+  email: Gwyn4250@mail.com
+  pass: As123456789
+
+
+#------------------Consumer App Credentials------------------------------------------
+consumerApp:
+  appName: NS Data Consumer App
+  appId: HERE-ef200b27-50f5-452f-b9a4-58473a22692c
+  appClientId: Qh6oGuflMyIoTTytDoJ4
+  appKeyId: Q6URj_Q3BJlEO7-spHy0sw
+  appKeySecret: HUMiroiKhWk7c787fyDjVAB7XpGI4x1q3gXCuPFV3naE7a3Lhlvz9Q_F-Bq5ckmMNvvDJPEz3Pz0v_NWpnYqnw
+
+#------------------AAA Credentials--------------------------------------------------
+aaService:
+  appName: NS Service Application
+  appId: SERVICE-06894eeb-e504-47f8-bb9b-062c05897000
+  appClientId: xxx
+  appKeyId: y0d3LAj_BevhECAeAezv4g
+  appKeySecret: iWifm9_aSfnPPBB6M4EqpDeyDbus9ZALAyO1TI_FnkjGOt3OTjQGt-b29jzuQUcCjbWWV7BcWrMUhnhJcrsr2A

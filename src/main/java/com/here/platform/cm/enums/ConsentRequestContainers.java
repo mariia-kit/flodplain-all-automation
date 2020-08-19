@@ -3,7 +3,7 @@ package com.here.platform.cm.enums;
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_ID;
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
 
-import com.here.platform.common.EnumByEnv;
+import com.here.platform.common.config.Conf;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -57,8 +57,8 @@ public enum ConsentRequestContainers {
             "odometer", "odometer",
             "Provides odometer specific information.",
             "mb:user:pool:reader mb:vehicle:status:general",
-            EnumByEnv.get(ConnectedVehicleCredentials.class).clientId,
-            EnumByEnv.get(ConnectedVehicleCredentials.class).clientSecret,
+            Conf.cmUsers().getDaimlerApp().getClientId(),
+            Conf.cmUsers().getDaimlerApp().getClientSecret(),
             List.of("odometer"),
             MPProviders.DAIMLER_EXPERIMENTAL
     ),
@@ -66,8 +66,8 @@ public enum ConsentRequestContainers {
             "fuel", "fuel",
             "Provides fuel specific information.",
             "mb:user:pool:reader mb:vehicle:status:general",
-            DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
-            DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
+            Conf.cmUsers().getDaimlerApp().getClientId(),
+            Conf.cmUsers().getDaimlerApp().getClientSecret(),
             List.of("fuel"),
             MPProviders.DAIMLER_EXPERIMENTAL
     ),

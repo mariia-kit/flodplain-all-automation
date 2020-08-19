@@ -1,15 +1,15 @@
 package com.here.platform.ns.controllers.access;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
-import com.here.platform.ns.utils.NS_Config;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
 
 public class ContainerDataController extends BaseNeutralServerAccessController<ContainerDataController> {
 
-    private final String serviceBasePath = NS_Config.SERVICE_ACCESS.toString();
+    private final String serviceBasePath = Conf.ns().getNsUrlAccess();
 
     @Step
     public Response getContainerForVehicle(DataProvider provider, String vehicleId, Container container) {

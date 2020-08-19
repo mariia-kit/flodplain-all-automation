@@ -2,7 +2,7 @@ package com.here.platform.aaa;
 
 import static io.restassured.RestAssured.given;
 
-import com.here.platform.ns.utils.NS_Config;
+import com.here.platform.common.config.Conf;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
@@ -19,7 +19,7 @@ import java.util.TimeZone;
 public class PortalTokenController {
 
     public static String produceToken(String realm, String login, String pass) {
-        String portalUrl = NS_Config.GET_PORTAL_PATH.toString();
+        String portalUrl = Conf.ns().getPortalUrl();
 
         DateFormat dateFormatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss", Locale.ENGLISH);
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+02:00"));

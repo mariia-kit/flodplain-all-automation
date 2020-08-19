@@ -45,20 +45,20 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     void createConsentRequestAndApproveConsent() {
         targetApplication = ProviderApplications.DAIMLER_CONS_1;
 
-        userAccountController.attachVinToUserAccount(dataSubject.vin, dataSubject.getBearerToken());
-        vinsToRemove.add(dataSubject.vin);
+        userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
+        vinsToRemove.add(dataSubject.getVin());
 
-        targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApplication, dataSubject.vin);
+        targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApplication, dataSubject.getVin());
         crid = targetConsentRequest.getConsentRequestId();
         userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
 
-        ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.vin);
+        ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();
     }
 
     @AfterEach
     void cleanUp() {
-        userAccountController.deleteVINForUser(dataSubject.vin, dataSubject.getBearerToken());
+        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
         userAccountController
                 .deleteConsumerForUser(targetApplication.consumer.getRealm(), dataSubject.getBearerToken());
         RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
@@ -85,7 +85,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     void isNotPossibleToGetByNotOwnerUserConsentTest() {
         var anotherDataSubject = DataSubjects.getNext();
         var anotherToken = anotherDataSubject.getBearerToken();
-        userAccountController.attachVinToUserAccount(anotherDataSubject.vin, anotherToken);
+        userAccountController.attachVinToUserAccount(anotherDataSubject.getVin(), anotherToken);
 
         var userConsentsInState = userAccountController.getConsentsForUser(
                 anotherToken, Map.of("consentRequestId", crid, "state", ""));

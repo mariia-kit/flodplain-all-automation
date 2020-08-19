@@ -3,6 +3,7 @@ package com.here.platform.ns.instruments;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 import static io.restassured.RestAssured.given;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.controllers.provider.ResourceController;
@@ -17,7 +18,6 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
-import com.here.platform.ns.utils.NS_Config;
 import java.util.Arrays;
 import org.apache.http.HttpStatus;
 
@@ -94,7 +94,7 @@ public class TestDataGeneration {
         String token = Users.DAIMLER.getToken().split(":")[0];
         String refresh = Users.DAIMLER.getToken().split(":")[1];
         for (String vin : Arrays.asList(Vehicle.validVehicleIdLong, Vehicle.validVehicleId)) {
-            String url = NS_Config.URL_NS.toString() + NS_Config.SERVICE_ACCESS.toString() + "token?" +
+            String url = Conf.ns().getNsUrlBaseAccess() + Conf.ns().getAuthUrlAccess() + "token?" +
                     "access_token=" + token +
                     "&refresh_token=" + refresh +
                     "&client_id=88440bf1-2fff-42b6-8f99-0510b6b5e6f8" +

@@ -123,7 +123,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     @Test
     @DisplayName("Force remove approved consents from consent request Async")
     void forceRemoveApprovedDataSubjectsTestAsync() {
-        var vinToApprove = DataSubjects.getNext().vin;
+        var vinToApprove = DataSubjects.getNext().getVin();
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
         consentRequestController
                 .withConsumerToken(mpConsumer)
@@ -167,7 +167,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     @Test
     @DisplayName("Verify Remove Vins From ConsentRequest Async")
     void removeVinsFromConsentRequestTestAsync() {
-        var vinToApprove = DataSubjects.getNext().vin;
+        var vinToApprove = DataSubjects.getNext().getVin();
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
         consentRequestController
                 .withConsumerToken(mpConsumer)

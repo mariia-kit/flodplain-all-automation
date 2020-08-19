@@ -59,9 +59,9 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Get ConsentRequest In All Statuses")
     void getConsentRequestInAllStatusesTest() {
-        String vinToApprove = DataSubjects.getNext().vin,
-                vinToRevoke = DataSubjects.getNext().vin,
-                vinToPending = DataSubjects.getNext().vin;
+        String vinToApprove = DataSubjects.getNext().getVin(),
+                vinToRevoke = DataSubjects.getNext().getVin(),
+                vinToPending = DataSubjects.getNext().getVin();
 
         OnboardingSteps.onboardApplicationProviderAndConsumer(
                 testConsentRequestData.getProviderId(),

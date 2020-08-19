@@ -1,12 +1,12 @@
 package com.here.platform.ns.restEndPoints.external;
 
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
-import com.here.platform.ns.utils.NS_Config;
 import io.restassured.response.Response;
 import java.util.Arrays;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class ReferenceProviderCall {
 
     public static void wipeAllData() {
         String token = StringUtils.EMPTY;
-        String url = NS_Config.REFERENCE_J_PROV_URL + "/admin/wipe";
+        String url = Conf.ns().getRefProviderUrl() + "/admin/wipe";
         Response resp = RestHelper.get("Wipe all reference provider data", url, token);
         Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(),
                 "Wipe reference provider response not as expected!");
@@ -33,7 +33,7 @@ public class ReferenceProviderCall {
     }
 
     public static void regNewToken(String vinNumber, String token) {
-        String url = NS_Config.REFERENCE_J_PROV_URL + "/admin/tokens";
+        String url = Conf.ns().getRefProviderUrl() + "/admin/tokens";
         String authToken = StringUtils.EMPTY;
         String body = "{\n"
                 + "    \"tokenId\": \"" + token + "\",\n"
@@ -48,7 +48,7 @@ public class ReferenceProviderCall {
     }
 
     public static void regNewToken(String vinNumber, String token, Container container) {
-        String url = NS_Config.REFERENCE_J_PROV_URL + "/admin/tokens";
+        String url = Conf.ns().getRefProviderUrl() + "/admin/tokens";
         String authToken = StringUtils.EMPTY;
         String body = "{\n"
                 + "    \"tokenId\": \"" + token + "\",\n"
@@ -63,7 +63,7 @@ public class ReferenceProviderCall {
     }
 
     public static void createContainer(Container container) {
-        String url = NS_Config.REFERENCE_J_PROV_URL + "/admin/containers";
+        String url = Conf.ns().getRefProviderUrl() + "/admin/containers";
         String authToken = StringUtils.EMPTY;
         String body = "{\n"
                 + "    \"name\": \"" + container.getId() + "\",\n"
