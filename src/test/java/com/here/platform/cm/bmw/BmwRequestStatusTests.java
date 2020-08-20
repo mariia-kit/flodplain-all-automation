@@ -1,11 +1,13 @@
 package com.here.platform.cm.bmw;
 
 import com.here.platform.cm.controllers.BMWController;
+import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import io.qameta.allure.Issue;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,9 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .responseIsEqualToObject(new Health().status("OK"));
     }
 
-    @Test
+    //@Test
     @Issue("NS-2427")
+    @Ignore("Until test-bmw provider is handled by reference provider")
     @DisplayName("BMW set status of consent clearance")
     void setClearanceStatusByBMW() {
         crid = createValidBmwConsentRequest();
@@ -43,7 +46,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         var responseBefore = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
 
-        var response = bmwController.setClearanceStatusByBMW(crid, "APPROVED");
+        var response = bmwController.setClearanceStatusByBMW(testClearanceId, BMWStatus.APPROVED.name());
 
         new ResponseAssertion(response)
                 .statusCodeIsEqualTo(StatusCode.OK)
