@@ -112,6 +112,8 @@ public class E2EUITest extends BaseE2ETest {
             return;
         }
         TokenManager.resetUserLogins();
+        var cmToken = targetDataSubject.generateBearerToken();
+        targetDataSubject.setBearerToken(cmToken);
 
         var mpListings = new MarketplaceManageListingCall();
         mpListings.beginCancellation(subscriptionId.get());
