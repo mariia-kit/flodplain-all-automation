@@ -28,7 +28,6 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -144,10 +143,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);
         $(".container-content h4").shouldHave(Condition.text("Purpose of the request"));
-
-        String rootUrl = ConsentPageUrl.getEnvUrlRoot().substring(0, ConsentPageUrl.getEnvUrlRoot().length() - 1)
-                .replace("https://", StringUtils.EMPTY)
-                .replace("http://", StringUtils.EMPTY);
 
         $(".container-content p:nth-child(3)")
                 .shouldHave(Condition
