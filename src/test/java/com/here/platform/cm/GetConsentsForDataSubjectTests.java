@@ -66,7 +66,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
                 .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION)
                 .getCause();
-        assertThat(actualCause).isEqualTo(String.format("Request parameter '%s' must be provided", cause));
+        assertThat(actualCause).isEqualTo(String.format("Parameter '%s' must be provided", cause));
     }
 
     @Nested
