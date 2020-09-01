@@ -9,6 +9,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.OnBoardConsumer;
 import com.here.platform.common.annotations.ErrorHandler;
+import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -29,8 +30,9 @@ class ConsumersTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Verify onboard of Consumer")
-    void createConsumerTest() {
+    @TmsLink("NS-2694")
+    @DisplayName("Onboard Data Consumer")
+    void onboardDataConsumer() {
         final var testConsumer = new Consumer()
                 .consumerId(faker.crypto().sha1())
                 .consumerName(faker.commerce().department());

@@ -46,8 +46,8 @@ class ProvidersTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Verify onboard of Data Provider")
-    @TmsLink("NS-1376")
+    @DisplayName("Onboard Data Provider application")
+    @TmsLink("NS-2699")
     void onboardProviderPositiveTest() {
         var providerRealmId = testConsentRequest.getProviderId();
         var consumerRealmId = testConsentRequest.getConsumerId();
