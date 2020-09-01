@@ -11,7 +11,7 @@ public enum SentryErrorsList {
     TOKEN_NOT_FOUND(new SentryError(
             HttpStatus.SC_UNAUTHORIZED,
             "Unauthorized",
-            "Bearer token invalid. Bearer missing or bearer value missing.")),
+            "No credentials found")),
     TOKEN_INVALID(new SentryError(
             HttpStatus.SC_UNAUTHORIZED,
             "Unauthorized",
