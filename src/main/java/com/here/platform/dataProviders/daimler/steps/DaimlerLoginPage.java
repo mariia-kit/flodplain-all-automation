@@ -3,6 +3,7 @@ package com.here.platform.dataProviders.daimler.steps;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.refresh;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
@@ -16,6 +17,7 @@ public class DaimlerLoginPage {
 
     @Step("Login data subject on Mercedes.me site")
     public void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
+        sleep(3000); //hotfix cos of FE developer rotation
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
         refresh();
