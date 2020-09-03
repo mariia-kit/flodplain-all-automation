@@ -2,15 +2,24 @@ package com.here.platform.cm.bmw;
 
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.enums.BMWStatus;
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
+import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.Health;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.VIN;
+import com.here.platform.common.VinsToFile;
+import com.here.platform.common.controller.ReferenceProviderController;
 import io.qameta.allure.Issue;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
@@ -18,10 +27,12 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
     private String crid;
     private final BMWController bmwController = new BMWController();
+    private final ReferenceProviderController referenceProviderController = new ReferenceProviderController();
 
     @AfterEach
     void cleanUp() {
         RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
+        referenceProviderController.cleanUpContainersVehiclesResources();
     }
 
     @Test
@@ -35,18 +46,31 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .responseIsEqualToObject(new Health().status("OK"));
     }
 
-    //@Test
+    @ParameterizedTest
     @Issue("NS-2427")
-    @Ignore("Until test-bmw provider is handled by reference provider")
     @DisplayName("BMW set status of consent clearance")
-    void setClearanceStatusByBMW() {
+    @EnumSource(BMWStatus.class)
+    void setClearanceStatusByBMW(BMWStatus bmwStatus) {
         crid = createValidBmwConsentRequest();
 
         var privateBearer = dataSubject.getBearerToken();
         var responseBefore = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
+        new ResponseAssertion(responseBefore).statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObjectIgnoringTimeFields(new ConsentInfo()
+                        .consentRequestId(crid)
+                        .consumerName(mpConsumer.getConsumerName())
+                        .containerName(testContainer.name)
+                        .containerDescription(testContainer.containerDescription)
+                        .resources(testContainer.resources)
+                        .purpose(testConsentRequestData.getPurpose())
+                        .title(testConsentRequestData.getTitle())
+                        .state(StateEnum.PENDING)
+                        .vinLabel(new VIN(testVin).label()));
 
-        var response = bmwController.setClearanceStatusByBMW(testClearanceId, BMWStatus.APPROVED.name());
+        var clearanceId = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath().get("clearanceId").toString();
+
+        var response = bmwController.setClearanceStatusByBMW(clearanceId, bmwStatus.name());
 
         new ResponseAssertion(response)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -54,6 +78,54 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
         var responseAfter = consentStatusController
                 .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
+        new ResponseAssertion(responseAfter).statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObjectIgnoringTimeFields(new ConsentInfo()
+                        .consentRequestId(crid)
+                        .consumerName(mpConsumer.getConsumerName())
+                        .containerName(testContainer.name)
+                        .containerDescription(testContainer.containerDescription)
+                        .resources(testContainer.resources)
+                        .purpose(testConsentRequestData.getPurpose())
+                        .title(testConsentRequestData.getTitle())
+                        .state(bmwStatus.getCmStatus())
+                        .vinLabel(new VIN(testVin).label()));
+    }
+
+    @Test
+    @DisplayName("BMW set status of consent clearance multiple")
+    void setClearanceStatusByBMWMultiple() {
+        testFileWithVINs = new VinsToFile(testVin, testVin1).json();
+        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+        crid = ConsentRequestSteps.createConsentRequestFor(targetApp).getConsentRequestId();
+        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin, testVin1);
+
+        var expectedConsentRequestStatuses = new ConsentRequestStatus()
+                .approved(0)
+                .pending(2)
+                .revoked(0);
+
+        consentRequestController.withCMToken();
+        var statusForConsentRequestByIdResponse = consentRequestController
+                .getStatusForConsentRequestById(crid);
+        new ResponseAssertion(statusForConsentRequestByIdResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(expectedConsentRequestStatuses);
+
+        var clearanceId1 = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath().get("clearanceId").toString();
+        var clearanceId2 = referenceProviderController.getClearanceByVin(testVin1, bmwContainer).jsonPath().get("clearanceId").toString();
+        bmwController.setClearanceStatusByBMW(clearanceId1, BMWStatus.APPROVED.name());
+        bmwController.setClearanceStatusByBMW(clearanceId2, BMWStatus.REVOKED.name());
+        expectedConsentRequestStatuses = new ConsentRequestStatus()
+                .approved(1)
+                .pending(0)
+                .revoked(1);
+
+        consentRequestController.withCMToken();
+        statusForConsentRequestByIdResponse = consentRequestController
+                .getStatusForConsentRequestById(crid);
+        new ResponseAssertion(statusForConsentRequestByIdResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(expectedConsentRequestStatuses);
     }
 
 }

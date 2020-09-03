@@ -108,7 +108,7 @@ public enum ConsentRequestContainers {
             MPProviders.DAIMLER_EXPERIMENTAL
     ),
     BMW_MILEAGE(
-            "S00I000M001OK", "bmwcardata_mileage", "Vehicle mileage",
+            "payasyoudrive", "bmwcardata_mileage", "Vehicle mileage",
             "",
             StringUtils.EMPTY, StringUtils.EMPTY,
             List.of("mileage"),

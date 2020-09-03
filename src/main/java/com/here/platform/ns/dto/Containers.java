@@ -1,10 +1,13 @@
 package com.here.platform.ns.dto;
 
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.ns.helpers.ContainerResourcesHelper;
 import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.UniqueId;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 
 @AllArgsConstructor
@@ -149,6 +152,12 @@ public enum Containers {
                     "Mileage,Status of doors",
                     true, ""
             )
+    ),
+    BMW_MILEAGE(
+            new Container("payasyoudrive", "bmwcardata_mileage", Providers.BMW_TEST.getName(),
+                    "Vehicle mileage",
+                    "mileage",
+                    true, "")
     );
 
     private final Container container;
