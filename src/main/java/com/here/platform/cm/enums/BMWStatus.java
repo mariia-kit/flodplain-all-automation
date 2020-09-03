@@ -1,8 +1,17 @@
 package com.here.platform.cm.enums;
 
+import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+
+@AllArgsConstructor
+@Getter
 public enum BMWStatus {
-    APPROVED,
-    REJECTED,
-    REVOKED,
-    TIMED_OUT
+    APPROVED(StateEnum.APPROVED),
+    REJECTED(StateEnum.REJECTED),
+    REVOKED(StateEnum.REVOKED),
+    TIMED_OUT(StateEnum.EXPIRED);
+
+    private StateEnum cmStatus;
 }

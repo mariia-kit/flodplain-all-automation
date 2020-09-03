@@ -1,7 +1,9 @@
 package com.here.platform.cm.bmw;
 
 import com.github.javafaker.Faker;
+import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.ConsentStatusController;
+import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -20,7 +22,9 @@ public class BaseBmwConsentTests {
     protected static Faker faker = new Faker();
 
     String
-            testVin = "WBAVB71470VOTP000",
+            testVin = "2AD190A6AD057824E",
+            testVin1 = "2AD190A6AD0578AAA",
+            bmwContainer = "S00I000M001OK",
             testClearanceId = "11111111-1111-1111-1111-111111111111";
 
     protected File testFileWithVINs = null;
@@ -28,6 +32,7 @@ public class BaseBmwConsentTests {
     protected ConsentRequestContainers testContainer = targetApp.container;
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
+    protected ConsentRequestController consentRequestController = new ConsentRequestController();
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(targetApp.consumer.getRealm())
             .providerId(targetApp.provider.getName())
@@ -40,6 +45,9 @@ public class BaseBmwConsentTests {
     protected String createValidBmwConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
         var targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, testVin);
+        testConsentRequestData = new ConsentInfoToConsentRequestData(
+                targetConsentRequest, targetApp.provider.getName(), targetApp.consumer.getRealm()
+        ).consentRequestData();
         return targetConsentRequest.getConsentRequestId();
     }
 }

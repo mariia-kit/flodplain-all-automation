@@ -12,7 +12,7 @@ public class ResponseAssertion {
 
     public static String[] timeFieldsToIgnore = {
             "approveTime", "createTime", "expiredTime",
-            "finishedAt", "startedAt", "vinHash"
+            "finishedAt", "startedAt", "vinHash", "revokeTime"
     };
     private final Response targetResponse;
 
