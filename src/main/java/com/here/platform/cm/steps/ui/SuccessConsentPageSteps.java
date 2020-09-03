@@ -16,6 +16,7 @@ public class SuccessConsentPageSteps {
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);
         $(".container-offers.current .offer-box .main-details")
+                .waitUntil(Condition.visible, 10000) //hotfix cos of FE developer rotation
                 .shouldHave(Condition.text(consentRequest.getTitle()))
                 .shouldHave(Condition.text(consentRequest.getPurpose()))
                 .shouldHave(Condition.text(consentRequest.getConsumerName()))

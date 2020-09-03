@@ -10,7 +10,7 @@ class TestCM extends Test {
         forkEvery = 8
 
         useJUnitPlatform() {
-            excludeTags "neutral_server", "e2e", "local", "smoke_cm", "ui", "userAccount"
+            excludeTags "neutral_server", "e2e", "smoke_cm", "ui", "userAccount"
         }
 
         systemProperties = [
@@ -38,7 +38,7 @@ ext {
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
 def finalEnv = "dev"
-if(targetEnv != null && !targetEnv.isEmpty()) {
+if (targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = targetEnv
     println "Receive env from CI_ENVIRONMENT_SLUG ${targetEnv}"
 } else {
@@ -85,8 +85,6 @@ task userAccount(type: TestCM) {
 }
 
 task uiTests(type: TestCM, dependsOn: "initTokens") {
-    group "cm tests"
-
     maxParallelForks = 1
     forkEvery = 0
 
@@ -98,22 +96,24 @@ task uiTests(type: TestCM, dependsOn: "initTokens") {
 
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "dev"
-}
 
-task stgTests(type: TestCM, dependsOn: "smokeCMTests") {
-    systemProperty "env", "sit"
-    systemProperty "jira_sync", "true"
+    finalizedBy "userAccount", "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
+
+    finalizedBy "userAccount", "uiTests"
 }
 
 task prodTests(type: TestCM, dependsOn: "smokeCMTests") {
     group "cm tests"
 
     systemProperty "env", "prod"
+    systemProperty "jira_sync", "true"
+
+    finalizedBy "userAccount", "uiTests"
 }
 
 task zephyrCMSync(type: JavaExec) {

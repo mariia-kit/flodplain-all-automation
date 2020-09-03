@@ -2,6 +2,7 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.sleep;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
@@ -44,11 +45,14 @@ public class DashboardTests extends BaseUITests {
 
     @AfterEach
     void afterEach() {
-        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
-        userAccountController
-                .deleteConsumerForUser(providerApplication.consumer.getRealm(), dataSubject.getBearerToken());
+        var privateBearer = dataSubject.getBearerToken();
+        userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
+        userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
         for (String crid : cridsToRemove) {
-            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.getVin()).json());
+            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
+                    crid,
+                    new VinsToFile(dataSubject.getVin()).json()
+            );
         }
     }
 
@@ -100,16 +104,20 @@ public class DashboardTests extends BaseUITests {
 
     @Step
     private void openDashboardNewTab() {
+        sleep(3000); //hotfix cos of FE developer rotation
         $("lui-tab[data-cy='new']").click();
     }
 
     @Step
     private void openDashboardRevokedTab() {
+        sleep(3000); //hotfix cos of FE developer rotation
         $("lui-tab[data-cy='revoked']").click();
+        $("lui-tab[data-cy='revoked']").click(); //hotfix cos of FE developer rotation
     }
 
     @Step
     private void openDashboardAcceptedTab() {
+        sleep(3000); //hotfix cos of FE developer rotation
         $("lui-tab[data-cy='accepted']").click();
     }
 
