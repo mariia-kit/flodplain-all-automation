@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @DisplayName("Approve and get access token E2E")
@@ -106,14 +107,16 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         var consentRequest = generateConsentData(mpConsumer);
         crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.getVin());
 
-        open(crid);
-        HereLoginSteps.loginDataSubject(dataSubject);
+        String purposePageUrl = UriComponentsBuilder.fromUriString(staticPageUrl)
+                .queryParam("consumerId", consentRequest.getConsumerId())
+                .queryParam("containerId", consentRequest.getContainerId())
+                .toUriString();
+
+        open(purposePageUrl);
         fuSleep();
-        updateSessionStorageData(crid, dataSubject.getVin());
-        dataSubject.setBearerToken(getUICmToken());
-        openStaticPurposePage();
         verifyStaticPurposeInfoPage();
         openPurposePageLink();
+        HereLoginSteps.loginDataSubject(dataSubject);
         verifyPurposeInfoPage(mpConsumer, consentRequest, container);
     }
 
@@ -165,12 +168,11 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
         $(".container-content p:nth-child(5)")
                 .shouldHave(Condition.text("Consent Request"));
-        $(".container-content p:nth-child(5) a")
-                .shouldHave(Condition.attribute("href", purposePageUrl));
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest, ConsentRequestContainers container) {
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest,
+            ConsentRequestContainers container) {
         switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
