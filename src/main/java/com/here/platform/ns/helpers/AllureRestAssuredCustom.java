@@ -2,6 +2,7 @@ package com.here.platform.ns.helpers;
 
 import static io.qameta.allure.attachment.http.HttpRequestAttachment.Builder.create;
 
+import io.qameta.allure.Allure;
 import io.qameta.allure.attachment.DefaultAttachmentProcessor;
 import io.qameta.allure.attachment.FreemarkerAttachmentRenderer;
 import io.qameta.allure.attachment.http.HttpRequestAttachment;
@@ -67,37 +68,39 @@ public class AllureRestAssuredCustom implements OrderedFilter {
     public Response filter(final FilterableRequestSpecification requestSpec,
             final FilterableResponseSpecification responseSpec,
             final FilterContext filterContext) {
-        final Prettifier prettifier = new Prettifier();
-        String uri = requestSpec.getURI();
-        uri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
-        final HttpRequestAttachment.Builder requestAttachmentBuilder = create(requestName, uri)
-                .setMethod(requestSpec.getMethod())
-                .setHeaders(toMapConverter(requestSpec.getHeaders()))
-                .setCookies(toMapConverter(requestSpec.getCookies()));
-
-        if (Objects.nonNull(requestSpec.getBody())) {
-            requestAttachmentBuilder.setBody(prettifier.getPrettifiedBodyIfPossible(requestSpec));
-        }
-
-        final HttpRequestAttachment requestAttachment = requestAttachmentBuilder.build();
-
-        new DefaultAttachmentProcessor().addAttachment(
-                requestAttachment,
-                new FreemarkerAttachmentRenderer(requestTemplatePath)
-        );
-
         final Response response = filterContext.next(requestSpec, responseSpec);
-        final HttpResponseAttachment responseAttachment = HttpResponseAttachment.Builder
-                .create(response.getStatusLine())
-                .setResponseCode(response.getStatusCode())
-                .setHeaders(toMapConverter(response.getHeaders()))
-                .setBody(prettifier.getPrettifiedBodyIfPossible(response, response.getBody()))
-                .build();
+        if(Allure.getLifecycle().getCurrentTestCase().isPresent()) {
+            final Prettifier prettifier = new Prettifier();
+            String uri = requestSpec.getURI();
+            uri = URLDecoder.decode(uri, StandardCharsets.UTF_8);
+            final HttpRequestAttachment.Builder requestAttachmentBuilder = create(requestName, uri)
+                    .setMethod(requestSpec.getMethod())
+                    .setHeaders(toMapConverter(requestSpec.getHeaders()))
+                    .setCookies(toMapConverter(requestSpec.getCookies()));
 
-        new DefaultAttachmentProcessor().addAttachment(
-                responseAttachment,
-                new FreemarkerAttachmentRenderer(responseTemplatePath)
-        );
+            if (Objects.nonNull(requestSpec.getBody())) {
+                requestAttachmentBuilder.setBody(prettifier.getPrettifiedBodyIfPossible(requestSpec));
+            }
+
+            final HttpRequestAttachment requestAttachment = requestAttachmentBuilder.build();
+
+            new DefaultAttachmentProcessor().addAttachment(
+                    requestAttachment,
+                    new FreemarkerAttachmentRenderer(requestTemplatePath)
+            );
+
+            final HttpResponseAttachment responseAttachment = HttpResponseAttachment.Builder
+                    .create(response.getStatusLine())
+                    .setResponseCode(response.getStatusCode())
+                    .setHeaders(toMapConverter(response.getHeaders()))
+                    .setBody(prettifier.getPrettifiedBodyIfPossible(response, response.getBody()))
+                    .build();
+
+            new DefaultAttachmentProcessor().addAttachment(
+                    responseAttachment,
+                    new FreemarkerAttachmentRenderer(responseTemplatePath)
+            );
+        }
 
         return response;
     }

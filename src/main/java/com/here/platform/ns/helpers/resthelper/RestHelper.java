@@ -24,7 +24,6 @@ import org.apache.http.HttpStatus;
 public class RestHelper {
 
     private static final ResponseSpecification responseSpec = new ResponseSpecBuilder()
-            .log(LogDetail.ALL)
             .build();
 
     public static Headers generateHeaders(String token, List<Header> headers) {
@@ -39,7 +38,6 @@ public class RestHelper {
 
     private static RequestSpecification getReqSpec(String requestName, Headers headers) {
         return new RequestSpecBuilder()
-                .log(LogDetail.ALL)
                 .setUrlEncodingEnabled(false)
                 .addHeaders(headers.asList().stream().collect(Collectors.toMap(
                         Header::getName, Header::getValue)))
