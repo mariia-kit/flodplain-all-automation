@@ -97,12 +97,20 @@ task uiTests(type: TestCM, dependsOn: "initTokens") {
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "dev"
 
+    useJUnitPlatform {
+        includeTags "smoke_cm"
+    }
+
     //finalizedBy "userAccount", "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
+
+    useJUnitPlatform {
+        includeTags "smoke_cm"
+    }
 
     //finalizedBy "userAccount", "uiTests"
 }
