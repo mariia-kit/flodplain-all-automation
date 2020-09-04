@@ -6,14 +6,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @Tag("ignored-prod")
 @Tag("neutral_server")
 @ExtendWith(TestResultLoggerExtension.class)
+@Execution(ExecutionMode.CONCURRENT)
 public class BaseNSTest {
-
-    private final static Logger logger = Logger.getLogger(BaseNSTest.class);
 
     @BeforeAll
     public static void suiteSetup1() {

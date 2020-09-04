@@ -31,7 +31,6 @@ class DataProvidersAddTest extends BaseNSTest {
     @DisplayName("Verify create new DataProvider Successful")
     @Tag("smoke_ns")
     void verifyDataProviderCanBeCreated() {
-        NsUserConfig c = Conf.nsUsers();
         DataProvider provider = Providers.generateNew();
 
         var response = new ProviderController()
@@ -191,20 +190,6 @@ class DataProvidersAddTest extends BaseNSTest {
                 .addProvider(provider);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getProviderDataManipulationError(provider));
-    }
-
-    @Test
-    @DisplayName("Verify create new DataProvider invalid Name Symbol")
-    void verifyDataProviderCreationInvalidNameSymbol() {
-        DataProvider provider = Providers.generateNew();
-        provider.setName(provider.getName() + ":abc/123");
-
-        var response = new ProviderController()
-                .withToken(PROVIDER)
-                .addProvider(provider);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_NOT_FOUND);
-
     }
 
 }

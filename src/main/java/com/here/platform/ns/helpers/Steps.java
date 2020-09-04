@@ -15,6 +15,8 @@ import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import io.qameta.allure.Step;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
@@ -23,16 +25,18 @@ public class Steps {
 
     @Step("Create regular Data Provider: {provider.name}")
     public static void createRegularProvider(DataProvider provider) {
+        String token = PROVIDER.getToken();
         var response = new ProviderController()
-                .withToken(PROVIDER)
+                .withBearerToken(token)
                 .addProvider(provider);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
-        provider.getResources().forEach(res ->
-                new ResourceController()
-                        .withToken(PROVIDER)
-                        .addResource(provider, res)
-        );
+        List<ProviderResource> resource = new CopyOnWriteArrayList<>(provider.getResources());
+        resource.forEach(res ->
+                    new ResourceController()
+                            .withBearerToken(token)
+                            .addResource(provider, res)
+            );
     }
 
     @Step("Add resource {res.name} to Data Provider: {provider.name}")

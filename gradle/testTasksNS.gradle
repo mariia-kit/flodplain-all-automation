@@ -16,12 +16,12 @@ class TestNS extends Test {
     TestNS() {
         group "ns tests"
 
-        maxParallelForks = 16
-        
-        forkEvery = 1
-        minHeapSize = "32m"
-        maxHeapSize = "64m"
+        maxParallelForks = 20
 
+        forkEvery = 20
+        minHeapSize = "16m"
+        maxHeapSize = "64m"
+        
         useJUnitPlatform {
             includeTags "neutral_server"
         }
@@ -68,6 +68,7 @@ task cleanUpNS(type: JavaExec) {
 
 task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
+    
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "neutral_server"

@@ -18,11 +18,6 @@ class TestCM extends Test {
                 "stg.access.key.secret"                                    : System.getenv("ACCESS_KEY_SECRET_STG"),
                 "prod.access.key.id"                                       : System.getenv("ACCESS_KEY_ID_PROD"),
                 "prod.access.key.secret"                                   : System.getenv("ACCESS_KEY_SECRET_PROD"),
-                'junit.jupiter.execution.parallel.enabled'                 : true,
-                'junit.jupiter.execution.parallel.mode.default'            : 'same_thread',
-                'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
-                'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
-                'junit.jupiter.execution.parallel.config.fixed.parallelism': 8
         ]
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
@@ -96,23 +91,15 @@ task uiTests(type: TestCM, dependsOn: "initTokens") {
 
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "dev"
-
-    useJUnitPlatform {
-        includeTags "smoke_cm"
-    }
-
-    //finalizedBy "userAccount", "uiTests"
+    
+    finalizedBy "userAccount", "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
 
-    useJUnitPlatform {
-        includeTags "smoke_cm"
-    }
-
-    //finalizedBy "userAccount", "uiTests"
+    finalizedBy "userAccount", "uiTests"
 }
 
 task prodTests(type: TestCM, dependsOn: "smokeCMTests") {
