@@ -49,6 +49,8 @@ task initTokens(type: JavaExec) {
     systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.DataPreparation"
+
+    finalizedBy "testDataGeneration"
 }
 
 task smokeCMTests(type: TestCM) {

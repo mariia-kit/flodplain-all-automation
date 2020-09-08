@@ -47,7 +47,7 @@ public class Conf {
         YamlConfUrl annotation = Optional.ofNullable(type.getAnnotation(YamlConfUrl.class))
                 .orElseThrow(() -> new RuntimeException("Config class " + type.getName() + " not properly configured!"));
         String env = System.getProperty("env");
-        if (env.equalsIgnoreCase("stg")) {
+        if ("stg".equalsIgnoreCase(env)) {
             env = "sit";
         }
         String url = annotation.configUrl().replace("{env}", env);

@@ -51,7 +51,9 @@ public enum ContainerResources {
     payasyoudrive(new ProviderResource("payasyoudrive")),
     fuelstatus(new ProviderResource("fuelstatus")),
     oil(new ProviderResource("oil")),
-    vehicles(new ProviderResource("vehicles"));
+    vehicles(new ProviderResource("vehicles")),
+
+    mileage(new ProviderResource("mileage"));
 
 
     private final ProviderResource resource;

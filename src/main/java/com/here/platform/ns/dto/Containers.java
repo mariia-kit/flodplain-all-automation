@@ -1,13 +1,10 @@
 package com.here.platform.ns.dto;
 
-import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.ns.helpers.ContainerResourcesHelper;
 import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.UniqueId;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 
 
 @AllArgsConstructor
@@ -147,9 +144,9 @@ public enum Containers {
     ),
     BMW_TEST_1(
             new Container(
-                    "d00v010t942hi", "HERE Test Container 1", Providers.BMW.getName(),
+                    "payasyoudrive", "HERE Test Container 1", Providers.BMW.getName(),
                     "This test container to be used for testing HERE Neutral Server integration with BMW CarData services",
-                    "Mileage,Status of doors",
+                    "mileage",
                     true, ""
             )
     ),
