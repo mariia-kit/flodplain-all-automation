@@ -110,7 +110,7 @@ public enum ConsentRequestContainers {
     BMW_MILEAGE(
             "payasyoudrive", "bmwcardata_mileage", "Vehicle mileage",
             "",
-            StringUtils.EMPTY, StringUtils.EMPTY,
+            "S00I000M001OK", StringUtils.EMPTY,
             List.of("mileage"),
             MPProviders.BMW_TEST
     );

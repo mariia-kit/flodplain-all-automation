@@ -58,6 +58,14 @@ task initTokensNS(type: JavaExec) {
     main = "com.here.platform.ns.common.DataPreparationNS"
 }
 
+task testDataGeneration(type: JavaExec) {
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", finalEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.TestDataGeneration"
+}
+
 task cleanUpNS(type: JavaExec) {
     logging.captureStandardOutput(LogLevel.QUIET)
 
@@ -67,6 +75,7 @@ task cleanUpNS(type: JavaExec) {
 }
 
 task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
+    dependsOn "testDataGeneration"
     group "ns tests"
     
     systemProperty "env", finalEnv
