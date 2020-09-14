@@ -37,7 +37,6 @@ public class UserAccountUITests extends BaseUITests {
     void createApproveConsentForUser() {
         consentRequestInfo = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, dataSubject.getVin());
         crid = consentRequestInfo.getConsentRequestId();
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
         userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.getVin());
 
@@ -50,7 +49,6 @@ public class UserAccountUITests extends BaseUITests {
         for (String vin : vinsToRemove) {
             userAccountController.deleteVINForUser(vin, dataSubject.getBearerToken());
         }
-        userAccountController.deleteConsumerForUser(targetApp.consumer.getRealm(), dataSubject.getBearerToken());
     }
 
     @Test

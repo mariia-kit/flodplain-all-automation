@@ -41,10 +41,6 @@ public class UserAccountExtension implements BeforeEachCallback, AfterEachCallba
                 .as(UserAccountData.class);
         System.out.println(userAccountInfo);
 
-        for (ConsumerData consumer : userAccountInfo.getConsumersData()) {
-            userAccountController.deleteConsumerForUser(consumer.getConsumerId(), cmToken);
-        }
-
         for (String vinToRemove : additionalVINsToRemove) {
             userAccountController.deleteVINForUser(vinToRemove, cmToken);
         }
