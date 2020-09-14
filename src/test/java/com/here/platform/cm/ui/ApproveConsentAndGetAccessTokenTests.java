@@ -52,7 +52,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @BeforeEach
     void beforeEach() {
         var privateBearer = dataSubject.getBearerToken();
-        userAccountController.deleteConsumerForUser(mpConsumer.getRealm(), privateBearer);
         userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
     }
 

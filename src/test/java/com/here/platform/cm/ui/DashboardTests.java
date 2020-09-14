@@ -39,7 +39,6 @@ public class DashboardTests extends BaseUITests {
     @BeforeEach
     void beforeEach() {
         var privateBearer = dataSubject.getBearerToken();
-        userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
         userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
     }
 
@@ -47,7 +46,6 @@ public class DashboardTests extends BaseUITests {
     void afterEach() {
         var privateBearer = dataSubject.getBearerToken();
         userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
-        userAccountController.deleteConsumerForUser(providerApplication.consumer.getRealm(), privateBearer);
         for (String crid : cridsToRemove) {
             RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
                     crid,
@@ -75,7 +73,6 @@ public class DashboardTests extends BaseUITests {
         var consentRequestId2 = secondConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId2);
 
-        userAccountController.attachConsumerToUserAccount(consentRequestId1, dataSubject.getBearerToken());
         userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
 
         open(ConsentPageUrl.getEnvUrlRoot());

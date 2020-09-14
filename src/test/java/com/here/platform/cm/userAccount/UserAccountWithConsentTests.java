@@ -50,8 +50,6 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
         targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApplication, dataSubject.getVin());
         crid = targetConsentRequest.getConsentRequestId();
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
-
         ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();
     }
@@ -59,8 +57,6 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @AfterEach
     void cleanUp() {
         userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
-        userAccountController
-                .deleteConsumerForUser(targetApplication.consumer.getRealm(), dataSubject.getBearerToken());
         RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
                 crid,
                 new VinsToFile(vinsToRemove.toArray(String[]::new)).json()
@@ -99,7 +95,6 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @Issue("NS-1709")
     @DisplayName("Get consents for user by consentRequestId and state")
     void getConsentRequestForUserByCridAndStateTest() {
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
         var userConsentsInState = userAccountController.getConsentsForUser(
                 dataSubject.getBearerToken(),
                 Map.of("consentRequestId", crid, "state", "")
@@ -144,7 +139,6 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @Test
     @DisplayName("Get all consent requests for the user")
     void getListOfConsentRequestForUserTest() {
-        userAccountController.attachConsumerToUserAccount(crid, dataSubject.getBearerToken());
         var userConsents = userAccountController.getConsentsForUser(
                 dataSubject.getBearerToken(),
                 Map.of("state", "")

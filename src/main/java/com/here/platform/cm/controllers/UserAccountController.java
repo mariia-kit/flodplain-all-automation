@@ -37,13 +37,6 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
     }
 
     @Step
-    public Response attachConsumerToUserAccount(String consentRequestId, String privateBearerToken) {
-        return consentServiceClient(userBasePath)
-                .header("Authorization", privateBearerToken)
-                .put("/consumer/consentRequest/{consentRequestId}", consentRequestId);
-    }
-
-    @Step
     public Response attachVinToUserAccount(String vin, String privateBearerToken) {
         return consentServiceClient(userBasePath)
                 .header("Authorization", privateBearerToken)
@@ -64,13 +57,6 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
         return consentServiceClient(userBasePath)
                 .header("Authorization", privateBearerToken)
                 .delete("/vin/{vinHash}", vinHash);
-    }
-
-    @Step
-    public Response deleteConsumerForUser(String consumerId, String privateBearerToken) {
-        return consentServiceClient(userBasePath)
-                .header("Authorization", privateBearerToken)
-                .delete("/consumer/{consumerId}", consumerId);
     }
 
 }
