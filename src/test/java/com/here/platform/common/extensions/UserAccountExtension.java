@@ -1,7 +1,6 @@
 package com.here.platform.common.extensions;
 
 import com.here.platform.cm.controllers.UserAccountController;
-import com.here.platform.cm.rest.model.ConsumerData;
 import com.here.platform.cm.rest.model.UserAccountData;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
