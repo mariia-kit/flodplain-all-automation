@@ -50,7 +50,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
 
     @BeforeEach
     void beforeEach() {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
         crid = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.CREATED)
@@ -68,7 +68,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .pending(0)
                 .revoked(0);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)
@@ -95,7 +95,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .pending(2)
                 .revoked(0);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)

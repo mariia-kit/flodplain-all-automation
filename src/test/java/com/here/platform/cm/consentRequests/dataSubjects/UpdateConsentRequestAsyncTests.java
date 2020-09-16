@@ -70,7 +70,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 testConsentRequest.getConsumerId(),
                 testContainer
         );
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class)

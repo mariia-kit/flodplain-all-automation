@@ -37,7 +37,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @ErrorHandler
     @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Consumer")
     void isNotPossibleToCreateConsentRequestWithOutConsumer() {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
 
         var actualCause = new ResponseAssertion(actualResponse)
@@ -63,7 +63,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @DisplayName("Verify Create Empty ConsentRequest is forbidden")
     @TmsLink("NS-1350")
     void createEmptyConsentRequestTest() {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         final var actualCreateConsentRequestResponse = consentRequestController
                 .createConsentRequest(new ConsentRequestData());
 
@@ -87,7 +87,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
         void isNotPossibleToCreateConsentRequestWithOutProvider() {
             new OnboardingSteps(null, testConsentRequest.getConsumerId()).onboardValidConsumer();
 
-            consentRequestController.withCMToken();
+            consentRequestController.withConsumerToken();
             final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
 
             var actualCause = new ResponseAssertion(actualResponse)

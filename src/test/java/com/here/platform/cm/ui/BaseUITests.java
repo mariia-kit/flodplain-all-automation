@@ -92,7 +92,7 @@ public class BaseUITests extends BaseCMTest {
 
     @Step
     String requestConsentAddVin(MPConsumers mpConsumer, ConsentRequestData consentRequest, String... vinNumbers) {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var consentRequestId = consentRequestController.createConsentRequest(consentRequest)
                 .as(ConsentRequestIdResponse.class).getConsentRequestId();
 

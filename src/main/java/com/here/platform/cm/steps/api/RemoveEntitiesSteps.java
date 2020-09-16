@@ -39,7 +39,7 @@ public class RemoveEntitiesSteps {
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
         }
         var deleteConsentRequestResponse = privateController
-                .withCMToken()
+                .withConsumerToken()
                 .hardDeleteConsentRequest(crid);
         StepExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
@@ -50,7 +50,7 @@ public class RemoveEntitiesSteps {
             return;
         }
 
-        privateController.withCMToken();
+        privateController.withConsumerToken();
 
         var deleteProviderApplicationResponse = privateController.deleteProviderApplication(
                 consentRequestData.getProviderId(),
@@ -65,13 +65,13 @@ public class RemoveEntitiesSteps {
     }
 
     public void removeProvider(String providerId) {
-        privateController.withCMToken();
+        privateController.withConsumerToken();
         var deleteProviderResponse = privateController.deleteProvider(providerId);
         StepExpects.expectNOCONSTENTStatusCode(deleteProviderResponse);
     }
 
     public void removeConsumer(String consumerId) {
-        privateController.withCMToken();
+        privateController.withConsumerToken();
         var deleteConsumerResponse = privateController.deleteConsumer(consumerId);
         StepExpects.expectNOCONSTENTStatusCode(deleteConsumerResponse);
     }

@@ -44,7 +44,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
     void getAccessTokenForRevokedConsentTest() {
         ConsentFlowSteps.revokeConsentForVIN(crid, testVin);
 
-        accessTokenController.withCMToken();
+        accessTokenController.withConsumerToken();
         final var actualAccessTokenResponse = accessTokenController
                 .getAccessToken(this.crid, testVin, testConsumerId);
 
@@ -66,7 +66,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
             fuSleep();
-            accessTokenController.withCMToken();
+            accessTokenController.withConsumerToken();
             final var actualResponse = accessTokenController
                     .getAccessToken(crid, testVin, testConsumerId);
             var accessTokenResponse = new ResponseAssertion(actualResponse)
@@ -81,7 +81,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         void isNotPossibleToGetAccessTokenWithInvalidConsumerIdTest() {
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
-            accessTokenController.withCMToken();
+            accessTokenController.withConsumerToken();
             final var actualResponse = accessTokenController
                     .getAccessToken(crid, testVin, testConsumerId + 1);
 
@@ -113,7 +113,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
                     .approveConsent(secondConsumerConsent, privateBearer);
             new ResponseAssertion(secondApprovedConsentResponse).statusCodeIsEqualTo(StatusCode.OK);
 
-            consentRequestController.withCMToken();
+            consentRequestController.withConsumerToken();
             var secondConsentStatusResponse = consentRequestController
                     .getStatusForConsentRequestById(secondConsentRequestId);
 

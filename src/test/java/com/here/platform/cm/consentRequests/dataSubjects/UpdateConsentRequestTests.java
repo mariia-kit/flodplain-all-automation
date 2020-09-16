@@ -59,7 +59,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 testConsentRequest.getConsumerId(),
                 testContainer
         );
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class)
@@ -95,7 +95,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 .pending(3)
                 .revoked(0);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
@@ -131,7 +131,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 .approved(1)
                 .pending(2)
                 .revoked(0);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
@@ -139,7 +139,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         consentRequestController.forceRemoveVinsFromConsentRequest(crid, new VinsToFile(vinToApprove, vin2).csv());
         fuSleep();
         expectedConsentRequestStatuses.approved(0).pending(1);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
     }
@@ -161,7 +161,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 .approved(0)
                 .pending(2)
                 .revoked(1);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
@@ -172,7 +172,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
 
         fuSleep();
         expectedConsentRequestStatuses.pending(1).revoked(0);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
     }
@@ -194,7 +194,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 .approved(0)
                 .pending(2)
                 .revoked(1);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
@@ -203,7 +203,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                 .removeVinsFromConsentRequest(crid, new VinsToFile(vinToRevoke, vin2).json());
 
         expectedConsentRequestStatuses.pending(1).revoked(0);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
     }

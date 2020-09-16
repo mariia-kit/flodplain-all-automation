@@ -94,7 +94,7 @@ class ProvidersTests extends BaseCMTest {
                 testConsentRequest.getConsumerId(),
                 testContainer
         );
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var consentRequestResponse = consentRequestController.createConsentRequest(testConsentRequest);
         var crid = new ResponseAssertion(consentRequestResponse)
                 .statusCodeIsEqualTo(StatusCode.CREATED)

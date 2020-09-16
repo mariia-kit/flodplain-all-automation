@@ -52,7 +52,7 @@ public class ConsentRequestSteps {
                 )
                 .containerId(providerApplication.container.id);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
         StepExpects.expectCREATEDStatusCode(consentRequestResponse);
 

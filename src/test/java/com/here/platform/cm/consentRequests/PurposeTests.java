@@ -79,7 +79,7 @@ public class PurposeTests extends BaseCMTest {
 
         @BeforeEach
         void beforeEach() {
-            consentRequestController.withCMToken();
+            consentRequestController.withConsumerToken();
             var consentRequest = consentRequestController.createConsentRequest(targetConsentRequest);
             crid = new ResponseAssertion(consentRequest)
                     .statusCodeIsEqualTo(StatusCode.CREATED).bindAs(ConsentRequestIdResponse.class)
