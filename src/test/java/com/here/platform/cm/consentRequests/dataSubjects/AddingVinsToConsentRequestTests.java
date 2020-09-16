@@ -49,7 +49,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 testScope
         );
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class)
@@ -105,7 +105,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 .pending(2)
                 .revoked(0);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)

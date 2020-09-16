@@ -3,8 +3,8 @@ package com.here.platform.cm.controllers;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.HeaderConfig.headerConfig;
 
-import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -36,8 +36,8 @@ abstract class BaseConsentService<T> {
         this.authorizationToken = String.format("Bearer %s", tokenValue);
     }
 
-    public T withCMToken() {
-        setAuthorizationToken(BearerAuthorization.init().getCmUserToken());
+    public T withConsumerToken() {
+        setAuthorizationToken(Users.MP_CONSUMER.getToken());
         return (T) this;
     }
 

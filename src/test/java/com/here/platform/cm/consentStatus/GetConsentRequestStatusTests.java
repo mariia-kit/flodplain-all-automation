@@ -36,7 +36,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Set Consent Status For Non Existent Consent Request Id")
     void getConsentStatusForNonExistentConsentRequestIdTest() {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var actualResponse = consentRequestController
                 .getStatusForConsentRequestById(crypto.sha256());
 
@@ -69,7 +69,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
                 testContainer
         );
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var consentCreateResponse = consentRequestController.createConsentRequest(testConsentRequestData);
 
         crid = new ResponseAssertion(consentCreateResponse)
@@ -93,7 +93,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
                 .pending(1)
                 .revoked(1);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)

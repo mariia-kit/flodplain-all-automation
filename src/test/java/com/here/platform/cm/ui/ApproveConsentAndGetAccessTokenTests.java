@@ -87,7 +87,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         Selenide.clearBrowserLocalStorage();
 
         var accessTokenController = new AccessTokenController();
-        accessTokenController.withCMToken();
+        accessTokenController.withConsumerToken();
         var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, mpConsumer.getRealm());
 
         new ResponseAssertion(accessTokenResponse)

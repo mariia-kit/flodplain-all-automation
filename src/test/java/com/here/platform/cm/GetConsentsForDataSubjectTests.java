@@ -81,7 +81,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
                     testScope
             );
 
-            consentRequestController.withCMToken();
+            consentRequestController.withConsumerToken();
             var consentRequestResponse = consentRequestController.createConsentRequest(testConsentRequestData);
             crid = new ResponseAssertion(consentRequestResponse)
                     .statusCodeIsEqualTo(StatusCode.CREATED)
@@ -110,7 +110,7 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
             consentRequestController.withConsumerToken(mpConsumer);
             consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
 
-            consentRequestController.withCMToken();
+            consentRequestController.withConsumerToken();
             var actualConsentRequestResponse = consentRequestController
                     .getAllConsentRequestsByConsumerIdAndVin(testConsentRequestData.getConsumerId(), testVin);
             var actualConsentRequestObject = new ResponseAssertion(actualConsentRequestResponse)

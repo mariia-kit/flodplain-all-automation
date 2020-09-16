@@ -75,7 +75,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .isAfter(successApproveData.getApprovedConsentInfo().getCreateTime());
 
         final var expectedStatusesForConsent = new ConsentRequestStatus().approved(1).pending(0).revoked(0);
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         final var actualStatusesForConsent = consentRequestController
                 .getStatusForConsentRequestById(consentToApprove.getConsentRequestId());
 
@@ -97,7 +97,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
                 .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_NOT_FOUND);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         final var actualStatusesForConsent = consentRequestController
                 .getStatusForConsentRequestById(randomConsentRequestId);
 

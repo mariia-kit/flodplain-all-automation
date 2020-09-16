@@ -114,7 +114,7 @@ public class ConsentRequestInfoTests extends BaseCMTest {
 
 
     private String createConsentRequestWithCar(String targetVin) {
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class)

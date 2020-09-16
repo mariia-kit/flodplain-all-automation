@@ -35,7 +35,7 @@ public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
     @MethodSource("consentRequestIdAndVins")
     void accessTokenErrorHandlerTest(String crid, String vin, String cause) {
         var accessTokenController = new AccessTokenController();
-        accessTokenController.withCMToken();
+        accessTokenController.withConsumerToken();
         final var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, testConsumerId);
 
         new ResponseAssertion(accessTokenResponse)

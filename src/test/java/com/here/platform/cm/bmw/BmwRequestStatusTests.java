@@ -104,7 +104,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .pending(2)
                 .revoked(0);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)
@@ -120,7 +120,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .pending(0)
                 .revoked(1);
 
-        consentRequestController.withCMToken();
+        consentRequestController.withConsumerToken();
         statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)
