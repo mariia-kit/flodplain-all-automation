@@ -9,6 +9,7 @@ import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
+import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -60,19 +61,12 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         crid = createValidBmwConsentRequest();
 
         var privateBearer = dataSubject.getBearerToken();
-        var responseBefore = consentStatusController
-                .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
+        var responseBefore = consentStatusController.getConsentStatusByIdAndVin(crid,testVin);
         new ResponseAssertion(responseBefore).statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObjectIgnoringTimeFields(new ConsentInfo()
+                .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
-                        .consumerName(mpConsumer.getConsumerName())
-                        .containerName(testContainer.name)
-                        .containerDescription(testContainer.containerDescription)
-                        .resources(testContainer.resources)
-                        .purpose(testConsentRequestData.getPurpose())
-                        .title(testConsentRequestData.getTitle())
-                        .state(StateEnum.PENDING)
-                        .vinLabel(new VIN(testVin).label()));
+                        .state(StateEnum.PENDING.getValue())
+                        .vin(new VIN(testVin).label()));
 
         var clearanceId = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath().get("clearanceId").toString();
 
@@ -82,19 +76,12 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(new Health().status("OK"));
 
-        var responseAfter = consentStatusController
-                .getConsentRequestInfoByVinAndCrid(testVin, crid, privateBearer);
+        var responseAfter = consentStatusController.getConsentStatusByIdAndVin(crid,testVin);
         new ResponseAssertion(responseAfter).statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObjectIgnoringTimeFields(new ConsentInfo()
+                .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
-                        .consumerName(mpConsumer.getConsumerName())
-                        .containerName(testContainer.name)
-                        .containerDescription(testContainer.containerDescription)
-                        .resources(testContainer.resources)
-                        .purpose(testConsentRequestData.getPurpose())
-                        .title(testConsentRequestData.getTitle())
-                        .state(bmwStatus.getCmStatus())
-                        .vinLabel(new VIN(testVin).label()));
+                        .state(bmwStatus.name())
+                        .vin(new VIN(testVin).label()));
     }
 
     @Test

@@ -44,20 +44,6 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
                 .get("/status");
     }
 
-    @Step
-    public Response getConsentsInfo(String vin, PageableConsent pageableConsent) {
-        return consentServiceClient(consentsBasePath)
-                .queryParams(pageableConsent.toMap())
-                .get("/{vin}/info", vin);
-    }
-
-    public Response getConsentRequestInfoByVinAndCrid(String vin, String crid, String privateBearerToken) {
-        return consentServiceClient(consentsBasePath)
-                .header("Authorization", privateBearerToken)
-                .get("/{vin}/consentRequests/{crid}/info", vin, crid);
-    }
-
-
     @Data
     @Builder
     public static class NewConsent {
