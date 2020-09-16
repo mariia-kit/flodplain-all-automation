@@ -1,9 +1,8 @@
 package com.here.platform.cm.consentStatus;
 
 
-import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
-import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
@@ -17,6 +16,7 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -66,10 +66,12 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedStatusesForConsent);
 
-        var revokedConsentInfo = new ConsentStatusController()
-                .getConsentsInfo(testVin, PageableConsent.builder().stateEnum(StateEnum.REVOKED).build());
+        var revokedConsents = new UserAccountController()
+                .getConsentsForUser(privateBearer,
+                        Map.of("consentRequestId", crid,
+                                "state", "REVOKED"));
 
-        var consentInfoList = new ResponseAssertion(revokedConsentInfo)
+        var consentInfoList = new ResponseAssertion(revokedConsents)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .bindAsListOf(ConsentInfo[].class);
 
