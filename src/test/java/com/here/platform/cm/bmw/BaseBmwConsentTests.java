@@ -1,6 +1,7 @@
 package com.here.platform.cm.bmw;
 
 import com.github.javafaker.Faker;
+import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
@@ -14,7 +15,7 @@ import com.here.platform.dataProviders.daimler.DataSubjects;
 import java.io.File;
 
 
-public class BaseBmwConsentTests {
+public class BaseBmwConsentTests extends BaseCMTest {
 
     private final ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;

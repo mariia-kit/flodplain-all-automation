@@ -19,9 +19,11 @@ import java.util.stream.Stream;
 public class TestDataGeneration {
 
     public static void main(String[] args) {
-        createBaseProvidersIfNecessary();
-        createBaseContainersIfNecessary();
-        createBaseCMApplicationIfNecessary();
+        if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
+            createBaseProvidersIfNecessary();
+            createBaseContainersIfNecessary();
+            createBaseCMApplicationIfNecessary();
+        }
     }
 
     public static void createBaseProvidersIfNecessary() {
@@ -37,10 +39,10 @@ public class TestDataGeneration {
     }
 
     public static void createBaseCMApplicationIfNecessary() {
-        String providerId = Providers.BMW_TEST.getName();
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
-        new OnboardingSteps(providerId, consumerId)
-                .onboardTestProviderApplicationForScope(ConsentRequestContainers.BMW_MILEAGE);
+        Stream.of(ConsentRequestContainers.values()).forEach(containers ->
+        new OnboardingSteps(containers.provider.getName(), consumerId)
+                .onboardTestProviderApplicationForScope(containers));
     }
 
 
@@ -55,7 +57,7 @@ public class TestDataGeneration {
         String token = Users.DAIMLER.getToken().split(":")[0];
         String refresh = Users.DAIMLER.getToken().split(":")[1];
         for (String vin : Arrays.asList(Vehicle.validVehicleIdLong, Vehicle.validVehicleId)) {
-            String url = Conf.ns().getNsUrlBaseAccess() + Conf.ns().getAuthUrlAccess() + "token?" +
+            String url = Conf.ns().getNsUrlBaseAccess() + Conf.ns().getNsUrlAccess() + "token?" +
                     "access_token=" + token +
                     "&refresh_token=" + refresh +
                     "&client_id=88440bf1-2fff-42b6-8f99-0510b6b5e6f8" +
@@ -64,7 +66,7 @@ public class TestDataGeneration {
                     "&scope=mb:user:pool:reader mb:vehicle:status:general";
             given()
                     .headers("Content-Type", "application/json",
-                            "Authorization", Users.PROVIDER.getToken())
+                            "Authorization", "Bearer " + Users.PROVIDER.getToken())
                     .when()
                     .post(url)
                     .then()

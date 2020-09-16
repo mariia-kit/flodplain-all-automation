@@ -4,13 +4,16 @@ package com.here.platform.ns.helpers;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.controller.ReferenceProviderController;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
+import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import io.restassured.response.Response;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

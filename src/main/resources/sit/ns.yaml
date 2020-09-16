@@ -37,3 +37,8 @@ referenceApp:
   clientId: consent_mediator
   clientSecret: 123
   callBackUrl: https://platform.in.here.com/consent/oauth2/referenceProvider/auth/callback
+
+bmwApp:
+  clientId: S00I000M001OK
+  clientSecret: ""
+  callBackUrl: ""

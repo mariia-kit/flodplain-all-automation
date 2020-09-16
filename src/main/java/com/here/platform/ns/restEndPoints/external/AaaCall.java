@@ -12,6 +12,7 @@ import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -256,7 +257,7 @@ public class AaaCall {
                 .extract().response().jsonPath().get("id");
     }
 
-    public String getPolicy(String policyId) {
+    public Response getPolicy(String policyId) {
         String url = Conf.ns().getAuthUrlBase() + "/policy/" + policyId;
 
         return given()
@@ -265,8 +266,7 @@ public class AaaCall {
                         "Authorization", "Bearer " + Users.AAA.getToken()
                 )
                 .when()
-                .get(url)
-                .asString();
+                .get(url);
     }
 
     public String getPolicyLink(String groupId, String policyId) {
