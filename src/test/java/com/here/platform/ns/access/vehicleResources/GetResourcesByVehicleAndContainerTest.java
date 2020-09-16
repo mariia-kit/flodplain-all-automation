@@ -3,7 +3,9 @@ package com.here.platform.ns.access.vehicleResources;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
-
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
@@ -52,6 +54,31 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsContainerData(
                         Vehicle.odometerResource,
+                        "Provider content not as expected!");
+    }
+
+    @Test
+    @Tag("ignored-dev")
+    @DisplayName("Verify get resources by vehicle Id and container Id Successful BMW")
+    void verifyGetContainersDataRetrievedBMW() {
+        DataProvider provider = Providers.BMW_TEST.getProvider();
+        Container container = Containers.generateNew(provider).withResourceNames("mileage");
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        String crid = ConsentRequestSteps
+                .createConsentRequestWithVINFor(ProviderApplications.BMW_CONS_1, Vehicle.validVehicleId)
+                .getConsentRequestId();
+        ConsentFlowSteps.approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
+
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withCampaignId(crid)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedEqualsISOContainerData(
+                        Vehicle.fuelResource,
                         "Provider content not as expected!");
     }
 

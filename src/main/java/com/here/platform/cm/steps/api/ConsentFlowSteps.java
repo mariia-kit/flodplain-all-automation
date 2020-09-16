@@ -1,9 +1,12 @@
 package com.here.platform.cm.steps.api;
 
 
+import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.controllers.ConsentStatusController;
+import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.VIN;
+import com.here.platform.common.controller.ReferenceProviderController;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
@@ -25,6 +28,13 @@ public class ConsentFlowSteps {
         var privateBearer = DataSubjects.getByVin(targetVIN).getBearerToken();
         var approveResponse = new ConsentStatusController().approveConsent(consentToApprove, privateBearer);
         StepExpects.expectOKStatusCode(approveResponse);
+    }
+
+    @Step
+    public void approveConsentForVinBMW(String bmwContainer, String targetVIN) {
+        var clearanceId = new ReferenceProviderController().getClearanceByVin(targetVIN, bmwContainer).jsonPath().get("clearanceId").toString();
+        var response = new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.APPROVED.name());
+        StepExpects.expectOKStatusCode(response);
     }
 
     @Step
