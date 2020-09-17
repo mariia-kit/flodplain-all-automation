@@ -32,6 +32,7 @@ nonConsumerManager:
 consumerGroupId: GROUP-9a2cd6e4-299a-432d-a464-e70558bbe8ee
 #  ns.provider.group.name: Provider Management
 providerGroupId: GROUP-4cd9f1a8-114d-4dd7-bd82-730b01c01479
+providerPolicyId: POLICY-3895513b-d4df-44a4-857b-8044a68df0c4
 
 #------------------Here User Credentials---------------------------------------------
 daimlerUser:
@@ -56,7 +57,7 @@ consumerApp:
 #------------------AAA Credentials--------------------------------------------------
 aaService:
   appName: NS Service Application
-  appId: SERVICE-1850e339-c859-4335-a39e-4d93b1c8fc9c
+  appId: SERVICE-e92b64bb-c124-4d7f-ac6f-aab2cf4b4398
   appClientId: xxx
   appKeyId: PPtpktfOvJESGo8GPRG1Lg
   appKeySecret: zUSl2EcArhqVwPswNmkfeRLoEhB3faT5LAUFhfYeW51P5nmwQBgyvw_8stxs5DHGO5_EtqwbMv6bw6hPvDtpGA

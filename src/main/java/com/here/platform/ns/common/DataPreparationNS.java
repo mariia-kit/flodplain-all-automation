@@ -23,7 +23,7 @@ public class DataPreparationNS {
 
         EnvDataCollector.create();
         if (Conf.ns().isConsentMock()) {
-            new TestDataGeneration().setVehicleTokenForDaimler();
+            TestDataGeneration.setVehicleTokenForDaimler();
         }
     }
 
