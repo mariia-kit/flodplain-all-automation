@@ -82,7 +82,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                 );
     }
 
-//    @Test
+    //    @Test
     @DisplayName("Approve consent with max pending list of consents")
     void approveConsentWithMaxPendingListConsentsTest() {
         var secondPendingConsent = createValidConsentRequest();
