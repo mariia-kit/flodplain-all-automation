@@ -8,7 +8,8 @@ import com.here.account.oauth2.HereAccount;
 
 public class ApplicationTokenController {
 
-    public synchronized static String createConsumerAppToken(String host, String clientIdValue, String clientSecretValue) {
+    public synchronized static String createConsumerAppToken(String host, String clientIdValue,
+            String clientSecretValue) {
 
         var tokenEndpoint = HereAccount.getTokenEndpoint(
                 ApacheHttpClientProvider.builder().build(),

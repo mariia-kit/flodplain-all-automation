@@ -40,4 +40,5 @@ public class ReferenceTokenController {
         return consentCall.getHeader("Location")
                 .replace(CALLBACK_URL + "?code=", StringUtils.EMPTY);
     }
+
 }

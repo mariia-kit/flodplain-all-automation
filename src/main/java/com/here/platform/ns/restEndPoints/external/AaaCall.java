@@ -27,7 +27,8 @@ public class AaaCall {
     private static final String prodPolicy = "POLICY-c6be1029-573c-4d66-903e-e6be57178c45";
 
     public List<MutablePair<String, String>> getAllContainersPolicy() {
-        String url = Conf.ns().getAuthUrlBase() + "/search/policy?serviceId=" + Conf.nsUsers().getAaService().getAppId();
+        String url =
+                Conf.ns().getAuthUrlBase() + "/search/policy?serviceId=" + Conf.nsUsers().getAaService().getAppId();
 
         List<MutablePair<String, String>> policy = new ArrayList<>();
 

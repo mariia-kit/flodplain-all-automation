@@ -28,7 +28,11 @@ public class ContainerController extends BaseNeutralService<ContainerController>
     @Step
     public Response deleteContainer(Container container) {
         return neutralServerClient(containersBasePath)
-                .delete("/{providerId}/containers_info/{containerId}", container.getDataProviderName(), container.getId());
+                .delete(
+                        "/{providerId}/containers_info/{containerId}",
+                        container.getDataProviderName(),
+                        container.getId()
+                );
     }
 
     @Step

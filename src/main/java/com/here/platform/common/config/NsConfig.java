@@ -34,4 +34,5 @@ public class NsConfig {
     private DaimlerApp daimlerApp;
     private DaimlerApp referenceApp;
     private DaimlerApp bmwApp;
+
 }

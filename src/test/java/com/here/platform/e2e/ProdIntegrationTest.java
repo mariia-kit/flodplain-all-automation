@@ -1,6 +1,5 @@
 package com.here.platform.e2e;
 
-import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 
 import com.here.platform.ns.controllers.access.ContainerDataController;

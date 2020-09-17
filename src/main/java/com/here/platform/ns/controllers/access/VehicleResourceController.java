@@ -14,7 +14,12 @@ public class VehicleResourceController extends BaseNeutralServerAccessController
     @Step
     public Response getVehicleResource(DataProvider provider, String vehicleId, ProviderResource resource) {
         return neutralServerAccessClient(serviceBasePath)
-                .get("providers/{providerId}/vehicles/{vehicleId}/resources/{resourceId}", provider.generateHrn(), vehicleId, resource.getName());
+                .get(
+                        "providers/{providerId}/vehicles/{vehicleId}/resources/{resourceId}",
+                        provider.generateHrn(),
+                        vehicleId,
+                        resource.getName()
+                );
     }
 
     @Step

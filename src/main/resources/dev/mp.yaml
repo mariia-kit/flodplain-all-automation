@@ -1,4 +1,3 @@
-
 #------------------Marketplace target Endpoint--------------------
 marketplaceUrl: https://marketplace-dev.api.platform.in.here.com/api/v1
 marketplaceUiBaseUrl: https://portal.platform.in.here.com/

@@ -79,7 +79,8 @@ public class Zephyroth {
         log("Fetching JIRA Test Executions for the project");
         int skip = 0;
         String search = "project='" + config.getValue(PROJECT_KEY) + "'%20and%20fixVersion='"
-                + URLEncoder.encode(config.getValue(RELEASE_VERSION), StandardCharsets.UTF_8) + "'%20and%20cycleName='" + config.getValue(TEST_CYCLE) + "'";
+                + URLEncoder.encode(config.getValue(RELEASE_VERSION), StandardCharsets.UTF_8) + "'%20and%20cycleName='"
+                + config.getValue(TEST_CYCLE) + "'";
 
         ExecutionResponse executionResponse = searchInZQL(config, search);
         if (executionResponse == null || executionResponse.getExecutions().isEmpty()) {

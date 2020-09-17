@@ -25,7 +25,8 @@ public class AuthController {
                         String host = Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken();
                         String clientIdValue = Conf.nsUsers().getConsumerApp().getAppKeyId();
                         String clientSecretValue = Conf.nsUsers().getConsumerApp().getAppKeySecret();
-                        return ApplicationTokenController.createConsumerAppToken(host, clientIdValue, clientSecretValue);
+                        return ApplicationTokenController
+                                .createConsumerAppToken(host, clientIdValue, clientSecretValue);
                     } else {
                         logger.info("------------- Creating new portal user token ------------");
                         return PortalTokenController.produceToken(user.getRealm(), user.getEmail(), user.getPass());

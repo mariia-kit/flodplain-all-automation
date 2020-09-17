@@ -6,7 +6,6 @@ import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
@@ -16,7 +15,6 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.controller.ReferenceProviderController;
 import io.qameta.allure.Issue;
@@ -63,14 +61,15 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
         var responseBefore = consentStatusController
                 .withConsumerToken(MPConsumers.OLP_CONS_1)
-                .getConsentStatusByIdAndVin(crid,testVin);
+                .getConsentStatusByIdAndVin(crid, testVin);
         new ResponseAssertion(responseBefore).statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
                         .state(StateEnum.PENDING.getValue())
                         .vin(testVin));
 
-        var clearanceId = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath().get("clearanceId").toString();
+        var clearanceId = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath()
+                .get("clearanceId").toString();
 
         var response = bmwController.setClearanceStatusByBMW(clearanceId, bmwStatus.name());
 
@@ -78,7 +77,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(new Health().status("OK"));
 
-        var responseAfter = consentStatusController.getConsentStatusByIdAndVin(crid,testVin);
+        var responseAfter = consentStatusController.getConsentStatusByIdAndVin(crid, testVin);
         new ResponseAssertion(responseAfter).statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
@@ -106,8 +105,10 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
-        var clearanceId1 = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath().get("clearanceId").toString();
-        var clearanceId2 = referenceProviderController.getClearanceByVin(testVin1, bmwContainer).jsonPath().get("clearanceId").toString();
+        var clearanceId1 = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath()
+                .get("clearanceId").toString();
+        var clearanceId2 = referenceProviderController.getClearanceByVin(testVin1, bmwContainer).jsonPath()
+                .get("clearanceId").toString();
         bmwController.setClearanceStatusByBMW(clearanceId1, BMWStatus.APPROVED.name());
         bmwController.setClearanceStatusByBMW(clearanceId2, BMWStatus.REVOKED.name());
         expectedConsentRequestStatuses = new ConsentRequestStatus()

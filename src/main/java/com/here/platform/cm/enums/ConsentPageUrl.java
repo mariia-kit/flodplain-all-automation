@@ -14,7 +14,7 @@ public class ConsentPageUrl {
     }
 
     public static String getEnvUrlRoot() {
-       return Conf.cm().getConsentPageUrl();
+        return Conf.cm().getConsentPageUrl();
     }
 
     public static String getDaimlerCallbackUrl() {

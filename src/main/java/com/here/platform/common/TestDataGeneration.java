@@ -42,8 +42,8 @@ public class TestDataGeneration {
     public static void createBaseCMApplicationIfNecessary() {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
         Stream.of(ConsentRequestContainers.values()).forEach(containers ->
-        new OnboardingSteps(containers.provider.getName(), consumerId)
-                .onboardTestProviderApplicationForScope(containers));
+                new OnboardingSteps(containers.provider.getName(), consumerId)
+                        .onboardTestProviderApplicationForScope(containers));
     }
 
 

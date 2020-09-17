@@ -48,7 +48,8 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.getVin());
 
-        targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApplication, dataSubject.getVin());
+        targetConsentRequest = ConsentRequestSteps
+                .createConsentRequestWithVINFor(targetApplication, dataSubject.getVin());
         crid = targetConsentRequest.getConsentRequestId();
         ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();

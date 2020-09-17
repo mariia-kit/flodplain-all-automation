@@ -7,7 +7,6 @@ import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
 import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.filter.log.LogDetail;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
@@ -80,7 +79,8 @@ public class RestHelper {
 //    }
 
     @Step("{requestName}")
-    public static Response putFile(String requestName, String url, String token, File file, String mimeType, String xCorrId) {
+    public static Response putFile(String requestName, String url, String token, File file, String mimeType,
+            String xCorrId) {
         return RestHelper.gatewayWrapper(() -> given()
                 .header("Content-Type", "multipart/form-data")
                 .header("Authorization", token)

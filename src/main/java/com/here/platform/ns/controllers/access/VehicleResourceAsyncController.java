@@ -15,7 +15,12 @@ public class VehicleResourceAsyncController extends BaseNeutralServerAccessContr
     @Step
     public Response initGetVehicleResouce(DataProvider provider, String vehicleId, ProviderResource resource) {
         return neutralServerAccessClient(serviceBasePath)
-                .post("providers/{providerId}/vehicles/{vehicleId}/{resourceId}", provider.generateHrn(), vehicleId, resource.getName());
+                .post(
+                        "providers/{providerId}/vehicles/{vehicleId}/{resourceId}",
+                        provider.generateHrn(),
+                        vehicleId,
+                        resource.getName()
+                );
     }
 
     @Step
