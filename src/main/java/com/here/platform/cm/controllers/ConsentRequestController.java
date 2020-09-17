@@ -34,20 +34,6 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     }
 
     @Step
-    public Response getAllConsentRequestsByConsumerIdAndVin(String testConsumerId, String testVin) {
-        return consentServiceClient(consentRequestBasePath)
-                .queryParams(Map.of("consumerId", testConsumerId, "vin", testVin))
-                .get();
-    }
-
-    @Step
-    public Response getConsentRequestById(String consentRequestId) {
-        return consentServiceClient(consentRequestBasePath)
-                .header("Authorization", this.consumerBearerToken)
-                .get(consentRequestId);
-    }
-
-    @Step
     @SneakyThrows
     public Response addVinsToConsentRequest(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)

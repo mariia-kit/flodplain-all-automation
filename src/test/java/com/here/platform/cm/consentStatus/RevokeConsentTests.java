@@ -42,6 +42,8 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify revoke of ConsentRequest")
     void revokeConsentRequestPositiveTest() {
+        new UserAccountController().attachVinToUserAccount(testVin, dataSubject.getBearerToken());
+
         crid = createValidConsentRequest();
 
         final var consentToRevoke = NewConsent.builder()
@@ -67,9 +69,10 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .responseIsEqualToObject(expectedStatusesForConsent);
 
         var revokedConsents = new UserAccountController()
-                .getConsentsForUser(privateBearer,
-                        Map.of("consentRequestId", crid,
-                                "state", "REVOKED"));
+                .getConsentsForUser(
+                        privateBearer,
+                        Map.of("consentRequestId", crid, "state", "REVOKED")
+                );
 
         var consentInfoList = new ResponseAssertion(revokedConsents)
                 .statusCodeIsEqualTo(StatusCode.OK)
