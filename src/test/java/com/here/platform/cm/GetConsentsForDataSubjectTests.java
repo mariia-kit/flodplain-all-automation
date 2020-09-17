@@ -55,20 +55,6 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
         );
     }
 
-    @ParameterizedTest(name = "Is not possible to get consent requests with consumerId: {0}, vin: {1}, should cause: {2}")
-    @ErrorHandler
-    @MethodSource("consumerIdAndVins")
-    void getConsentsErrorHandlerTest(String consumerId, String vin, String cause) {
-        var actualGetConsentsResponse = consentRequestController
-                .getAllConsentRequestsByConsumerIdAndVin(consumerId, vin);
-
-        var actualCause = new ResponseAssertion(actualGetConsentsResponse)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION)
-                .getCause();
-        assertThat(actualCause).isEqualTo(String.format("Parameter '%s' must be provided", cause));
-    }
-
     @Nested
     @DisplayName("Get consents for data subject")
     public class WithOnboarding {
@@ -92,32 +78,6 @@ class GetConsentsForDataSubjectTests extends BaseCMTest {
         @AfterEach
         void cleanUp() {
             RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-        }
-
-        @Test
-        @DisplayName("Verify get ConsentRequestsByConsumerIdAndVin request")
-        void getConsentRequestsByConsumerIdAndVinTest() {
-            final var expectedConsentRequest = new ConsentRequest()
-                    .consumerId(mpConsumer.getRealm())
-                    .providerId(testConsentRequestData.getProviderId())
-                    .consentRequestId(crid)
-                    .purpose(testConsentRequestData.getPurpose())
-                    .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
-                    .title(testConsentRequestData.getTitle())
-                    .containerId(testScope.id);
-
-            testFileWithVINs = new VinsToFile(testVin).json();
-            consentRequestController.withConsumerToken(mpConsumer);
-            consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
-
-            consentRequestController.withConsumerToken();
-            var actualConsentRequestResponse = consentRequestController
-                    .getAllConsentRequestsByConsumerIdAndVin(testConsentRequestData.getConsumerId(), testVin);
-            var actualConsentRequestObject = new ResponseAssertion(actualConsentRequestResponse)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .bindAsListOf(ConsentRequest[].class);
-
-            assertThat(actualConsentRequestObject).contains(expectedConsentRequest);
         }
 
     }
