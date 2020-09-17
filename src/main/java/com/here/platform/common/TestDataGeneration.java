@@ -20,6 +20,7 @@ public class TestDataGeneration {
 
     public static void main(String[] args) {
         if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
+            createPoliciesForProviderGroup();
             createBaseProvidersIfNecessary();
             createBaseContainersIfNecessary();
             createBaseCMApplicationIfNecessary();
@@ -47,10 +48,8 @@ public class TestDataGeneration {
 
 
     public static void createPoliciesForProviderGroup() {
-        new AaaCall().addGroupToPolicy("GROUP-4cd9f1a8-114d-4dd7-bd82-730b01c01479",
-                "POLICY-4657709a-4b14-424f-937b-55c5d5f99f6d");
-        new AaaCall().addGroupToPolicy("GROUP-f905202a-b38c-46ec-b0a1-5ebda7b18389",
-                "POLICY-7e671f5d-d786-4b4a-be97-0c03ae8dd608");
+        new AaaCall().addGroupToPolicy(Conf.nsUsers().getProviderGroupId(),
+                Conf.nsUsers().getProviderPolicyId());
     }
 
     public static void setVehicleTokenForDaimler() {

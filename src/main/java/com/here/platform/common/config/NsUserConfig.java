@@ -17,6 +17,7 @@ public class NsUserConfig {
 
     private String consumerGroupId;
     private String providerGroupId;
+    private String providerPolicyId;
 
     private HereApplication consumerApp;
     private HereApplication aaService;
