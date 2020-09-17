@@ -3,6 +3,7 @@ package com.here.platform.ns.access.vehicleResources;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
+
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
@@ -70,7 +71,8 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         String crid = ConsentRequestSteps
                 .createConsentRequestWithVINFor(ProviderApplications.BMW_CONS_1, Vehicle.validVehicleId)
                 .getConsentRequestId();
-        ConsentFlowSteps.approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
+        ConsentFlowSteps
+                .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -224,7 +226,6 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    //@Tag("smoke_ns")
     @DisplayName("Verify get resources by vehicle Id and container Id for empty response")
     void verifyGetContainersDataRetrievedEmpty() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();

@@ -133,7 +133,8 @@ public class ConsentManagementCall {
         String authToken = "Bearer " + PROVIDER.getUser().getToken();
         String consumerId = CONSUMER.getUser().getRealm();
         DaimlerApp app = Conf.ns().getDaimlerApp();
-        if (providerId.equals(Providers.DAIMLER_REFERENCE.getName()) || providerId.equals(Providers.REFERENCE_PROVIDER.getName())) {
+        if (providerId.equals(Providers.DAIMLER_REFERENCE.getName()) || providerId
+                .equals(Providers.REFERENCE_PROVIDER.getName())) {
             app = Conf.ns().getReferenceApp();
         } else if (providerId.equals(Providers.BMW_TEST.getName()) || providerId.equals(Providers.BMW.getName())) {
             app = Conf.ns().getBmwApp();

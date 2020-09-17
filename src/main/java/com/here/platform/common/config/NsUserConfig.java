@@ -24,4 +24,5 @@ public class NsUserConfig {
 
     private DataSubject daimlerUser;
     private DataSubject hereUser;
+
 }

@@ -51,4 +51,5 @@ public class BaseBmwConsentTests extends BaseCMTest {
         ).consentRequestData();
         return targetConsentRequest.getConsentRequestId();
     }
+
 }

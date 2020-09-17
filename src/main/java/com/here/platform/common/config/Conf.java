@@ -45,7 +45,8 @@ public class Conf {
 
     public static <T> T getConfig(Class<T> type) {
         YamlConfUrl annotation = Optional.ofNullable(type.getAnnotation(YamlConfUrl.class))
-                .orElseThrow(() -> new RuntimeException("Config class " + type.getName() + " not properly configured!"));
+                .orElseThrow(
+                        () -> new RuntimeException("Config class " + type.getName() + " not properly configured!"));
         String env = System.getProperty("env");
         if ("stg".equalsIgnoreCase(env)) {
             env = "sit";
@@ -58,4 +59,5 @@ public class Conf {
             return ConfigLoader.yamlLoadConfig(annotation.configUrl().replace("{env}", "dev"), type);
         }
     }
+
 }

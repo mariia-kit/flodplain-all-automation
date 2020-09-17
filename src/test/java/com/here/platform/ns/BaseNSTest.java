@@ -1,7 +1,6 @@
 package com.here.platform.ns;
 
 import com.here.platform.common.TestResultLoggerExtension;
-import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;

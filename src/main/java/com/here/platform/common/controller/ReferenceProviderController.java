@@ -72,6 +72,7 @@ public class ReferenceProviderController {
 
         @JsonProperty("scope")
         private String scope;
+
     }
 
     @Data
@@ -86,5 +87,7 @@ public class ReferenceProviderController {
 
         @JsonProperty("resourceNames")
         private String resourceNames;
+
     }
+
 }

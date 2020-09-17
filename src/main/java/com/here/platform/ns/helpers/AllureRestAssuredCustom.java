@@ -69,7 +69,7 @@ public class AllureRestAssuredCustom implements OrderedFilter {
             final FilterableResponseSpecification responseSpec,
             final FilterContext filterContext) {
         final Response response = filterContext.next(requestSpec, responseSpec);
-        if(Allure.getLifecycle().getCurrentTestCase().isPresent()) {
+        if (Allure.getLifecycle().getCurrentTestCase().isPresent()) {
             final Prettifier prettifier = new Prettifier();
             String uri = requestSpec.getURI();
             uri = URLDecoder.decode(uri, StandardCharsets.UTF_8);

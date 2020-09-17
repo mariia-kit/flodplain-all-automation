@@ -45,6 +45,7 @@ public enum DataSubjects {
     public String getVin() {
         return dataSubject.getVin();
     }
+
     public static DataSubjects getNext() {
         var dataSubjectsArray = values();
         if (atomicInteger.getAcquire() > dataSubjectsArray.length - 2) {

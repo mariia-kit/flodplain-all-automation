@@ -6,7 +6,6 @@ import static io.restassured.config.HeaderConfig.headerConfig;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;

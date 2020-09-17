@@ -101,12 +101,4 @@ public class BaseUITests extends BaseCMTest {
         return consentRequestId;
     }
 
-    @Step
-    void updateSessionStorageData(String consentRequestId, String vinNumber) {
-        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
-        LocalStorage storage = webStorage.getLocalStorage();
-        storage.setItem("VIN_NUMBER", vinNumber);
-        storage.setItem("CONSENT_REQUEST_ID", consentRequestId);
-    }
-
 }

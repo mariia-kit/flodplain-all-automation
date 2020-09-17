@@ -14,8 +14,10 @@ public class ConsentAfterCleanUp implements AfterAllCallback {
     public void afterAll(ExtensionContext context) {
         logger.info("Clean up after CM test start!");
 
-        CleanUpHelper.getConsentVinsList().forEach(vin -> new ConsentManagementCall().deleteVinsHard(vin.getCrid(), vin.getVin()));
-        CleanUpHelper.getConsentAppsList().forEach(app -> new ConsentManagementCall().deleteApplicationHard(app.getProviderId(), app.getContainerId()));
+        CleanUpHelper.getConsentVinsList()
+                .forEach(vin -> new ConsentManagementCall().deleteVinsHard(vin.getCrid(), vin.getVin()));
+        CleanUpHelper.getConsentAppsList().forEach(
+                app -> new ConsentManagementCall().deleteApplicationHard(app.getProviderId(), app.getContainerId()));
         CleanUpHelper.getConsentIdsList().forEach(consent -> new ConsentManagementCall().deleteConsentHard(consent));
 
         CleanUpHelper.getConsentVinsList().clear();

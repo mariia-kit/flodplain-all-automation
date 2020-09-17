@@ -33,10 +33,10 @@ public class Steps {
                 .expectedCode(HttpStatus.SC_OK);
         List<ProviderResource> resource = new CopyOnWriteArrayList<>(provider.getResources());
         resource.forEach(res ->
-                    new ResourceController()
-                            .withBearerToken(token)
-                            .addResource(provider, res)
-            );
+                new ResourceController()
+                        .withBearerToken(token)
+                        .addResource(provider, res)
+        );
     }
 
     @Step("Add resource {res.name} to Data Provider: {provider.name}")
@@ -44,7 +44,8 @@ public class Steps {
         var response = new ResourceController()
                 .withToken(PROVIDER)
                 .addResource(provider, res);
-        Assertions.assertTrue(response.getStatusCode() == HttpStatus.SC_OK || response.getStatusCode() == HttpStatus.SC_CONFLICT,
+        Assertions.assertTrue(
+                response.getStatusCode() == HttpStatus.SC_OK || response.getStatusCode() == HttpStatus.SC_CONFLICT,
                 "Creation of resource was not successful! " + response.getBody().print());
     }
 
@@ -80,7 +81,8 @@ public class Steps {
                 .withToken(PROVIDER)
                 .addContainer(container);
         if ((response.getStatusCode() != HttpStatus.SC_OK) && (response.getStatusCode() != HttpStatus.SC_CONFLICT)) {
-            throw new RuntimeException("Error creating container:" + response.getStatusCode() + " " + response.getBody().prettyPrint());
+            throw new RuntimeException(
+                    "Error creating container:" + response.getStatusCode() + " " + response.getBody().prettyPrint());
         }
     }
 

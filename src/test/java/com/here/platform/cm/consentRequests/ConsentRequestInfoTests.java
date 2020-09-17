@@ -2,24 +2,18 @@ package com.here.platform.cm.consentRequests;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
-import com.here.platform.cm.controllers.ConsentStatusController.PageableConsent;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
-import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.common.extensions.ProviderApplicationRemoveExtension;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 

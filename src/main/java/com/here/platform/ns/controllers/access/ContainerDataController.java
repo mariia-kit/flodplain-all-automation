@@ -14,7 +14,12 @@ public class ContainerDataController extends BaseNeutralServerAccessController<C
     @Step
     public Response getContainerForVehicle(DataProvider provider, String vehicleId, Container container) {
         return neutralServerAccessClient(serviceBasePath)
-                .get("providers/{providerId}/vehicles/{vehicleId}/containers/{containerId}", provider.generateHrn(), vehicleId, container.getId());
+                .get(
+                        "providers/{providerId}/vehicles/{vehicleId}/containers/{containerId}",
+                        provider.generateHrn(),
+                        vehicleId,
+                        container.getId()
+                );
     }
 
 }

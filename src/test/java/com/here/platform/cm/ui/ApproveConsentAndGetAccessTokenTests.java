@@ -1,11 +1,9 @@
 package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.switchTo;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
@@ -16,7 +14,6 @@ import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -40,9 +37,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Tag("ui")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
-    private static final String
-            staticPageUrl = ConsentPageUrl.getEnvUrlRoot() + "purpose/info",
-            purposePageUrl = ConsentPageUrl.getEnvUrlRoot() + "consentRequests/purpose";
+    private static final String staticPageUrl = ConsentPageUrl.getEnvUrlRoot() + "purpose/info";
     protected ProviderApplications providerApplication = ProviderApplications.DAIMLER_CONS_1;
     private final MPConsumers mpConsumer = providerApplication.consumer;
 
@@ -117,26 +112,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         openPurposePageLink();
         HereLoginSteps.loginDataSubject(dataSubject);
         verifyPurposeInfoPage(mpConsumer, consentRequest, container);
-    }
-
-    @Step
-    private void verifyConsentDetailsPage(MPConsumers mpConsumer, ConsentInfo consentRequest) {
-        $(".container-content [data-cy='title']").shouldHave(Condition.text(consentRequest.getTitle()));
-        $(".container-content [data-cy='consumerName']")
-                .shouldHave(Condition.text("Offer from " + mpConsumer.getConsumerName()));
-        $(".container-content [data-cy='purpose']").shouldHave(Condition.text(consentRequest.getPurpose()));
-
-        $$(".container-content [data-cy='resource']")
-                .shouldHave(CollectionCondition.textsInAnyOrder(testContainer.resources));
-
-        $(".container-content [data-cy='vin-code']")
-                .shouldHave(Condition.text("*********" + consentRequest.getVinLabel()));
-    }
-
-
-    @Step
-    private void openStaticPurposePage() {
-        open(staticPageUrl);
     }
 
     @Step

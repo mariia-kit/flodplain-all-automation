@@ -10,4 +10,5 @@ public class CmConfig {
     private String serviceUrl;
 
     private String consentPageUrl;
+
 }

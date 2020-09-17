@@ -5,7 +5,6 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.io.File;
-import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
