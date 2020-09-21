@@ -3,6 +3,7 @@ package com.here.platform.cm;
 import com.github.javafaker.Crypto;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
+import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.common.TestResultLoggerExtension;
 import lombok.SneakyThrows;
@@ -21,6 +22,10 @@ public class BaseCMTest {
     static {
         //To run on specific environment CM tests use following "env" values: dev, sit, prod
         //System.setProperty("env", "dev");
+
+        if (System.getProperty("env").matches("dev|sit")) {
+            new PrivateController().cleanUpEnvConsents();
+        }
     }
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
