@@ -1,7 +1,5 @@
 package com.here.platform.cm.providersAndConsumers;
 
-import static com.here.platform.cm.steps.api.RemoveEntitiesSteps.forceRemoveApplicationProviderConsumerEntities;
-
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ConsentPageUrl;
@@ -17,13 +15,15 @@ import com.here.platform.common.JConvert;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import io.qameta.allure.TmsLink;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("On-board data provider")
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 @Tag("smoke_cm")
 class ProvidersTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_LOCATION;
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(MPConsumers.OLP_CONS_1.getRealm())
             .providerId(crypto.sha1())
@@ -40,10 +40,11 @@ class ProvidersTests extends BaseCMTest {
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);
 
-    @AfterEach
-    void afterEach() {
-        forceRemoveApplicationProviderConsumerEntities(testConsentRequest);
-    }
+    @RegisterExtension
+    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
+            .consentRequestData(testConsentRequest).build();
+    @RegisterExtension
+    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
 
     @Test
     @DisplayName("Onboard Data Provider application")
@@ -99,6 +100,7 @@ class ProvidersTests extends BaseCMTest {
         var crid = new ResponseAssertion(consentRequestResponse)
                 .statusCodeIsEqualTo(StatusCode.CREATED)
                 .bindAs(ConsentRequestIdResponse.class).getConsentRequestId();
+        consentRequestRemoveExtension.cridToRemove(crid);
 
         var redirectToDataProviderResponse = providerController
                 .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());

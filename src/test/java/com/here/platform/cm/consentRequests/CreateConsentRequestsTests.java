@@ -1,7 +1,6 @@
 package com.here.platform.cm.consentRequests;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class CreateConsentRequestsTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
@@ -38,7 +36,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
             .privacyPolicy(faker.internet().url())
             .addAdditionalLinksItem(
                     new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url()))
-            .containerId(testScope.id);
+            .containerId(crypto.sha1());
 
     @RegisterExtension
     OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()

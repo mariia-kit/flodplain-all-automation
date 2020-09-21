@@ -88,7 +88,6 @@ public class AaaCall {
                 .parallel()
                 .forEach(p -> {
                     String policyLink = pLinks.get(p.getLeft());
-                    System.out.println("try policy " + p.getLeft() + " -> " + p.getRight());
                     if (policyLink != null) {
                         removeGroupFromPolicy(groupId, policyLink);
                         try {
@@ -96,10 +95,8 @@ public class AaaCall {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        System.out.println("delete policy " + p.getLeft() + " -> " + p.getRight());
                         deletePolicy(p.getLeft());
                     } else {
-                        System.out.println("HARD delete policy required " + p.getLeft() + " -> " + p.getRight());
                         deletePolicy(p.getLeft());
                     }
 

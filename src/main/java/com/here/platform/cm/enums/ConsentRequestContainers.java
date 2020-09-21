@@ -6,6 +6,7 @@ import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApp
 import com.here.platform.common.config.Conf;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -115,8 +116,8 @@ public enum ConsentRequestContainers {
             MPProviders.BMW_TEST
     );
 
-    public final String id, name, containerDescription, scopeValue, clientId, clientSecret;
-
+    private static final AtomicInteger atomicInteger = new AtomicInteger(0);
+    public String id, name, containerDescription, scopeValue, clientId, clientSecret;
     //TODO implement reusing of provider from container for consent request creation and onboarding
     public List<String> resources;
     public MPProviders provider;
@@ -125,8 +126,26 @@ public enum ConsentRequestContainers {
         return values()[(int) (Math.random() * values().length - 1)]; //except CONNECTED_VEHICLE
     }
 
+    public static ConsentRequestContainers getNextDaimlerExperimental() {
+        var daimlerExperimentalContainers = List.of(
+                DAIMLER_EXPERIMENTAL_ODOMETER, DAIMLER_EXPERIMENTAL_TIRES, DAIMLER_EXPERIMENTAL_LOCATION,
+                DAIMLER_EXPERIMENTAL_FUEL, DAIMLER_EXPERIMENTAL_DOORS, DAIMLER_EXPERIMENTAL_CHARGE
+        );
+        if (atomicInteger.getAcquire() > daimlerExperimentalContainers.size() - 1) {
+            atomicInteger.set(0);
+        }
+        return daimlerExperimentalContainers.get(atomicInteger.getAndIncrement());
+    }
+
     public static ConsentRequestContainers getById(String containerId) {
-        return Arrays.stream(values()).filter(containers -> containers.id.equals(containerId)).findFirst().get();
+        var consentRequestContainers = Arrays.stream(values())
+                .filter(containers -> containers.id.equals(containerId)).findFirst();
+
+        var mockContainer = DAIMLER_EXPERIMENTAL_LOCATION;
+        mockContainer.id = containerId;
+        mockContainer.name = containerId;
+
+        return consentRequestContainers.orElse(mockContainer);
     }
 
     @AllArgsConstructor

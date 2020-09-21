@@ -57,7 +57,7 @@ public class BaseUITests extends BaseCMTest {
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER;
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
