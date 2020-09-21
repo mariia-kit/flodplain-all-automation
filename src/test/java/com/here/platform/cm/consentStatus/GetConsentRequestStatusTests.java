@@ -42,7 +42,13 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
 
         new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(new ConsentRequestStatus().approved(0).pending(0).revoked(0));
+                .responseIsEqualToObject(new ConsentRequestStatus()
+                        .approved(0)
+                        .pending(0)
+                        .revoked(0)
+                        .expired(0)
+                        .rejected(0)
+                );
     }
 
     @Test
@@ -91,7 +97,9 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(1)
                 .pending(1)
-                .revoked(1);
+                .revoked(1)
+                .expired(0)
+                .rejected(0);
 
         consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController

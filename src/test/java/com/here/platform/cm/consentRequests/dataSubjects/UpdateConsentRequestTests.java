@@ -80,6 +80,8 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                         .approved(0)
                         .pending(1)
                         .revoked(0)
+                        .expired(0)
+                        .rejected(0)
                 );
     }
 
@@ -93,7 +95,9 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(3)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
 
         consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
@@ -130,7 +134,9 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(1)
                 .pending(2)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
         consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
@@ -160,7 +166,9 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(2)
-                .revoked(1);
+                .revoked(1)
+                .expired(0)
+                .rejected(0);
         consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
@@ -233,7 +241,9 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(1)
                 .pending(1)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
     }

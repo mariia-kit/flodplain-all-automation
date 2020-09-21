@@ -82,7 +82,12 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         Assertions.assertThat(successApproveData.getApprovedConsentInfo().getApproveTime())
                 .isAfter(successApproveData.getApprovedConsentInfo().getCreateTime());
 
-        final var expectedStatusesForConsent = new ConsentRequestStatus().approved(1).pending(0).revoked(0);
+        final var expectedStatusesForConsent = new ConsentRequestStatus()
+                .approved(1)
+                .pending(0)
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
         consentRequestController.withConsumerToken();
         final var actualStatusesForConsent = consentRequestController
                 .getStatusForConsentRequestById(consentToApprove.getConsentRequestId());
@@ -112,7 +117,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         final var expectedStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(0)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
 
         new ResponseAssertion(actualStatusesForConsent)
                 .statusCodeIsEqualTo(StatusCode.OK)

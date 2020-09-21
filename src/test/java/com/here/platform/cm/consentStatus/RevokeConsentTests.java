@@ -59,7 +59,12 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEmpty();
 
-        final var expectedStatusesForConsent = new ConsentRequestStatus().approved(0).pending(0).revoked(1);
+        final var expectedStatusesForConsent = new ConsentRequestStatus()
+                .approved(0)
+                .pending(0)
+                .revoked(1)
+                .expired(0)
+                .rejected(0);
         consentRequestController.withConsumerToken();
         final var actualStatusesForConsentResponse = consentRequestController
                 .getStatusForConsentRequestById(consentToRevoke.getConsentRequestId());
@@ -122,7 +127,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         final var expectedStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(0)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
         new ResponseAssertion(actualStatusesForConsent).responseIsEqualToObject(expectedStatuses);
     }
 
