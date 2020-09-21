@@ -64,7 +64,9 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(0)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
 
         consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController
@@ -91,7 +93,9 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(2)
-                .revoked(0);
+                .revoked(0)
+                .expired(0)
+                .rejected(0);
 
         consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController

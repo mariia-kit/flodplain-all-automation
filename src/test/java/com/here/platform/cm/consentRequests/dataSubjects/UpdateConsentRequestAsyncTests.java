@@ -117,6 +117,8 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                         .approved(0)
                         .pending(1)
                         .revoked(0)
+                        .expired(0)
+                        .rejected(0)
                 );
     }
 
@@ -161,7 +163,10 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .responseIsEqualToObject(new ConsentRequestStatus()
                         .approved(0)
                         .pending(1)
-                        .revoked(0));
+                        .revoked(0)
+                        .expired(0)
+                        .rejected(0)
+                );
     }
 
     @Test
@@ -212,7 +217,10 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .responseIsEqualToObject(new ConsentRequestStatus()
                         .approved(1)
                         .pending(1)
-                        .revoked(0));
+                        .revoked(0)
+                        .expired(0)
+                        .rejected(0)
+                );
 
         var consentStatusByIdAndVinResponse = new ConsentStatusController()
                 .withConsumerToken(mpConsumer)

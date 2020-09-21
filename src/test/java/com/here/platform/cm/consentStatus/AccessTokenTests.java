@@ -128,7 +128,12 @@ class AccessTokenTests extends BaseConsentStatusTests {
             new ResponseAssertion(secondConsentStatusResponse)
                     .statusCodeIsEqualTo(StatusCode.OK)
                     .responseIsEqualToObject(
-                            new ConsentRequestStatus().approved(1).pending(0).revoked(0)
+                            new ConsentRequestStatus()
+                                    .approved(1)
+                                    .pending(0)
+                                    .revoked(0)
+                                    .expired(0)
+                                    .rejected(0)
                     );
         }
 
