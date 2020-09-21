@@ -61,7 +61,7 @@ public class PurposeTests extends BaseCMTest {
     public class ConsentRequestPurpose {
 
         private final String privateBearer = DataSubjects.getNext().getBearerToken();
-        private final ConsentRequestContainers targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE;
+        private final ConsentRequestContainers targetContainer = ConsentRequestContainers.getNextDaimlerExperimental();
         private final ConsentRequestData targetConsentRequest = getBaseConsentRequestData()
                 .providerId(targetContainer.provider.getName())
                 .consumerId(faker.crypto().md5())

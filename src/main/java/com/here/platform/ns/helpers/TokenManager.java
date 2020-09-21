@@ -39,7 +39,6 @@ public class TokenManager {
             Scanner scanner = new Scanner(tokens);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                System.out.println(line);
                 if (line.contains(userEmail)) {
                     res = line.split("=")[1];
                     //break;
@@ -54,10 +53,8 @@ public class TokenManager {
     }
 
     public static void resetUserLogins() {
-        System.out.println("PropertiesLoader.resetUserLogins");
         new File(TOKEN_URL).delete();
         boolean exists = new File(TOKEN_URL).exists();
-        System.out.println("exists = " + exists);
         for (Users user : Users.values()) {
             user.getUser().setToken("");
         }

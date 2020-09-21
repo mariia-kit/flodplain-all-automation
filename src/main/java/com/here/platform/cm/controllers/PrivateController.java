@@ -58,6 +58,12 @@ public class PrivateController extends BaseConsentService<PrivateController> {
                 .delete("/consentRequest/{consentRequestId}", consentRequestId);
     }
 
+    public Response cleanUpEnvConsents() {
+        withCMToken();
+        return basePrivateController()
+                .delete("/consentRequests");
+    }
+
     private boolean isForbiddenToRemoveProvider(String providerId) {
         return forbiddenToRemoveProviders.contains(providerId.toLowerCase());
     }

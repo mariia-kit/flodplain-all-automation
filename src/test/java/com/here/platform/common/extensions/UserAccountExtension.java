@@ -1,7 +1,6 @@
 package com.here.platform.common.extensions;
 
 import com.here.platform.cm.controllers.UserAccountController;
-import com.here.platform.cm.rest.model.UserAccountData;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
@@ -34,11 +33,6 @@ public class UserAccountExtension implements BeforeEachCallback, AfterEachCallba
         var cmToken = targetDataSubject.getBearerToken();
 
         userAccountController.deleteVINForUser(targetDataSubject.getVin(), cmToken);
-
-        var userAccountInfo = userAccountController
-                .userAccountGetInfo(cmToken)
-                .as(UserAccountData.class);
-        System.out.println(userAccountInfo);
 
         for (String vinToRemove : additionalVINsToRemove) {
             userAccountController.deleteVINForUser(vinToRemove, cmToken);
