@@ -14,10 +14,10 @@ class TestCM extends Test {
         }
 
         systemProperties = [
-                "stg.access.key.id"                                        : System.getenv("ACCESS_KEY_ID_STG"),
-                "stg.access.key.secret"                                    : System.getenv("ACCESS_KEY_SECRET_STG"),
-                "prod.access.key.id"                                       : System.getenv("ACCESS_KEY_ID_PROD"),
-                "prod.access.key.secret"                                   : System.getenv("ACCESS_KEY_SECRET_PROD"),
+                "stg.access.key.id"     : System.getenv("ACCESS_KEY_ID_STG"),
+                "stg.access.key.secret" : System.getenv("ACCESS_KEY_SECRET_STG"),
+                "prod.access.key.id"    : System.getenv("ACCESS_KEY_ID_PROD"),
+                "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD"),
         ]
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
@@ -29,6 +29,8 @@ ext {
     jira_login = "svc-ns-bot"
     jira_pass = "HtSUxXwdb2aoVfkLfvAoMbPV"
 }
+
+boolean isHotDeploy = System.getenv("hot_deploy")
 
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
@@ -42,16 +44,6 @@ if (targetEnv != null && !targetEnv.isEmpty()) {
 }
 
 println "Run script for CM env >>>>> ${finalEnv}"
-
-task initTokens(type: JavaExec) {
-    logging.captureStandardOutput(LogLevel.QUIET)
-
-    systemProperty "env", finalEnv
-    classpath sourceSets.main.runtimeClasspath
-    main = "com.here.platform.common.DataPreparation"
-
-    finalizedBy "testDataGeneration"
-}
 
 task smokeCMTests(type: TestCM) {
     failFast true
@@ -67,10 +59,25 @@ task smokeCMTests(type: TestCM) {
     useJUnitPlatform {
         includeTags "smoke_cm"
     }
-    if (!dynamicEnvUrl) finalizedBy "initTokens"
+
+    if (!dynamicEnvUrl && isHotDeploy) finalizedBy "initTokens"
+}
+
+task initTokens(type: JavaExec) {
+    onlyIf { !isHotDeploy }
+
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", finalEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.DataPreparation"
+
+    finalizedBy "testDataGeneration"
 }
 
 task userAccount(type: TestCM) {
+    onlyIf { !isHotDeploy }
+
     maxParallelForks = 1
     forkEvery = 0
 
@@ -82,6 +89,8 @@ task userAccount(type: TestCM) {
 }
 
 task uiTests(type: TestCM, dependsOn: "initTokens") {
+    onlyIf { !isHotDeploy }
+
     maxParallelForks = 1
     forkEvery = 0
 
@@ -92,20 +101,20 @@ task uiTests(type: TestCM, dependsOn: "initTokens") {
 }
 
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
+    onlyIf { !isHotDeploy }
+
     systemProperty "env", "dev"
 
-    useJUnitPlatform {
-        includeTags "smoke_cm"
-    }
+    finalizedBy "userAccount"//, "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
+    onlyIf { !isHotDeploy }
+
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
 
-    useJUnitPlatform {
-        includeTags "smoke_cm"
-    }
+    finalizedBy "userAccount"//, "uiTests"
 }
 
 task prodTests(type: TestCM) {

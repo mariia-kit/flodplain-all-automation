@@ -59,6 +59,8 @@ task initTokensNS(type: JavaExec) {
 }
 
 task testDataGeneration(type: JavaExec) {
+    onlyIf { !System.getenv("hot_deploy") }
+
     logging.captureStandardOutput(LogLevel.QUIET)
 
     systemProperty "env", finalEnv
