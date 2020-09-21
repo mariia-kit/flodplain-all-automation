@@ -12,6 +12,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
@@ -47,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.Dimension;
@@ -97,6 +99,7 @@ public class E2EUITest extends BaseE2ETest {
     UserAccountExtension userAccountCleanUpExtension = UserAccountExtension.builder()
             .targetDataSubject(targetDataSubject)
             .build();
+
     private String listingHrn;
 
     @BeforeEach
@@ -121,6 +124,7 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     @Test
+    @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
         var listingName = "[E2E test] " + faker.company().buzzword();

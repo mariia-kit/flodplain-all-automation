@@ -17,7 +17,7 @@ class TestE2E extends Test {
         maxParallelForks = 32
         forkEvery = 1
         minHeapSize = "32m"
-        maxHeapSize = "64m"
+        maxHeapSize = "254m"
 
         if (System.properties.containsKey('jira_sync')) {
             def login = System.getProperty("jira_login") ?: jira_login_default
@@ -39,11 +39,19 @@ ext {
 }
 
 task e2eTests(type: TestE2E, dependsOn: "initTokensNS") {
-    group "ns tests"
+    group "e2e tests"
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "e2e"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
+    }
+}
+
+task e2eProdTests(type: TestE2E) {
+    group "e2e tests"
+    systemProperty "env", "prod"
+    useJUnitPlatform {
+        includeTags "e2e_prod"
     }
 }
 

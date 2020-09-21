@@ -48,25 +48,11 @@ class ProdIntegrationTest extends BaseE2ETest {
     @Tag("ignored-sit")
     @Tag("prod")
     void providerTest() {
-        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
+        DataProvider provider = Providers.REFERENCE_PROVIDER_PROD.getProvider();
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
         Steps.removeRegularContainer(container);
-    }
-
-    @Test
-    @DisplayName("Verify create")
-    @Tag("ignored")
-    void createProdData() {
-        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
-        Container container = Containers.generateNew(provider)
-                .withName("payasyoudrive")
-                .withResourceNames("payasyoudrive")
-                .withConsentRequired(false);
-
-        Steps.createRegularProvider(provider);
-        Steps.createRegularContainer(container);
     }
 
 }

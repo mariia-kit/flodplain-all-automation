@@ -102,7 +102,6 @@ task nsTestProd(type: TestNS, dependsOn: "initTokensNS") {
         includeTags "prod"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
     }
-    finalizedBy cleanUpNS
 }
 
 task copyHistory(type: Copy) {
