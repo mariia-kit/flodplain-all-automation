@@ -13,13 +13,16 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Getting of access tokens for consents")
@@ -38,6 +41,10 @@ class AccessTokenTests extends BaseConsentStatusTests {
     void cleanUp() {
         RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
     }
+
+    @RegisterExtension
+    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
+            .consentRequestData(testConsentRequestData).cleanUpAfter(true).build();
 
     @Test
     @DisplayName("Verify Getting Access Token For Revoked Consent")
@@ -62,6 +69,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
 
         @Test
         @DisplayName("Verify Getting Access Token For Approved Consent")
+        @Tag("cm_prod")
         void getAccessTokenForApprovedConsentTest() {
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 

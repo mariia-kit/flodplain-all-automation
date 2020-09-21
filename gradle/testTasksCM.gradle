@@ -104,13 +104,14 @@ task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     finalizedBy "userAccount"//, "uiTests"
 }
 
-task prodTests(type: TestCM, dependsOn: "smokeCMTests") {
+task prodTests(type: TestCM) {
     group "cm tests"
 
     systemProperty "env", "prod"
-    systemProperty "jira_sync", "true"
 
-    //finalizedBy "userAccount", "uiTests"
+    useJUnitPlatform {
+        includeTags "cm_prod"
+    }
 }
 
 task zephyrCMSync(type: JavaExec) {

@@ -245,6 +245,34 @@ test_ns_prod:
     - when: manual
   allow_failure: true
 
+test_cm_prod:
+  extends: .test_run
+  stage: test_prod
+  variables:
+    ENV: "prod"
+    TASK: "prodTests"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
+  allow_failure: true
+
+test_e2e_prod:
+  extends: .test_run
+  stage: test_prod
+  variables:
+    ENV: "prod"
+    TASK: "e2eProdTests"
+    REPORT_URL: "build/reports_e2e"
+    HISTORY_URL: "history_e2e"
+  rules:
+    - if: $TASK_NS
+      when: never
+    - when: manual
+  allow_failure: true
+
 #Instruments
 zephyr_sync_ns:
   stage: instrumental
@@ -310,19 +338,6 @@ push_allure_reports_ns:
 pages:
   stage: pages
   when: always
-  dependencies:
-    - test_ns_auto
-    - test_cm_auto
-    - test_ns_smoke_dev
-    - test_ns_regression_dev
-    - test_cm_smoke_dev
-    - test_cm_regression_dev
-    - test_e2e_dev
-    - test_ns_smoke_sit
-    - test_ns_regression_sit
-    - test_cm_smoke_sit
-    - test_cm_regression_sit
-    - test_e2e_sit
   script:
     - echo "Generate page with url ${CI_PAGES_URL}"
     - mkdir .public

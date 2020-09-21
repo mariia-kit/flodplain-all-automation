@@ -15,12 +15,15 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
+import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Approve consent")
@@ -38,8 +41,13 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         }
     }
 
+    @RegisterExtension
+    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
+            .consentRequestData(testConsentRequestData).cleanUpAfter(true).build();
+
     @Test
     @DisplayName("Verify Approve Consent GetStatus")
+    @Tag("cm_prod")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
 

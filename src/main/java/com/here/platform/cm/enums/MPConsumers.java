@@ -1,6 +1,8 @@
 package com.here.platform.cm.enums;
 
+import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.common.FileIO;
+import com.here.platform.common.config.Conf;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import java.io.File;
@@ -12,9 +14,9 @@ import lombok.Getter;
 public enum MPConsumers {
 
     OLP_CONS_1(
-            "olp-here-mrkt-cons-1",
+            Conf.mpUsers().getMpConsumer().getRealm(),
             "OLP Market Place Consumer Realm - 1",
-            new HereUser("ns-automated-data-consumer@here.com", "g{#N2(mP(8", "olp-here-mrkt-cons-1")
+            new HereUser(Conf.mpUsers().getMpConsumer().getEmail(), Conf.mpUsers().getMpConsumer().getPass(), Conf.mpUsers().getMpConsumer().getRealm())
     );
 
     private final String realm, consumerName;
@@ -39,7 +41,8 @@ public enum MPConsumers {
     }
 
     public String generateToken() {
-        var accessToken = new HereUserManagerController().getHereCurrentToken(getHereUserRepresentation());
+        var accessToken = PortalTokenController.produceToken(hereUserRepresentation.getRealm(),
+                hereUserRepresentation.getEmail(), hereUserRepresentation.getPassword());
         FileIO.writeStringToFile(consumerFile(), accessToken);
         return accessToken;
     }
