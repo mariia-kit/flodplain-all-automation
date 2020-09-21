@@ -56,7 +56,7 @@ consumerApp:
 #------------------AAA Credentials--------------------------------------------------
 aaService:
   appName: NS Service Application
-  appId: SERVICE-52425500-af8e-4088-bd07-7540f7591d03
+  appId: SERVICE-679ab544-0ab9-4723-afc5-370a65c9604b
   appClientId: xxx
   appKeyId: F8dItBfiC5CQrlRpXzNhsg
   appKeySecret: dc9DRIx2ZxfTgjP3bys8DCUW2fL2OC_-_Dfh-ZZJPT-SNmnGtv50EYj-ePwn2u5fUTGfEPffBUhr0jxNhK79qA
