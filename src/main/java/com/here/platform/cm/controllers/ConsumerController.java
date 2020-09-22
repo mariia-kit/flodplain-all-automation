@@ -11,6 +11,7 @@ public class ConsumerController extends BaseConsentService<ConsumerController> {
 
     @Step
     public Response onboardConsumer(Consumer consumerRequestBody) {
+        withConsumerToken();
         return consentServiceClient(consumersBasePath)
                 .body(consumerRequestBody)
                 .put(consumerRequestBody.getConsumerId());
@@ -19,6 +20,7 @@ public class ConsumerController extends BaseConsentService<ConsumerController> {
 
     @Step
     public Response getConsumerById(String consumerId) {
+        withConsumerToken();
         return consentServiceClient(consumersBasePath)
                 .get(consumerId);
     }
