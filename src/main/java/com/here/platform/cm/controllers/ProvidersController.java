@@ -13,6 +13,7 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
 
     @Step
     public Response onboardDataProvider(Provider dataProviderBody) {
+        withConsumerToken();
         return consentServiceClient(providersBasePath)
                 .body(dataProviderBody)
                 .put(dataProviderBody.getId());
@@ -20,6 +21,7 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
 
     @Step
     public Response getProviderById(String providerRealmId) {
+        withConsumerToken();
         return consentServiceClient(providersBasePath).get(providerRealmId);
     }
 
@@ -38,11 +40,13 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
 
     @Step
     public Response onboardApplication(ProviderApplication providerApplication) {
+        withConsumerToken();
         return consentServiceClient(providersBasePath).body(providerApplication).post("/applications");
     }
 
     @Step
     public Response getListOfApplications() {
+        withConsumerToken();
         return consentServiceClient(providersBasePath).get("/applications");
 
     }
