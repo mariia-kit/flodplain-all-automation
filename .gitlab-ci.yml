@@ -89,6 +89,17 @@ test_cm_auto:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
 
+test_e2e_auto:
+  extends: .test_run
+  rules:
+    - if: $TASK_NS
+      when: manual
+    - when: never
+  variables:
+    TASK: "e2eTests"
+    REPORT_URL: "build/reports_e2e"
+    HISTORY_URL: "history_e2e"
+
 #dev operations
 test_ns_smoke_dev:
   extends: .test_run
@@ -99,9 +110,9 @@ test_ns_smoke_dev:
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_cm_smoke_dev:
@@ -113,9 +124,9 @@ test_cm_smoke_dev:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_ns_regression_dev:
@@ -127,9 +138,9 @@ test_ns_regression_dev:
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_cm_regression_dev:
@@ -141,9 +152,9 @@ test_cm_regression_dev:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_e2e_dev:
@@ -155,9 +166,9 @@ test_e2e_dev:
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 #sit operations
@@ -170,9 +181,9 @@ test_ns_smoke_sit:
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_cm_smoke_sit:
@@ -184,9 +195,9 @@ test_cm_smoke_sit:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_ns_regression_sit:
@@ -198,9 +209,9 @@ test_ns_regression_sit:
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_cm_regression_sit:
@@ -212,9 +223,9 @@ test_cm_regression_sit:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_e2e_sit:
@@ -226,9 +237,9 @@ test_e2e_sit:
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_ns_prod:
@@ -240,9 +251,9 @@ test_ns_prod:
     REPORT_URL: "build/reports_ns"
     HISTORY_URL: "history_ns"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_cm_prod:
@@ -254,9 +265,9 @@ test_cm_prod:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 test_e2e_prod:
@@ -268,9 +279,9 @@ test_e2e_prod:
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: $TASK_NS
-      when: never
-    - when: manual
+    - if: '$TASK_NS == null'
+      when: manual
+    - when: never
   allow_failure: true
 
 #Instruments

@@ -1,5 +1,6 @@
 package com.here.platform.ns.controllers.access;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.BaseNeutralService;
 import io.restassured.specification.RequestSpecification;
 import java.util.Map;
@@ -11,7 +12,7 @@ public class BaseNeutralServerAccessController<T> extends BaseNeutralService<T> 
     private Map<String, String> queryParam = null;
 
     protected RequestSpecification neutralServerAccessClient(final String targetPath) {
-        var baseService = neutralServerClient(targetPath);
+        var baseService = neutralServerClient(targetPath, Conf.ns().getNsUrlBaseAccess());
 
         if (crid != null) {
             baseService.header("CampaignID", crid);

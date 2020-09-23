@@ -9,7 +9,6 @@ import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import org.apache.commons.lang3.StringUtils;
 
 
 public abstract class BaseNeutralService<T> {
@@ -17,11 +16,11 @@ public abstract class BaseNeutralService<T> {
     private String authorizationToken = "";
     private String xcorrId = null;
 
-    protected RequestSpecification neutralServerClient(final String targetPath) {
+    protected RequestSpecification neutralServerClient(final String targetPath, String basePath) {
         var baseService = given()
                 .config(RestAssuredConfig.config()
                         .headerConfig(headerConfig().overwriteHeadersWithName("Authorization", "Content-Type")))
-                .baseUri(Conf.ns().getNsUrlBaseAccess())
+                .baseUri(basePath)
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -38,9 +37,12 @@ public abstract class BaseNeutralService<T> {
         return baseService;
     }
 
+    protected RequestSpecification neutralServerClient(final String targetPath) {
+        return neutralServerClient(targetPath, Conf.ns().getNsUrlBaseProvider());
+    }
+
     private void setAuthorizationToken(String tokenValue) {
-        //TODO: remove after token refactoring
-        this.authorizationToken = String.format("Bearer %s", tokenValue.replace("Bearer ", StringUtils.EMPTY));
+        this.authorizationToken = String.format("Bearer %s", tokenValue);
     }
 
     public T withToken(String token) {
