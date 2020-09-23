@@ -1,8 +1,11 @@
 package com.here.platform.e2e;
 
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
+import static com.here.platform.ns.dto.Users.MP_PROVIDER;
+import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.controllers.access.ContainerDataController;
+import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -50,6 +53,12 @@ class ProdIntegrationTest extends BaseE2ETest {
     void providerTest() {
         DataProvider provider = Providers.REFERENCE_PROVIDER_PROD.getProvider();
         Container container = Containers.generateNew(provider);
+
+        var verify = new ProviderController()
+                .withToken(PROVIDER)
+                .getProviderList();
+        new NeutralServerResponseAssertion(verify)
+                .expectedCode(HttpStatus.SC_OK);
 
         Steps.createRegularContainer(container);
         Steps.removeRegularContainer(container);
