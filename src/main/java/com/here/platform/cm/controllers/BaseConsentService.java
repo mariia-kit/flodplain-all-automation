@@ -47,6 +47,11 @@ abstract class BaseConsentService<T> {
         return (T) this;
     }
 
+    public T withAuthorizationValue(String authorizationTokenValue) {
+        setAuthorizationToken(authorizationTokenValue);
+        return (T) this;
+    }
+
     public void clearBearerToken() {
         this.authorizationToken = "";
     }

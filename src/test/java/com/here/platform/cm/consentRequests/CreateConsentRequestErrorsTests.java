@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getRandom();
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(crypto.sha1())
             .providerId(crypto.sha1())
@@ -46,7 +46,6 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .getCause();
         assertThat(actualCause)
                 .isEqualTo("Couldn't find consumer by consumer id: " + testConsentRequest.getConsumerId());
-
     }
 
     @Test
@@ -56,6 +55,17 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
         final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
+    }
+
+    @Test
+    @Sentry
+    @DisplayName("Is  not possible to create consent request with application token")
+    void isNotPossibleToCreateConsentRequestWithApplicationToken() {
+        final var actualResponse = consentRequestController
+                .withCMToken()
+                .createConsentRequest(testConsentRequest);
+
+        new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.FORBIDDEN);
     }
 
     @Test

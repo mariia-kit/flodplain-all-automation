@@ -1,17 +1,13 @@
 package com.here.platform.cm.providersAndConsumers;
 
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
-import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
-import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.Provider;
-import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.common.JConvert;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
@@ -19,8 +15,8 @@ import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import io.qameta.allure.TmsLink;
 import java.util.Map;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,86 +24,82 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 @DisplayName("On-board data provider")
 @OnBoardProvider
-@Tag("smoke_cm")
 class ProvidersTests extends BaseCMTest {
 
     private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
-            .consumerId(MPConsumers.OLP_CONS_1.getRealm())
-            .providerId(crypto.sha1())
+            .consumerId(crypto.sha1())
+            .providerId(testContainer.provider.getName())
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);
 
-    @RegisterExtension
-    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
-            .consentRequestData(testConsentRequest).build();
-    @RegisterExtension
-    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
-
     @Test
-    @DisplayName("Onboard Data Provider application")
-    @TmsLink("NS-2699")
-    void onboardProviderPositiveTest() {
-        var providerRealmId = testConsentRequest.getProviderId();
-        var consumerRealmId = testConsentRequest.getConsumerId();
+    @Tag("smoke_cm")
+    @DisplayName("Onboard Data Provider")
+    void onboardDataProvider() {
+        var testDataProvider = new Provider()
+                .name(faker.commerce().department())
+                .id(crypto.md5())
+                .properties(Map.of());
 
-        var providerProps = Map.of(
-                "authUrl", "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize",
-                "responseType", "code",
-                "prompt", "consent login"
-        );
-        var dataProviderBody = new Provider()
-                .name(MPProviders.DAIMLER_EXPERIMENTAL.getName())
-                .id(providerRealmId)
-                .properties(providerProps);
+        var onboardDataProvider = providerController
+                .withCMToken()
+                .onboardDataProvider(testDataProvider);
 
-        var providerResponse = providerController.onboardDataProvider(dataProviderBody);
-        new ResponseAssertion(providerResponse).statusCodeIsEqualTo(StatusCode.CREATED).responseIsEmpty();
+        new ResponseAssertion(onboardDataProvider)
+                .statusCodeIsEqualTo(StatusCode.CREATED)
+                .responseIsEmpty();
 
-        var testApplication = new ProviderApplication()
-                .providerId(providerRealmId)
-                .consumerId(consumerRealmId)
-                .clientId(crypto.sha1())
-                .clientSecret(crypto.sha1())
-                .container(testContainer.id)
-                .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
+        var getProviderResponse = providerController
+                .withConsumerToken()
+                .getProviderById(testDataProvider.getId());
+        new ResponseAssertion(getProviderResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(testDataProvider);
 
-        var applicationResponse = providerController.onboardApplication(testApplication);
-        new ResponseAssertion(applicationResponse).statusCodeIsEqualTo(StatusCode.CREATED).responseIsEmpty();
+        RemoveEntitiesSteps.removeProvider(testDataProvider.getId());
 
-        var providerApplications = new JConvert(providerController.getListOfApplications().body().asString())
-                .toListOfObjects(ProviderApplication[].class);
-        Assertions.assertThat(providerApplications).contains(testApplication);
-
-        new ResponseAssertion(providerController.getProviderById(providerRealmId))
-                .responseIsEqualToObject(dataProviderBody);
+        getProviderResponse = providerController
+                .withConsumerToken()
+                .getProviderById(testDataProvider.getId());
+        new ResponseAssertion(getProviderResponse)
+                .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
+                .expectedErrorResponse(CMErrorResponse.PROVIDER_NOT_FOUND);
     }
 
-    @Test
-    @DisplayName("Verify Data Provider redirect")
-    @TmsLink("NS-1377")
-    void dataProviderRedirectTest() {
-        testConsentRequest.providerId(MPProviders.DAIMLER_EXPERIMENTAL.getName());
-        OnboardingSteps.onboardApplicationProviderAndConsumer(
-                testConsentRequest.getProviderId(),
-                testConsentRequest.getConsumerId(),
-                testContainer
-        );
-        consentRequestController.withConsumerToken();
-        var consentRequestResponse = consentRequestController.createConsentRequest(testConsentRequest);
-        var crid = new ResponseAssertion(consentRequestResponse)
-                .statusCodeIsEqualTo(StatusCode.CREATED)
-                .bindAs(ConsentRequestIdResponse.class).getConsentRequestId();
-        consentRequestRemoveExtension.cridToRemove(crid);
+    @Nested
+    public class RedirectDataProvider {
 
-        var redirectToDataProviderResponse = providerController
-                .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());
+        @RegisterExtension
+        OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension
+                .builder().consentRequestData(testConsentRequest).build();
 
-        new ResponseAssertion(redirectToDataProviderResponse)
-                .statusCodeIsEqualTo(StatusCode.REDIRECT)
-                .responseIsEmpty();
+        @RegisterExtension
+        ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
+
+        @Test
+        @DisplayName("Verify Data Provider redirect")
+        @TmsLink("NS-1377")
+        void dataProviderRedirectTest() {
+            var consentRequestResponse = consentRequestController
+                    .withConsumerToken()
+                    .createConsentRequest(testConsentRequest);
+            var crid = new ResponseAssertion(consentRequestResponse)
+                    .statusCodeIsEqualTo(StatusCode.CREATED)
+                    .bindAs(ConsentRequestIdResponse.class)
+                    .getConsentRequestId();
+            consentRequestRemoveExtension.cridToRemove(crid);
+
+            var redirectToDataProviderResponse = providerController
+                    .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());
+
+            new ResponseAssertion(redirectToDataProviderResponse)
+                    .statusCodeIsEqualTo(StatusCode.REDIRECT)
+                    .responseIsEmpty();
+        }
+
     }
 
     //todo add tests for DAIMLER redirect and excelsior

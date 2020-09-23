@@ -3,7 +3,6 @@ package com.here.platform.cm.enums;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.common.FileIO;
 import com.here.platform.common.config.Conf;
-import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import java.io.File;
 import lombok.Data;

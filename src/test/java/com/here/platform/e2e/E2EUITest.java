@@ -12,7 +12,6 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;

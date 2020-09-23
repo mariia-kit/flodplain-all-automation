@@ -4,6 +4,7 @@ import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
+import com.here.platform.cm.rest.model.ProviderApplication;
 import io.qameta.allure.Step;
 import java.io.File;
 import lombok.experimental.UtilityClass;
@@ -50,28 +51,38 @@ public class RemoveEntitiesSteps {
             return;
         }
 
-        privateController.withConsumerToken();
-
-        var deleteProviderApplicationResponse = privateController.deleteProviderApplication(
-                consentRequestData.getProviderId(),
-                consentRequestData.getConsumerId(),
-                consentRequestData.getContainerId()
-        );
-        StepExpects.expectNOCONSTENTStatusCode(deleteProviderApplicationResponse);
+        var appToRemove = new ProviderApplication()
+                .consumerId(consentRequestData.getConsumerId())
+                .providerId(consentRequestData.getProviderId())
+                .container(consentRequestData.getContainerId());
+        removeProviderApplication(appToRemove);
 
         removeProvider(consentRequestData.getProviderId());
 
         removeConsumer(consentRequestData.getConsumerId());
     }
 
+    public void removeProviderApplication(ProviderApplication providerApplication) {
+        privateController.withCMToken();
+        var deleteProviderAppResponse = privateController.deleteProviderApplication(providerApplication);
+
+        StepExpects.expectNOCONSTENTStatusCode(deleteProviderAppResponse);
+    }
+
     public void removeProvider(String providerId) {
-        privateController.withConsumerToken();
+        if (providerId == null) {
+            return;
+        }
+        privateController.withCMToken();
         var deleteProviderResponse = privateController.deleteProvider(providerId);
         StepExpects.expectNOCONSTENTStatusCode(deleteProviderResponse);
     }
 
     public void removeConsumer(String consumerId) {
-        privateController.withConsumerToken();
+        if (consumerId == null) {
+            return;
+        }
+        privateController.withCMToken();
         var deleteConsumerResponse = privateController.deleteConsumer(consumerId);
         StepExpects.expectNOCONSTENTStatusCode(deleteConsumerResponse);
     }

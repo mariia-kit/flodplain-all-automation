@@ -32,6 +32,7 @@ public enum CMErrorResponse {
     TOKEN_VALIDATION("E503110", "Token validation failed", "Provide correct token"),
     METRIC_EXCEPTION("E503111", "Metrics exception", TRY_AGAIN_ACTION),
     CONSUMER_NOT_FOUND("E503112", "Consumer not found", CORRECT_DATA),
+    PROVIDER_NOT_FOUND("E503129", "Provider not found", CORRECT_DATA),
     PROVIDER_APPLICATION_NOT_FOUND("E503130", "Provider application not found", CORRECT_DATA),
     CONSENT_REQUEST_NOT_FOUND("E503113", "Consent request not found", CORRECT_DATA),
     CREDENTIALS_EXCEPTION("E503114", "Invalid credentials", CORRECT_DATA),

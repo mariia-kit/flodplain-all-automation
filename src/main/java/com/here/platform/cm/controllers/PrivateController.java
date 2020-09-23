@@ -3,8 +3,10 @@ package com.here.platform.cm.controllers;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.rest.model.ProviderApplication;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -22,21 +24,24 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         return consentServiceClient("private");
     }
 
-    @Step
-    public Response deleteProviderApplication(
-            final String providerId,
-            final String consumerId,
-            final String container
-    ) {
-        if (isForbiddenToRemoveProvider(providerId) && isForbiddenToRemoveConsumer(consumerId)) {
+    @Step("Delete data provider application for "
+            + "containerId: '{providerApplication.container}', "
+            + "providerId: '{providerApplication.providerId}, "
+            + "consumerId: '{providerApplication.consumerId}'")
+    public Response deleteProviderApplication(ProviderApplication providerApplication) {
+        if (isForbiddenToRemoveProviderApplication(providerApplication)) {
             return null;
         }
         return basePrivateController()
-                .queryParams("providerId", providerId, "consumerId", consumerId, "container", container)
+                .params(
+                        "providerId", providerApplication.getProviderId(),
+                        "consumerId", providerApplication.getConsumerId(),
+                        "container", providerApplication.getContainer()
+                )
                 .delete("/providerApplication");
     }
 
-    @Step
+    @Step("Delete data consumer by ID: {consumerId}")
     public Response deleteConsumer(final String consumerId) {
         if (isForbiddenToRemoveConsumer(consumerId)) {
             return null;
@@ -44,7 +49,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         return basePrivateController().delete("/consumer/{consumerId}", consumerId);
     }
 
-    @Step
+    @Step("Delete data provider by ID: {providerId}")
     public Response deleteProvider(final String providerId) {
         if (isForbiddenToRemoveProvider(providerId)) {
             return null;
@@ -52,7 +57,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         return basePrivateController().delete("/provider/{providerId}", providerId);
     }
 
-    @Step
+    @Step("Delete consent request by ID: {consentRequestId}")
     public Response hardDeleteConsentRequest(final String consentRequestId) {
         return basePrivateController()
                 .delete("/consentRequest/{consentRequestId}", consentRequestId);
@@ -65,11 +70,19 @@ public class PrivateController extends BaseConsentService<PrivateController> {
     }
 
     private boolean isForbiddenToRemoveProvider(String providerId) {
-        return forbiddenToRemoveProviders.contains(providerId.toLowerCase());
+        return this.forbiddenToRemoveProviders.contains(providerId.toLowerCase());
     }
 
     private boolean isForbiddenToRemoveConsumer(String consumerId) {
-        return consumerId == null || forbiddenToRemoveConsumers.contains(consumerId.toLowerCase());
+        return consumerId == null || this.forbiddenToRemoveConsumers.contains(consumerId.toLowerCase());
+    }
+
+    private boolean isForbiddenToRemoveProviderApplication(ProviderApplication providerApplication) {
+        var forbiddenApplications = stream(ConsentRequestContainers.values());
+
+        return providerApplication == null || forbiddenApplications.anyMatch(
+                containers -> containers.getId().equals(providerApplication.getContainer())
+                        && containers.getProvider().getName().equals(providerApplication.getProviderId()));
     }
 
 }

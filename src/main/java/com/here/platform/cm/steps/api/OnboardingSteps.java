@@ -29,12 +29,12 @@ public class OnboardingSteps {
     public static void onboardApplicationProviderAndConsumer(
             String providerId,
             String consumerId,
-            ConsentRequestContainers scope
+            ConsentRequestContainers providerApplication
     ) {
         var onboardingSteps = new OnboardingSteps(providerId, consumerId);
         onboardingSteps.onboardTestProvider();
         onboardingSteps.onboardValidConsumer();
-        onboardingSteps.onboardTestProviderApplicationForScope(scope);
+        onboardingSteps.onboardTestProviderApplicationForScope(providerApplication);
     }
 
     @Step
@@ -63,7 +63,9 @@ public class OnboardingSteps {
                 .id(this.providerId)
                 .properties(providerProps);
 
-        var providerResponse = this.providersController.onboardDataProvider(testDataProvider);
+        var providerResponse = this.providersController
+                .withConsumerToken()
+                .onboardDataProvider(testDataProvider);
         StepExpects.expectCREATEDStatusCode(providerResponse);
     }
 
@@ -73,7 +75,9 @@ public class OnboardingSteps {
                 .consumerId(this.consumerId)
                 .consumerName(this.faker.commerce().department());
 
-        var consumerResponse = this.consumerController.onboardConsumer(testConsumer);
+        var consumerResponse = this.consumerController
+                .withConsumerToken()
+                .onboardDataConsumer(testConsumer);
         StepExpects.expectOKStatusCode(consumerResponse);
     }
 
