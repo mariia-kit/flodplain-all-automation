@@ -11,26 +11,19 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
 
     private final String providersBasePath = "/providers";
 
-    @Step
-    public Response onboardDataProvider(Provider dataProviderBody) {
-        withConsumerToken();
+    @Step("Onboard Data Provider {dataProvider}")
+    public Response onboardDataProvider(Provider dataProvider) {
         return consentServiceClient(providersBasePath)
-                .body(dataProviderBody)
-                .put(dataProviderBody.getId());
+                .body(dataProvider)
+                .put(dataProvider.getId());
     }
 
-    @Step
+    @Step("Get Data Provider by ID: '{providerRealmId}'")
     public Response getProviderById(String providerRealmId) {
-        withConsumerToken();
         return consentServiceClient(providersBasePath).get(providerRealmId);
     }
 
-    @Step
-    public Response getListOfProviders() {
-        return consentServiceClient(providersBasePath).get();
-    }
-
-    @Step
+    @Step("Redirect data subject to data provider OAUTH by consent request ID: '{crid}' and callback URL: '{callbackUrl}'")
     public Response redirectToDataProviderByRequestId(String crid, String callbackUrl) {
         return consentServiceClient(providersBasePath)
                 .queryParams(Map.of("consentRequestId", crid, "callbackUrl", callbackUrl))
@@ -38,17 +31,14 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
                 .get("oauth");
     }
 
-    @Step
+    @Step("Onboard Provider Application {providerApplication}")
     public Response onboardApplication(ProviderApplication providerApplication) {
-        withConsumerToken();
         return consentServiceClient(providersBasePath).body(providerApplication).post("/applications");
     }
 
-    @Step
+    @Step("Get all onboarded Data Provider Applications")
     public Response getListOfApplications() {
-        withConsumerToken();
         return consentServiceClient(providersBasePath).get("/applications");
-
     }
 
 }

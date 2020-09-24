@@ -9,20 +9,24 @@ public class ConsumerController extends BaseConsentService<ConsumerController> {
 
     private final String consumersBasePath = "/consumers";
 
-    @Step
-    public Response onboardConsumer(Consumer consumerRequestBody) {
-        withConsumerToken();
+    @Step("Onboard data consumer: {consumerBody}")
+    public Response onboardDataConsumer(Consumer consumerBody) {
         return consentServiceClient(consumersBasePath)
-                .body(consumerRequestBody)
-                .put(consumerRequestBody.getConsumerId());
+                .body(consumerBody)
+                .put(consumerBody.getConsumerId());
 
     }
 
-    @Step
+    @Step("Get consumer by id: {consumerId}")
     public Response getConsumerById(String consumerId) {
-        withConsumerToken();
         return consentServiceClient(consumersBasePath)
                 .get(consumerId);
+    }
+
+    @Step("Get all consumers")
+    public Response getAllConsumers() {
+        return consentServiceClient(consumersBasePath)
+                .get();
     }
 
 }

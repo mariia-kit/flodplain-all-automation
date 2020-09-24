@@ -7,7 +7,8 @@ package com.here.platform.cm.enums;
 public enum ProviderApplications {
 
     DAIMLER_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER),
-    BMW_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.BMW_MILEAGE);
+    BMW_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.BMW_MILEAGE),
+    REFERENCE_CONS_1(MPConsumers.OLP_CONS_1, ConsentRequestContainers.REFERENCE_NEW);
 
     public final MPProviders provider;
     public final MPConsumers consumer;

@@ -3,18 +3,25 @@ package com.here.platform.cm.enums;
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_ID;
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
 
+import com.github.javafaker.Faker;
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.dto.ProviderResource;
+import com.here.platform.ns.dto.Providers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 
 /**
  * Possible to use as a container name for provider's applications
  */
-@AllArgsConstructor
+@ToString
+@Getter
 public enum ConsentRequestContainers {
 
     //todo: refactor to reuse all data
@@ -114,6 +121,13 @@ public enum ConsentRequestContainers {
             "S00I000M001OK", StringUtils.EMPTY,
             List.of("mileage"),
             MPProviders.BMW_TEST
+    ),
+    REFERENCE_NEW(
+            "", "", "", "",
+            "cliendID", "clientSecret",
+            Providers.REFERENCE_PROVIDER.getProvider().getResources()
+                    .stream().map(ProviderResource::getName).collect(Collectors.toList()),
+            MPProviders.EXCELSIOR
     );
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -122,8 +136,28 @@ public enum ConsentRequestContainers {
     public List<String> resources;
     public MPProviders provider;
 
-    public static ConsentRequestContainers getRandom() {
-        return values()[(int) (Math.random() * values().length - 1)]; //except CONNECTED_VEHICLE
+    ConsentRequestContainers(
+            String id, String name, String containerDescription, String scopeValue,
+            String clientId, String clientSecret, List<String> resources, MPProviders provider
+    ) {
+        this.id = id;
+        this.name = name;
+        this.containerDescription = containerDescription;
+        this.scopeValue = scopeValue;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.resources = resources;
+        this.provider = provider;
+        if (provider.equals(MPProviders.EXCELSIOR)) {
+            var faker = new Faker();
+            this.id = faker.crypto().sha1();
+            this.name = this.id;
+            this.containerDescription = faker.backToTheFuture().quote();
+        }
+    }
+
+    public static ConsentRequestContainers generateNew() {
+        return values()[(int) (Math.random() * values().length - 1)];
     }
 
     public static ConsentRequestContainers getNextDaimlerExperimental() {
@@ -153,7 +187,6 @@ public enum ConsentRequestContainers {
         LOCAL("7ad8cbff-d257-4182-b41f-2a4afd013e47", "9d9b8e0a-04b3-4a78-aa8d-8143ccd0e6f3"),
         DEV("7ad8cbff-d257-4182-b41f-2a4afd013e47", "9d9b8e0a-04b3-4a78-aa8d-8143ccd0e6f3"),
         SIT("837df42f-500f-4b3d-be3d-c57e11b61f45", "240c3498-d266-4b30-a837-7d7220987cef"),
-        STG(SIT.clientId, SIT.clientSecret),
         PROD("93dc654d-eabe-4437-a3ae-fdb0ce32b58b", "3b789e8a-e472-4cd5-875a-f4c773f4bc4d");
         String clientId, clientSecret;
     }
