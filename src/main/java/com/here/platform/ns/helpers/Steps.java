@@ -17,6 +17,7 @@ import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import io.qameta.allure.Step;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
@@ -73,8 +74,8 @@ public class Steps {
 
     @Step("Create regular Container {container.name} of provider {container.dataProviderName}")
     public static void createRegularContainer(Container container) {
-        if (Providers.DAIMLER_REFERENCE.getName().equals(container.getDataProviderName()) ||
-                Providers.REFERENCE_PROVIDER.getName().equals(container.getDataProviderName())) {
+        if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD, Providers.BMW_TEST)
+                .anyMatch(prov -> prov.getProvider().getName().equalsIgnoreCase(container.getDataProviderName()))) {
             ReferenceProviderCall.createContainer(container);
         }
         var response = new ContainerController()

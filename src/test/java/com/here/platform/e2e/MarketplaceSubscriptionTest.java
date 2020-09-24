@@ -173,10 +173,13 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListing(container);
-
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -190,10 +193,13 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
-
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
@@ -207,10 +213,13 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
-
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);

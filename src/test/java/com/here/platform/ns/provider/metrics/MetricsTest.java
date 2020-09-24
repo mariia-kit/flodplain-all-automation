@@ -123,9 +123,14 @@ public class MetricsTest extends BaseNSTest {
                 .expectedCode(HttpStatus.SC_OK);
         Steps.createListingAndSubscription(container);
 
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
+
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);

@@ -6,7 +6,6 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
@@ -38,7 +37,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @DisplayName("Verify get resources by vehicle Id and container Id Successful")
     void verifyGetContainersDataRetrieved() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
+        Container container = Containers.generateNew(provider).withResourceNames("odometer");
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
@@ -51,11 +50,11 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
+                .withXCorrelationId("X-corr-1")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
-                .expectedEqualsContainerData(
-                        Vehicle.odometerResource,
-                        "Provider content not as expected!");
+                .expectedError(NSErrors.getDaimleRResourceNotFoundError(provider.getName(), container.getName()))
+                .expectedHeader(new Header("X-Correlation-ID", "X-corr-1"));
     }
 
     @Test
@@ -63,13 +62,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @DisplayName("Verify get resources by vehicle Id and container Id Successful BMW")
     void verifyGetContainersDataRetrievedBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();
-        Container container = Containers.generateNew(provider).withResourceNames("mileage");
+        Container container = Containers.generateNew(provider).withResourceNames("fuel");
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = ConsentRequestSteps
-                .createConsentRequestWithVINFor(ProviderApplications.BMW_CONS_1, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
         ConsentFlowSteps
                 .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
@@ -91,10 +90,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
-
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(EXTERNAL_USER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
@@ -107,9 +109,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(PROVIDER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -123,9 +129,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsContainerData(Vehicle.chargeResource,
@@ -141,10 +151,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
@@ -159,9 +172,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
+                .withCampaignId(crid)
                 .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -176,7 +193,10 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = ConsentManagerHelper.getValidConsentId();
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .getConsentRequestId();
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -184,26 +204,6 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getContainerForVehicle(provider, Vehicle.invalidVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getCMInvalidVehicleError(crid));
-    }
-
-    @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id with X-Corr Id")
-    void verifyGetContainersDataXCorrId() {
-        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
-
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-
-        var response = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(ConsentManagerHelper.getValidConsentId())
-                .withXCorrelationId("X-corr-1")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_OK)
-                .expectedHeader(new Header("X-Correlation-ID", "X-corr-1"));
-
     }
 
     @Test
@@ -226,30 +226,6 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id for empty response")
-    void verifyGetContainersDataRetrievedEmpty() {
-        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
-
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
-
-        var response = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(crid)
-                .withQueryParam("empty", "on")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_NO_CONTENT)
-                .expectedBody(StringUtils.EMPTY, "Expected empty body!");
-    }
-
-    @Test
-    //@Tag("smoke_ns")
     @DisplayName("Verify get resources by vehicle Id and container Id for empty response Reference")
     void verifyGetContainersDataRetrievedEmptyReference() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();

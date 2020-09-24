@@ -6,6 +6,7 @@ import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
@@ -36,6 +37,17 @@ public class TestDataGeneration {
     public static void createBaseContainersIfNecessary() {
         Arrays.stream(Containers.values()).forEach(containers ->
                 Steps.createRegularContainer(containers.getContainer())
+        );
+    }
+
+    public static void createBaseProvidersResourcesIfNecessary() {
+        Arrays.stream(Containers.values()).forEach(containers ->
+                Stream.of(containers.getContainer().getResourceNames().split(",")).parallel()
+                        .forEach(res -> Steps.addResourceToProvider(
+                                containers.getContainer().getDataProviderByName(),
+                                new ProviderResource(res)
+                                )
+                        )
         );
     }
 

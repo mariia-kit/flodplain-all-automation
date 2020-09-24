@@ -91,7 +91,7 @@ public class AaaCall {
                     if (policyLink != null) {
                         removeGroupFromPolicy(groupId, policyLink);
                         try {
-                            Thread.sleep(10000);
+                            Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

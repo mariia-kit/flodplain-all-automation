@@ -153,7 +153,7 @@ public enum Containers {
     BMW_MILEAGE(
             new Container("payasyoudrive", "bmwcardata_mileage", Providers.BMW_TEST.getName(),
                     "Vehicle mileage",
-                    "mileage",
+                    "fuel",
                     true, "")
     );
 

@@ -78,52 +78,6 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify get resources by vehicle Id Daimler filter")
-    void verifyGetResourceDataRetrievedFilterDaimler() {
-        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
-
-        Steps.createRegularProvider(provider);
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
-
-        var response1 = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(crid)
-                .withQueryParam("resource", "distancesincereset")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response1)
-                .expectedEqualsContainerData(
-                        Vehicle.getResourceMap(Vehicle.odometerResource, "distancesincereset"),
-                        "Container data content not as expected!");
-
-        var response2 = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(crid)
-                .withQueryParam("resource", "odometer")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response2)
-                .expectedEqualsContainerData(
-                        Vehicle.getResourceMap(Vehicle.odometerResource, "odometer"),
-                        "Container data content not as expected!");
-
-        var response3 = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(crid)
-                .withQueryParam("resource", "notrealres")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response3)
-                .expectedEqualsContainerData(
-                        Vehicle.empty,
-                        "Container data content not as expected!");
-    }
-
-    @Test
     @DisplayName("Verify get single resource by vehicle Id filter")
     void verifyGetResourceRetrievedFilter() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();

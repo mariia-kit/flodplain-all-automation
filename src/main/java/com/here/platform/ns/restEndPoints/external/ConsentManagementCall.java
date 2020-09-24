@@ -190,22 +190,6 @@ public class ConsentManagementCall {
 
     }
 
-    public void deleteAllAutomatedConsentsHard() {
-        String token = "Bearer " + CM_CONSUMER.getUser().getToken();
-        for (String vin : new String[]{Vehicle.validVehicleIdLong, Vehicle.validVehicleId}) {
-            String url = Conf.ns().getConsentUrl()
-                    + "/consentRequests?consumerId=" + CONSUMER.getUser().getRealm() + "&vin=" + vin;
-            Response r = RestHelper.get("get all consent from CM for " + vin, url, token);
-            r.jsonPath().getList(
-                    "findAll { it.containerId.startsWith('automatedtestcontainer')}.consentRequestId",
-                    String.class)
-                    .forEach(id -> {
-                        new ConsentManagementCall().deleteVinsHard(id, vin);
-                        new ConsentManagementCall().deleteConsentHard(id);
-                    });
-        }
-    }
-
     public Response getConsentInfo(String vin) {
         String url = Conf.ns().getConsentUrl() + "/consents/" + vin + "/info?state=PENDING";
         return RestHelper.get("Get consent info for " + vin, url, "");
