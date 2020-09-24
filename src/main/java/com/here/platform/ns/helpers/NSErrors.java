@@ -118,11 +118,12 @@ public class NSErrors {
                 "Modify request according to data provider requirements");
     }
 
-    public static NSError getDaimleRResourceNotFoundError() {
+    public static NSError getDaimleRResourceNotFoundError(String providerName, String resourceName) {
         return new NSError("Request processing exception",
                 HttpStatus.SC_NOT_FOUND,
                 "E501114",
-                "Data provider 'daimleR' response: {exveErrorId=5, exveErrorMsg=No resource with id:vehicles found., exveErrorRef=asdsdsdsda-asdasda-12123, exveNote=Provide request with valid data}",
+                "Data provider '" + providerName + "' response: {exveErrorId=5, exveErrorMsg=No resource with id:" +
+                        resourceName + " found., exveErrorRef=asdsdsdsda-asdasda-12123, exveNote=Provide request with valid data}",
                 "Modify request according to data provider requirements");
     }
 

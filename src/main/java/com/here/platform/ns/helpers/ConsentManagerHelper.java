@@ -1,15 +1,8 @@
 package com.here.platform.ns.helpers;
 
-
-import static com.here.platform.ns.dto.Users.PROVIDER;
-
 import com.here.platform.common.config.Conf;
-import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.dto.Vehicle;
-import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import io.restassured.response.Response;
 import java.math.BigInteger;
@@ -20,14 +13,11 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 
 
 public class ConsentManagerHelper {
 
-    private final static Logger logger = Logger.getLogger(ConsentManagerHelper.class);
-    private static String masterConsentRequestId = StringUtils.EMPTY;
     private final Container container;
     private final List<String> vinNumbers;
     private String consentRequestId = StringUtils.EMPTY;
@@ -38,51 +28,6 @@ public class ConsentManagerHelper {
         this.vinNumbers = new ArrayList<>();
         this.vinNumbers.addAll(Arrays.asList(vinNumbers));
         this.cmConsumer = Users.CONSUMER.getUser().getRealm();
-    }
-
-    private static synchronized String produceMasterConsent() {
-        if (!Conf.ns().isConsentMock()) {
-            Container container = new Container("cmmastercontainer",
-                    "cmmastercontainer",
-                    Providers.DAIMLER_REFERENCE.getName(),
-                    "CM_test",
-                    "odometer",
-                    true,
-                    null);
-            container.setScope(container.generateScope());
-            var response = new ContainerController()
-                    .withToken(PROVIDER)
-                    .addContainer(container);
-            new NeutralServerResponseAssertion(response)
-                    .expectedCode(HttpStatus.SC_OK);
-            new ConsentManagementCall().addCMApplication(container, Providers.DAIMLER_REFERENCE.getName());
-            String cmConsumerId = Users.CONSUMER.getUser().getRealm();
-            String crid = new ConsentManagementCall()
-                    .initConsentRequestStrict(container, cmConsumerId);
-
-            new ConsentManagementCall().addVinNumbers(crid, Vehicle.validVehicleId);
-            waitForConsentInit();
-            String authToken = Users.HERE_USER.getToken();
-            Response res = new ConsentManagementCall()
-                    .approveConsentRequestNew(crid, Vehicle.validVehicleId, authToken, container);
-            Assertions.assertEquals(HttpStatus.SC_OK, res.getStatusCode(),
-                    "Error during approve of consent " + crid + " for vin "
-                            + Vehicle.validVehicleId);
-            return crid;
-        } else {
-            return "SomeConsentId";
-        }
-    }
-
-    public static String getValidConsentId() {
-        if (StringUtils.isEmpty(masterConsentRequestId)) {
-            masterConsentRequestId = produceMasterConsent();
-        } else {
-            if (!new ConsentManagementCall().isConsentApproved(masterConsentRequestId)) {
-                masterConsentRequestId = produceMasterConsent();
-            }
-        }
-        return masterConsentRequestId;
     }
 
     private static void waitForConsentInit() {

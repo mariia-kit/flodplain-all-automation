@@ -31,6 +31,13 @@ public class ConsentRequestSteps {
     }
 
     @Step
+    public ConsentInfo createConsentRequestWithVINFor(String providerName, String consumerName, String consumerRealm, String containerId, String vin) {
+        ConsentInfo consentInfo = createConsentRequestFor(providerName, consumerName, consumerRealm, containerId);
+        addVINsToConsentRequestAsConsumer(consentInfo.getConsentRequestId(), vin);
+        return consentInfo.vinLabel(new VIN(vin).label());
+    }
+
+    @Step
     public void addVINsToConsentRequest(ProviderApplications providerApplication, String crid, String... vins) {
         consentRequestController.withConsumerToken(providerApplication.consumer);
         var addVINsResponse = consentRequestController.addVinsToConsentRequest(
@@ -40,26 +47,44 @@ public class ConsentRequestSteps {
     }
 
     @Step
+    public void addVINsToConsentRequestAsConsumer(String crid, String... vins) {
+        consentRequestController.withConsumerToken();
+        var addVINsResponse = consentRequestController.addVinsToConsentRequest(
+                crid, new VinsToFile(vins).csv()
+        );
+        StepExpects.expectOKStatusCode(addVINsResponse);
+    }
+
+    @Step
     public ConsentInfo createConsentRequestFor(ProviderApplications providerApplication) {
+        return createConsentRequestFor(
+                providerApplication.provider.getName(),
+                providerApplication.consumer.getConsumerName(),
+                providerApplication.consumer.getRealm(),
+                providerApplication.container.id);
+    }
+
+    @Step
+    public ConsentInfo createConsentRequestFor(String providerName, String consumerName, String consumerRealm, String containerId) {
         var targetConsentRequest = new ConsentRequestData()
-                .providerId(providerApplication.provider.getName())
-                .consumerId(providerApplication.consumer.getRealm())
+                .providerId(providerName)
+                .consumerId(consumerRealm)
                 .title(faker.gameOfThrones().character())
                 .purpose(faker.gameOfThrones().quote())
                 .privacyPolicy(faker.internet().url())
                 .addAdditionalLinksItem(
                         new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url())
                 )
-                .containerId(providerApplication.container.id);
+                .containerId(containerId);
 
         consentRequestController.withConsumerToken();
         var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
         StepExpects.expectCREATEDStatusCode(consentRequestResponse);
 
-        var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
+        var consentRequestId =  consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
         return new ConsentRequestToConsentInfo(consentRequestId, targetConsentRequest)
                 .consentInfo()
-                .consumerName(providerApplication.consumer.getConsumerName());
+                .consumerName(consumerName);
     }
 
 }
