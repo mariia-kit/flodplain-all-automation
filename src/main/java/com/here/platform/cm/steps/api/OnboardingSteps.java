@@ -34,11 +34,11 @@ public class OnboardingSteps {
         var onboardingSteps = new OnboardingSteps(providerId, consumerId);
         onboardingSteps.onboardTestProvider();
         onboardingSteps.onboardValidConsumer();
-        onboardingSteps.onboardTestProviderApplicationForScope(providerApplication);
+        onboardingSteps.onboardTestProviderApplication(providerApplication);
     }
 
     @Step
-    public void onboardTestProviderApplicationForScope(ConsentRequestContainers container) {
+    public void onboardTestProviderApplication(ConsentRequestContainers container) {
         var testApplication = new ProviderApplication()
                 .providerId(this.providerId)
                 .consumerId(this.consumerId)

@@ -19,6 +19,7 @@ public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback,
 
     private final ConsentRequestData consentRequestData;
     private final boolean cleanUpAfter;
+    private boolean onboardProviderWithContainerToNS = false;
 
     @Override
     public void beforeEach(ExtensionContext context) {
@@ -38,11 +39,16 @@ public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback,
     }
 
     public Consumer getOnboardedConsumer() {
-        return new ConsumerController().getConsumerById(consentRequestData.getConsumerId()).as(Consumer.class);
+        return new ConsumerController().withCMToken().getConsumerById(consentRequestData.getConsumerId()).as(Consumer.class);
     }
 
     public Provider getOnboardedProvider() {
         return new ProvidersController().getProviderById(consentRequestData.getProviderId()).as(Provider.class);
+    }
+
+    public OnboardAndRemoveApplicationExtension withNSOnboarding(boolean onboardToNS){
+        this.onboardProviderWithContainerToNS = onboardToNS;
+        return this;
     }
 
 }

@@ -30,14 +30,14 @@ import org.junit.jupiter.api.Test;
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testScope = ConsentRequestContainers.getRandom();
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateRandomContainer();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
             .title(faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerId(testScope.id);
+            .containerId(testContainer.id);
     private String crid;
     private File testFileWithVINs = null;
 
@@ -46,7 +46,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         OnboardingSteps.onboardApplicationProviderAndConsumer(
                 testConsentRequest.getProviderId(),
                 testConsentRequest.getConsumerId(),
-                testScope
+                testContainer
         );
 
         consentRequestController.withConsumerToken();

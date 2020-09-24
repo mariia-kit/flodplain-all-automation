@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew();
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(crypto.sha1())
             .providerId(crypto.sha1())
