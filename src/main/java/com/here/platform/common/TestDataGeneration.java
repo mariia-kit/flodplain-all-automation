@@ -43,7 +43,7 @@ public class TestDataGeneration {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
         Stream.of(ConsentRequestContainers.values()).forEach(containers ->
                 new OnboardingSteps(containers.provider.getName(), consumerId)
-                        .onboardTestProviderApplicationForScope(containers));
+                        .onboardTestProviderApplication(containers));
     }
 
 

@@ -156,8 +156,18 @@ public enum ConsentRequestContainers {
         }
     }
 
-    public static ConsentRequestContainers generateNew() {
-        return values()[(int) (Math.random() * values().length - 1)];
+    public static ConsentRequestContainers generateRandomContainer() {
+        var faker = new Faker();
+
+        var daimlerExperimental = List.of(
+                DAIMLER_EXPERIMENTAL_ODOMETER, DAIMLER_EXPERIMENTAL_TIRES, DAIMLER_EXPERIMENTAL_LOCATION,
+                DAIMLER_EXPERIMENTAL_FUEL, DAIMLER_EXPERIMENTAL_DOORS, DAIMLER_EXPERIMENTAL_CHARGE
+        );
+
+        var newRandomContainer = daimlerExperimental.get((int) (Math.random() * daimlerExperimental.size() - 1));
+        newRandomContainer.id = faker.crypto().sha256();
+        newRandomContainer.name = newRandomContainer.id;
+        return newRandomContainer;
     }
 
     public static ConsentRequestContainers getNextDaimlerExperimental() {

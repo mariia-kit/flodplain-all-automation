@@ -82,7 +82,9 @@ public class PrivateController extends BaseConsentService<PrivateController> {
 
         return providerApplication == null || forbiddenApplications.anyMatch(
                 containers -> containers.getId().equals(providerApplication.getContainer())
-                        && containers.getProvider().getName().equals(providerApplication.getProviderId()));
+                        && containers.getProvider().getName().equals(providerApplication.getProviderId())
+                        && providerApplication.getConsumerId().equals(MPConsumers.OLP_CONS_1.getRealm())
+                        && providerApplication.getConsumerId().equals("olp-here-dataeval"));
     }
 
 }
