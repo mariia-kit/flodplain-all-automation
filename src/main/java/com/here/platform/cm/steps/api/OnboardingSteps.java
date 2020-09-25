@@ -47,7 +47,7 @@ public class OnboardingSteps {
                 .container(container.id)
                 .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
-        var applicationResponse = this.providersController.onboardApplication(testApplication);
+        var applicationResponse = this.providersController.withConsumerToken().onboardApplication(testApplication);
         StepExpects.expectCREATEDStatusCode(applicationResponse);
     }
 
