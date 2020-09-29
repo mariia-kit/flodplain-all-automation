@@ -2,6 +2,7 @@ package com.here.platform.common;
 
 import static io.restassured.RestAssured.given;
 
+import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.common.config.Conf;
@@ -21,6 +22,7 @@ public class TestDataGeneration {
 
     public static void main(String[] args) {
         if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
+            new PrivateController().cleanUpEnvConsents();
             createPoliciesForProviderGroup();
             createBaseProvidersIfNecessary();
             createBaseContainersIfNecessary();

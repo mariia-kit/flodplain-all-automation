@@ -9,6 +9,7 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.ns.dto.Container;
 import io.qameta.allure.Step;
 import java.util.Map;
 
@@ -39,12 +40,17 @@ public class OnboardingSteps {
 
     @Step
     public void onboardTestProviderApplication(ConsentRequestContainers container) {
+        onboardTestProviderApplication(container.id, container.clientId, this.consumerId);
+    }
+
+    @Step("Onboard application for current provide for {containerId}")
+    public void onboardTestProviderApplication(String containerId, String clientId, String secret) {
         var testApplication = new ProviderApplication()
                 .providerId(this.providerId)
                 .consumerId(this.consumerId)
-                .clientId(container.clientId)
-                .clientSecret(container.clientSecret)
-                .container(container.id)
+                .clientId(clientId)
+                .clientSecret(secret)
+                .container(containerId)
                 .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
         var applicationResponse = this.providersController.withConsumerToken().onboardApplication(testApplication);

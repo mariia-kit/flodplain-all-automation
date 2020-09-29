@@ -62,7 +62,12 @@ task testDataGeneration(type: JavaExec) {
     onlyIf { !System.getenv("hot_deploy") }
 
     logging.captureStandardOutput(LogLevel.QUIET)
-
+    systemProperties = [
+            "stg.access.key.id"     : System.getenv("ACCESS_KEY_ID_STG"),
+            "stg.access.key.secret" : System.getenv("ACCESS_KEY_SECRET_STG"),
+            "prod.access.key.id"    : System.getenv("ACCESS_KEY_ID_PROD"),
+            "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD")
+    ]
     systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.TestDataGeneration"

@@ -3,6 +3,7 @@ package com.here.platform.ns.restEndPoints.external;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
 import io.restassured.response.Response;
@@ -28,6 +29,7 @@ public class MarketplaceCMAddVinsCall extends BaseRestControllerNS<MarketplaceCM
     @Override
     public Supplier<Response> defineCall() {
         return () -> {
+            CleanUpHelper.addToVinsList(subsId, vin);
             File file = new File("VIN_subs_" + subsId + ".csv");
 
             try (FileWriter writer = new FileWriter(file)) {

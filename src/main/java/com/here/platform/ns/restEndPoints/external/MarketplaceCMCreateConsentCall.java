@@ -4,6 +4,7 @@ import static com.here.platform.ns.dto.Users.CONSUMER;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
 import io.restassured.response.Response;
@@ -13,8 +14,10 @@ import java.util.function.Supplier;
 public class MarketplaceCMCreateConsentCall extends BaseRestControllerNS<MarketplaceCMCreateConsentCall> {
 
     private final Container container;
+    private final String subsId;
 
     public MarketplaceCMCreateConsentCall(String subsId, Container container) {
+        this.subsId = subsId;
         this.container = container;
         callMessage = "Perform MP call to create CM ConsentRequest";
         setDefaultUser(CONSUMER);
@@ -39,6 +42,7 @@ public class MarketplaceCMCreateConsentCall extends BaseRestControllerNS<Marketp
                 + "  {\"title\":\"title8\",\"url\":\"link8\"},\n"
                 + "  {\"title\":\"title9\",\"url\":\"link9\"}]"
                 + "}";
+        CleanUpHelper.getConsentIdsList().add(subsId);
         return () -> RestHelper.post(this, body);
     }
 
