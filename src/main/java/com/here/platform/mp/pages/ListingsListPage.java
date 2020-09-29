@@ -15,7 +15,7 @@ public class ListingsListPage extends BaseMPPage {
 
     @Step("Listings list page is loaded")
     public ListingsListPage isLoaded() {
-        $(dataTest("listing-link")).waitUntil(Condition.visible, 20000);
+        $(dataTest("listing-link")).waitUntil(Condition.visible, 60000);
         return this;
     }
 

@@ -19,6 +19,7 @@ import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,30 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @DisplayName("Consent Management integration Tests: 'E2E'")
 @ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
 public class ZConsentManagementTest extends BaseE2ETest {
-
-    @Test
-    @DisplayName("Verify E2E flow positive")
-    public void CMFlowPositive() {
-        DataProvider provider = Providers.DAIMLER_EXPERIMENTAL.getProvider();
-        Container container = Containers.DAIMLER_EXPERIMENTAL_ODOMETER.getContainer();
-
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
-
-        var response = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withCampaignId(crid)
-                .withXCorrelationId("X-corr-12345")
-                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_OK);
-
-    }
 
     @Test
     @DisplayName("Verify E2E flow positive Reference")
@@ -183,9 +160,10 @@ public class ZConsentManagementTest extends BaseE2ETest {
     @Test
     @DisplayName("Verify E2E flow add Consent, revoke, add new one")
     @Tag("ignored-dev")
+    @Disabled("No create of consent for same container allowed")
     public void CMFlowAddConsentAfterRevoke() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
+        Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
@@ -237,10 +215,11 @@ public class ZConsentManagementTest extends BaseE2ETest {
     }
 
     @Test
+    @Disabled("No create of consent for same container allowed")
     @DisplayName("Verify E2E flow add Consent than add another")
     public void CMFlowAddConsentAddAnother() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
+        Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);

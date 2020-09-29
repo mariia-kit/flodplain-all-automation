@@ -22,10 +22,6 @@ public class BaseCMTest {
     static {
         //To run on specific environment CM tests use following "env" values: dev, sit, prod
         //System.setProperty("env", "dev");
-
-        if (System.getProperty("env").matches("dev|sit")) {
-            new PrivateController().cleanUpEnvConsents();
-        }
     }
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
