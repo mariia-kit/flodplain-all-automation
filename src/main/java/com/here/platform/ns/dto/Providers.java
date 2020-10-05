@@ -23,9 +23,9 @@ public enum Providers {
                     ))
     ),
     BMW(new DataProvider("bmw", Conf.ns().getRefProviderUrl() + "/bmw")
-            .addResources(List.of(ContainerResources.mileage))),
+            .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
     BMW_TEST(new DataProvider("test-bmw", Conf.ns().getRefProviderUrl() + "/bmw")
-            .addResources(List.of(ContainerResources.mileage))),
+            .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
     NOT_EXIST(new DataProvider("rimak", "http://www.rim.com")),
     DAIMLER_CAPITAL(new DataProvider("Daimler", "https://api.mercedes-benz.com/vehicledata/v1")),
     REFERENCE_PROVIDER(

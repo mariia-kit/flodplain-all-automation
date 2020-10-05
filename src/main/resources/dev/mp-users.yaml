@@ -17,3 +17,5 @@ mpProvider:
   clientId: ha-test-app-1
   clientSecret: ha-test-secret-1
   type: MP
+
+consumerName: "OLP Marketplace Consumer Dev Test 1"

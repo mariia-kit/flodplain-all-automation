@@ -20,6 +20,9 @@ import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,15 +33,19 @@ import org.junit.jupiter.api.Test;
 @UpdateConsentRequest
 public class UpdateConsentRequestTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
+    private final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     private final int vinLength = targetApp.provider.vinLength;
 
     private final String
             vin1 = VIN.generate(vinLength),
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
-    private final ConsentRequestContainers testContainer = targetApp.container;
-    private final MPConsumers mpConsumer = targetApp.consumer;
+
+    protected final MPConsumers mpConsumer = targetApp.consumer;
+    protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
+    Container container = Containers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
+    
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())
@@ -54,11 +61,12 @@ public class UpdateConsentRequestTests extends BaseCMTest {
 
     @BeforeEach
     void onboardApplicationForProviderAndConsumer() {
-        OnboardingSteps.onboardApplicationProviderAndConsumer(
-                testConsentRequest.getProviderId(),
-                testConsentRequest.getConsumerId(),
-                testContainer
-        );
+        Steps.createRegularContainer(container);
+        OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
+        onboard.onboardTestProviderApplication(
+                container.getName(),
+                targetApp.container.clientId,
+                targetApp.container.clientSecret);
         consentRequestController.withConsumerToken();
         crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)
@@ -125,7 +133,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @ApproveConsent
     @DisplayName("Force remove approved consents from consent request")
     void forceRemoveApprovedDataSubjectsTest() {
-        var vinToApprove = DataSubjects.getNext().getVin();
+        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
         consentRequestController
                 .withConsumerToken(mpConsumer)
                 .addVinsToConsentRequest(crid, new VinsToFile(vinToApprove, vin2, vin3).json());
@@ -154,7 +162,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @DisplayName("Force remove revoked consent from consent request")
     @RevokeConsent
     void forceRemoveRevokedConsentsTest() {
-        var vehicle = DataSubjects.getNext();
+        var vehicle = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
         var vinToRevoke = vehicle.getVin();
         consentRequestController.withConsumerToken(mpConsumer);
         consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(vinToRevoke, vin2, vin3).json());
@@ -189,7 +197,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @DisplayName("Remove revoked consent from consent request")
     @RevokeConsent
     void removeRevokedConsentsTest() {
-        var targetDataSubject = DataSubjects.getNext();
+        var targetDataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
         var vinToRevoke = targetDataSubject.getVin();
         consentRequestController
                 .withConsumerToken(mpConsumer)
@@ -201,7 +209,9 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(2)
-                .revoked(1);
+                .revoked(1)
+                .rejected(0)
+                .expired(0);
         consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
@@ -220,11 +230,11 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     @ApproveConsent
     @DisplayName("Forbidden to remove approved consent")
     void forbiddenToRemoveApprovedDataSubjects() {
-        var vinToApprove = DataSubjects.getNext().getVin();
+        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
         consentRequestController.withConsumerToken(mpConsumer);
         consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(vinToApprove, vin2, vin3).csv());
 
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
+       ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
 
         fuSleep();
         //remove consents in approved and pending state

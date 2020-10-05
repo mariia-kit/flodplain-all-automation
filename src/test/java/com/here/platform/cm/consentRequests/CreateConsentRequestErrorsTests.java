@@ -14,6 +14,7 @@ import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
 import io.qameta.allure.TmsLink;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -95,7 +96,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
         @ErrorHandler
         @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Provider")
         void isNotPossibleToCreateConsentRequestWithOutProvider() {
-            new OnboardingSteps(null, testConsentRequest.getConsumerId()).onboardValidConsumer();
+            new OnboardingSteps(StringUtils.EMPTY, testConsentRequest.getConsumerId()).onboardValidConsumer();
 
             consentRequestController.withConsumerToken();
             final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);

@@ -17,6 +17,7 @@ import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.VinUpdateError;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
@@ -25,6 +26,9 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @UpdateConsentRequest
 public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
+    private final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     private final String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
     private final MPConsumers mpConsumer = targetApp.consumer;
 
@@ -52,7 +56,9 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin1 = VIN.generate(vinLength),
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
-    private final ConsentRequestContainers testContainer = targetApp.container;
+
+    Container container = Containers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())
@@ -65,15 +71,18 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 
     @BeforeEach
     void onboardApplicationForProviderAndConsumer() {
-        OnboardingSteps.onboardApplicationProviderAndConsumer(
-                testConsentRequest.getProviderId(),
-                testConsentRequest.getConsumerId(),
-                testContainer
-        );
-        consentRequestController.withConsumerToken();
-        crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
-                .statusCodeIsEqualTo(StatusCode.CREATED)
-                .bindAs(ConsentRequestIdResponse.class)
+        Steps.createRegularContainer(container);
+        OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
+        onboard.onboardTestProvider();
+        onboard.onboardTestProviderApplication(
+                container.getName(),
+                targetApp.container.clientId,
+                targetApp.container.clientSecret);
+        crid = ConsentRequestSteps.createConsentRequestFor(
+                targetApp.provider.getName(),
+                targetApp.consumer.getConsumerName(),
+                targetApp.consumer.getRealm(),
+                testContainer.id)
                 .getConsentRequestId();
     }
 
@@ -125,7 +134,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     @Test
     @DisplayName("Force remove approved consents from consent request Async")
     void forceRemoveApprovedDataSubjectsTestAsync() {
-        var vinToApprove = DataSubjects.getNext().getVin();
+        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
         consentRequestController
                 .withConsumerToken(mpConsumer)
@@ -149,6 +158,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         String asyncId = StringUtils.substringAfter(updateInfoUrl, consentRequestAsyncUpdateInfo);
         fuSleep();
 
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getConsentRequestAsyncUpdateInfo(asyncId))
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
@@ -172,7 +182,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     @Test
     @DisplayName("Verify Remove Vins From ConsentRequest Async")
     void removeVinsFromConsentRequestTestAsync() {
-        var vinToApprove = DataSubjects.getNext().getVin();
+        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
         consentRequestController
                 .withConsumerToken(mpConsumer)
@@ -212,7 +222,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                         ).stream().sorted(Comparator.comparing(VinUpdateError::getVinLabel))
                                 .collect(Collectors.toList()))
                 );
-
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
                 .responseIsEqualToObject(new ConsentRequestStatus()
                         .approved(1)

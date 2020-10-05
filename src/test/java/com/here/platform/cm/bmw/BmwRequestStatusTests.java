@@ -90,7 +90,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void setClearanceStatusByBMWMultiple() {
         testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
-        crid = ConsentRequestSteps.createConsentRequestFor(targetApp).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container).getConsentRequestId();
         ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin, testVin1);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
@@ -131,13 +131,14 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @Test
     @DisplayName("Verify Adding Vins To ConsentRequest Async BMW")
     void addVinsToConsentRequestTestAsyncBMW() {
+        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-        crid = ConsentRequestSteps.createConsentRequestFor(ProviderApplications.BMW_CONS_1).getConsentRequestId();
-        testFileWithVINs = new VinsToFile(testVin, testVin1).json();
+        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container).getConsentRequestId();
+        testFileWithVINs = new VinsToFile(testVin1).json();
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
                 .addVinsToConsentRequestAsync(crid, testFileWithVINs);
-
+        testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         String updateInfoUrl = new ResponseAssertion(addVinsToConsentRequest)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class)

@@ -1,6 +1,7 @@
 package com.here.platform.cm.consentStatus;
 
 
+import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -12,9 +13,7 @@ import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
-import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
-import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -87,12 +86,14 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .usingElementComparatorIgnoringFields("createTime", "revokeTime", "approveTime", "vinHash")
                 .contains(
                         new ConsentInfo()
+                                .additionalLinks(testConsentRequestData.getAdditionalLinks())
                                 .consentRequestId(crid)
                                 .state(StateEnum.REVOKED)
                                 .consumerName(mpConsumer.getConsumerName())
                                 .vinLabel(new VIN(testVin).label())
                                 .title(testConsentRequestData.getTitle())
                                 .purpose(testConsentRequestData.getPurpose())
+                                .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                                 .containerName(testContainer.name)
                                 .containerDescription(testContainer.containerDescription)
                                 .resources(testContainer.resources)
@@ -143,7 +144,8 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         @BeforeEach
         void generateDaimlerAuthorisationTokenForTestCar() {
             privateBearer = dataSubject.getBearerToken();
-            validDaimlerToken = new DaimlerTokenController(testVin, testContainer).generateAuthorizationCode();
+            validDaimlerToken = ReferenceTokenController
+                    .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
         }
 
         @Test
@@ -156,7 +158,6 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                     .purpose(faker.commerce().productName());
 
             var crid = createValidConsentRequest();
-            consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(testVin).json());
 
             var consentUnderTest = NewConsent.builder()
                     .consentRequestId(crid)
@@ -168,14 +169,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                     .statusCodeIsEqualTo(StatusCode.OK)
                     .responseIsEmpty();
 
-            var secondTestConsentRequestId = createValidConsentRequest();
-            consentUnderTest.setConsentRequestId(secondTestConsentRequestId);
-            consentUnderTest.setVinHash(new VIN(testVin).hashed());
-            consentUnderTest.setAuthorizationCode(validDaimlerToken);
-
-            fuSleep();
-            var approveResponse = consentStatusController.approveConsent(consentUnderTest, privateBearer);
-            new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.OK);
+            consentRequestController.withConsumerToken();
+            var consentRequestResponse = consentRequestController.createConsentRequest(testConsentRequestData);
+            new ResponseAssertion(consentRequestResponse).statusCodeIsEqualTo(StatusCode.CONFLICT);
         }
 
         @Test

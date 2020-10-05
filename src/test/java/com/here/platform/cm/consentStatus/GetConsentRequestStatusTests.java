@@ -2,10 +2,8 @@ package com.here.platform.cm.consentStatus;
 
 
 import com.here.platform.cm.enums.MPConsumers;
-import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -65,28 +63,15 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Get ConsentRequest In All Statuses")
     void getConsentRequestInAllStatusesTest() {
-        String vinToApprove = DataSubjects.getNext().getVin(),
-                vinToRevoke = DataSubjects.getNext().getVin(),
-                vinToPending = DataSubjects.getNext().getVin();
+        String vinToApprove = testVin,
+                vinToRevoke = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin(),
+                vinToPending = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
 
-        OnboardingSteps.onboardApplicationProviderAndConsumer(
-                testConsentRequestData.getProviderId(),
-                testConsentRequestData.getConsumerId(),
-                testContainer
-        );
-
-        consentRequestController.withConsumerToken();
-        var consentCreateResponse = consentRequestController.createConsentRequest(testConsentRequestData);
-
-        crid = new ResponseAssertion(consentCreateResponse)
-                .statusCodeIsEqualTo(StatusCode.CREATED)
-                .bindAs(ConsentRequestIdResponse.class)
-                .getConsentRequestId();
-
+        crid = createValidConsentRequest();
         consentRequestController.withConsumerToken(mpConsumers);
-        testFileWithVINs = new VinsToFile(vinToApprove, vinToRevoke, vinToPending).csv();
+        testFileWithVINs = new VinsToFile(testVin, vinToRevoke, vinToPending).csv();
         consentRequestController
-                .addVinsToConsentRequest(crid, testFileWithVINs);
+                .addVinsToConsentRequest(crid, new VinsToFile(testVin, vinToRevoke, vinToPending).csv());
 
         fuSleep();
         ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);

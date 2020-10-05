@@ -60,7 +60,8 @@ task smokeCMTests(type: TestCM) {
         includeTags "smoke_cm"
     }
 
-    if (!dynamicEnvUrl && isHotDeploy) finalizedBy "initTokens"
+    if (!dynamicEnvUrl && isHotDeploy) dependsOn "initTokens"
+    dependsOn "testDataGeneration"
 }
 
 task initTokens(type: JavaExec) {
@@ -71,8 +72,6 @@ task initTokens(type: JavaExec) {
     systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.DataPreparation"
-
-    finalizedBy "testDataGeneration"
 }
 
 task userAccount(type: TestCM) {

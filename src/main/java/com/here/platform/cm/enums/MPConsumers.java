@@ -14,7 +14,7 @@ public enum MPConsumers {
 
     OLP_CONS_1(
             Conf.mpUsers().getMpConsumer().getRealm(),
-            "OLP Market Place Consumer Realm - 1",
+            Conf.mpUsers().getConsumerName(),
             new HereUser(Conf.mpUsers().getMpConsumer().getEmail(), Conf.mpUsers().getMpConsumer().getPass(), Conf.mpUsers().getMpConsumer().getRealm())
     );
 

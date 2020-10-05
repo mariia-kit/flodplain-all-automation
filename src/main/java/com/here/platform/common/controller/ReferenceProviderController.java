@@ -39,13 +39,23 @@ public class ReferenceProviderController {
     @Step
     public Response addToken(String vinNumber, String token, String refreshToken, String scope) {
         return referenceProviderClient("/admin")
+                .header("Content-Type", "application/json")
                 .body(new ReferenceToken(token, refreshToken, 0, vinNumber, scope))
                 .post("/tokens");
     }
 
     @Step
+    public Response addApp(String appId, String appSecret) {
+        return referenceProviderClient("/admin")
+                .header("Content-Type", "application/json")
+                .body(new ReferenceApplication(appId, appSecret))
+                .post("/apps");
+    }
+
+    @Step
     public Response addContainer(Container container) {
         return referenceProviderClient("/admin")
+                .header("Content-Type", "application/json")
                 .body(new ReferenceContainer(
                         container.getId(),
                         container.getConsentRequired(),
@@ -88,6 +98,17 @@ public class ReferenceProviderController {
         @JsonProperty("resourceNames")
         private String resourceNames;
 
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class ReferenceApplication {
+
+        @JsonProperty("clientId")
+        private String clientId;
+
+        @JsonProperty("clientSecret")
+        private String clientSecret;
     }
 
 }

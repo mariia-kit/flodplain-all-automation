@@ -6,18 +6,26 @@ import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import java.io.File;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 
+@ExtendWith(MarketAfterCleanUp.class)
 public class BaseConsentStatusTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
+    protected final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
-    protected DataSubjects dataSubject = DataSubjects.getNext();
+    protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
+    protected Container container = Containers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),
@@ -25,7 +33,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
 
     protected File testFileWithVINs = null;
 
-    protected ConsentRequestContainers testContainer = targetApp.container;
+
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
@@ -38,11 +46,9 @@ public class BaseConsentStatusTests extends BaseCMTest {
 
     protected String createValidConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
-        var targetConsentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, testVin);
-        testConsentRequestData = new ConsentInfoToConsentRequestData(
-                targetConsentRequest, testProviderId, testConsumerId
-        ).consentRequestData();
-        return targetConsentRequest.getConsentRequestId();
+        ConsentInfo consent = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container);
+        testConsentRequestData = new ConsentInfoToConsentRequestData(consent, targetApp.provider.getName(), targetApp.consumer.getRealm()).consentRequestData();
+        return consent.getConsentRequestId();
     }
 
 }
