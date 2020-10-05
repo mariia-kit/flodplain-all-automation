@@ -1,7 +1,9 @@
 package com.here.platform.cm.consentStatus.approve;
 
+import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.SuccessApproveData;
@@ -11,6 +13,8 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +41,8 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
     void createAndApproveConsent() {
         crid = createValidConsentRequest();
         cridsToRemove.add(crid);
-        var validDaimlerToken = new DaimlerTokenController(testVin, testContainer).generateAuthorizationCode();
+        var validDaimlerToken = ReferenceTokenController
+                .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
         this.consentToApprove = NewConsent.builder()
                 .vinHash(new VIN(testVin).hashed())
                 .consentRequestId(crid)
@@ -57,7 +62,10 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Approve consent with single pending consent")
     void approveConsentWithSinglePendingConsentTest() {
+        container = Containers.generateNew(targetApp.provider.getName());
+        testContainer = ConsentRequestContainers.getById(container.getId());
         var cridForPendingConsent = createValidConsentRequest();
+        cridsToRemove.add(cridForPendingConsent);
 
         var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
 
@@ -72,6 +80,8 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                         .consumerName(mpConsumer.getConsumerName())
                         .title(testConsentRequestData.getTitle())
                         .purpose(testConsentRequestData.getPurpose())
+                        .additionalLinks(testConsentRequestData.getAdditionalLinks())
+                        .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                         .vinLabel(new VIN(testVin).label())
                         .containerName(testContainer.name)
                         .containerDescription(testContainer.containerDescription)
@@ -85,6 +95,8 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
     //    @Test
     @DisplayName("Approve consent with max pending list of consents")
     void approveConsentWithMaxPendingListConsentsTest() {
+        container = Containers.generateNew(targetApp.provider.getName());
+        testContainer = ConsentRequestContainers.getById(container.getId());
         var secondPendingConsent = createValidConsentRequest();
         cridsToRemove.add(secondPendingConsent);
 

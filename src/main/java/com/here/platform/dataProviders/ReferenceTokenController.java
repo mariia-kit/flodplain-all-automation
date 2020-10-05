@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.restassured.http.Cookies;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,7 @@ public class ReferenceTokenController {
     private final static String
             CALLBACK_URL =
             ConsentPageUrl.getDaimlerCallbackUrl(),
-            REFERENCE_URL = "https://data-reference-provider-dev.ns.api.platform.in.here.com/",
+            REFERENCE_URL = Conf.ns().getRefProviderUrl() + "/",
             REFERENCE_AUTH_URL = REFERENCE_URL + "auth/oauth/v2",
             CLIENT_ID = "consent_mediator",
             CLIENT_SECRET = "123";

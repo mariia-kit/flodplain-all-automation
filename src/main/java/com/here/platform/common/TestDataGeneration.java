@@ -26,6 +26,7 @@ public class TestDataGeneration {
             createPoliciesForProviderGroup();
             createBaseProvidersIfNecessary();
             createBaseContainersIfNecessary();
+            createBaseCMProvidersIfNecessary();
             createBaseCMApplicationIfNecessary();
         }
     }
@@ -51,6 +52,13 @@ public class TestDataGeneration {
                                 )
                         )
         );
+    }
+
+    public static void createBaseCMProvidersIfNecessary() {
+        String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
+        Stream.of(ConsentRequestContainers.values()).forEach(containers ->
+                new OnboardingSteps(containers.provider, consumerId)
+                        .onboardTestProvider());
     }
 
     public static void createBaseCMApplicationIfNecessary() {

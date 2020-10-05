@@ -30,7 +30,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();
 
-    private final DataSubjects dataSubject = DataSubjects.getNext();
+    private final DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
     private final String privateBearer = dataSubject.getBearerToken();
     private final List<String> userVINsToRemove = new ArrayList<>();
 
@@ -90,7 +90,7 @@ public class UserAccountVINTests extends BaseCMTest {
         var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
 
-        var secondUserLogin = DataSubjects.getNext().getBearerToken();
+        var secondUserLogin = DataSubjects.getNextBy18VINLength().getBearerToken();
 
         var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), secondUserLogin);
         new ResponseAssertion(secondAdd)

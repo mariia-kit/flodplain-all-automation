@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -118,16 +117,17 @@ public enum ConsentRequestContainers {
     BMW_MILEAGE(
             "payasyoudrive", "bmwcardata_mileage", "Vehicle mileage",
             "",
-            "S00I000M001OK", StringUtils.EMPTY,
+            "S00I000M001OK", "no secret",
             List.of("mileage"),
             MPProviders.BMW_TEST
     ),
     REFERENCE_NEW(
-            "", "", "", "",
-            "cliendID", "clientSecret",
-            Providers.REFERENCE_PROVIDER.getProvider().getResources()
-                    .stream().map(ProviderResource::getName).collect(Collectors.toList()),
-            MPProviders.EXCELSIOR
+            "odometer", "odometer", "Automated Test Container",
+            "mb:user:pool:reader mb:vehicle:status:general",
+            Conf.ns().getReferenceApp().getClientId(),
+            Conf.ns().getReferenceApp().getClientSecret(),
+            List.of("odometer"),
+            MPProviders.DAIMLER_EXPERIMENTAL_REFERENCE
     );
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -148,12 +148,6 @@ public enum ConsentRequestContainers {
         this.clientSecret = clientSecret;
         this.resources = resources;
         this.provider = provider;
-        if (provider.equals(MPProviders.EXCELSIOR)) {
-            var faker = new Faker();
-            this.id = faker.crypto().sha1();
-            this.name = this.id;
-            this.containerDescription = faker.backToTheFuture().quote();
-        }
     }
 
     public static ConsentRequestContainers generateRandomContainer() {
@@ -185,7 +179,7 @@ public enum ConsentRequestContainers {
         var consentRequestContainers = Arrays.stream(values())
                 .filter(containers -> containers.id.equals(containerId)).findFirst();
 
-        var mockContainer = DAIMLER_EXPERIMENTAL_LOCATION;
+        var mockContainer = REFERENCE_NEW;
         mockContainer.id = containerId;
         mockContainer.name = containerId;
 

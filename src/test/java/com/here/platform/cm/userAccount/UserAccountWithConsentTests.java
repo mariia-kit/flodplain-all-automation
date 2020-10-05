@@ -4,6 +4,7 @@ package com.here.platform.cm.userAccount;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
@@ -16,6 +17,8 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,22 +37,22 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @DisplayName("User Account")
 public class UserAccountWithConsentTests extends BaseCMTest {
 
-    private final DataSubjects dataSubject = DataSubjects.getNext();
     private final UserAccountController userAccountController = new UserAccountController();
     private final List<String> vinsToRemove = new ArrayList<>();
     private String crid;
-    private ProviderApplications targetApplication;
+    private ProviderApplications targetApplication = ProviderApplications.REFERENCE_CONS_1;
     private ConsentInfo targetConsentRequest;
+
+    protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
+    Container container = Containers.generateNew(targetApplication.provider.getName());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
-        targetApplication = ProviderApplications.DAIMLER_CONS_1;
-
         userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.getVin());
 
-        targetConsentRequest = ConsentRequestSteps
-                .createConsentRequestWithVINFor(targetApplication, dataSubject.getVin());
+        targetConsentRequest = ConsentRequestSteps.createValidConsentRequest(targetApplication, dataSubject.getVin(), container);
         crid = targetConsentRequest.getConsentRequestId();
         ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();
@@ -80,7 +83,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @Issue("NS-1709")
     @DisplayName("Forbidden to get consent by not owner")
     void isNotPossibleToGetByNotOwnerUserConsentTest() {
-        var anotherDataSubject = DataSubjects.getNext();
+        var anotherDataSubject = DataSubjects.getNextBy18VINLength();
         var anotherToken = anotherDataSubject.getBearerToken();
         userAccountController.attachVinToUserAccount(anotherDataSubject.getVin(), anotherToken);
 

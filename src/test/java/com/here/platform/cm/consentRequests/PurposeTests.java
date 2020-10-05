@@ -27,7 +27,7 @@ public class PurposeTests extends BaseCMTest {
     @ErrorHandler
     @DisplayName("Get consent request purpose Not found")
     void purposeNotFoundForConsentRequestTest() {
-        var privateBearer = DataSubjects.getNext().getBearerToken();
+        var privateBearer = DataSubjects.getNextBy18VINLength().getBearerToken();
         var purposeResponse = consentRequestController.getConsentRequestPurpose(crypto.sha1(), privateBearer);
 
         new ResponseAssertion(purposeResponse)
@@ -60,7 +60,7 @@ public class PurposeTests extends BaseCMTest {
     @DisplayName("Get consent request purpose")
     public class ConsentRequestPurpose {
 
-        private final String privateBearer = DataSubjects.getNext().getBearerToken();
+        private final String privateBearer = DataSubjects.getNextBy18VINLength().getBearerToken();
         private final ConsentRequestContainers targetContainer = ConsentRequestContainers.getNextDaimlerExperimental();
         private final ConsentRequestData targetConsentRequest = getBaseConsentRequestData()
                 .providerId(targetContainer.provider.getName())

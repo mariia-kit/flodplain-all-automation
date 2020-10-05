@@ -11,4 +11,5 @@ public class MpUserConfig {
     private User mpConsumer;
     private User mpProvider;
 
+    private String consumerName;
 }

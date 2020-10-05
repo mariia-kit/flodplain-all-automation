@@ -83,7 +83,7 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     private final ListingsListPage listingsPage = new ListingsListPage();
-    private final DataSubjects targetDataSubject = DataSubjects.getNext();
+    private final DataSubjects targetDataSubject = DataSubjects.getNextBy18VINLength();
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();

@@ -6,6 +6,9 @@ import com.here.platform.common.FileIO;
 import com.here.platform.common.config.Conf;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +28,10 @@ public enum DataSubjects {
     B978FB280D54D80444(Conf.cmUsers().getDataSubj10()),
     _8AB90888E052A342F2(Conf.cmUsers().getDataSubj11()),
     CC7F49BF608F46D1DB(Conf.cmUsers().getDataSubj12()),
-    AD1D74EE1D30352A5E(Conf.cmUsers().getDataSubj13());
+    AD1D74EE1D30352A5E(Conf.cmUsers().getDataSubj13()),
+    _2AD190A6AD057824E(Conf.cmUsers().getDataSubj14()),
+    _857903401504142745(Conf.cmUsers().getDataSubj15()),
+    _352903401504142980(Conf.cmUsers().getDataSubj16());
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(-1);
     public final DataSubject dataSubject;
@@ -46,12 +52,22 @@ public enum DataSubjects {
         return dataSubject.getVin();
     }
 
-    public static DataSubjects getNext() {
-        var dataSubjectsArray = values();
-        if (atomicInteger.getAcquire() > dataSubjectsArray.length - 2) {
+    public static DataSubjects getNextBy18VINLength() {
+        return getNextVinLength(18);
+    }
+
+    public static DataSubjects getNextBy17VINLength() {
+        return getNextVinLength(17);
+    }
+
+    public static DataSubjects getNextVinLength(int vinLength) {
+        var dataSubjectsArray = Stream.of(values())
+                .filter(subj -> subj.getVin().length() == vinLength)
+                .collect(Collectors.toList());
+        if (atomicInteger.getAcquire() > dataSubjectsArray.size() - 2) {
             atomicInteger.set(-1);
         }
-        return dataSubjectsArray[atomicInteger.incrementAndGet()];
+        return dataSubjectsArray.get(atomicInteger.incrementAndGet());
     }
 
     public static DataSubjects getByVin(String vin) {

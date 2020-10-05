@@ -14,7 +14,9 @@ public class ConsentInfoToConsentRequestData {
                 .title(consentInfo.getTitle())
                 .containerId(consentInfo.getContainerName())
                 .purpose(consentInfo.getPurpose())
-                .consumerId(consumerId);
+                .consumerId(consumerId)
+                .additionalLinks(consentInfo.getAdditionalLinks())
+                .privacyPolicy(consentInfo.getPrivacyPolicy());
     }
 
     public ConsentRequestData consentRequestData() {

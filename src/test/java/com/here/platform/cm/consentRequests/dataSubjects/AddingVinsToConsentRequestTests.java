@@ -16,6 +16,9 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -48,7 +51,13 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 testConsentRequest.getConsumerId(),
                 testContainer
         );
-
+        Steps.createRegularContainer(new Container(testContainer.id,
+                testContainer.getId(),
+                testContainer.getProvider().getName(),
+                testContainer.getContainerDescription(),
+                testContainer.getResources().get(0),
+                false,
+                testContainer.getScopeValue()));
         consentRequestController.withConsumerToken();
         crid = new ResponseAssertion(consentRequestController.createConsentRequest(testConsentRequest))
                 .statusCodeIsEqualTo(StatusCode.CREATED)

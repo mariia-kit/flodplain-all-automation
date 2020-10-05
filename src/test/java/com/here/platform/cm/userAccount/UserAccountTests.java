@@ -23,7 +23,7 @@ public class UserAccountTests extends BaseCMTest {
     @Test
     @DisplayName("Get registered user account data")
     void getUserAccountTest() {
-        var dataSubject = DataSubjects.getNext();
+        var dataSubject = DataSubjects.getNextBy18VINLength();
         var privateBearer = dataSubject.getBearerToken();
 
         var userAccountResponse = userAccountController.userAccountGetInfo(privateBearer);

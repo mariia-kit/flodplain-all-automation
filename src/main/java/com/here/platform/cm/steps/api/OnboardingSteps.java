@@ -12,6 +12,7 @@ import com.here.platform.cm.rest.model.ProviderApplication;
 import com.here.platform.ns.dto.Container;
 import io.qameta.allure.Step;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class OnboardingSteps {
@@ -20,9 +21,20 @@ public class OnboardingSteps {
     private final Faker faker = new Faker();
     private final ConsumerController consumerController = new ConsumerController();
     private final ProvidersController providersController = new ProvidersController();
+    private String providerTypeName = MPProviders.DAIMLER.getName();
+    private String providerAuthUrl = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize";
+    private String providerTokenUrl = StringUtils.EMPTY;
 
     public OnboardingSteps(String providerId, String consumerId) {
         this.providerId = providerId;
+        this.consumerId = consumerId;
+    }
+
+    public OnboardingSteps(MPProviders provider, String consumerId) {
+        this.providerId = provider.getName();
+        this.providerTypeName = provider.getType();
+        this.providerAuthUrl = provider.getAuthUrl();
+        this.providerTokenUrl = provider.getTokenUrl();
         this.consumerId = consumerId;
     }
 
@@ -40,7 +52,7 @@ public class OnboardingSteps {
 
     @Step
     public void onboardTestProviderApplication(ConsentRequestContainers container) {
-        onboardTestProviderApplication(container.id, container.clientId, this.consumerId);
+        onboardTestProviderApplication(container.id, container.clientId, container.clientSecret);
     }
 
     @Step("Onboard application for current provide for {containerId}")
@@ -60,12 +72,13 @@ public class OnboardingSteps {
     @Step("Onboard test Provider")
     public void onboardTestProvider() {
         var providerProps = Map.of(
-                "authUrl", "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize",
+                "tokenUrl", providerTokenUrl,
+                "authUrl", providerAuthUrl,
                 "responseType", "code",
                 "prompt", "consent login"
         );
         var testDataProvider = new Provider()
-                .name(MPProviders.DAIMLER.getName())
+                .name(providerTypeName)
                 .id(this.providerId)
                 .properties(providerProps);
 

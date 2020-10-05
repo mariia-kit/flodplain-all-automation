@@ -25,4 +25,8 @@ public class CmUserConfig {
     private DataSubject dataSubj12;
     private DataSubject dataSubj13;
 
+    private DataSubject dataSubj14;
+    private DataSubject dataSubj15;
+    private DataSubject dataSubj16;
+
 }

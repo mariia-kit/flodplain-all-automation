@@ -1,6 +1,7 @@
 package com.here.platform.cm.consentStatus.approve;
 
 
+import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -41,22 +42,19 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         }
     }
 
-    @RegisterExtension
-    OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension.builder()
-            .consentRequestData(testConsentRequestData).cleanUpAfter(true).build();
-
     @Test
     @DisplayName("Verify Approve Consent GetStatus")
     @Tag("cm_prod")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
 
-        var validDaimlerToken = new DaimlerTokenController(testVin, testContainer).generateAuthorizationCode();
+        var validCode = ReferenceTokenController
+                .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
 
         final var consentToApprove = NewConsent.builder()
                 .vinHash(new VIN(testVin).hashed())
                 .consentRequestId(crid)
-                .authorizationCode(validDaimlerToken)
+                .authorizationCode(validCode)
                 .build();
 
         var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
@@ -75,6 +73,8 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .containerName(testContainer.name)
                 .containerDescription(testContainer.containerDescription)
                 .resources(testContainer.resources)
+                .additionalLinks(testConsentRequestData.getAdditionalLinks())
+                .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                 .vinLabel(new VIN(testVin).label());
 
         Assertions.assertThat(successApproveData.getApprovedConsentInfo())
