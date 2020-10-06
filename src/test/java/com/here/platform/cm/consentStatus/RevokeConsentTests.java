@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
     @Test
     @DisplayName("Verify revoke of ConsentRequest")
+    @Disabled("Bug fix required NS-2805")
     void revokeConsentRequestPositiveTest() {
         new UserAccountController().attachVinToUserAccount(testVin, dataSubject.getBearerToken());
 

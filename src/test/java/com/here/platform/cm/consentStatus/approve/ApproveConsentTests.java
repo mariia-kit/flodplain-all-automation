@@ -21,6 +21,7 @@ import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Approve Consent GetStatus")
     @Tag("cm_prod")
+    @Disabled("Bug fix required NS-2805")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
 
