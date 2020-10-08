@@ -71,11 +71,9 @@ public enum DataSubjects {
     }
 
     public static DataSubjects getByVin(String vin) {
-        try {
-            return valueOf(vin);
-        } catch (IllegalArgumentException notFound) {
-            return valueOf("_" + vin);
-        }
+        return Stream.of(values())
+                .filter(subj -> vin.equals(subj.getVin()))
+                .findFirst().orElseThrow(() -> new RuntimeException("No DataSubject with vin " + vin + " detected."));
     }
 
     public String getBearerToken() {
@@ -92,8 +90,7 @@ public enum DataSubjects {
 
     @SneakyThrows
     public String generateBearerToken() {
-        var token = new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass());
-        setBearerToken(token);
+        var token = FileIO.writeStringToLockedFile(vinFile(), () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
         return token;
     }
 

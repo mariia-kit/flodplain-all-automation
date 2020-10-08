@@ -7,6 +7,7 @@ import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -94,6 +95,10 @@ public class HERETokenController {
                 .extract().response();
 
         String callBackUrl = sign2Result.getHeader("Location");
+
+        if (StringUtils.isEmpty(callBackUrl)) {
+            throw new RuntimeException("Error during generation of here token! " + userLogin);
+        }
 
         return fetchQueryParamsFromUrl(callBackUrl).getFirst("code");
     }
