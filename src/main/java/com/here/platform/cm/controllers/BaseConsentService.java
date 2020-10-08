@@ -5,6 +5,7 @@ import static io.restassured.config.HeaderConfig.headerConfig;
 
 import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
+import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -43,7 +44,7 @@ abstract class BaseConsentService<T> {
     }
 
     public T withConsumerToken() {
-        setAuthorizationToken(Users.MP_CONSUMER.getToken());
+        setAuthorizationToken(MPConsumers.OLP_CONS_1.getToken());
         return (T) this;
     }
 

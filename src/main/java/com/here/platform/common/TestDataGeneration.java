@@ -22,7 +22,6 @@ public class TestDataGeneration {
 
     public static void main(String[] args) {
         if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
-            new PrivateController().cleanUpEnvConsents();
             createPoliciesForProviderGroup();
             createBaseProvidersIfNecessary();
             createBaseContainersIfNecessary();

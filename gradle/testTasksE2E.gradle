@@ -17,7 +17,7 @@ class TestE2E extends Test {
         maxParallelForks = 32
         forkEvery = 20
         minHeapSize = "32m"
-        maxHeapSize = "254m"
+        maxHeapSize = "256m"
         
         if (System.properties.containsKey('jira_sync')) {
             def login = System.getProperty("jira_login") ?: jira_login_default

@@ -29,6 +29,12 @@ public class ReferenceTokenController {
         String consentId = StringUtils.substringBetween(authResp.asString(),
                 "consent?consent_id=", "\">");
 
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         String makeConsent = Conf.ns().getRefProviderUrl() + "/consent";
         Response consentCall = given()
                 .param("consent_id", consentId)

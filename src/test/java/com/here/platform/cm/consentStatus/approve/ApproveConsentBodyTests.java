@@ -41,12 +41,12 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
     void createAndApproveConsent() {
         crid = createValidConsentRequest();
         cridsToRemove.add(crid);
-        var validDaimlerToken = ReferenceTokenController
+        var validRefToken = ReferenceTokenController
                 .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
         this.consentToApprove = NewConsent.builder()
                 .vinHash(new VIN(testVin).hashed())
                 .consentRequestId(crid)
-                .authorizationCode(validDaimlerToken)
+                .authorizationCode(validRefToken)
                 .build();
 
     }
