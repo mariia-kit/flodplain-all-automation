@@ -31,17 +31,19 @@ stages:
 
 .test_run:
   stage: test
-  variables:
-    TASK: "smoke"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
+  # variables:
+  #   TASK: "smoke"
+  #   REPORT_URL: "build/reports_ns"
+  #   HISTORY_URL: "history_ns"
   script:
+    - mkdir -p "${REPORT_URL}"
+    - mkdir -p "${HISTORY_URL}"
     - chown gradle:gradle ./ -R
     - echo "gradle $TASK -Penv=$ENV"
     - gradle $TASK -Penv=$ENV
     - gradle --stop
   after_script:
-    - mkdir -p "/${REPORT_URL}"
+    - mkdir -p "${REPORT_URL}"
     - cp -TRv build/reports/allure-report/ "${REPORT_URL}/" > /dev/null
   artifacts:
     name: "Report"
@@ -375,7 +377,10 @@ push_allure_reports_ns:
 
 pages:
   stage: pages
-  when: always
+  rules:
+    - if: $TASK_NS || $TASK_CM
+      when: always
+    - when: never
   script:
     - echo "Generate page with url ${CI_PAGES_URL}"
     - mkdir .public

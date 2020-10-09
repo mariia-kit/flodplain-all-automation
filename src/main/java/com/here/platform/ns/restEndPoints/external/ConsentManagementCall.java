@@ -8,6 +8,8 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 import com.here.platform.aaa.DaimlerTokenController;
 import com.here.platform.aaa.ReferenceTokenController;
 import com.here.platform.common.DaimlerApp;
+import com.here.platform.common.ResponseExpectMessages;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -41,7 +43,7 @@ public class ConsentManagementCall {
         Response resp = RestHelper.post("Init Consent Campaign Id", url, token, body,
                 new Header("X-Correlation-ID", "x-cons-init-" + container.getName()));
         Assertions.assertEquals(201, resp.getStatusCode(),
-                "Error during init of consent for " + container.getName());
+                new ResponseExpectMessages(resp).expectedStatuesCode(StatusCode.CREATED));
         String consentId = resp.getBody().jsonPath().get("consentRequestId").toString();
         CleanUpHelper.getConsentIdsList().add(consentId);
         return consentId;

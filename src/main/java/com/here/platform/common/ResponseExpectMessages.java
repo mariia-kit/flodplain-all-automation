@@ -1,6 +1,7 @@
 package com.here.platform.common;
 
 import io.restassured.response.Response;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 
 
@@ -39,6 +40,11 @@ public class ResponseExpectMessages {
 
         public int code;
 
+        public static StatusCode byValue(int value) {
+            return Stream.of(StatusCode.values())
+                    .filter(code -> code.code == value).findFirst()
+                    .orElseThrow(() -> new RuntimeException("No such status code known " + value));
+        }
     }
 
 }

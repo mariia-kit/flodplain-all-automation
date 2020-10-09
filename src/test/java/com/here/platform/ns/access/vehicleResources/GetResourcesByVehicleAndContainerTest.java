@@ -42,7 +42,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -51,14 +51,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withXCorrelationId("X-corr-1")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getDaimleRResourceNotFoundError(provider.getName(), container.getName()))
                 .expectedHeader(new Header("X-Correlation-ID", "X-corr-1"));
     }
 
     @Test
-    @Tag("ignored-dev")
+    //@Tag("ignored-dev")
     @DisplayName("Verify get resources by vehicle Id and container Id Successful BMW")
     void verifyGetContainersDataRetrievedBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();
@@ -90,14 +90,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(EXTERNAL_USER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
     }
@@ -109,14 +109,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(PROVIDER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
@@ -129,14 +129,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsContainerData(Vehicle.chargeResource,
                         "Provider content not as expected!");
@@ -151,14 +151,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
@@ -172,14 +172,14 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), Vehicle.validVehicleId, container);
+                .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
@@ -193,7 +193,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -233,7 +233,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -242,7 +242,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("empty", "on")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NO_CONTENT)
                 .expectedBody(StringUtils.EMPTY, "Expected empty body!");

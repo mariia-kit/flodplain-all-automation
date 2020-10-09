@@ -154,6 +154,15 @@ task zephyrCMSync(type: JavaExec) {
     ]
 }
 
+task copyHistoryCM(type: Copy) {
+    description 'Copies the new CM history directory to folder to store.'
+    println "Copy local history_ns to $rootDir/history_cm"
+    from "${allure.reportDir.absolutePath}/history"
+    into "$rootDir/history_cm"
+
+    shouldRunAfter 'allureReport'
+}
+
 task allureAggregatedReportCM {
     doFirst {
         copy {
@@ -164,13 +173,5 @@ task allureAggregatedReportCM {
             into "${allure.resultsDir.absolutePath}/history"
         }
     }
-    doLast {
-        copy {
-            description 'Copies the new CM history directory to folder to store.'
-            println "Copy local history to $rootDir/history_cm"
-            from "${allure.reportDir.absolutePath}/history"
-            into "$rootDir/history_cm"
-        }
-    }
-    finalizedBy 'allureReport'
+    finalizedBy 'allureReport', 'copyHistoryCM'
 }

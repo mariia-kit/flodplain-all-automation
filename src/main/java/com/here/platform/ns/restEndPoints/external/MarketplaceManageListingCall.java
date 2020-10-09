@@ -23,7 +23,9 @@ public class MarketplaceManageListingCall {
         String RES_REALM = Conf.ns().getRealm();
         NeutralServerResponseAssertion listing = createListing(container, RES_REALM)
                 .expectedCode(HttpStatus.SC_OK);
-        String hrn = listing.getResponse().getBody().jsonPath().get("hrn");
+        String hrn = listing.getResponse().getBody().jsonPath()
+                .get("resourceId").toString();
+        mpDelayStep();
         String invite = inviteConsumer(hrn);
         inviteClicked(invite);
         return hrn;
@@ -34,7 +36,7 @@ public class MarketplaceManageListingCall {
         negotiate(subsId);
         ack_prov(subsId);
         ack_cons(subsId);
-        mpDelay();
+        mpDelayStep();
         return subsId;
     }
 
@@ -101,7 +103,7 @@ public class MarketplaceManageListingCall {
         Response resp = RestHelper
                 .post("Create new Listing " + containerTitle, url, providerToken, body);
         if (resp.getStatusCode() == HttpStatus.SC_OK) {
-            String hrn = resp.getBody().jsonPath().get("hrn");
+            String hrn = resp.getBody().jsonPath().get("resourceId").toString();
             CleanUpHelper.getListingList().put(hrn, container.getName());
         }
         return new NeutralServerResponseAssertion(resp);
@@ -120,7 +122,7 @@ public class MarketplaceManageListingCall {
     @Step("Get listing by hrn {hrn}")
     private Response getListingByHRN(String hrn) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = baseMpUrl + "/listings/" + hrn + "/as_provider";
+        String url = baseMpUrl + "/listings/" + hrn + "/asProvider";
         return RestHelper
                 .get("Get listing by hrn " + hrn, url, providerToken);
     }
@@ -140,7 +142,7 @@ public class MarketplaceManageListingCall {
                     .post("Request subscription for hrn try 2: " + listingHrn, url, providerToken, body);
         }
         Assertions.assertEquals(200, resp.getStatusCode(), "Subscription to listing failed!");
-        String subsId = resp.getBody().jsonPath().get("subscriptions[0].id").toString();
+        String subsId = resp.getBody().jsonPath().get("resourceId").toString();
         CleanUpHelper.getSubsList().add(subsId);
         return subsId;
     }
@@ -187,7 +189,7 @@ public class MarketplaceManageListingCall {
         if (response.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED) {
             return rejectSubscribtion(subsId);
         }
-        mpDelay();
+        mpDelayStep();
         return new NeutralServerResponseAssertion(response);
     }
 
@@ -195,7 +197,7 @@ public class MarketplaceManageListingCall {
     public NeutralServerResponseAssertion rejectSubscribtion(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = baseMpUrl + "/subscriptions/" + subsId
-                + "/reject/as_provider";
+                + "/reject";
         String body = "{\n"
                 + "  \"message\": \"ManualProviderReject\"\n"
                 + "}";
@@ -241,12 +243,20 @@ public class MarketplaceManageListingCall {
                 .post("Consumer click invite with id " + inviteId, url, providerToken,
                         body);
         Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(), "Submit of invitation failed!");
-        mpDelay();
+        mpDelayStep();
     }
 
     public void mpDelay() {
         try {
             Thread.sleep(15000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mpDelayStep() {
+        try {
+            Thread.sleep(7000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

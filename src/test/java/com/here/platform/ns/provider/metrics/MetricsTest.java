@@ -72,7 +72,7 @@ public class MetricsTest extends BaseNSTest {
                                 + "'}.apiCallCount",
                         StringUtils.EMPTY, "Metric Statistic field value not as expected!");
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -81,7 +81,7 @@ public class MetricsTest extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("resource", "distancesincereset")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -96,7 +96,7 @@ public class MetricsTest extends BaseNSTest {
         var getContainer1 = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(getContainer1)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -123,7 +123,7 @@ public class MetricsTest extends BaseNSTest {
                 .expectedCode(HttpStatus.SC_OK);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -131,7 +131,7 @@ public class MetricsTest extends BaseNSTest {
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
 
@@ -153,7 +153,7 @@ public class MetricsTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -161,7 +161,7 @@ public class MetricsTest extends BaseNSTest {
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -183,7 +183,7 @@ public class MetricsTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -192,7 +192,7 @@ public class MetricsTest extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("empty", "on")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
