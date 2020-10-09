@@ -15,7 +15,7 @@ versionPattern: "1.\\d.\\d.\\d+"
 realm: here-dev
 
 #------------------Marketplace target--------------------
-marketplaceMock: true
+marketplaceMock: false
 
 #------------------Consent Manager Target Endpoint---------------------------------------------
 consentMock: false

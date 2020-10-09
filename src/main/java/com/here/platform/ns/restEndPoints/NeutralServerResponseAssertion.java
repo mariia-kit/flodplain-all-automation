@@ -1,5 +1,7 @@
 package com.here.platform.ns.restEndPoints;
 
+import com.here.platform.common.ResponseExpectMessages;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.NSError;
@@ -96,7 +98,7 @@ public class NeutralServerResponseAssertion {
     @Step("Expected response code equals to '{responseCode}'")
     public NeutralServerResponseAssertion expectedCode(int responseCode) {
         Assertions.assertEquals(responseCode, response.getStatusCode(),
-                "Response code not as expected!");
+                new ResponseExpectMessages(response).expectedStatuesCode(StatusCode.byValue(responseCode)));
         return this;
     }
 

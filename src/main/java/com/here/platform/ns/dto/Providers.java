@@ -22,7 +22,7 @@ public enum Providers {
                             ContainerResources.oil
                     ))
     ),
-    BMW(new DataProvider("bmw", Conf.ns().getRefProviderUrl() + "/bmw")
+    BMW(new DataProvider("bmw", "https://api.bmwgroup.com/otpdatadelivery/api/thirdparty/v1")
             .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
     BMW_TEST(new DataProvider("test-bmw", Conf.ns().getRefProviderUrl() + "/bmw")
             .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),

@@ -41,7 +41,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -50,7 +50,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("resource", "distancesincereset")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response1)
                 .expectedEqualsISOContainerData(
                         Vehicle.getResourceMap(Vehicle.odometerResource, "distancesincereset"),
@@ -60,7 +60,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("resourceName", "odometer")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response2)
                 .expectedEqualsISOContainerData(
                         Vehicle.odometerResource,
@@ -70,7 +70,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
                 .withQueryParam("resource", "notrealres")
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response3)
                 .expectedEqualsISOContainerData(
                         Vehicle.empty,
