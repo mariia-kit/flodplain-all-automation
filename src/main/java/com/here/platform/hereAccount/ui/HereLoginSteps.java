@@ -27,9 +27,10 @@ public class HereLoginSteps {
     public void loginMPUser(User mpUser) {
         loginPage
                 .isLoaded()
-                .fillRealm(mpUser.getRealm())
-                .clickNext()
                 .fillUserEmail(mpUser.getEmail())
+                .clickNextEmail()
+                .fillRealm(mpUser.getRealm())
+                .clickNextRealm()
                 .fillUserPassword(mpUser.getPass())
                 .clickSignIn();
     }

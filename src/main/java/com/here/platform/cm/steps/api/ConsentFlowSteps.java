@@ -1,10 +1,9 @@
 package com.here.platform.cm.steps.api;
 
 
-import com.here.platform.aaa.ReferenceTokenController;
+import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.controllers.ConsentStatusController;
-import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
@@ -14,7 +13,6 @@ import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
-import org.apache.http.HttpStatus;
 
 
 @UtilityClass

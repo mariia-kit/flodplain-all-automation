@@ -1,7 +1,7 @@
 package com.here.platform.cm.consentStatus;
 
 
-import com.here.platform.aaa.ReferenceTokenController;
+import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -14,6 +14,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
+import com.here.platform.common.config.Conf;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -155,7 +156,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         void approveSimilarToRevokedConsentsTest() {
             testConsentRequestData
                     .containerId(testContainer.id)
-                    .title(faker.gameOfThrones().quote())
+                    .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
                     .privacyPolicy(faker.internet().url())
                     .purpose(faker.commerce().productName());
 

@@ -23,12 +23,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
+@Tag("bmw_cm")
 public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
     private String crid;
@@ -38,7 +40,6 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @AfterEach
     void cleanUp() {
         RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-        referenceProviderController.cleanUpContainersVehiclesResources();
     }
 
     @Test
@@ -90,7 +91,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void setClearanceStatusByBMWMultiple() {
         testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
-        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
         ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin, testVin1);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
@@ -133,7 +134,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
         testFileWithVINs = new VinsToFile(testVin1).json();
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)

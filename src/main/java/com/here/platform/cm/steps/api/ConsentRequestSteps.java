@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.dataAdapters.ConsentRequestToConsentInfo;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AdditionalLink;
@@ -12,6 +13,7 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.helpers.Steps;
 import io.qameta.allure.Step;
@@ -42,7 +44,7 @@ public class ConsentRequestSteps {
     }
 
     @Step
-    public ConsentInfo createValidConsentRequest(ProviderApplications targetApp, String testVin, Container container) {
+    public ConsentInfo createValidConsentRequest(ProviderApplications targetApp, String testVin, ConsentRequestContainers container) {
         Steps.createRegularContainer(container);
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProvider();
@@ -90,7 +92,7 @@ public class ConsentRequestSteps {
         var targetConsentRequest = new ConsentRequestData()
                 .providerId(providerName)
                 .consumerId(consumerRealm)
-                .title(faker.gameOfThrones().character())
+                .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().character())
                 .purpose(faker.gameOfThrones().quote())
                 .privacyPolicy(faker.internet().url())
                 .addAdditionalLinksItem(

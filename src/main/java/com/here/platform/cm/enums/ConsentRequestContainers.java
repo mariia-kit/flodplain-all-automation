@@ -5,6 +5,8 @@ import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApp
 
 import com.github.javafaker.Faker;
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import java.util.Arrays;
@@ -182,8 +184,21 @@ public enum ConsentRequestContainers {
         var mockContainer = REFERENCE_NEW;
         mockContainer.id = containerId;
         mockContainer.name = containerId;
+        mockContainer.containerDescription = Conf.cm().getQaTestDataMarker() + containerId;
 
         return consentRequestContainers.orElse(mockContainer);
+    }
+
+    public static ConsentRequestContainers generateNew(String providerName) {
+        Container container = Containers.generateNew(providerName).withDescription(Conf.cm().getQaTestDataMarker() + "cm_automated_container");
+
+        var mockContainer = REFERENCE_NEW;
+        mockContainer.id = container.getId();
+        mockContainer.name = container.getName();
+        mockContainer.scopeValue = container.getScope();
+        mockContainer.containerDescription = container.getDescription();
+
+        return mockContainer;
     }
 
     @AllArgsConstructor

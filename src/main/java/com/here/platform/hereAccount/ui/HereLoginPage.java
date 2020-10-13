@@ -32,7 +32,12 @@ public class HereLoginPage {
         return this;
     }
 
-    public HereLoginPage clickNext() {
+    public HereLoginPage clickNextEmail() {
+        $("#nextEmailBtn").click();
+        return this;
+    }
+
+    public HereLoginPage clickNextRealm() {
         $("#nextRealmBtn").click();
         return this;
     }

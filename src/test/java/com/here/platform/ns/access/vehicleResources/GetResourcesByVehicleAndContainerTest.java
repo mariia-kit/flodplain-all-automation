@@ -58,7 +58,8 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    //@Tag("ignored-dev")
+    @Tag("ignored-dev")
+    @Tag("bmw_ns")
     @DisplayName("Verify get resources by vehicle Id and container Id Successful BMW")
     void verifyGetContainersDataRetrievedBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();

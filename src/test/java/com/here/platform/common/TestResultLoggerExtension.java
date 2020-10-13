@@ -50,11 +50,20 @@ public class TestResultLoggerExtension implements TestWatcher {
         }
     }
 
-    private TestResult getAllureTest(ExtensionContext context) {
+    private TestResult getAllureTest(ExtensionContext context, boolean isParametrised) {
         List<TestResult> resList = new LinkedList<>();
         Allure.getLifecycle().getCurrentTestCase().orElseThrow(() -> new RuntimeException(
                 "Allure context not detected for current test: " + context.getDisplayName()));
+
+
         Allure.getLifecycle().updateTestCase(resList::add);
+
+        if (isParametrised && context.getDisplayName().contains("[")) {
+            resList.get(0).setName(context.getParent().get()
+                    .getDisplayName() + " " + resList.get(0).getName()
+                    .replace("[", "")
+                    .replace("]", ""));
+        }
         return resList.get(0);
     }
 
@@ -182,7 +191,7 @@ public class TestResultLoggerExtension implements TestWatcher {
         if (getJiraRestClient() != null) {
             boolean isParametrised = context.getTestMethod()
                     .map(method -> method.isAnnotationPresent(ParameterizedTest.class)).orElse(false);
-            TestResult currentTest = getAllureTest(context);
+            TestResult currentTest = getAllureTest(context, isParametrised);
             String issueKey = createOrUpdateIssue(currentTest.getName(), currentTest.getFullName(),
                     generateDescription(currentTest, true), isParametrised);
             linkToStory(currentTest, issueKey);
@@ -194,7 +203,7 @@ public class TestResultLoggerExtension implements TestWatcher {
         if (getJiraRestClient() != null) {
             boolean isParametrised = context.getTestMethod()
                     .map(method -> method.isAnnotationPresent(ParameterizedTest.class)).orElse(false);
-            TestResult currentTest = getAllureTest(context);
+            TestResult currentTest = getAllureTest(context, isParametrised);
             String issueKey = createOrUpdateIssue(currentTest.getName(), currentTest.getFullName(),
                     generateDescription(currentTest, false), isParametrised);
             linkToStory(currentTest, issueKey);

@@ -2,10 +2,11 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.here.platform.aaa.ReferenceTokenController;
+import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
@@ -16,8 +17,6 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,7 +100,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         @Test
         @DisplayName("Verify It Is Possible To Approve Two Consents For Single Vin")
         void approveTwoConsentsForSingleVinTest() {
-            Container container2 = Containers.generateNew(ProviderApplications.REFERENCE_CONS_1.provider.getName());
+            ConsentRequestContainers container2 = ConsentRequestContainers.generateNew(ProviderApplications.REFERENCE_CONS_1.provider.getName());
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
             fuSleep();

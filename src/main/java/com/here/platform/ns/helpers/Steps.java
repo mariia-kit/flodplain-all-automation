@@ -2,6 +2,7 @@ package com.here.platform.ns.helpers;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.controllers.provider.ProviderController;
@@ -17,6 +18,7 @@ import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import io.qameta.allure.Step;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -85,6 +87,18 @@ public class Steps {
             throw new RuntimeException(
                     "Error creating container:" + response.getStatusCode() + " " + response.asString());
         }
+    }
+
+    @Step("Create regular Container for CM {container.id} for provider {container.provider.name}")
+    public static void createRegularContainer(ConsentRequestContainers container) {
+        Container cont = new Container(container.getId(),
+                container.getName(),
+                container.getProvider().getName(),
+                container.getContainerDescription(),
+                container.getResources().stream().collect(Collectors.joining(",")),
+                true,
+                container.getScopeValue());
+        createRegularContainer(cont);
     }
 
     @Step("Remove regular Container {container.name} of provider {container.dataProviderName}")

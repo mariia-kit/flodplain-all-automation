@@ -15,6 +15,7 @@ import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -87,7 +88,7 @@ public class BaseUITests extends BaseCMTest {
                 .containerId(testContainer.id)
                 .privacyPolicy(faker.internet().url())
                 .purpose(faker.commerce().productName() + "_purpose")
-                .title(faker.gameOfThrones().quote() + "_title");
+                .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote() + "_title");
     }
 
     @Step
