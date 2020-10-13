@@ -10,9 +10,8 @@ import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import java.io.File;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +23,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
-    protected Container container = Containers.generateNew(targetApp.provider.getName());
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),
@@ -42,11 +40,11 @@ public class BaseConsentStatusTests extends BaseCMTest {
             .containerId(testContainer.id)
             .privacyPolicy(faker.internet().url())
             .purpose(faker.commerce().productName())
-            .title(faker.gameOfThrones().quote());
+            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote());
 
     protected String createValidConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
-        ConsentInfo consent = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container);
+        ConsentInfo consent = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer);
         testConsentRequestData = new ConsentInfoToConsentRequestData(consent, targetApp.provider.getName(), targetApp.consumer.getRealm()).consentRequestData();
         return consent.getConsentRequestId();
     }

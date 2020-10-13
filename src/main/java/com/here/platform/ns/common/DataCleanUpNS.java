@@ -15,11 +15,12 @@ public class DataCleanUpNS {
             new MarketplaceManageListingCall().providerCleanUp();
             new CleanUp().deleteAllArtificialPoliciesBrute();
         }
-        new CleanUp().deleteAllTestProvidersAndContainers();
-        new CleanUp().deleteAllTestContainersForProvider(Providers.DAIMLER_REFERENCE.getProvider());
-        new CleanUp().deleteAllTestContainersForProvider(Providers.DAIMLER_EXPERIMENTAL.getProvider());
-        new CleanUp().deleteAllTestContainersForProvider(Providers.REFERENCE_PROVIDER.getProvider());
-        new CleanUp().deleteAllTestContainersForProvider(Providers.BMW_TEST.getProvider());
+        //TODO: restore after cleanup investigation complete!
+//        new CleanUp().deleteAllTestProvidersAndContainers();
+//        new CleanUp().deleteAllTestContainersForProvider(Providers.DAIMLER_REFERENCE.getProvider());
+//        new CleanUp().deleteAllTestContainersForProvider(Providers.DAIMLER_EXPERIMENTAL.getProvider());
+//        new CleanUp().deleteAllTestContainersForProvider(Providers.REFERENCE_PROVIDER.getProvider());
+//        new CleanUp().deleteAllTestContainersForProvider(Providers.BMW_TEST.getProvider());
         File tokens = new File("build/tmp/tokens.txt");
         if (tokens.exists()) {
             tokens.delete();

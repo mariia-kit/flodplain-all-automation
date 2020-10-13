@@ -11,6 +11,7 @@ import com.here.platform.cm.rest.model.ConsentRequestPurposeData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.ErrorHandler;
+import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
@@ -48,7 +49,7 @@ public class PurposeTests extends BaseCMTest {
 
     public ConsentRequestData getBaseConsentRequestData() {
         return new ConsentRequestData()
-                .title(faker.gameOfThrones().character())
+                .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().character())
                 .purpose(faker.gameOfThrones().quote())
                 .privacyPolicy(faker.internet().url())
                 .addAdditionalLinksItem(

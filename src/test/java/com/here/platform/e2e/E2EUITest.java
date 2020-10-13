@@ -269,6 +269,7 @@ public class E2EUITest extends BaseE2ETest {
 
     @Test
     @Tag("e2e_prod")
+    @Tag("bmw_e2e")
     @DisplayName("Simple happy path BMW E2E UI level")
     void simpleHappyPathTestBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();

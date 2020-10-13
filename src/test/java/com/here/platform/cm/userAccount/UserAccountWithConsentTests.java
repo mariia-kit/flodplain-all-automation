@@ -17,8 +17,6 @@ import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +42,15 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     private ConsentInfo targetConsentRequest;
 
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
-    Container container = Containers.generateNew(targetApplication.provider.getName());
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApplication.provider.getName());
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
-        userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
+        var addVins = userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
+        new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
         vinsToRemove.add(dataSubject.getVin());
 
-        targetConsentRequest = ConsentRequestSteps.createValidConsentRequest(targetApplication, dataSubject.getVin(), container);
+        targetConsentRequest = ConsentRequestSteps.createValidConsentRequest(targetApplication, dataSubject.getVin(), testContainer);
         crid = targetConsentRequest.getConsentRequestId();
         ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();

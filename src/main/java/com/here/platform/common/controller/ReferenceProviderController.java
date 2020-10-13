@@ -31,6 +31,12 @@ public class ReferenceProviderController {
     }
 
     @Step
+    public Response getAllConsents() {
+        return referenceProviderClient("/admin")
+                .get("/consents");
+    }
+
+    @Step
     public Response cleanUpContainersVehiclesResources() {
         return referenceProviderClient("/admin")
                 .get("/wipe");

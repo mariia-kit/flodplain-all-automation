@@ -55,6 +55,34 @@ public enum ContainerResources {
 
     mileage(new ProviderResource("mileage"));
 
+    //TODO: add bmw resource if necessary
+    //Electric Vehicle
+    //bmwcardata_batteryVoltage,bmwcardata_naviInformationRemainingRange
+    //Fuel Status
+    //bmwcardata_kombiCurrentRemainingRangeFuel
+    //bmwcardata_remainingFuel
+    //Pay As You Drive (PAYD)
+    //bmwcardata_mileage
+    //Vehicle Lock Status
+    //bmwcardata_vehicleStatusDoors
+    //bmwcardata_trunkState
+    //bmwcardata_hoodState
+    //bmwcardata_sunroofState
+    //bmwcardata_heading
+    //Vehicle Status
+    //bmwcardata_sunroofPosition
+    //bmwcardata_sunroofState
+    //bmwcardata_trunkState
+    //bmwcardata_vehicleStatusLightstatus
+    //bmwcardata_windowDriverFront
+    //bmwcardata_windowDriverRear
+    //bmwcardata_windowPassengerFront
+    //bmwcardata_windowPassengerRear
+    //bmwcardata_doorDriverFront
+    //bmwcardata_doorDriverRear
+    //bmwcardata_doorLockState
+    //bmwcardata_doorPassengerFront
+    //bmwcardata_doorPassengerRear
 
     private final ProviderResource resource;
 

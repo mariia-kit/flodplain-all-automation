@@ -1,9 +1,11 @@
-package com.here.platform.aaa;
+package com.here.platform.dataProviders.reference;
 
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.controller.ReferenceProviderController;
 import io.restassured.response.Response;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 
@@ -12,10 +14,19 @@ public class ReferenceTokenController {
 
     private static final String CALLBACK_URL = Conf.ns().getReferenceApp().getCallBackUrl();
 
+    @SneakyThrows
     public static String produceConsentAuthCode(String vin, String scope) {
-
         String clientId = Conf.ns().getReferenceApp().getClientId();
+        String consentId = createConsent(clientId, scope);
+        Response consentCall = approve(consentId, vin);
 
+        Assertions.assertTrue(consentCall != null && !StringUtils.isEmpty(consentCall.getHeader("Location")),
+                "Can't allocate auth code for reference provider!" + consentCall.getStatusCode());
+        return consentCall.getHeader("Location")
+                .replace(CALLBACK_URL + "?code=", StringUtils.EMPTY);
+    }
+
+    private static String createConsent(String clientId, String scope) {
         String authorize = Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize";
         Response authResp = given()
                 .param("client_id", clientId)
@@ -28,23 +39,15 @@ public class ReferenceTokenController {
                 .when().get(authorize);
         String consentId = StringUtils.substringBetween(authResp.asString(),
                 "consent?consent_id=", "\">");
+        return consentId;
+    }
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    private static Response approve(String consentId, String vin) {
         String makeConsent = Conf.ns().getRefProviderUrl() + "/consent";
-        Response consentCall = given()
+        return given()
                 .param("consent_id", consentId)
                 .param("vin", vin)
                 .when().post(makeConsent);
-
-        Assertions.assertTrue(consentCall != null && !StringUtils.isEmpty(consentCall.getHeader("Location")),
-                "Can't allocate auth code for reference provider!");
-        return consentCall.getHeader("Location")
-                .replace(CALLBACK_URL + "?code=", StringUtils.EMPTY);
     }
 
 }

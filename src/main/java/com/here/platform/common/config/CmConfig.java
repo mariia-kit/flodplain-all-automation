@@ -11,4 +11,6 @@ public class CmConfig {
 
     private String consentPageUrl;
 
+    private String qaTestDataMarker;
+
 }

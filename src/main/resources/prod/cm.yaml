@@ -4,3 +4,5 @@ serviceUrl: https://consent.api.platform.here.com
 
 #----ConsentPageUrl---
 consentPageUrl: https://platform.here.com/consent/
+
+qaTestDataMarker: qa_test_

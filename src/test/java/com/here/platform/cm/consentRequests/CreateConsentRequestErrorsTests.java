@@ -13,6 +13,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
+import com.here.platform.common.config.Conf;
 import io.qameta.allure.TmsLink;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +30,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(crypto.sha1())
             .providerId(crypto.sha1())
-            .title(faker.gameOfThrones().quote())
+            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);

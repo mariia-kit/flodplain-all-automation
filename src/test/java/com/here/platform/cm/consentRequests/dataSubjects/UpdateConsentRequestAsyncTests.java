@@ -25,6 +25,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
+import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -57,12 +58,11 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
 
-    Container container = Containers.generateNew(targetApp.provider.getName());
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())
-            .title(faker.gameOfThrones().quote())
+            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);
@@ -71,11 +71,11 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 
     @BeforeEach
     void onboardApplicationForProviderAndConsumer() {
-        Steps.createRegularContainer(container);
+        Steps.createRegularContainer(testContainer);
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProvider();
         onboard.onboardTestProviderApplication(
-                container.getName(),
+                testContainer.getName(),
                 targetApp.container.clientId,
                 targetApp.container.clientSecret);
         crid = ConsentRequestSteps.createConsentRequestFor(

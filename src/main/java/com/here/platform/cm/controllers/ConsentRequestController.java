@@ -2,6 +2,8 @@ package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.io.File;
@@ -21,9 +23,13 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
 
     @Step
     public Response createConsentRequest(ConsentRequestData consentRequestBody) {
-        return consentServiceClient(consentRequestBasePath)
+        Response response = consentServiceClient(consentRequestBasePath)
                 .body(consentRequestBody)
                 .post();
+        if (response.getStatusCode() == StatusCode.CREATED.code) {
+            CleanUpHelper.getConsentIdsList().add(response.getBody().jsonPath().get("consentRequestId").toString());
+        }
+        return response;
     }
 
     @Step

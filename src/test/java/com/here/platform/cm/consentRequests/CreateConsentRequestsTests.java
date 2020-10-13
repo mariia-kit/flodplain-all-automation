@@ -11,6 +11,7 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
+import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import io.qameta.allure.TmsLink;
@@ -31,7 +32,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
-            .title(faker.gameOfThrones().quote())
+            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .addAdditionalLinksItem(

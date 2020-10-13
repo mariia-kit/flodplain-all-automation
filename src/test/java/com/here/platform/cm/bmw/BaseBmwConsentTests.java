@@ -11,10 +11,12 @@ import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import java.io.File;
+import java.util.List;
 
 
 public class BaseBmwConsentTests extends BaseCMTest {
@@ -31,24 +33,24 @@ public class BaseBmwConsentTests extends BaseCMTest {
     protected File testFileWithVINs = null;
 
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
-    Container container = Containers.generateNew(targetApp.provider.getName()).withResourceNames("fuel");
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getById(container.getId());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(targetApp.consumer.getRealm())
             .providerId(targetApp.provider.getName())
-            .containerId(container.getId())
+            .containerId(testContainer.getId())
             .privacyPolicy(faker.internet().url())
             .purpose(faker.commerce().productName())
-            .title(faker.gameOfThrones().quote());
+            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote());
 
 
     protected String createValidBmwConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
-        String crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, container).getConsentRequestId();
-        testConsentRequestData.setContainerId(container.getId());
+        testContainer.resources = List.of("fuel");
+        String crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
+        testConsentRequestData.setContainerId(testContainer.getId());
         return crid;
     }
 
