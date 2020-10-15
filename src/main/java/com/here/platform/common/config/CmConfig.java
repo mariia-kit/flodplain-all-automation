@@ -13,4 +13,6 @@ public class CmConfig {
 
     private String qaTestDataMarker;
 
+    private String bmwClearanceSecret;
+
 }

@@ -6,3 +6,5 @@ serviceUrl: https://consent.api.platform.here.com
 consentPageUrl: https://platform.here.com/consent/
 
 qaTestDataMarker: qa_test_
+
+bmwClearanceSecret: 5a2404bede9252a1951a5b7783d6f872edc6377ca5faaf1afe
