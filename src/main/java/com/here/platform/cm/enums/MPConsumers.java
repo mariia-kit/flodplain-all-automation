@@ -14,7 +14,7 @@ public enum MPConsumers {
 
     OLP_CONS_1(
             Conf.mpUsers().getMpConsumer().getRealm(),
-            Conf.mpUsers().getConsumerName(),
+            Conf.mpUsers().getMpConsumer().getName(),
             new HereUser(Conf.mpUsers().getMpConsumer().getEmail(), Conf.mpUsers().getMpConsumer().getPass(), Conf.mpUsers().getMpConsumer().getRealm())
     );
 

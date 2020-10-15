@@ -23,7 +23,7 @@ public enum Providers {
                     ))
     ),
     BMW(new DataProvider("bmw", "https://api.bmwgroup.com/otpdatadelivery/api/thirdparty/v1")
-            .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
+            .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL, ContainerResources.doorsstatus))),
     BMW_TEST(new DataProvider("test-bmw", Conf.ns().getRefProviderUrl() + "/bmw")
             .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
     NOT_EXIST(new DataProvider("rimak", "http://www.rim.com")),
