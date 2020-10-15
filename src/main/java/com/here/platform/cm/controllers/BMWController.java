@@ -1,5 +1,6 @@
 package com.here.platform.cm.controllers;
 
+import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BMWController extends BaseConsentService<BMWController> {
 
     private final String bmwBasePath = StringUtils.EMPTY;
-    private String bmwToken = "5a2404bede9252a1951a5b7783d6f872edc6377ca5faaf1afee055d852e61c92";
+    private String bmwToken = Conf.cm().getBmwClearanceSecret();
 
     private void withBMWToken(String tokenValue) {
         bmwToken = tokenValue;
