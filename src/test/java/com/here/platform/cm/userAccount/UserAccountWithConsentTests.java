@@ -58,7 +58,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
     @AfterEach
     void cleanUp() {
-        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
+        vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, dataSubject.getBearerToken()));
         RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
                 crid,
                 new VinsToFile(vinsToRemove.toArray(String[]::new)).json()
