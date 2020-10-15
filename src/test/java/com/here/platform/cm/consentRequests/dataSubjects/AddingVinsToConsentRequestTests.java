@@ -5,6 +5,7 @@ import static com.here.platform.cm.enums.CMErrorResponse.CONSENT_REQUEST_UPDATE;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateRandomContainer();
+    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
