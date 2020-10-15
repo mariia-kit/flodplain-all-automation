@@ -1,5 +1,6 @@
 package com.here.platform.cm.steps.ui;
 
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 
@@ -24,9 +25,9 @@ public class OfferDetailsPageSteps {
         acceptAndContinueConsent();
     }
 
-    @Step("Accept with HERE and continue to data provider site")
+    @Step("Accept with HERE conditions and continue to data provider site")
     private void acceptAndContinueConsent() {
-        $("a[href='javascript:void(0)']").click();
+        $(byText("Accept and continue")).click();
     }
 
 }

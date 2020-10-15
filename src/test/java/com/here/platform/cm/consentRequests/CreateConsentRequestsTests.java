@@ -5,6 +5,7 @@ import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
+import com.here.platform.cm.rest.model.ConsentRequestResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -16,7 +17,6 @@ import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import io.qameta.allure.TmsLink;
 import java.io.File;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,42 +45,36 @@ public class CreateConsentRequestsTests extends BaseCMTest {
     @RegisterExtension
     ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
 
-    private String crid;
-
-    @BeforeEach
-    void beforeEach() {
-        consentRequestController.withConsumerToken();
-        final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
-        crid = new ResponseAssertion(actualResponse)
-                .statusCodeIsEqualTo(StatusCode.CREATED)
-                .bindAs(ConsentRequestIdResponse.class)
-                .getConsentRequestId();
-        consentRequestRemoveExtension.cridToRemove(crid);
-    }
-
     @Test
-    @DisplayName("Verify Creation Of ConsentRequest With Empty Vin")
-    @TmsLink("NS-1351")
-    void createConsentRequestWithEmptyVinTestPositiveTst() {
-        var expectedConsentRequestStatuses = new ConsentRequestStatus()
-                .approved(0)
-                .pending(0)
-                .revoked(0)
-                .expired(0)
-                .rejected(0);
+    @DisplayName("Success flow of consent request creation and getting consent request by ID")
+    void createAndGetConsentRequest() {
+        var crid = createConsentRequestWith(testConsentRequest);
 
-        consentRequestController.withConsumerToken();
-        var statusForConsentRequestByIdResponse = consentRequestController
-                .getStatusForConsentRequestById(crid);
-        new ResponseAssertion(statusForConsentRequestByIdResponse)
+        ConsentRequestResponse expectedResponse = new ConsentRequestResponse()
+                .consentRequestId(crid)
+                .additionalLinks(testConsentRequest.getAdditionalLinks())
+                .privacyPolicy(testConsentRequest.getPrivacyPolicy())
+                .consumerId(testConsentRequest.getConsumerId())
+                .providerId(testConsentRequest.getProviderId())
+                .containerId(testConsentRequest.getContainerId())
+                .containerName(testConsentRequest.getContainerId()) //todo bug?
+                .purpose(testConsentRequest.getPurpose())
+                .title(testConsentRequest.getTitle());
+
+        var consentRequestByIdResponse = consentRequestController
+                .withConsumerToken()
+                .getConsentRequestById(crid);
+        new ResponseAssertion(consentRequestByIdResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(expectedConsentRequestStatuses);
+                .responseIsEqualToObject(expectedResponse);
     }
 
     @Test
     @DisplayName("Verify Adding Vins To Empty ConsentRequest Via File")
     @TmsLink("NS-1382")
     void addVinsToEmptyConsentRequestViaFileTest() {
+        var crid = createConsentRequestWith(testConsentRequest);
+
         var testVin = VIN.generate(17);
         File testFileWithVINs = new VinsToFile(
                 testVin,
@@ -106,6 +100,17 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
         consentRequestRemoveExtension.fileWithVINsToRemove(testFileWithVINs);
+    }
+
+    private String createConsentRequestWith(ConsentRequestData targetConsentRequest) {
+        consentRequestController.withConsumerToken();
+        final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
+        var crid = new ResponseAssertion(actualResponse)
+                .statusCodeIsEqualTo(StatusCode.CREATED)
+                .bindAs(ConsentRequestIdResponse.class)
+                .getConsentRequestId();
+        consentRequestRemoveExtension.cridToRemove(crid);
+        return crid;
     }
 
 }

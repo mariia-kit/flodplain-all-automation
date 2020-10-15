@@ -7,6 +7,7 @@ mpConsumer:
   clientId: ha-test-app-1
   clientSecret: ha-test-secret-1
   type: MP
+  name: "OLP Market Place Consumer Realm - 1"
 
 #------------------MP Providers Credentials---------------------------------------------
 mpProvider:
@@ -17,5 +18,3 @@ mpProvider:
   clientId: ha-test-app-1
   clientSecret: ha-test-secret-1
   type: MP
-
-consumerName: "OLP Market Place Consumer Realm - 1"

@@ -4,21 +4,25 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.ConsentStatusController;
-import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
+import io.qameta.allure.Issue;
+import io.qameta.allure.Issues;
 import java.io.File;
 import java.util.List;
 
 
+@BMW
+@Issues({@Issue("OLPPORT-3250"), @Issue("OLPPORT-3251")})
 public class BaseBmwConsentTests extends BaseCMTest {
 
     private final ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
@@ -48,8 +52,8 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
     protected String createValidBmwConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
-        testContainer.resources = List.of("fuel");
-        String crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
+        String crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer)
+                .getConsentRequestId();
         testConsentRequestData.setContainerId(testContainer.getId());
         return crid;
     }

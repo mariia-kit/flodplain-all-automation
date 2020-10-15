@@ -19,7 +19,8 @@ public class User {
             realm,
             userId,
             clientId,
-            clientSecret;
+            clientSecret,
+            name;
     private UserType_NS type;
 
     public User(String email, String pass, String realm, String userId) {

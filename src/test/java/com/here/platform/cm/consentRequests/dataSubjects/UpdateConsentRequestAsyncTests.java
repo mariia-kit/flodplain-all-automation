@@ -12,7 +12,6 @@ import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.VinUpdateError;
@@ -91,6 +90,8 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         fuSleep();
         RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequest);
     }
+
+    //todo add test for 2mb file
 
     @Test
     @Disabled("cos of removing VINs is not working fine for this test")

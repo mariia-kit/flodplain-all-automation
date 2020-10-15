@@ -18,13 +18,13 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -123,6 +123,21 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         new ResponseAssertion(statusForConsentRequestByIdResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
+    }
+
+    @Test
+    @Disabled("Cos of https://saeljira.it.here.com/browse/NS-2802")
+    @DisplayName("Dublicated VINs test")
+    void dublicatedViNsTest() {
+        var testVin = VIN.generate(17);
+        var validVINs = new String[]{VIN.generate(17), testVin, testVin};
+
+        testFileWithVINs = new VinsToFile(validVINs).json();
+        consentRequestController.withConsumerToken(mpConsumer);
+        var addVinsResponse = consentRequestController
+                .addVinsToConsentRequest(crid, testFileWithVINs);
+
+        new ResponseAssertion(addVinsResponse).statusCodeIsEqualTo(StatusCode.OK);
     }
 
 }

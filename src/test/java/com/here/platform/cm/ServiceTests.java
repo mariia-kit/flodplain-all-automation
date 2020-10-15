@@ -9,6 +9,7 @@ import com.here.platform.cm.rest.model.Version;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.BaseService;
+import io.qameta.allure.Issue;
 import io.qameta.allure.Stories;
 import io.qameta.allure.Story;
 import java.io.FileOutputStream;
@@ -55,8 +56,8 @@ class ServiceTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Verify deep health check call")
-    @Stories({@Story(value = "NS-825")})
+    @DisplayName("Check healthDeep status of the consent service")
+    @Issue("NS-825")
     void deepHealthTest() {
         var actualHealthResponse = this.serviceController.deepHealth();
 

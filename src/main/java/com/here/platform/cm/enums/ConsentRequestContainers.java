@@ -12,10 +12,10 @@ import com.here.platform.ns.dto.Providers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -122,6 +122,13 @@ public enum ConsentRequestContainers {
             "S00I000M001OK", "no secret",
             List.of("mileage"),
             MPProviders.BMW_TEST
+    ),
+    BMW_DOORS_STATUS(
+            "doorsstatus", "bmwcardata_doors", "Status of doors",
+            "",
+            "Z00G010J992HM", StringUtils.EMPTY,
+            List.of("doorsstatus"),
+            MPProviders.BMW
     ),
     REFERENCE_NEW(
             "odometer", "odometer", "Automated Test Container",

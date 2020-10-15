@@ -132,7 +132,6 @@ public class AaaCall {
 
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
-                .filter(new AllureRestAssuredCustom("Add group to Policy:" + policyId))
                 .when()
                 .body(body)
                 .post(url)

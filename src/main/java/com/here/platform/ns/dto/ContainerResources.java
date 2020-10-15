@@ -53,7 +53,9 @@ public enum ContainerResources {
     oil(new ProviderResource("oil")),
     vehicles(new ProviderResource("vehicles")),
 
-    mileage(new ProviderResource("mileage"));
+    //BMW resources
+    mileage(new ProviderResource("mileage")),
+    doorsstatus(new ProviderResource("doorsstatus"));
 
     //TODO: add bmw resource if necessary
     //Electric Vehicle

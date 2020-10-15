@@ -23,14 +23,14 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers
+            .generateNew(targetApp.provider.getName());
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),
             testVin = dataSubject.getVin();
 
     protected File testFileWithVINs = null;
-
 
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
@@ -44,8 +44,10 @@ public class BaseConsentStatusTests extends BaseCMTest {
 
     protected String createValidConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
-        ConsentInfo consent = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer);
-        testConsentRequestData = new ConsentInfoToConsentRequestData(consent, targetApp.provider.getName(), targetApp.consumer.getRealm()).consentRequestData();
+        ConsentInfo consent = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer);
+        testConsentRequestData = new ConsentInfoToConsentRequestData(consent, targetApp.provider.getName(),
+                targetApp.consumer.getRealm()).consentRequestData();
         return consent.getConsentRequestId();
     }
 

@@ -6,7 +6,6 @@ import static com.codeborne.selenide.Selenide.switchTo;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -60,9 +59,10 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @Test
     @DisplayName("E2E create approve consent and get access token")
     void e2eTest() {
-        var consentRequest = ConsentRequestSteps
-                .createConsentRequestWithVINFor(providerApplication, dataSubject.getVin());
-
+        var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(
+                providerApplication,
+                dataSubject.getVin()
+        );
         crid = consentRequest.getConsentRequestId();
 
         var vin = dataSubject.getVin();
@@ -71,15 +71,12 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
         HereLoginSteps.loginDataSubject(dataSubject);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
         this.dataSubject.setBearerToken(getUICmToken());
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
         DaimlerLoginPage.loginDataSubjectOnDaimlerSite(dataSubject);
         DaimlerLoginPage.approveDaimlerScopesAndSubmit();
 
         SuccessConsentPageSteps.verifyFinalPage(consentRequest);
-
-        Selenide.clearBrowserCookies();
-        Selenide.clearBrowserLocalStorage();
 
         var accessTokenController = new AccessTokenController();
         accessTokenController.withConsumerToken();

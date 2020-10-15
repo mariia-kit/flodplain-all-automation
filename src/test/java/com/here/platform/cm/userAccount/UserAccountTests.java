@@ -34,7 +34,7 @@ public class UserAccountTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Get user account data forbidden with empty token")
+    @DisplayName("Negative flow of sending GET request to get user account data with empty token")
     void getUserAccountWithoutAuthorizationTest() {
         var userAccountResponse = userAccountController.userAccountGetInfo("");
 

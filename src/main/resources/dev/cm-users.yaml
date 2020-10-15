@@ -1,6 +1,6 @@
 daimlerApp:
-  clientId: 7ad8cbff-d257-4182-b41f-2a4afd013e47
-  clientSecret: 9d9b8e0a-04b3-4a78-aa8d-8143ccd0e6f3
+  clientId: 6788d1e1-effa-4899-b76f-4c905ed18d77
+  clientSecret: ybnndydkpLnCWGZrhxlHVKDnGbeSrItwamGKZMaSTNjyyrWjtYIVNDGXQgTCQftk
   callBackUrl: https://portal.platform.in.here.com/consent/oauth2/daimler/auth/callback
 
 dataSubj1:

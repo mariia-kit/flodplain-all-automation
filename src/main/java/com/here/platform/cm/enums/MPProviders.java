@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum MPProviders {
 
-    DAIMLER_EXPERIMENTAL("daimler_experimental", 18, "daimler_experimental", "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize", ""),
-    DAIMLER("daimler", 17, "daimler", "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize", ""),
+    DAIMLER_EXPERIMENTAL("daimler_experimental", 18, "daimler_experimental", "https://id.mercedes-benz.com/as/authorization.oauth2", "https://id.mercedes-benz.com/as/token.oauth2"),
+    DAIMLER("daimler", 17, "daimler", "https://id.mercedes-benz.com/as/authorization.oauth2", ""),
     DAIMLER_EXPERIMENTAL_REFERENCE("daimleR_experimental", 18, "daimler_experimental", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token"),
     DAIMLER_REFERENCE("daimleR", 17, "daimler", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token"),
     BMW_TEST("test-bmw", 17, "test-bmw", "", ""),
