@@ -155,7 +155,14 @@ public enum Containers {
                     "Vehicle mileage",
                     "fuel",
                     true, "")
-    );
+    ),
+    BMW_DOORS_STATUS(
+            new Container("doorsstatus", "bmwcardata_doors", Providers.BMW.getName(),
+                    "Status of doors",
+                    "doorsstatus",
+                    true, "")
+    )
+    ;
 
     private final Container container;
 

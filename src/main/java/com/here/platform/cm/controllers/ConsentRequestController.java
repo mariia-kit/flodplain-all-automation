@@ -16,12 +16,13 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     private final String consentRequestBasePath = "/consentRequests";
     private String consumerBearerToken = "";
 
+    @Step("Perform the next request to CM with Data Consumer '{consumer.realm}' token")
     public ConsentRequestController withConsumerToken(MPConsumers consumer) {
         this.consumerBearerToken = String.join(" ", "Bearer", consumer.getToken());
         return this;
     }
 
-    @Step
+    @Step("Create consent request with: {consentRequestBody}")
     public Response createConsentRequest(ConsentRequestData consentRequestBody) {
         Response response = consentServiceClient(consentRequestBasePath)
                 .body(consentRequestBody)
@@ -32,13 +33,19 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return response;
     }
 
-    @Step
+    @Step("Get Consent Request status by ID: {consentRequestId}")
     public Response getStatusForConsentRequestById(String consentRequestId) {
         return consentServiceClient(consentRequestBasePath)
                 .get("/{consentRequestId}/status", consentRequestId);
     }
 
-    @Step
+    @Step("Get Consent Request by ID: {consentRequestId}")
+    public Response getConsentRequestById(String consentRequestId) {
+        return consentServiceClient(consentRequestBasePath)
+                .get(consentRequestId);
+    }
+
+    @Step("Add VINs to Consent Request by ID: {consentRequestId}")
     @SneakyThrows
     public Response addVinsToConsentRequest(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
@@ -48,7 +55,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/addDataSubjects", consentRequestId);
     }
 
-    @Step
+    @Step("Asynchronously add VINs to Consent Request by ID: {consentRequestId}")
     @SneakyThrows
     public Response addVinsToConsentRequestAsync(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
@@ -58,8 +65,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/addDataSubjectsAsync", consentRequestId);
     }
 
-    @Step
-    @SneakyThrows
+    @Step("Remove VINs from Consent Request by ID: {consentRequestId}")
     public Response removeVinsFromConsentRequest(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")

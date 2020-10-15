@@ -15,14 +15,14 @@ public class BMWController extends BaseConsentService<BMWController> {
     }
 
 
-    @Step
+    @Step("Ping consent service status by BMW")
     public Response pingConsentServiceStatusByBMW() {
         return consentServiceClient(bmwBasePath)
                 .header("Authorization", bmwToken)
                 .get("/status/ping");
     }
 
-    @Step
+    @Step("Update clearance status with clearanceId: '{clearanceId}', with status: '{consentState}' by BMW")
     public Response setClearanceStatusByBMW(String clearanceId, String consentState) {
         return consentServiceClient(bmwBasePath)
                 .header("Authorization", bmwToken)

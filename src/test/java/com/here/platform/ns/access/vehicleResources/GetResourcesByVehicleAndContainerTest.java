@@ -6,6 +6,7 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
@@ -20,6 +21,7 @@ import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
+import io.qameta.allure.Issue;
 import io.restassured.http.Header;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -60,7 +62,9 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @Test
     @Tag("ignored-dev")
     @Tag("bmw_ns")
-    @DisplayName("Verify get resources by vehicle Id and container Id Successful BMW")
+    @BMW
+    @Issue("OLPPORT-3252")
+    @DisplayName("Positive Verify get BMW resources by vehicle Id and container Id")
     void verifyGetContainersDataRetrievedBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();
         Container container = Containers.generateNew(provider).withResourceNames("fuel");

@@ -105,7 +105,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
 
             fuSleep();
             var secondConsentRequestId = ConsentRequestSteps
-                    .createValidConsentRequest(ProviderApplications.REFERENCE_CONS_1, testVin, container2)
+                    .createValidConsentRequestWithNSOnboardings(ProviderApplications.REFERENCE_CONS_1, testVin, container2)
                     .getConsentRequestId();
             //second time with the same VIN
 

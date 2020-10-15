@@ -2,10 +2,8 @@ package com.here.platform.dataProviders.daimler.steps;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.refresh;
 import static com.codeborne.selenide.Selenide.sleep;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
@@ -18,12 +16,11 @@ public class DaimlerLoginPage {
     @Step("Login data subject on Mercedes.me site")
     public void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
         sleep(3000); //hotfix cos of FE developer rotation
-        Selenide.clearBrowserCookies();
-        Selenide.clearBrowserLocalStorage();
-        refresh();
-        $("[name=username]").setValue(dataSubject.getUserName());
+        $("#username").setValue(dataSubject.getUserName());
+        $("#continue").click();
+        $("#login-with-password").click();
         $("#password").setValue(dataSubject.getPass());
-        $("#ciam-weblogin-auth-login-button").click();
+        $("#confirm").click();
     }
 
     @Step("Accept consent scopes")

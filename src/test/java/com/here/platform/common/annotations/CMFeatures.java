@@ -83,4 +83,11 @@ public class CMFeatures {
 
     }
 
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Feature("BMW")
+    public @interface BMW {
+
+    }
+
 }

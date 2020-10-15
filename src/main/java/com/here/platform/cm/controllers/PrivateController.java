@@ -19,7 +19,6 @@ public class PrivateController extends BaseConsentService<PrivateController> {
             forbiddenToRemoveProviders = stream(MPProviders.values()).map(MPProviders::getName).collect(toList()),
             forbiddenToRemoveConsumers = stream(MPConsumers.values()).map(MPConsumers::getRealm).collect(toList());
 
-
     private RequestSpecification basePrivateController() {
         return consentServiceClient("private");
     }
@@ -63,12 +62,6 @@ public class PrivateController extends BaseConsentService<PrivateController> {
                 .delete("/consentRequest/{consentRequestId}", consentRequestId);
     }
 
-    public Response cleanUpEnvConsents() {
-        withCMToken();
-        return basePrivateController()
-                .delete("/consentRequests");
-    }
-
     private boolean isForbiddenToRemoveProvider(String providerId) {
         return this.forbiddenToRemoveProviders.contains(providerId.toLowerCase());
     }
@@ -81,10 +74,10 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         var forbiddenApplications = stream(ConsentRequestContainers.values());
 
         return providerApplication == null || forbiddenApplications.anyMatch(
-                containers -> containers.getId().equals(providerApplication.getContainer())
+                containers -> containers.getId().equalsIgnoreCase(providerApplication.getContainer())
                         && containers.getProvider().getName().equals(providerApplication.getProviderId())
-                        && providerApplication.getConsumerId().equals(MPConsumers.OLP_CONS_1.getRealm())
-                        && providerApplication.getConsumerId().equals("olp-here-dataeval"));
+                        && (providerApplication.getConsumerId().equalsIgnoreCase(MPConsumers.OLP_CONS_1.getRealm())
+                        || providerApplication.getConsumerId().equalsIgnoreCase("olp-here-dataeval")));
     }
 
 }

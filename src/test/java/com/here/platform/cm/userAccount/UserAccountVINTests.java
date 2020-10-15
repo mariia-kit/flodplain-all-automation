@@ -63,7 +63,7 @@ public class UserAccountVINTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Add several VINs to the User")
+    @DisplayName("Positive flow of attaching several VINs to the one User")
     void addSeveralVINsToUserTest() {
         var firstAddVINsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         userVINsToRemove.add(dataSubject.getVin());
@@ -114,7 +114,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
-    @DisplayName("Forbidden to add VIN without Bearer token")
+    @DisplayName("Fail flow of adding VIN without Bearer token")
     void forbiddenToAddVINWithoutBearerTokenTest() {
         var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), "");
         new ResponseAssertion(addVINResponse)

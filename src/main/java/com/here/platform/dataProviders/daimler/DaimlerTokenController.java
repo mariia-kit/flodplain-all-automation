@@ -6,26 +6,26 @@ import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.extern.java.Log;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Log
+@Deprecated //cos of migration daimler tests to UI checks
 public class DaimlerTokenController {
 
     private final static String
             CALLBACK_URL = ConsentPageUrl.getDaimlerCallbackUrl(),
-            MERSEDES_API_URL = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2",
-            LOGIN_MERSEDES_WL_URL = "https://login.secure.mercedes-benz.com/wl";
+            MERSEDES_API_URL = "https://id.mercedes-benz.com/";
 
     private final DataSubjects targetVehicle;
     private final ConsentRequestContainers container;
     private Cookies mercedesCookies;
-    private String sessionId, sessionData;
+    private String resume, requestInfo;
 
     public DaimlerTokenController(String targetVehicle, ConsentRequestContainers container) {
         this.targetVehicle = DataSubjects.getByVin(targetVehicle);
@@ -37,13 +37,13 @@ public class DaimlerTokenController {
         loginUser();
         loginConsent();
 
-        return authoriseConsentAndFetchAuthorizationCode();
+        return fetchAuthorizationCode();
     }
 
     private void authoriseClient() {
         var authorizeResponse = given()
                 .baseUri(MERSEDES_API_URL)
-                .basePath("authorize")
+                .basePath("/as/authorization.oauth2")
                 .params(
                         "client_id", container.clientId,
                         "response_type", "code",
@@ -56,22 +56,22 @@ public class DaimlerTokenController {
                 .then().extract().response();
         mercedesCookies = authorizeResponse.detailedCookies();
 
+        authorizeResponse.prettyPrint();
+
         String locationHeaderValue = authorizeResponse.getHeader("Location");
-        sessionId = fetchQueryParamsFromUrl(locationHeaderValue).getFirst("sessionID");
-        sessionData = fetchQueryParamsFromUrl(locationHeaderValue).getFirst("sessionData");
+        resume = fetchQueryParamsFromUrl(locationHeaderValue).getFirst("resume");
+        requestInfo = fetchQueryParamsFromUrl(locationHeaderValue).getFirst("request_info");
     }
 
     private void loginUser() {
         var loginResponse = given()
-                .baseUri(LOGIN_MERSEDES_WL_URL)
-                .basePath("/login")
+                .baseUri(MERSEDES_API_URL)
+                .basePath("/ciam/auth/login/pass")
                 .params(
-                        "SMAUTHREASON", "", "target", "", "acr_values", "", "t", "",
-                        "sessionID", sessionId,
-                        "sessionData", sessionData,
                         "username", targetVehicle.getUserName(),
                         "password", targetVehicle.getPass(),
-                        "app-id", "ONEAPI.PROD", "lang", "en_US")
+                        "rememberMe", false
+                )
                 .cookies(mercedesCookies)
                 .when().post()
                 .then().extract().response();
@@ -80,34 +80,23 @@ public class DaimlerTokenController {
     }
 
     private void loginConsent() {
-        var scopes = new HashMap<String, String>();
-        for (String scopeItem : container.scopeValue.split(" ")) {
-            scopes.put(String.format("scope:%s", scopeItem), "on");
-        }
-
         var consentResponse = given()
-                .baseUri(LOGIN_MERSEDES_WL_URL)
-                .basePath("/consent")
-                .formParams(
-                        "sessionData", sessionData, "sessionID", sessionId,
-                        "app-id", "ONEAPI.PROD", "lang", "en_US")
-                .formParams(scopes)
+                .baseUri(MERSEDES_API_URL)
+                .basePath("/ciam/auth/consent")
                 .cookies(mercedesCookies)
                 .redirects().follow(false)
+                .body(Map.of("grantedScopes", List.of(container.scopeValue.split(" "))))
                 .when().post()
                 .then().extract().response();
         mercedesCookies = consentResponse.detailedCookies();
-        sessionData = fetchSessionDataFromHtml(consentResponse);
     }
 
-    private String authoriseConsentAndFetchAuthorizationCode() {
+    private String fetchAuthorizationCode() {
         Response consentCodeCall = given()
                 .baseUri(MERSEDES_API_URL)
-                .basePath("/authorize/consent")
+                .basePath(resume)
                 .formParams(
-                        "action", "Grant",
-                        "sessionID", sessionId,
-                        "sessionData", sessionData
+                        "token", requestInfo
                 )
                 .cookies(mercedesCookies)
                 .redirects().follow(false)
@@ -128,11 +117,6 @@ public class DaimlerTokenController {
 
     private MultiValueMap<String, String> fetchQueryParamsFromUrl(String uri) {
         return UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
-    }
-
-    private String fetchSessionDataFromHtml(Response response) {
-        return StringUtils.substringBetween(response.asString(), "name=\"sessionData\" value=", ">")
-                .replace("\"", "").replace("'", "");
     }
 
 }

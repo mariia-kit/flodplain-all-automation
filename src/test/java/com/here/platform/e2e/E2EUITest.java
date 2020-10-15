@@ -19,6 +19,7 @@ import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.UserAccountExtension;
@@ -268,9 +269,10 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     @Test
+    @BMW
     @Tag("e2e_prod")
     @Tag("bmw_e2e")
-    @DisplayName("Simple happy path BMW E2E UI level")
+    @DisplayName("Positive BMW E2E flow of creating consent request via UI")
     void simpleHappyPathTestBMW() {
         DataProvider provider = Providers.BMW_TEST.getProvider();
         Container targetContainer = Containers.generateNew(provider).withResourceNames("fuel");

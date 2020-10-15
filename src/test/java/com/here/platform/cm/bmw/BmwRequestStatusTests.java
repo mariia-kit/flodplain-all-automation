@@ -44,7 +44,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
     @Test
     @Issue("NS-2427")
-    @DisplayName("BMW read status of consent service acceptability")
+    @DisplayName("Flow of the verifying of Consent Service status for the BMW")
     void pingConsentStatusByBMW() {
         var response = bmwController.pingConsentServiceStatusByBMW();
 
@@ -53,9 +53,8 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .responseIsEqualToObject(new Health().status("OK"));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[BMW] Positive flow of changing consent status of the current consent request from PENDING to {0}")
     @Issue("NS-2427")
-    @DisplayName("BMW set status of consent clearance")
     @EnumSource(BMWStatus.class)
     void setClearanceStatusByBMW(BMWStatus bmwStatus) {
         crid = createValidBmwConsentRequest();
@@ -87,11 +86,11 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     }
 
     @Test
-    @DisplayName("BMW set status of consent clearance multiple")
+    @DisplayName("Positive BMW flow of updating consent statuses for consent request with multiple VINs")
     void setClearanceStatusByBMWMultiple() {
         testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
-        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer).getConsentRequestId();
         ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin, testVin1);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
@@ -130,11 +129,11 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     }
 
     @Test
-    @DisplayName("Verify Adding Vins To ConsentRequest Async BMW")
+    @DisplayName("Async Verify adding vins to Consent request for BMW")
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-        crid = ConsentRequestSteps.createValidConsentRequest(targetApp, testVin, testContainer).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer).getConsentRequestId();
         testFileWithVINs = new VinsToFile(testVin1).json();
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)

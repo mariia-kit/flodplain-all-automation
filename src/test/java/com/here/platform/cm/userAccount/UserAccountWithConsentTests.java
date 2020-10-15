@@ -50,7 +50,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
         vinsToRemove.add(dataSubject.getVin());
 
-        targetConsentRequest = ConsentRequestSteps.createValidConsentRequest(targetApplication, dataSubject.getVin(), testContainer);
+        targetConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApplication, dataSubject.getVin(), testContainer);
         crid = targetConsentRequest.getConsentRequestId();
         ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
         fuSleep();
@@ -67,7 +67,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
     @Test
     @Issue("NS-1709")
-    @DisplayName("Forbidden to get consent with invalid token")
+    @DisplayName("Negative flow of sending GET request to get consent with invalid token")
     void isNotPossibleToGetConsentByInvalidTokenTest() {
         var userConsentsInState = userAccountController.getConsentsForUser(
                 "null", Map.of("consentRequestId", crid, "state", StateEnum.APPROVED)
@@ -113,7 +113,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Get consent request with 2 consents for single user")
+    @DisplayName("Get consent request with 2 consents for a user")
     void getConsentRequestWith2ConsentsForSingleUserTest() {
         var secondVin = VIN.generate(targetApplication.provider.vinLength);
         var secondLogin = dataSubject.getBearerToken();
@@ -139,7 +139,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Get all consent requests for the user")
+    @DisplayName("Success flow of sending GET request to return all consent requests per specific User")
     void getListOfConsentRequestForUserTest() {
         var userConsents = userAccountController.getConsentsForUser(
                 dataSubject.getBearerToken(),
