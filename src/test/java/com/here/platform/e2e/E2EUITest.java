@@ -250,7 +250,7 @@ public class E2EUITest extends BaseE2ETest {
 
         this.targetDataSubject.setBearerToken(getUICmToken());
 
-        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(targetDataSubject);
+        DaimlerLoginPage.loginDataSubjectOnDaimlerSiteOld(targetDataSubject);
         DaimlerLoginPage.approveDaimlerScopesAndSubmit();
 
         SuccessConsentPageSteps.verifyFinalPage(consentRequest);

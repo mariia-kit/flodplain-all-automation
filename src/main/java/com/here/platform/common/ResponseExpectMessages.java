@@ -3,6 +3,7 @@ package com.here.platform.common;
 import io.restassured.response.Response;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
+import org.apache.http.HttpStatus;
 
 
 public class ResponseExpectMessages {
@@ -16,6 +17,15 @@ public class ResponseExpectMessages {
     public String expectedStatuesCode(StatusCode expectedStatusCode) {
         return new StringBuilder().append("\n")
                 .append("Expected status code: ").append(expectedStatusCode.code).append("\n")
+                .append("Actual status code: ").append(targetResponse.statusCode()).append("\n")
+                .append("Actual response body:").append("\n")
+                .append(targetResponse.body().asString()).append("\n")
+                .toString();
+    }
+
+    public String expectedStatuesCode(int expectedStatusCode) {
+        return new StringBuilder().append("\n")
+                .append("Expected status code: ").append(expectedStatusCode).append("\n")
                 .append("Actual status code: ").append(targetResponse.statusCode()).append("\n")
                 .append("Actual response body:").append("\n")
                 .append(targetResponse.body().asString()).append("\n")

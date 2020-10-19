@@ -5,6 +5,8 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
@@ -35,8 +37,8 @@ public class MarketplaceManageListingCall {
         String subsId = subscribeStart(listingHrn);
         negotiate(subsId);
         ack_prov(subsId);
-        ack_cons(subsId);
-        mpDelayStep();
+        int taskId = ack_cons(subsId);
+        waitForAsyncTask(taskId, MP_CONSUMER);
         return subsId;
     }
 
@@ -168,7 +170,7 @@ public class MarketplaceManageListingCall {
     }
 
     @Step("Acknowledge subscription {subsId} by Consumer")
-    private void ack_cons(String subsId) {
+    private int ack_cons(String subsId) {
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
         String url = baseMpUrl + "/subscriptions/" + subsId + "/ack";
         String body = "{}";
@@ -176,6 +178,7 @@ public class MarketplaceManageListingCall {
                 + subsId, url, providerToken, body);
         Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(),
                 "Acknowledge subscription {subsId} by Consumer failed!");
+        return resp.jsonPath().getInt("taskId");
     }
 
     @Step("Begin cancellation of subscription {subsId}")
@@ -260,6 +263,37 @@ public class MarketplaceManageListingCall {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void mpDelayMinute() {
+        try {
+            Thread.sleep(1*60*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void waitForAsyncTask(int taskId, Users requester) {
+        String url = baseMpUrl + "/tasks/" + taskId;
+        String token = "Bearer " + requester.getToken();
+        int maxCount = 30;
+        do {
+            maxCount--;
+            Response resp = RestHelper
+                    .get("Wait for asynk task to complete " + taskId, url, token);
+            if (resp.getStatusCode() == HttpStatus.SC_OK) {
+                if (resp.jsonPath().getString("status").equals("SUCCESS")) {
+                    break;
+                }
+                try {
+                    Thread.sleep(20*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new RuntimeException("Error waiting for MP async task " + taskId + "to complete!");
+            }
+        } while (maxCount > 1);
     }
 
     @Step("Delete all Provider data from MP.")

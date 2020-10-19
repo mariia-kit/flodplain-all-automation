@@ -1,5 +1,6 @@
 package com.here.platform.cm.bmw;
 
+
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;

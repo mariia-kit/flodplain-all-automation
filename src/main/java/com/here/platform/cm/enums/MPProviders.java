@@ -34,7 +34,7 @@ public enum MPProviders {
         return tokenUrl;
     }
 
-    public MPProviders findByProviderId(String providerId) {
+    public static MPProviders findByProviderId(String providerId) {
         return Stream.of(MPProviders.values())
                 .filter(prov -> prov.getName().equals(providerId))
                 .findFirst()

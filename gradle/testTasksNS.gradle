@@ -160,7 +160,7 @@ task zephyrSyncTaskNS(type: JavaExec) {
     println "Current user and service: $login $cycle"
     args = [
             "--username=${login}", "--password=${pass}", "--reportType=allure", "--projectKey=NS",
-            "--releaseVersion=Neutral Server v.0.4",
+            "--releaseVersion=NSPOSTMVP",
             "--testCycle=${cycleValue}",
             "--jiraUrl=https://saeljira.it.here.com/rest/",
             "--reportPath=build/allure-results/",

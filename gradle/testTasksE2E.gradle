@@ -18,7 +18,7 @@ class TestE2E extends Test {
         forkEvery = 20
         minHeapSize = "32m"
         maxHeapSize = "256m"
-        
+
         if (System.properties.containsKey('jira_sync')) {
             def login = System.getProperty("jira_login") ?: jira_login_default
             def pass = System.getProperty("jira_pass") ?: jira_pass_default

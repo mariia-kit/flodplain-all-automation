@@ -64,6 +64,23 @@ task smokeCMTests(type: TestCM) {
     dependsOn "testDataGeneration"
 }
 
+task fePreDevTests(type: TestCM) {
+    failFast true
+    def dynamicUIUrl = System.getenv("DYNAMIC_ENV_URL")
+    
+    println "Will be used dynamic url: $dynamicEnvUrl"
+    println "Will be used dynamic ui url: $dynamicUIUrl"
+    
+    systemProperty "dynamicUrl", dynamicEnvUrl
+    systemProperty "env", "dev"
+    
+    useJUnitPlatform {
+        includeTags "dynamic_ui"
+    }
+
+    dependsOn "testDataGeneration"
+}
+
 task initTokens(type: JavaExec) {
     onlyIf { !isHotDeploy }
 

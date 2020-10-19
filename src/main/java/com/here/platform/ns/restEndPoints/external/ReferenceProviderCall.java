@@ -6,6 +6,7 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
+import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import io.restassured.response.Response;
 import java.util.Arrays;

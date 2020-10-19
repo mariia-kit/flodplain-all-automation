@@ -98,7 +98,7 @@ public class NeutralServerResponseAssertion {
     @Step("Expected response code equals to '{responseCode}'")
     public NeutralServerResponseAssertion expectedCode(int responseCode) {
         Assertions.assertEquals(responseCode, response.getStatusCode(),
-                new ResponseExpectMessages(response).expectedStatuesCode(StatusCode.byValue(responseCode)));
+                new ResponseExpectMessages(response).expectedStatuesCode(responseCode));
         return this;
     }
 

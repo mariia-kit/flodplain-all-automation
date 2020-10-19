@@ -7,12 +7,14 @@ import static com.codeborne.selenide.Selenide.switchTo;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.AccessTokenController;
+import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -59,13 +61,11 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @Test
     @DisplayName("E2E create approve consent and get access token")
     void e2eTest() {
-        var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(
-                providerApplication,
-                dataSubject.getVin()
-        );
+        var vin = dataSubject.getVin();
+        ConsentInfo consentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
         crid = consentRequest.getConsentRequestId();
 
-        var vin = dataSubject.getVin();
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
 
