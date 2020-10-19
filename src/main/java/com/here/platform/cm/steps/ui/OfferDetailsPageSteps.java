@@ -26,8 +26,13 @@ public class OfferDetailsPageSteps {
     }
 
     @Step("Accept with HERE conditions and continue to data provider site")
-    private void acceptAndContinueConsent() {
+    public void acceptAndContinueConsent() {
         $(byText("Accept and continue")).click();
+    }
+
+    @Step("View all offers click")
+    public void viewAllOffers() {
+        $(byText("View all offers")).click();
     }
 
 }

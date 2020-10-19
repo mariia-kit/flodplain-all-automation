@@ -25,7 +25,7 @@ import java.util.List;
 @Issues({@Issue("OLPPORT-3250"), @Issue("OLPPORT-3251")})
 public class BaseBmwConsentTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+    protected final ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected static Faker faker = new Faker();
 
@@ -52,6 +52,7 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
     protected String createValidBmwConsentRequest() {
         testFileWithVINs = new VinsToFile(testVin).json();
+        testContainer.resources = List.of("fuel");
         String crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer)
                 .getConsentRequestId();
         testConsentRequestData.setContainerId(testContainer.getId());

@@ -1,7 +1,17 @@
 package com.here.platform.e2e;
 
 import static com.here.platform.ns.dto.Users.CONSUMER;
+import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 
+import com.here.platform.cm.controllers.BMWController;
+import com.here.platform.cm.enums.BMWStatus;
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.Health;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.common.ResponseAssertion;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.controller.ReferenceProviderController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -39,7 +49,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -47,7 +57,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -104,7 +114,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .revokeConsent()
@@ -113,7 +123,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentRevokeError(crid));
     }
@@ -128,7 +138,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndCanceledSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -136,7 +146,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
@@ -290,7 +300,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createApplicationForContainer()
                 .createConsentRequest()
                 .getConsentRequestId();
@@ -320,7 +330,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         //daimler mb:user:pool:reader%20mb:vehicle:status:general
         //reference mb:vehicle:status:general%20mb:user:pool:reader
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createApplicationForContainer()
                 .createConsentRequest()
                 .getConsentRequestId();
@@ -333,4 +343,97 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Assertions.assertTrue(oauthUrl.contains(scope), "Scope " + scope + " not detected in OAuth url:" + oauthUrl);
     }
 
+
+    @Test
+    @DisplayName("BMW Request Data Provider vehicle data without approve")
+    void getRequestVehicleDataBMW() {
+        DataProvider provider = Providers.BMW_TEST.getProvider();
+        Container container = Containers.generateNew(provider).withResourceNames("fuel");
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .getConsentRequestId();
+
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withCampaignId(crid)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("BMW Request Data Provider vehicle data after revoke")
+    void getRequestVehicleDataBMWRevoke() {
+        DataProvider provider = Providers.BMW_TEST.getProvider();
+        Container container = Containers.generateNew(provider).withResourceNames("fuel");
+        String bmwContainer = "S00I000M001OK";
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .getConsentRequestId();
+        var clearanceId = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer).jsonPath()
+                .get("clearanceId").toString();
+        new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.REVOKED.name());
+
+        var response = new ContainerDataController()
+                .withToken(MP_CONSUMER)
+                .withCampaignId(crid)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("BMW Request Data Provider vehicle data, two consumers on same resource")
+    void getRequestVehicleDoubleDataBMW() {
+
+        DataProvider provider = Providers.BMW_TEST.getProvider();
+        Container container = Containers.generateNew(provider).withResourceNames("fuel");
+        String bmwContainer1 = "S00I000M001OK";
+        String bmwContainer2 = "vehiclestatus";
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+
+
+        String crid1 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .getConsentRequestId();
+        var clearanceId1 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer1).jsonPath()
+                .get("clearanceId").toString();
+        new BMWController().setClearanceStatusByBMW(clearanceId1, BMWStatus.REVOKED.name());
+
+        String crid2 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .getConsentRequestId();
+        var clearanceId2 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer2).jsonPath()
+                .get("clearanceId").toString();
+        new BMWController().setClearanceStatusByBMW(clearanceId2, BMWStatus.APPROVED.name());
+
+        OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
+        onboard.onboardTestProviderApplication(
+                container.getName(),
+                bmwContainer2,
+                targetApp.container.clientSecret);
+        var response1 = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withCampaignId(crid1)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+
+        var response2 = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withCampaignId(crid2)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response2)
+                .expectedCode(HttpStatus.SC_UNAUTHORIZED);
+    }
 }

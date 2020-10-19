@@ -4,8 +4,10 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.LoggerHelper;
 import com.here.platform.ns.helpers.UniqueId;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.antlr.v4.runtime.atn.RangeTransition;
 
 
 @Getter
@@ -79,6 +81,12 @@ public enum Providers {
         dataProvider.addResource(ContainerResources.ODOMETER);
         LoggerHelper.logStep("Generate new DataProvider:" + dataProvider.toString());
         return dataProvider;
+    }
+
+    public static Providers getByProviderId(String providerId) {
+        return Stream.of(Providers.values())
+                .filter(prov -> prov.getProvider().getName().equals(providerId))
+                .findFirst().orElseThrow(() -> new RuntimeException("No provider with id found:" + providerId));
     }
 
     public String getName() {

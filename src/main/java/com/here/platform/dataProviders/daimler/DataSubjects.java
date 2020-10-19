@@ -98,4 +98,8 @@ public enum DataSubjects {
         return new File(String.format("%s/%s.token", FileIO.basePath, dataSubject.getVin()));
     }
 
+    public void clearBearerToken() {
+        vinFile().delete();
+    }
+
 }

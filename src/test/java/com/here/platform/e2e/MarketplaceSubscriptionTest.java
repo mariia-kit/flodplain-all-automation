@@ -34,12 +34,12 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
     @DisplayName("Verify Subscription Successful")
     void verifySubscription() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_ODOMETER.getContainer();
+        Container container = Containers.generateNew(Providers.DAIMLER_REFERENCE.getName());
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -47,7 +47,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withCampaignId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -173,7 +173,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListing(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -193,7 +193,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -213,7 +213,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();

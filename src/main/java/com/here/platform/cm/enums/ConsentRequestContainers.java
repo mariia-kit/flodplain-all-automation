@@ -204,6 +204,7 @@ public enum ConsentRequestContainers {
         mockContainer.name = container.getName();
         mockContainer.scopeValue = container.getScope();
         mockContainer.containerDescription = container.getDescription();
+        mockContainer.provider = MPProviders.findByProviderId(providerName);
 
         return mockContainer;
     }

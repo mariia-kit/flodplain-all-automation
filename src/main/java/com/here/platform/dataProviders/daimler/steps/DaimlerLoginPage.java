@@ -23,6 +23,14 @@ public class DaimlerLoginPage {
         $("#confirm").click();
     }
 
+    @Step("Login data subject on Mercedes.me site")
+    public void loginDataSubjectOnDaimlerSiteOld(DataSubjects dataSubject) {
+        sleep(3000); //hotfix cos of FE developer rotation
+        $("#name").setValue(dataSubject.getUserName());
+        $("#password").setValue(dataSubject.getPass());
+        $("#ciam-weblogin-auth-login-button").click();
+    }
+
     @Step("Accept consent scopes")
     public void approveDaimlerScopesAndSubmit() {
         for (SelenideElement scope : $$("[name*='scope:mb']")) {

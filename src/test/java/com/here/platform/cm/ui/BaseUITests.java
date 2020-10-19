@@ -12,6 +12,8 @@ import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VinsToFile;
@@ -58,7 +60,7 @@ public class BaseUITests extends BaseCMTest {
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(ProviderApplications.DAIMLER_CONS_1.provider.getName());
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
