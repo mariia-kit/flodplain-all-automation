@@ -11,6 +11,8 @@ public class CmConfig {
 
     private String consentPageUrl;
 
+    private String consentPageUrlDynamic;
+
     private String qaTestDataMarker;
 
     private String bmwClearanceSecret;

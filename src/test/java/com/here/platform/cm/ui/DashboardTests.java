@@ -122,7 +122,9 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(crid);
 
         open(Configuration.baseUrl + crid);
+
         HereLoginSteps.loginDataSubject(dataSubject);
+
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 
         OfferDetailsPageSteps.viewAllOffers();

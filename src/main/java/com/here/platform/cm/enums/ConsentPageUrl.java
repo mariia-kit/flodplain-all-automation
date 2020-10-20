@@ -4,6 +4,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 
 import com.here.platform.common.config.Conf;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 
 @AllArgsConstructor
@@ -14,7 +15,12 @@ public class ConsentPageUrl {
     }
 
     public static String getEnvUrlRoot() {
-        return Conf.cm().getConsentPageUrl();
+        var dynamicEnvUrl = System.getProperty("dynamicUrl");
+        if (StringUtils.isNotBlank(dynamicEnvUrl)) {
+            return Conf.cm().getConsentPageUrlDynamic();
+        } else {
+            return Conf.cm().getConsentPageUrl();
+        }
     }
 
     public static String getDaimlerCallbackUrl() {
