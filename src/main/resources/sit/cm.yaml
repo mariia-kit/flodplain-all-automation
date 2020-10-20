@@ -5,6 +5,8 @@ serviceUrl: https://sit.consent.api.platform.in.here.com
 #----ConsentPageUrl---
 consentPageUrl: https://platform.in.here.com/consent/
 
+consentPageUrlDynamic: https://pre-dev-web.consent.api.platform.in.here.com/
+
 qaTestDataMarker: qa_test_
 
 bmwClearanceSecret: 5a2404bede9252a1951a5b7783d6f872edc6377ca5faaf1afe
