@@ -110,7 +110,7 @@ public class ProviderApplicationTests extends BaseCMTest {
                 .onboardApplication(testProviderApplication);
 
         new ResponseAssertion(onboardApplication)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST); //todo should be NOT_FOUND and E503112
+                .statusCodeIsEqualTo(StatusCode.NOT_FOUND);
     }
 
     @Test
