@@ -53,7 +53,7 @@ public class Container {
     }
 
     public String generateScope() {
-        if (this.getDataProviderName().toLowerCase().equals("daimler")) {
+        if (this.getDataProviderName().toLowerCase().equals("daimler") || this.getDataProviderName().equals(Providers.DAIMLER_EXPERIMENTAL.getName())) {
             return "mb:user:pool:reader mb:vehicle:status:general";
         } else {
             return getId() + ":" + getResourceNames();

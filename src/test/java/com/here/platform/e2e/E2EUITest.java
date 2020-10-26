@@ -1,6 +1,7 @@
 package com.here.platform.e2e;
 
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.sleep;
 import static com.here.platform.cm.ui.BaseUITests.getUICmToken;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
@@ -130,7 +131,7 @@ public class E2EUITest extends BaseE2ETest {
     @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_FUEL.getContainer();
+        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_LOCATION.getContainer();
         ConsentInfo consentRequest =
                 new ConsentInfo()
                         .title(faker.company().buzzword())
@@ -216,7 +217,7 @@ public class E2EUITest extends BaseE2ETest {
                     .startSubscription()
                     .confirmSubscriptionActivation();
         });
-
+        sleep(5*60*1000);
         var consentRequestUrl = new AtomicReference<>("");
         step("Create consent request by Data Consumer", () -> {
             var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();

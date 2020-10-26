@@ -5,6 +5,8 @@ serviceUrl: http://localhost:8080
 #----ConsentPageUrl---
 consentPageUrl: http://localhost:8080/consent/
 
+consentPageUrlDynamic: ""
+
 qaTestDataMarker: qa_test_
 
 bmwClearanceSecret: 5a2404bede9252a1951a5b7783d6f872edc6377ca5faaf1afe

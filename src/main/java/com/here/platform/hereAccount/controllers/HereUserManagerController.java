@@ -4,6 +4,7 @@ package com.here.platform.hereAccount.controllers;
 import com.github.javafaker.Faker;
 import com.here.platform.common.JConvert;
 import com.here.platform.common.config.Conf;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import lombok.Data;
 import org.apache.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Assertions;
 //todo implent extension to use for DEV and SIT environment
 public class HereUserManagerController extends BaseHereAccountController {
 
+    @Step("Create HERE user {hereUser.email}:{hereUser.password}")
     public void createHereUser(HereUser hereUser) {
         Assertions.assertEquals("here", hereUser.getRealm(),
                 "Not all realms allow to create users without invite. Please, use 'here'");
@@ -21,6 +23,7 @@ public class HereUserManagerController extends BaseHereAccountController {
         acceptHereTerms(hereUser, reAcceptanceToken);
     }
 
+    @Step("Delete HERE user {hereUser.email}")
     public void deleteHereUser(HereUser hereUser) {
         String token = getHereCurrentToken(hereUser);
         deleteHereAccount("Bearer " + token);

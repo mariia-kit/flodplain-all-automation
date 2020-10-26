@@ -12,13 +12,11 @@ import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
-import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
-import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
@@ -54,7 +52,6 @@ public class BaseUITests extends BaseCMTest {
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
-    final DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
     @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
@@ -68,7 +65,7 @@ public class BaseUITests extends BaseCMTest {
         sleep(1000);
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();
-        return "Bearer " + storage.getItem("CM_TOKEN");
+        return "Bearer " + storage.getItem("cmToken");
     }
 
     @BeforeEach

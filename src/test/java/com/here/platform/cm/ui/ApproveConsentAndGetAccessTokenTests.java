@@ -7,6 +7,8 @@ import static com.codeborne.selenide.Selenide.switchTo;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.AccessTokenController;
+import com.here.platform.cm.controllers.HERETokenController;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -20,12 +22,21 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
+import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
+import com.here.platform.hereAccount.controllers.HereUserManagerController;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Step;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,29 +50,40 @@ import org.springframework.web.util.UriComponentsBuilder;
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     private static final String staticPageUrl = ConsentPageUrl.getEnvUrlRoot() + "purpose/info";
-    protected ProviderApplications providerApplication = ProviderApplications.DAIMLER_CONS_1;
+    protected ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
     private final MPConsumers mpConsumer = providerApplication.consumer;
-
+    private ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(providerApplication.provider.getName());
+    private final List<String> cridsToRemove = new ArrayList<>();
+    HereUser hereUser = null;
+    DataSubject dataSubjectIm;
     private String crid;
 
     //todo refactor as extension https://www.baeldung.com/junit-5-extensions
     @BeforeEach
     void beforeEach() {
-        var privateBearer = dataSubject.getBearerToken();
-        userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
+        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
+        dataSubjectIm = new DataSubject();
+        dataSubjectIm.setEmail(hereUser.getEmail());
+        dataSubjectIm.setPass(hereUser.getPassword());
+        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
+        new HereUserManagerController().createHereUser(hereUser);
     }
 
     @AfterEach
     void afterEach() {
-        userAccountController.deleteVINForUser(dataSubject.getVin(), dataSubject.getBearerToken());
-        RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(dataSubject.getVin()).json());
+        var privateBearer =  new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
+        if (hereUser != null) {
+            new HereUserManagerController().deleteHereUser(hereUser);
+        }
     }
 
 
     @Test
     @DisplayName("E2E create approve consent and get access token")
+    @Tag("dynamic_ui")
     void e2eTest() {
-        var vin = dataSubject.getVin();
+        var vin = dataSubjectIm.getVin();
         ConsentInfo consentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
         crid = consentRequest.getConsentRequestId();
@@ -69,12 +91,13 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
 
-        HereLoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-        this.dataSubject.setBearerToken(getUICmToken());
+        cridsToRemove.add(vin);
+
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
-        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(dataSubject);
-        DaimlerLoginPage.approveDaimlerScopesAndSubmit();
+
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(vin);
 
         SuccessConsentPageSteps.verifyFinalPage(consentRequest);
 
@@ -91,29 +114,29 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @Test
     @DisplayName("Verify Purpose page")
     void verifyPurposePageTest() {
-        var mpConsumer = MPConsumers.OLP_CONS_1;
-        var container = testContainer;
+        var mpConsumer = providerApplication.consumer;
         //todo after implemented ConsentInfo.privacyPolicy/additionalLinks fields refactor to
         // var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(providerApplication, dataSubject.vin)
-        var consentRequest = generateConsentData(mpConsumer);
-        crid = requestConsentAddVin(mpConsumer, consentRequest, dataSubject.getVin());
+        //var consentRequest = generateConsentData(mpConsumer);
+        var consentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
 
         String purposePageUrl = UriComponentsBuilder.fromUriString(staticPageUrl)
-                .queryParam("consumerId", consentRequest.getConsumerId())
-                .queryParam("containerId", consentRequest.getContainerId())
+                .queryParam("consumerId", consentRequest.getConsumerName())
+                .queryParam("containerId", consentRequest.getContainerName())
                 .toUriString();
 
         open(purposePageUrl);
         fuSleep();
         verifyStaticPurposeInfoPage();
         openPurposePageLink();
-        HereLoginSteps.loginDataSubject(dataSubject);
-        verifyPurposeInfoPage(mpConsumer, consentRequest, container);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+        verifyPurposeInfoPage(mpConsumer, consentRequest, testContainer);
     }
 
     @Step
     private void verifyStaticPurposeInfoPage() {
-        switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative'] div.notification > span")
                 .shouldNot(Condition.appear);
         $(".container-content h4").shouldHave(Condition.text("Purpose of the request"));
@@ -142,9 +165,8 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentRequestData consentRequest,
+    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentInfo consentRequest,
             ConsentRequestContainers container) {
-        switchTo().window("HERE Consent"); //todo code duplication
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
         $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));

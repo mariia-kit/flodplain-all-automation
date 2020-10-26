@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import com.codeborne.selenide.SelenideElement;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 
@@ -32,7 +33,17 @@ public class DaimlerLoginPage {
     }
 
     @Step("Accept consent scopes")
+    @SneakyThrows
     public void approveDaimlerScopesAndSubmit() {
+        for (SelenideElement scope : $$("#legaltext0")) {
+            scope.click();
+        }
+        Thread.sleep(1000);
+        $("#continue").click();
+    }
+
+    @Step("Accept consent scopes")
+    public void approveDaimlerScopesAndSubmitOld() {
         for (SelenideElement scope : $$("[name*='scope:mb']")) {
             scope.click();
         }

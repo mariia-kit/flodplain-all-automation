@@ -28,7 +28,7 @@ public class ConsentPageUrl {
     }
 
     public static String getAcceptedOffersUrl() {
-        return getEnvUrlRoot() + "offers#accepted";
+        return getEnvUrlRoot() + "offers?type=accepted";
     }
 
 }

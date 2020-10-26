@@ -10,6 +10,7 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
@@ -20,9 +21,12 @@ import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.hereAccount.controllers.HereUserManagerController;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
@@ -41,25 +45,31 @@ public class DashboardTests extends BaseUITests {
 
     private final List<String> cridsToRemove = new ArrayList<>();
     private final ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
-    DataSubjects dataSubject = DataSubjects.getNextVinLength(providerApplication.provider.vinLength);
+    HereUser hereUser = null;
+    DataSubject dataSubjectIm;
 
     @BeforeEach
     void beforeEach() {
-        var privateBearer = dataSubject.getBearerToken();
-        Stream.of(DataSubjects.values()).forEach(subj ->
-        userAccountController.deleteVINForUser(subj.getVin(), privateBearer));
+        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
+        dataSubjectIm = new DataSubject();
+        dataSubjectIm.setEmail(hereUser.getEmail());
+        dataSubjectIm.setPass(hereUser.getPassword());
+        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
+        new HereUserManagerController().createHereUser(hereUser);
     }
 
     @AfterEach
     void afterEach() {
-        this.dataSubject.clearBearerToken();
-        var privateBearer = dataSubject.getBearerToken();
-        userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
+        var privateBearer =  new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
         for (String crid : cridsToRemove) {
             RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
                     crid,
-                    new VinsToFile(dataSubject.getVin()).json()
+                    new VinsToFile(dataSubjectIm.getVin()).json()
             );
+        }
+        if (hereUser != null) {
+            new HereUserManagerController().deleteHereUser(hereUser);
         }
     }
 
@@ -73,7 +83,7 @@ public class DashboardTests extends BaseUITests {
     @DisplayName("Verify Dashboard page")
     void verifyDashBoardTest() {
         var mpConsumer = providerApplication.consumer;
-        var vin = dataSubject.getVin();
+        var vin = dataSubjectIm.getVin();
         ConsentRequestContainers testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var firstConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
@@ -86,23 +96,24 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(consentRequestId2);
 
         open(ConsentPageUrl.getEnvUrlRoot());
-        HereLoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
+        String token = getUICmToken();
 
         $(".offers-list").waitUntil(Condition.visible, 10000);
         openDashboardNewTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, PENDING);
         verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, PENDING);
 
-        ConsentFlowSteps.approveConsentForVIN(consentRequestId1, testContainer, vin);
-        ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin);
+        ConsentFlowSteps.approveConsentForVIN(consentRequestId1, testContainer, vin, token);
+        ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin, token);
 
         openDashboardAcceptedTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED);
         verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, APPROVED);
 
-        ConsentFlowSteps.revokeConsentForVIN(consentRequestId1, vin);
-        ConsentFlowSteps.revokeConsentForVIN(consentRequestId2, vin);
+        ConsentFlowSteps.revokeConsentForVIN(consentRequestId1, vin, token);
+        ConsentFlowSteps.revokeConsentForVIN(consentRequestId2, vin, token);
 
         openDashboardRevokedTab();
         verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, REVOKED);
@@ -113,7 +124,7 @@ public class DashboardTests extends BaseUITests {
     @DisplayName("Verify Open Dashboard page")
     @Tag("dynamic_ui")
     void verifyOpenDashBoardTest() {
-        var vin = dataSubject.getVin();
+        var vin = dataSubjectIm.getVin();
         ConsentRequestContainers testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var firstConsentRequest = ConsentRequestSteps
@@ -123,7 +134,7 @@ public class DashboardTests extends BaseUITests {
 
         open(Configuration.baseUrl + crid);
 
-        HereLoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 
@@ -162,8 +173,7 @@ public class DashboardTests extends BaseUITests {
         offerBox.$(".offer-description").shouldHave(Condition.text(consentRequest.getPurpose()));
         offerBox.$(".vin-code").shouldHave(Condition.text(new VIN(vinNumber).label()));
         if (!PENDING.equals(status)) {
-            String expectedText = APPROVED.equals(status) ? "ACCEPTED" : "REVOKED";
-            offerBox.$("lui-status").shouldHave(Condition.text(expectedText));
+            offerBox.$("lui-status").shouldHave(Condition.text(status.name()));
         } else {
             offerBox.$("lui-status").shouldNotBe(Condition.visible);
         }

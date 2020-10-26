@@ -6,12 +6,15 @@ import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
@@ -28,16 +31,18 @@ import org.junit.jupiter.api.Test;
 @DisplayName("User Account")
 public class UserAccountUITests extends BaseUITests {
 
-    private final ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
+    protected ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+    private ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    private DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
     private final List<String> vinsToRemove = new ArrayList<>();
     private ConsentInfo consentRequestInfo;
     private String crid;
 
     @BeforeEach
     void createApproveConsentForUser() {
-        consentRequestInfo = ConsentRequestSteps.createConsentRequestWithVINFor(targetApp, dataSubject.getVin());
+        consentRequestInfo = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubject.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
-        userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
         vinsToRemove.add(dataSubject.getVin());
 
         consentRequestInfo.resources(targetApp.container.resources);
