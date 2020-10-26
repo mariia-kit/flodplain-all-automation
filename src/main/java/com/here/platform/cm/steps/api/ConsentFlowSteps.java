@@ -20,8 +20,13 @@ public class ConsentFlowSteps {
 
     @Step
     public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN) {
-        String validCode;
         String token = DataSubjects.getByVin(targetVIN).getBearerToken();
+        approveConsentForVIN(crid, container, targetVIN, token);
+    }
+
+    @Step
+    public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN, String token) {
+        String validCode;
 
         if (container.getProvider().equals(MPProviders.DAIMLER_EXPERIMENTAL_REFERENCE)) {
             validCode = ReferenceTokenController
@@ -49,14 +54,17 @@ public class ConsentFlowSteps {
 
     @Step
     public void revokeConsentForVIN(String crid, String targetVIN) {
+        var privateBearer = DataSubjects.getByVin(targetVIN).getBearerToken();
+        revokeConsentForVIN(crid, targetVIN, privateBearer);
+    }
+
+    @Step
+    public void revokeConsentForVIN(String crid, String targetVIN, String token) {
         var consentToRevoke = ConsentStatusController.NewConsent.builder()
                 .consentRequestId(crid)
                 .vinHash(new VIN(targetVIN).hashed())
                 .build();
-
-        var privateBearer = DataSubjects.getByVin(targetVIN).getBearerToken();
-        var revokeResponse = new ConsentStatusController().revokeConsent(consentToRevoke, privateBearer);
+        var revokeResponse = new ConsentStatusController().revokeConsent(consentToRevoke, token);
         StepExpects.expectOKStatusCode(revokeResponse);
     }
-
 }

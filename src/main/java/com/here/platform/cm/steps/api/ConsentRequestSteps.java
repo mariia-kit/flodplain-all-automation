@@ -48,6 +48,7 @@ public class ConsentRequestSteps {
         Steps.createRegularContainer(container);
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProvider();
+        onboard.onboardValidConsumer();
         onboard.onboardTestProviderApplication(
                 container.getName(),
                 targetApp.container.clientId,

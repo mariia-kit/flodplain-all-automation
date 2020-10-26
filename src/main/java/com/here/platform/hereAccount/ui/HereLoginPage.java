@@ -4,6 +4,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 
 
 public class HereLoginPage {
@@ -49,6 +50,15 @@ public class HereLoginPage {
 
     public HereLoginPage clickSignIn() {
         $("#signInBtn").click();
+        return this;
+    }
+
+    @SneakyThrows
+    public HereLoginPage aproveConsentIfPresent() {
+        Thread.sleep(5000);
+        if ($("#authorizeFlowBtn").isDisplayed()) {
+            $("#authorizeFlowBtn").click();
+        }
         return this;
     }
 

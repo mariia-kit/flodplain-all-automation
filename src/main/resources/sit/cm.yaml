@@ -5,7 +5,7 @@ serviceUrl: https://sit.consent.api.platform.in.here.com
 #----ConsentPageUrl---
 consentPageUrl: https://platform.in.here.com/consent/
 
-consentPageUrlDynamic: https://pre-dev-web.consent.api.platform.in.here.com/
+consentPageUrlDynamic: ""
 
 qaTestDataMarker: qa_test_
 

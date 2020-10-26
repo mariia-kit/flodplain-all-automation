@@ -3,6 +3,7 @@ package com.here.platform.hereAccount.ui;
 import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.Selenide;
+import com.here.platform.common.DataSubject;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
@@ -16,11 +17,17 @@ public class HereLoginSteps {
 
     @Step("Login data subject")
     public void loginDataSubject(DataSubjects dataSubjects) {
+        loginDataSubject(dataSubjects.dataSubject);
+    }
+
+    @Step("Login data subject")
+    public void loginDataSubject(DataSubject dataSubject) {
         loginPage
                 .isLoaded()
-                .fillUserEmail(dataSubjects.getUserName())
-                .fillUserPassword(dataSubjects.getPass())
-                .clickSignIn();
+                .fillUserEmail(dataSubject.getEmail())
+                .fillUserPassword(dataSubject.getPass())
+                .clickSignIn()
+                .aproveConsentIfPresent();
     }
 
     @Step("Login marketplace user")
