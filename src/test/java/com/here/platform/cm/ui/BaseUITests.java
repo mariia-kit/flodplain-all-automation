@@ -1,6 +1,5 @@
 package com.here.platform.cm.ui;
 
-import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 import com.codeborne.selenide.Configuration;
@@ -14,10 +13,7 @@ import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
-import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
-import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.io.File;
@@ -61,8 +57,6 @@ public class BaseUITests extends BaseCMTest {
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
-        //todo extract to IPlatformPages
-        sleep(1000);
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();
         return "Bearer " + storage.getItem("cmToken");
@@ -88,17 +82,6 @@ public class BaseUITests extends BaseCMTest {
                 .privacyPolicy(faker.internet().url())
                 .purpose(faker.commerce().productName() + "_purpose")
                 .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote() + "_title");
-    }
-
-    @Step
-    String requestConsentAddVin(MPConsumers mpConsumer, ConsentRequestData consentRequest, String... vinNumbers) {
-        consentRequestController.withConsumerToken();
-        var consentRequestId = consentRequestController.createConsentRequest(consentRequest)
-                .as(ConsentRequestIdResponse.class).getConsentRequestId();
-
-        consentRequestController.withConsumerToken(mpConsumer);
-        consentRequestController.addVinsToConsentRequest(consentRequestId, new VinsToFile(vinNumbers).json());
-        return consentRequestId;
     }
 
 }

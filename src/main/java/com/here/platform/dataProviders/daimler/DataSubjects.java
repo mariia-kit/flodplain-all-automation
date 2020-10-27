@@ -64,7 +64,7 @@ public enum DataSubjects {
         var dataSubjectsArray = Stream.of(values())
                 .filter(subj -> subj.getVin().length() == vinLength)
                 .collect(Collectors.toList());
-        if (atomicInteger.getAcquire() > dataSubjectsArray.size() - 2) {
+        if (atomicInteger.getAcquire() >= dataSubjectsArray.size() - 1) {
             atomicInteger.set(-1);
         }
         return dataSubjectsArray.get(atomicInteger.incrementAndGet());

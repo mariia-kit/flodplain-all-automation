@@ -24,4 +24,9 @@ public class SuccessConsentPageSteps {
         $(".container-offers.current .offer-box .status").shouldHave(Condition.text("APPROVED"));
     }
 
+    @Step("Open all offers from success page")
+    public void openAllOffersLink() {
+        $(".container-offers-link").click();
+    }
+
 }

@@ -79,6 +79,7 @@ task fePreDevTests(type: TestCM) {
     }
 
     dependsOn "testDataGeneration"
+    finalizedBy "allureAggregatedReportCM"
 }
 
 task initTokens(type: JavaExec) {

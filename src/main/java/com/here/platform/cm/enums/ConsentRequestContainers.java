@@ -132,11 +132,11 @@ public enum ConsentRequestContainers {
     ),
     REFERENCE_NEW(
             "odometer", "odometer", "Automated Test Container",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:vehicle:mbdata:payasyoudrive",
             Conf.ns().getReferenceApp().getClientId(),
             Conf.ns().getReferenceApp().getClientSecret(),
             List.of("odometer"),
-            MPProviders.DAIMLER_EXPERIMENTAL_REFERENCE
+            MPProviders.DAIMLER_REFERENCE
     );
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(0);

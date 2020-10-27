@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.common.DataSubject;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
 import java.util.List;
@@ -15,20 +16,24 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Log
-@Deprecated //cos of migration daimler tests to UI checks
 public class DaimlerTokenController {
 
     private final static String
             CALLBACK_URL = ConsentPageUrl.getDaimlerCallbackUrl(),
             MERSEDES_API_URL = "https://id.mercedes-benz.com/";
 
-    private final DataSubjects targetVehicle;
+    private final DataSubject targetVehicle;
     private final ConsentRequestContainers container;
     private Cookies mercedesCookies;
     private String resume, requestInfo;
 
     public DaimlerTokenController(String targetVehicle, ConsentRequestContainers container) {
-        this.targetVehicle = DataSubjects.getByVin(targetVehicle);
+        this.targetVehicle = DataSubjects.getByVin(targetVehicle).dataSubject;
+        this.container = container;
+    }
+
+    public DaimlerTokenController(DataSubject targetVehicle, ConsentRequestContainers container) {
+        this.targetVehicle = targetVehicle;
         this.container = container;
     }
 
@@ -68,7 +73,7 @@ public class DaimlerTokenController {
                 .baseUri(MERSEDES_API_URL)
                 .basePath("/ciam/auth/login/pass")
                 .params(
-                        "username", targetVehicle.getUserName(),
+                        "username", targetVehicle.getEmail(),
                         "password", targetVehicle.getPass(),
                         "rememberMe", false
                 )
@@ -117,6 +122,23 @@ public class DaimlerTokenController {
 
     private MultiValueMap<String, String> fetchQueryParamsFromUrl(String uri) {
         return UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
+    }
+
+    public static String createDaimlerToken(String authCode, String clientId, String clientSecret, String callbackUrl) { ;
+        var authorizeResponse = given()
+                .baseUri(MERSEDES_API_URL)
+                .basePath("/as/token.oauth2")
+                .auth()
+                .preemptive().basic(clientId, clientSecret)
+                .header("content-type", "application/x-www-form-urlencoded")
+                .formParam("grant_type", "authorization_code")
+                .formParam("code", authCode)
+                .formParam("redirect_uri", callbackUrl)
+                .when().post()
+                .then()
+                .statusCode(200)
+                .extract().response();
+        return authorizeResponse.jsonPath().get("access_token") + ":" + authorizeResponse.jsonPath().get("refresh_token");
     }
 
 }

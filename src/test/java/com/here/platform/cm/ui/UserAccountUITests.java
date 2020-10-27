@@ -2,19 +2,33 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
+import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.pages.DashBoardPage;
+import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
+import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.VIN;
+import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
+import com.here.platform.hereAccount.controllers.HereUserManagerController;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
@@ -33,26 +47,30 @@ public class UserAccountUITests extends BaseUITests {
 
     protected ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     private ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
-    private DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
     private final List<String> vinsToRemove = new ArrayList<>();
     private ConsentInfo consentRequestInfo;
     private String crid;
+    HereUser hereUser = null;
+    DataSubject dataSubjectIm;
 
     @BeforeEach
-    void createApproveConsentForUser() {
-        consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubject.getVin(), testContainer);
-        crid = consentRequestInfo.getConsentRequestId();
-        vinsToRemove.add(dataSubject.getVin());
+    void beforeEach() {
+        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
+        dataSubjectIm = new DataSubject();
+        dataSubjectIm.setEmail(hereUser.getEmail());
+        dataSubjectIm.setPass(hereUser.getPassword());
+        dataSubjectIm.setVin(VIN.generate(targetApp.provider.vinLength));
+        new HereUserManagerController().createHereUser(hereUser);
 
-        consentRequestInfo.resources(targetApp.container.resources);
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, dataSubject.getVin());
+
     }
 
     @AfterEach
-    void cleanUp() {
-        for (String vin : vinsToRemove) {
-            userAccountController.deleteVINForUser(vin, dataSubject.getBearerToken());
+    void afterEach() {
+        var privateBearer =  new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, privateBearer));
+        if (hereUser != null) {
+            new HereUserManagerController().deleteHereUser(hereUser);
         }
     }
 
@@ -60,10 +78,18 @@ public class UserAccountUITests extends BaseUITests {
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent request link for registered user")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
+        consentRequestInfo = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+        crid = consentRequestInfo.getConsentRequestId();
+        vinsToRemove.add(dataSubjectIm.getVin());
+
+        consentRequestInfo.resources(targetApp.container.resources);
+        String token = new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, dataSubjectIm.getVin(), token);
+
         open(crid);
-        HereLoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
         $(".container-offers.current").waitUntil(Condition.visible, 10000);
-        dataSubject.setBearerToken(getUICmToken());
         $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
         $("lui-status").shouldHave(Condition.textCaseSensitive("ACCEPTED"));
         $(".offer-box").click();
@@ -75,18 +101,52 @@ public class UserAccountUITests extends BaseUITests {
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent and proceed with new vehicle")
     void openSecondTimeApprovedConsentAndProceedWithNewVehicleTest() {
+        consentRequestInfo = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+        crid = consentRequestInfo.getConsentRequestId();
+        vinsToRemove.add(dataSubjectIm.getVin());
+
+        open(Configuration.baseUrl + crid);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+        String token = getUICmToken();
+
         var secondVIN = VIN.generate(targetApp.provider.vinLength);
-        userAccountController.attachVinToUserAccount(secondVIN, dataSubject.getBearerToken());
+        userAccountController.attachVinToUserAccount(secondVIN, token);
         ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, secondVIN);
         vinsToRemove.add(secondVIN);
 
+        closeWebDriver();
+
         open(crid);
-        HereLoginSteps.loginDataSubject(dataSubject);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
 
-        $(".container-offers.current").waitUntil(Condition.visible, 10000);
+        new DashBoardPage().isLoaded().openDashboardNewTab()
+                .verifyConsentOfferTab(1, targetApp.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
+                .verifyConsentOfferTab(0, targetApp.consumer, consentRequestInfo, secondVIN, PENDING);
+    }
 
-        dataSubject.setBearerToken(getUICmToken());
-        $(".vin-code", 1).shouldHave(Condition.text(new VIN(secondVIN).label()));
+    @Test
+    @DisplayName("Open UI with vehicle already attached to account")
+    void openSecondTimeWithVehicleTest() {
+        consentRequestInfo = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+        crid = consentRequestInfo.getConsentRequestId();
+        vinsToRemove.add(dataSubjectIm.getVin());
+
+        open(Configuration.baseUrl + crid);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequestInfo);
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
+        SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
+
+        closeWebDriver();
+
+        open(crid);
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
     }
 
 }
