@@ -15,7 +15,7 @@ versionPattern: "1.\\d.\\d.\\d+"
 realm: here-dev
 
 #------------------Marketplace target--------------------
-marketplaceMock: true
+marketplaceMock: false
 
 #------------------Consent Manager Target Endpoint---------------------------------------------
 consentMock: true
@@ -28,8 +28,8 @@ refProviderUrl: https://reference-data-provider.ost.solo-experiments.com
 
 #------------------Daimler App Credentials--------------------------------------------------
 daimlerApp:
-  clientId: 88440bf1-2fff-42b6-8f99-0510b6b5e6f8
-  clientSecret: 2d839912-c5e6-4cfb-8543-9a1bed38efe6
+  clientId: 0f75cb55-8ed2-4e6c-9aee-39814b040d26
+  clientSecret: tNZeeNEChBCyyurafYrVGCjnVpLrJNfsuggQUtlfiCremlLxSZiuqxGiTTfbkaqi
   callBackUrl: https://platform.in.here.com/consent/oauth2/daimler/auth/callback
 
 referenceApp:

@@ -28,7 +28,7 @@ public class ConsentFlowSteps {
     public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN, String token) {
         String validCode;
 
-        if (container.getProvider().equals(MPProviders.DAIMLER_EXPERIMENTAL_REFERENCE)) {
+        if (container.getProvider().equals(MPProviders.DAIMLER_REFERENCE)) {
             validCode = ReferenceTokenController
                     .produceConsentAuthCode(targetVIN, container.getId() + ":general");
         } else {

@@ -5,7 +5,9 @@ import com.github.javafaker.Faker;
 import com.here.platform.common.JConvert;
 import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
+import io.restassured.http.Cookies;
 import io.restassured.response.Response;
+import java.util.List;
 import lombok.Data;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -69,6 +71,15 @@ public class HereUserManagerController extends BaseHereAccountController {
                 .post()
                 .then()
                 .statusCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    public void acceptCMConsent(Cookies cookie) {
+        hereAccountClient("/api/account/save-consent")
+                .body(new JConvert(new AcceptConsentRequest()).toJson())
+                .cookies(cookie)
+                .post()
+                .then()
+                .statusCode(HttpStatus.SC_CREATED);
     }
 
 
@@ -179,6 +190,18 @@ public class HereUserManagerController extends BaseHereAccountController {
             clientSecret = user.getClientSecret();
         }
 
+    }
+
+    @Data
+    public static class AcceptConsentRequest {
+        String realm, clientId;
+        List<String> scope;
+
+        public AcceptConsentRequest() {
+            realm = "HERE";
+            clientId = "yEx4GXjPeJtfJKmKOFU5";
+            scope = List.of("openid", "email", "profile", "readwrite:ha");
+        }
     }
 
 }

@@ -1,37 +1,31 @@
 package com.here.platform.cm.ui;
 
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.sleep;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.SelenideElement;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.VINEnteringPage;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
+import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
-import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("Verify Dashboard UI")
 @Tag("ui")
+@Tag("dynamic_ui")
 public class DashboardTests extends BaseUITests {
 
     private final List<String> cridsToRemove = new ArrayList<>();
@@ -73,11 +68,7 @@ public class DashboardTests extends BaseUITests {
         }
     }
 
-    //todo add test for offers opening
-
     //todo add tests to approve and revoke consents from dashboard
-
-    //todo add test for new  Data Subject registration on HERE after open consent request URL and delete created account
 
     @Test
     @DisplayName("Verify Dashboard page")
@@ -100,29 +91,33 @@ public class DashboardTests extends BaseUITests {
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         String token = getUICmToken();
 
-        $(".offers-list").waitUntil(Condition.visible, 10000);
-        openDashboardNewTab();
-        verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, PENDING);
-        verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, PENDING);
+        new DashBoardPage()
+                .isLoaded()
+                .openDashboardNewTab()
+                .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, PENDING)
+                .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, PENDING);
 
         ConsentFlowSteps.approveConsentForVIN(consentRequestId1, testContainer, vin, token);
         ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin, token);
 
-        openDashboardAcceptedTab();
-        verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED);
-        verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, APPROVED);
+        new DashBoardPage()
+                .isLoaded()
+                .openDashboardAcceptedTab()
+                .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED)
+                .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, APPROVED);
 
         ConsentFlowSteps.revokeConsentForVIN(consentRequestId1, vin, token);
         ConsentFlowSteps.revokeConsentForVIN(consentRequestId2, vin, token);
 
-        openDashboardRevokedTab();
-        verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, REVOKED);
-        verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, REVOKED);
+        new DashBoardPage()
+                .isLoaded()
+                .openDashboardRevokedTab()
+                .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, REVOKED)
+                .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, REVOKED);
     }
 
     @Test
     @DisplayName("Verify Open Dashboard page")
-    @Tag("dynamic_ui")
     void verifyOpenDashBoardTest() {
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainers testContainer1 = ConsentRequestContainers
@@ -139,44 +134,45 @@ public class DashboardTests extends BaseUITests {
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 
         OfferDetailsPageSteps.viewAllOffers();
-        $(".offers-list").waitUntil(Condition.visible, 10000);
+        new DashBoardPage().isLoaded();
     }
 
-    @Step
-    private void openDashboardNewTab() {
-        sleep(3000); //hotfix cos of FE developer rotation
-        $("lui-tab[data-cy='new']").click();
-    }
+    @Test
+    @DisplayName("Verify Revoke thru Dashboard page")
+    void verifyRevokeDashBoardTest() {
+        var vin = dataSubjectIm.getVin();
+        ConsentRequestContainers testContainer1 = ConsentRequestContainers
+                .generateNew(providerApplication.provider.getName());
+        var consentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
+        var crid = consentRequest.getConsentRequestId();
+        cridsToRemove.add(crid);
 
-    @Step
-    private void openDashboardRevokedTab() {
-        sleep(3000); //hotfix cos of FE developer rotation
-        $("lui-tab[data-cy='revoked']").click();
-        $("lui-tab[data-cy='revoked']").click(); //hotfix cos of FE developer rotation
-    }
+        open(Configuration.baseUrl + crid);
 
-    @Step
-    private void openDashboardAcceptedTab() {
-        sleep(3000); //hotfix cos of FE developer rotation
-        $("lui-tab[data-cy='accepted']").click();
-    }
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
 
-    @Step
-    private void verifyConsentOfferTab(int index,
-            MPConsumers mpConsumer, ConsentInfo consentRequest,
-            String vinNumber, ConsentInfo.StateEnum status
-    ) {
-        //TODO reuse consent request id to find offer box after 04.05
-        SelenideElement offerBox = $("div.offer-box", index).shouldBe(Condition.visible);
-        offerBox.$(".offer-title").shouldHave(Condition.text(consentRequest.getTitle()));
-        offerBox.$(".provider-name").shouldHave(Condition.text(mpConsumer.getConsumerName()));
-        offerBox.$(".offer-description").shouldHave(Condition.text(consentRequest.getPurpose()));
-        offerBox.$(".vin-code").shouldHave(Condition.text(new VIN(vinNumber).label()));
-        if (!PENDING.equals(status)) {
-            offerBox.$("lui-status").shouldHave(Condition.text(status.name()));
-        } else {
-            offerBox.$("lui-status").shouldNotBe(Condition.visible);
-        }
+        new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
+
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(vin);
+        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+        SuccessConsentPageSteps.openAllOffersLink();
+
+        new DashBoardPage()
+                .isLoaded()
+                .openDashboardAcceptedTab()
+                .openConsentRequestOfferBox(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
+        OfferDetailsPageSteps.revokeConsent();
+        OfferDetailsPageSteps.revokeConsentPopupYes();
+
+        new DashBoardPage()
+                .isLoaded()
+                .openDashboardRevokedTab()
+                .verifyConsentOfferTab(0, providerApplication.consumer, consentRequest, vin, REVOKED)
+                .openConsentRequestOfferBox(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
     }
 
 }
