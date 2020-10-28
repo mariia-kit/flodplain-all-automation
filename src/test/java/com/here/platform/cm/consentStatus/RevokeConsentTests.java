@@ -42,7 +42,6 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
     @Test
     @DisplayName("Verify revoke of ConsentRequest")
-    @Disabled("Bug fix required NS-2805")
     void revokeConsentRequestPositiveTest() {
         new UserAccountController().attachVinToUserAccount(testVin, dataSubject.getBearerToken());
 
