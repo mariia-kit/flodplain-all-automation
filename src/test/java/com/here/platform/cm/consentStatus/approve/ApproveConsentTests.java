@@ -43,7 +43,6 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Approve Consent GetStatus")
     @Tag("cm_prod")
-    @Disabled("Bug fix required NS-2805")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
 

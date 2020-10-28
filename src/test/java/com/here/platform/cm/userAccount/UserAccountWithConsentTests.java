@@ -46,13 +46,15 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
-        var addVins = userAccountController.attachVinToUserAccount(dataSubject.getVin(), dataSubject.getBearerToken());
+        var vin = VIN.generate(targetApplication.provider.vinLength);
+        String token = dataSubject.getBearerToken();
+        var addVins = userAccountController.attachVinToUserAccount(vin, token);
         new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
-        vinsToRemove.add(dataSubject.getVin());
+        vinsToRemove.add(vin);
 
-        targetConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApplication, dataSubject.getVin(), testContainer);
+        targetConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
         crid = targetConsentRequest.getConsentRequestId();
-        ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, dataSubject.getVin());
+        ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, vin, token);
         fuSleep();
     }
 
@@ -81,7 +83,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @Issue("NS-1709")
     @DisplayName("Forbidden to get consent by not owner")
     void isNotPossibleToGetByNotOwnerUserConsentTest() {
-        var anotherDataSubject = DataSubjects.getNextBy18VINLength();
+        var anotherDataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
         var anotherToken = anotherDataSubject.getBearerToken();
         userAccountController.attachVinToUserAccount(anotherDataSubject.getVin(), anotherToken);
 

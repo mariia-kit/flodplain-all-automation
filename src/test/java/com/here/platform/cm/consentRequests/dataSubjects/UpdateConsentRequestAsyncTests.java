@@ -94,7 +94,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     //todo add test for 2mb file
 
     @Test
-    @Disabled("cos of removing VINs is not working fine for this test")
+    //@Disabled("cos of removing VINs is not working fine for this test")
     @DisplayName("Verify Adding Vins To ConsentRequest Async")
     void addVinsToConsentRequestTestAsync() {
         testFileWithVINs = new VinsToFile(vin1).json();
@@ -106,12 +106,14 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class)
                 .getConsentRequestAsyncUpdateInfoUrl();
+        fuSleep();
 
         Assertions.assertThat(updateInfoUrl)
                 .isNotEmpty()
                 .startsWith(ConsentManagementServiceUrl.getEnvUrl() + consentRequestAsyncUpdateInfo);
         String asyncId = StringUtils.substringAfter(updateInfoUrl, consentRequestAsyncUpdateInfo);
 
+        consentRequestController.withConsumerToken();
         new ResponseAssertion(consentRequestController.getConsentRequestAsyncUpdateInfo(asyncId))
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
