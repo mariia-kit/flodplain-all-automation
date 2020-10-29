@@ -3,6 +3,7 @@ package com.here.platform.cm.steps.api;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.dataAdapters.ConsentRequestToConsentInfo;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -44,7 +45,7 @@ public class ConsentRequestSteps {
 
     @Step("Onboard provider with containers on NS and CM, and create consent request")
     public ConsentInfo createValidConsentRequestWithNSOnboardings(ProviderApplications targetApp, String testVin,
-            ConsentRequestContainers container) {
+            ConsentRequestContainer container) {
         Steps.createRegularContainer(container);
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProvider();

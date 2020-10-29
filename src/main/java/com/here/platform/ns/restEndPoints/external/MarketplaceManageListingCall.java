@@ -299,8 +299,10 @@ public class MarketplaceManageListingCall {
     @Step("Delete all Provider data from MP.")
     public void providerCleanUp() {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
-        String url = baseMpUrl + "/admin/provider_cleanup";
-        RestHelper.post("Delete all MP data", url, providerToken, "");
+        String url = baseMpUrl + "/admin/providerCleanup";
+        RestHelper.post("Delete all MP data", url, providerToken, "{\n"
+                + "  \"resourcesToKeep\": []\n"
+                + "}");
     }
 
 }

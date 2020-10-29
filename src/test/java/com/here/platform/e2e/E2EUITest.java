@@ -10,12 +10,14 @@ import static io.qameta.allure.Allure.step;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
@@ -32,6 +34,7 @@ import com.here.platform.mp.models.CreateInvite;
 import com.here.platform.mp.pages.ConsumerConsentRequestPage;
 import com.here.platform.mp.pages.ConsumerListingPage;
 import com.here.platform.mp.pages.ConsumerSubscriptionPage;
+import com.here.platform.mp.pages.ConsumerSubscriptionsListPage;
 import com.here.platform.mp.pages.CreateListingPage;
 import com.here.platform.mp.pages.CreateListingPage.ListingType;
 import com.here.platform.mp.pages.ListingsListPage;
@@ -140,7 +143,8 @@ public class E2EUITest extends BaseE2ETest {
                         .containerName(targetContainer.getName())
                         .containerDescription(targetContainer.getDescription())
                         .resources(List.of(targetContainer.getResourceNames()))
-                        .vinLabel(new VIN(targetDataSubject.getVin()).label());
+                        .vinLabel(new VIN(targetDataSubject.getVin()).label())
+                        .privacyPolicy(faker.internet().domainName());
 
         var listingName = "[E2E test] " + faker.company().buzzword();
 
@@ -217,9 +221,12 @@ public class E2EUITest extends BaseE2ETest {
                     .startSubscription()
                     .confirmSubscriptionActivation();
         });
-        sleep(5*60*1000);
+
         var consentRequestUrl = new AtomicReference<>("");
         step("Create consent request by Data Consumer", () -> {
+            new ConsumerSubscriptionsListPage().isLoaded()
+                    .waitSubscriptionWithName(targetContainer.getResourceNames())
+                    .openSubscriptionWithName(targetContainer.getResourceNames());
             var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();
             subscriptionId.set(getSubscriptionIdFromUrl());
 
@@ -227,6 +234,7 @@ public class E2EUITest extends BaseE2ETest {
                     .createConsentRequest()
                     .fillConsentRequestTitle(consentRequest.getTitle())
                     .fillConsentRequestDescription(consentRequest.getPurpose())
+                    .fillPolicyLinks(consentRequest.getPrivacyPolicy())
                     .attachFileWithVINs(new VinsToFile(targetDataSubject.getVin()).csv())
                     .saveConsentRequest();
 

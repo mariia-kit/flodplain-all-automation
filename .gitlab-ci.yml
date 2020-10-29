@@ -55,6 +55,8 @@ stages:
       - "${REPORT_URL}/"
       - build/allure-results/
     when: always
+    reports:
+      junit: build/test-results/**/TEST-*.xml
     expire_in: 1 week
   allow_failure: false
 

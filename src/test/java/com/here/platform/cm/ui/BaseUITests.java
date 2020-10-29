@@ -9,6 +9,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -53,7 +54,7 @@ public class BaseUITests extends BaseCMTest {
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(ProviderApplications.DAIMLER_CONS_1.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(ProviderApplications.DAIMLER_CONS_1.provider.getName());
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
@@ -76,9 +77,9 @@ public class BaseUITests extends BaseCMTest {
 
     ConsentRequestData generateConsentData(MPConsumers mpConsumer) {
         return new ConsentRequestData()
-                .providerId(testContainer.provider.getName())
+                .providerId(testContainer.getProvider().getName())
                 .consumerId(mpConsumer.getRealm())
-                .containerId(testContainer.id)
+                .containerId(testContainer.getId())
                 .privacyPolicy(faker.internet().url())
                 .purpose(faker.commerce().productName() + "_purpose")
                 .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote() + "_title");

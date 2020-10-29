@@ -2,6 +2,7 @@ package com.here.platform.ns.helpers;
 
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.provider.ContainerController;
@@ -90,7 +91,7 @@ public class Steps {
     }
 
     @Step("Create regular Container for CM {container.id} for provider {container.provider.name}")
-    public static void createRegularContainer(ConsentRequestContainers container) {
+    public static void createRegularContainer(ConsentRequestContainer container) {
         Container cont = new Container(container.getId(),
                 container.getName(),
                 container.getProvider().getName(),

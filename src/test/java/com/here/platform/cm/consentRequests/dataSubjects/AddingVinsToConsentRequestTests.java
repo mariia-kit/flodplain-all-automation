@@ -3,6 +3,7 @@ package com.here.platform.cm.consentRequests.dataSubjects;
 import static com.here.platform.cm.enums.CMErrorResponse.CONSENT_REQUEST_UPDATE;
 
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
@@ -35,14 +36,14 @@ import org.junit.jupiter.api.Test;
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
+    private final ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
             .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.id);
+            .containerId(testContainer.getId());
     private String crid;
     private File testFileWithVINs = null;
 
@@ -53,7 +54,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 testConsentRequest.getConsumerId(),
                 testContainer
         );
-        Steps.createRegularContainer(new Container(testContainer.id,
+        Steps.createRegularContainer(new Container(testContainer.getId(),
                 testContainer.getId(),
                 testContainer.getProvider().getName(),
                 testContainer.getContainerDescription(),

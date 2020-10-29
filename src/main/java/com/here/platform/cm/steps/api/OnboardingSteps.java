@@ -4,12 +4,12 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.ns.dto.Container;
 import io.qameta.allure.Step;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class OnboardingSteps {
     public static void onboardApplicationProviderAndConsumer(
             String providerId,
             String consumerId,
-            ConsentRequestContainers providerApplication
+            ConsentRequestContainer providerApplication
     ) {
         var onboardingSteps = new OnboardingSteps(providerId, consumerId);
         onboardingSteps.onboardTestProvider();
@@ -51,8 +51,8 @@ public class OnboardingSteps {
     }
 
     @Step
-    public void onboardTestProviderApplication(ConsentRequestContainers container) {
-        onboardTestProviderApplication(container.id, container.clientId, container.clientSecret);
+    public void onboardTestProviderApplication(ConsentRequestContainer container) {
+        onboardTestProviderApplication(container.getId(), container.getClientId(), container.getClientSecret());
     }
 
     @Step("Onboard application for current provide for {containerId}")

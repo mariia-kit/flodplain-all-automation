@@ -68,9 +68,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .consumerName(mpConsumer.getConsumerName())
                 .state(StateEnum.APPROVED)
                 .revokeTime(null)
-                .containerName(testContainer.name)
-                .containerDescription(testContainer.containerDescription)
-                .resources(testContainer.resources)
+                .containerName(testContainer.getName())
+                .containerDescription(testContainer.getContainerDescription())
+                .resources(testContainer.getResources())
                 .additionalLinks(testConsentRequestData.getAdditionalLinks())
                 .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                 .vinLabel(new VIN(testVin).label());

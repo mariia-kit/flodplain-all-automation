@@ -6,6 +6,7 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -26,8 +27,6 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -57,14 +55,14 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
 
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())
             .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.id);
+            .containerId(testContainer.getId());
     private String crid;
     private File testFileWithVINs = null;
 
@@ -81,7 +79,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 targetApp.provider.getName(),
                 targetApp.consumer.getConsumerName(),
                 targetApp.consumer.getRealm(),
-                testContainer.id)
+                testContainer.getId())
                 .getConsentRequestId();
     }
 
@@ -106,6 +104,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class)
                 .getConsentRequestAsyncUpdateInfoUrl();
+        fuSleep();
         fuSleep();
 
         Assertions.assertThat(updateInfoUrl)
