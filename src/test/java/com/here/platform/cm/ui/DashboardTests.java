@@ -8,6 +8,7 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.DashBoardPage;
@@ -75,12 +76,12 @@ public class DashboardTests extends BaseUITests {
     void verifyDashBoardTest() {
         var mpConsumer = providerApplication.consumer;
         var vin = dataSubjectIm.getVin();
-        ConsentRequestContainers testContainer1 = ConsentRequestContainers
+        ConsentRequestContainer testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var firstConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
         var consentRequestId1 = firstConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId1);
-        ConsentRequestContainers testContainer2 = ConsentRequestContainers
+        ConsentRequestContainer testContainer2 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var secondConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer2);
         var consentRequestId2 = secondConsentRequest.getConsentRequestId();
@@ -120,7 +121,7 @@ public class DashboardTests extends BaseUITests {
     @DisplayName("Verify Open Dashboard page")
     void verifyOpenDashBoardTest() {
         var vin = dataSubjectIm.getVin();
-        ConsentRequestContainers testContainer1 = ConsentRequestContainers
+        ConsentRequestContainer testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var firstConsentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
@@ -141,7 +142,7 @@ public class DashboardTests extends BaseUITests {
     @DisplayName("Verify Revoke thru Dashboard page")
     void verifyRevokeDashBoardTest() {
         var vin = dataSubjectIm.getVin();
-        ConsentRequestContainers testContainer1 = ConsentRequestContainers
+        ConsentRequestContainer testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
         var consentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);

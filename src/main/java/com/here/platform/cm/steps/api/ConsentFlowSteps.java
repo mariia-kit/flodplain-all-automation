@@ -1,11 +1,11 @@
 package com.here.platform.cm.steps.api;
 
 
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.BMWStatus;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.common.VIN;
 import com.here.platform.common.controller.ReferenceProviderController;
@@ -19,13 +19,13 @@ import lombok.experimental.UtilityClass;
 public class ConsentFlowSteps {
 
     @Step
-    public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN) {
+    public void approveConsentForVIN(String crid, ConsentRequestContainer container, String targetVIN) {
         String token = DataSubjects.getByVin(targetVIN).getBearerToken();
         approveConsentForVIN(crid, container, targetVIN, token);
     }
 
     @Step
-    public void approveConsentForVIN(String crid, ConsentRequestContainers container, String targetVIN, String token) {
+    public void approveConsentForVIN(String crid, ConsentRequestContainer container, String targetVIN, String token) {
         String validCode;
 
         if (container.getProvider().equals(MPProviders.DAIMLER_REFERENCE)) {

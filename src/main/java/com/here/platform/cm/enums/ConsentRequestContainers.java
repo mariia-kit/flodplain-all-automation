@@ -9,6 +9,7 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -130,6 +131,14 @@ public enum ConsentRequestContainers {
             List.of("doorsstatus"),
             MPProviders.BMW
     ),
+    DAIMLER_REFERENCE(
+            "odometer", "odometer", "Automated Test Container",
+            "mb:vehicle:mbdata:payasyoudrive",
+            Conf.ns().getReferenceApp().getClientId(),
+            Conf.ns().getReferenceApp().getClientSecret(),
+            List.of("odometer"),
+            MPProviders.DAIMLER_REFERENCE
+    ),
     REFERENCE_NEW(
             "odometer", "odometer", "Automated Test Container",
             "mb:vehicle:mbdata:payasyoudrive",
@@ -196,17 +205,32 @@ public enum ConsentRequestContainers {
         return consentRequestContainers.orElse(mockContainer);
     }
 
-    public static ConsentRequestContainers generateNew(String providerName) {
-        Container container = Containers.generateNew(providerName).withDescription(Conf.cm().getQaTestDataMarker() + "cm_automated_container");
+    public static ConsentRequestContainer generateNew(String providerName) {
+        Container container = Containers.generateNew(providerName)
+                .withDescription(Conf.cm().getQaTestDataMarker() + "cm_automated_container");
+        return ConsentRequestContainer.builder()
+                .id(container.getId())
+                .name(container.getName())
+                .scopeValue(container.getScope())
+                .resources(List.of(container.getResourceNames()))
+                .containerDescription(container.getDescription())
+                .provider(MPProviders.findByProviderId(providerName))
+                .clientId( Conf.ns().getReferenceApp().getClientId())
+                .clientSecret( Conf.ns().getReferenceApp().getClientSecret())
+                .build();
+    }
 
-        var mockContainer = REFERENCE_NEW;
-        mockContainer.id = container.getId();
-        mockContainer.name = container.getName();
-        mockContainer.scopeValue = container.getScope();
-        mockContainer.containerDescription = container.getDescription();
-        mockContainer.provider = MPProviders.findByProviderId(providerName);
-
-        return mockContainer;
+    public ConsentRequestContainer getConsentContainer() {
+        return ConsentRequestContainer.builder()
+                .id(this.getId())
+                .name(this.getName())
+                .scopeValue(this.getScopeValue())
+                .containerDescription(this.getContainerDescription())
+                .resources(this.getResources())
+                .provider(this.getProvider())
+                .clientId(this.getClientId())
+                .clientSecret(this.getClientSecret())
+                .build();
     }
 
     @AllArgsConstructor

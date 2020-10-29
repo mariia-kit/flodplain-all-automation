@@ -3,6 +3,7 @@ package com.here.platform.dataProviders.daimler;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.DataSubject;
 import io.restassured.http.Cookies;
@@ -23,16 +24,16 @@ public class DaimlerTokenController {
             MERSEDES_API_URL = "https://id.mercedes-benz.com/";
 
     private final DataSubject targetVehicle;
-    private final ConsentRequestContainers container;
+    private final ConsentRequestContainer container;
     private Cookies mercedesCookies;
     private String resume, requestInfo;
 
-    public DaimlerTokenController(String targetVehicle, ConsentRequestContainers container) {
+    public DaimlerTokenController(String targetVehicle, ConsentRequestContainer container) {
         this.targetVehicle = DataSubjects.getByVin(targetVehicle).dataSubject;
         this.container = container;
     }
 
-    public DaimlerTokenController(DataSubject targetVehicle, ConsentRequestContainers container) {
+    public DaimlerTokenController(DataSubject targetVehicle, ConsentRequestContainer container) {
         this.targetVehicle = targetVehicle;
         this.container = container;
     }
@@ -50,9 +51,9 @@ public class DaimlerTokenController {
                 .baseUri(MERSEDES_API_URL)
                 .basePath("/as/authorization.oauth2")
                 .params(
-                        "client_id", container.clientId,
+                        "client_id", container.getClientId(),
                         "response_type", "code",
-                        "scope", container.scopeValue,
+                        "scope", container.getScopeValue(),
                         "redirect_uri", CALLBACK_URL,
                         "prompt", "consent login"
                 )
@@ -90,7 +91,7 @@ public class DaimlerTokenController {
                 .basePath("/ciam/auth/consent")
                 .cookies(mercedesCookies)
                 .redirects().follow(false)
-                .body(Map.of("grantedScopes", List.of(container.scopeValue.split(" "))))
+                .body(Map.of("grantedScopes", List.of(container.getScopeValue().split(" "))))
                 .when().post()
                 .then().extract().response();
         mercedesCookies = consentResponse.detailedCookies();

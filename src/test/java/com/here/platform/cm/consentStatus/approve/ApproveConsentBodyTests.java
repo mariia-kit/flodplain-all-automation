@@ -79,19 +79,19 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                         .additionalLinks(testConsentRequestData.getAdditionalLinks())
                         .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                         .vinLabel(new VIN(testVin).label())
-                        .containerName(testContainer.name)
-                        .containerDescription(testContainer.containerDescription)
-                        .resources(testContainer.resources)
+                        .containerName(testContainer.getName())
+                        .containerDescription(testContainer.getContainerDescription())
+                        .resources(testContainer.getResources())
                         .state(StateEnum.PENDING)
                         .approveTime(null)
                         .revokeTime(null)
                 );
     }
 
-    //    @Test
+    //@Test
     @DisplayName("Approve consent with max pending list of consents")
     void approveConsentWithMaxPendingListConsentsTest() {
-        testContainer = ConsentRequestContainers.getById(targetApp.provider.getName());
+        testContainer = ConsentRequestContainers.getById(targetApp.provider.getName()).getConsentContainer();
         var secondPendingConsent = createValidConsentRequest();
         cridsToRemove.add(secondPendingConsent);
 

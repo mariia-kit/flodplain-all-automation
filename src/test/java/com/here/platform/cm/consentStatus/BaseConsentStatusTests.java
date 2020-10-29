@@ -3,6 +3,7 @@ package com.here.platform.cm.consentStatus;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -23,7 +24,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers
             .generateNew(targetApp.provider.getName());
     protected String
             testConsumerId = mpConsumer.getRealm(),
@@ -37,7 +38,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
             .consumerId(testConsumerId)
             .providerId(testProviderId)
-            .containerId(testContainer.id)
+            .containerId(testContainer.getId())
             .privacyPolicy(faker.internet().url())
             .purpose(faker.commerce().productName())
             .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote());

@@ -4,6 +4,7 @@ package com.here.platform.cm.userAccount;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -42,7 +43,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     private ConsentInfo targetConsentRequest;
 
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApplication.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApplication.provider.getName());
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
@@ -54,7 +55,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
         targetConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
         crid = targetConsentRequest.getConsentRequestId();
-        ConsentFlowSteps.approveConsentForVIN(crid, targetApplication.container, vin, token);
+        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, token);
         fuSleep();
     }
 
@@ -131,9 +132,9 @@ public class UserAccountWithConsentTests extends BaseCMTest {
                 .usingElementComparatorIgnoringFields(ResponseAssertion.timeFieldsToIgnore)
                 .contains(targetConsentRequest
                         .consumerName(targetApplication.consumer.getConsumerName())
-                        .containerName(targetApplication.container.name)
-                        .containerDescription(targetApplication.container.containerDescription)
-                        .resources(targetApplication.container.resources)
+                        .containerName(testContainer.getName())
+                        .containerDescription(testContainer.getContainerDescription())
+                        .resources(testContainer.getResources())
                         .state(StateEnum.APPROVED)
                 )
                 .contains(targetConsentRequest.vinLabel(new VIN(secondVin).label())

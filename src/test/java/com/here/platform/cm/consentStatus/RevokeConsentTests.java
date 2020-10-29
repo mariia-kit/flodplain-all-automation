@@ -96,9 +96,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                                 .title(testConsentRequestData.getTitle())
                                 .purpose(testConsentRequestData.getPurpose())
                                 .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
-                                .containerName(testContainer.name)
-                                .containerDescription(testContainer.containerDescription)
-                                .resources(testContainer.resources)
+                                .containerName(testContainer.getName())
+                                .containerDescription(testContainer.getContainerDescription())
+                                .resources(testContainer.getResources())
                 );
 
         var targetRevokedConsent = Arrays.stream(consentInfoList)
@@ -154,7 +154,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         @DisplayName("Verify it is possible to approve similar to revoked consent")
         void approveSimilarToRevokedConsentsTest() {
             testConsentRequestData
-                    .containerId(testContainer.id)
+                    .containerId(testContainer.getId())
                     .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
                     .privacyPolicy(faker.internet().url())
                     .purpose(faker.commerce().productName());

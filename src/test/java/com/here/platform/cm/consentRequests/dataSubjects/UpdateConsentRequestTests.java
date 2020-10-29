@@ -2,6 +2,7 @@ package com.here.platform.cm.consentRequests.dataSubjects;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -49,7 +50,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
 
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
-    protected ConsentRequestContainers testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
     
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
@@ -57,7 +58,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
             .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.id);
+            .containerId(testContainer.getId());
 
     private final String messageForbiddenToRemoveApproved =
             "All non-approved VINs have been deleted. "

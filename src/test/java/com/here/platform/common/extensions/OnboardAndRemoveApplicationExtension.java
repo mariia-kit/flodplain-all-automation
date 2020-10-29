@@ -26,7 +26,7 @@ public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback,
         OnboardingSteps.onboardApplicationProviderAndConsumer(
                 consentRequestData.getProviderId(),
                 consentRequestData.getConsumerId(),
-                ConsentRequestContainers.getById(consentRequestData.getContainerId())
+                ConsentRequestContainers.getById(consentRequestData.getContainerId()).getConsentContainer()
         );
     }
 

@@ -30,6 +30,11 @@ public class ConsumerSubscriptionPage extends BaseMPPage {
         return this;
     }
 
+    public ConsumerSubscriptionPage fillPolicyLinks(String link) {
+        $("#privacyPolicy").val(link);
+        return this;
+    }
+
     public ConsumerSubscriptionPage attachFileWithVINs(File fileWithVINs) {
         $("input.gal-file-upload__field").uploadFile(fileWithVINs);
         return this;

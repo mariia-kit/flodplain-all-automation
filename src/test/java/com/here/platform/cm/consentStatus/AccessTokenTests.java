@@ -2,6 +2,7 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
@@ -100,7 +101,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         @Test
         @DisplayName("Verify It Is Possible To Approve Two Consents For Single Vin")
         void approveTwoConsentsForSingleVinTest() {
-            ConsentRequestContainers container2 = ConsentRequestContainers.generateNew(ProviderApplications.REFERENCE_CONS_1.provider.getName());
+            ConsentRequestContainer container2 = ConsentRequestContainers.generateNew(ProviderApplications.REFERENCE_CONS_1.provider.getName());
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
             fuSleep();
