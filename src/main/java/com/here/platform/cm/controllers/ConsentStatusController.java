@@ -19,7 +19,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
         return this;
     }
 
-    @Step
+    @Step("Approve consent: '{consent}'")
     public Response approveConsent(NewConsent consent, String privateBearerToken) {
         return consentServiceClient(consentsBasePath)
                 .header("Authorization", privateBearerToken)
@@ -27,7 +27,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
                 .put("/approve");
     }
 
-    @Step
+    @Step("Revoke consent: '{consent}'")
     public Response revokeConsent(NewConsent consent, String privateBearerToken) {
         return consentServiceClient(consentsBasePath)
                 .header("Authorization", privateBearerToken)
@@ -36,7 +36,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
                 .put("/revoke");
     }
 
-    @Step
+    @Step("Get consent status by consent request id: '{consentRequestId}', VIN: '{vin}'")
     public Response getConsentStatusByIdAndVin(String consentRequestId, String vin) {
         return consentServiceClient(consentsBasePath)
                 .header("Authorization", this.consumerBearerToken)

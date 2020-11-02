@@ -74,8 +74,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/removeDataSubjectsExceptApproved", consentRequestId);
     }
 
-    @Step
-    @SneakyThrows
+    @Step("ASYNC Remove VINs from consent request for id: '{consentRequestId}'")
     public Response removeVinsFromConsentRequestAsync(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
@@ -84,8 +83,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/removeNonApprovedVINsAsync", consentRequestId);
     }
 
-    @Step
-    @SneakyThrows
+    @Step("Force remove VINs from consent request for id: '{consentRequestId}'")
     public Response forceRemoveVinsFromConsentRequest(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
@@ -94,8 +92,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/removeAllDataSubjects", consentRequestId);
     }
 
-    @Step
-    @SneakyThrows
+    @Step("ASYNC Force remove VINs from consent request for id: '{consentRequestId}'")
     public Response forceRemoveVinsFromConsentRequestAsync(String consentRequestId, File fileWithVins) {
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
@@ -104,21 +101,21 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/removeAllDataSubjectsAsync", consentRequestId);
     }
 
-    @Step
+    @Step("ASYNC Get consent request update info for Update info ID: '{asyncUpdateInfoId}'")
     public Response getConsentRequestAsyncUpdateInfo(String asyncUpdateInfoId) {
         return consentServiceClient(StringUtils.EMPTY)
                 .header("Authorization", consumerBearerToken)
                 .get("/consentRequestAsyncUpdateInfo/{asyncUpdateInfoId}", asyncUpdateInfoId);
     }
 
-    @Step
+    @Step("Get consent request purpose for id: '{consentRequestId}'")
     public Response getConsentRequestPurpose(String consentRequestId, String cmBearerToken) {
         return consentServiceClient(consentRequestBasePath)
                 .header("Authorization", cmBearerToken)
                 .get("/{consentRequestId}/purpose", consentRequestId);
     }
 
-    @Step
+    @Step("Get consent request purpose for consumer: '{consumerId}', container: '{containerId}'")
     public Response getConsentRequestPurpose(String consumerId, String containerId, String cmBearerToken) {
         return consentServiceClient(consentRequestBasePath)
                 .header("Authorization", cmBearerToken)

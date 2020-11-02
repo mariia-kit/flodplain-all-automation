@@ -1,7 +1,6 @@
 package com.here.platform.e2e;
 
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.sleep;
 import static com.here.platform.cm.ui.BaseUITests.getUICmToken;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
@@ -10,14 +9,12 @@ import static io.qameta.allure.Allure.step;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.VIN;
@@ -248,7 +245,7 @@ public class E2EUITest extends BaseE2ETest {
 
         step("Open consent request link by Data Subject and login", () -> {
             open(consentRequestUrl.get());
-            HereLoginSteps.loginDataSubject(targetDataSubject);
+            HereLoginSteps.loginDataSubject(targetDataSubject.dataSubject);
         });
 
         step("Fill VIN by Data Subject", () ->

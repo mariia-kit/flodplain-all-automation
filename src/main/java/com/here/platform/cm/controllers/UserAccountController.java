@@ -13,7 +13,7 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
 
     private final String userBasePath = "/user";
 
-    @Step
+    @Step("Redirect user to OAUTH page")
     public Response userAccountOauth() {
         return consentServiceClient(StringUtils.EMPTY)
                 .noFilters()
@@ -21,7 +21,7 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
                 .get("/oauth");
     }
 
-    @Step
+    @Step("Sign in user to CM by authorization code: '{authorizationCode}'")
     public Response userAccountSignIn(String authorizationCode) {
         return consentServiceClient(StringUtils.EMPTY)
                 .noFilters()
@@ -30,21 +30,21 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
                 .post("/sign-in");
     }
 
-    @Step
+    @Step("Get CM user account info with CM token")
     public Response userAccountGetInfo(String privateBearerToken) {
         return consentServiceClient(userBasePath)
                 .header("Authorization", privateBearerToken)
                 .get("/info");
     }
 
-    @Step
+    @Step("Add VIN '{vin}' to CM user account")
     public Response attachVinToUserAccount(String vin, String privateBearerToken) {
         return consentServiceClient(userBasePath)
                 .header("Authorization", privateBearerToken)
                 .put("/vin/{vin}", vin);
     }
 
-    @Step
+    @Step("Get consents for user with CM token, crid and state: '{cridAndState}'")
     public Response getConsentsForUser(String privateBearerToken, Map<String, Object> cridAndState) {
         return consentServiceClient(userBasePath)
                 .header("Authorization", privateBearerToken)
@@ -52,7 +52,7 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
                 .get("/consents");
     }
 
-    @Step
+    @Step("Delete VIN '{vin}' for user with CM token")
     public Response deleteVINForUser(String vin, String privateBearerToken) {
         var vinHash = new VIN(vin).hashed();
         return consentServiceClient(userBasePath)
