@@ -1,16 +1,16 @@
 package com.here.platform.cm.steps.api;
 
 
-import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.BMWStatus;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.common.VIN;
 import com.here.platform.common.controller.ReferenceProviderController;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
 
@@ -29,8 +29,7 @@ public class ConsentFlowSteps {
         String validCode;
 
         if (container.getProvider().equals(MPProviders.DAIMLER_REFERENCE)) {
-            validCode = ReferenceTokenController
-                    .produceConsentAuthCode(targetVIN, container.getId() + ":general");
+            validCode = ReferenceTokenController.produceConsentAuthCode(targetVIN, container.getId() + ":general");
         } else {
             validCode = new DaimlerTokenController(targetVIN, container).generateAuthorizationCode();
         }

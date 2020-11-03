@@ -3,9 +3,11 @@ package com.here.platform.cm.enums;
 import com.here.platform.common.config.Conf;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 
 @AllArgsConstructor
+@ToString
 public enum MPProviders {
 
     DAIMLER_EXPERIMENTAL("daimler_experimental", 18, "daimler_experimental", "https://id.mercedes-benz.com/as/authorization.oauth2", "https://id.mercedes-benz.com/as/token.oauth2"),

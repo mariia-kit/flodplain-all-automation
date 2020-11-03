@@ -29,19 +29,19 @@ public class TestDataGeneration {
         }
     }
 
-    public static void createBaseProvidersIfNecessary() {
+    private static void createBaseProvidersIfNecessary() {
         Stream.of(Providers.values())
                 .filter(providers -> !providers.equals(Providers.NOT_EXIST))
                 .forEach(providers -> Steps.createRegularProvider(providers.getProvider()));
     }
 
-    public static void createBaseContainersIfNecessary() {
+    private static void createBaseContainersIfNecessary() {
         Arrays.stream(Containers.values()).forEach(containers ->
                 Steps.createRegularContainer(containers.getContainer())
         );
     }
 
-    public static void createBaseProvidersResourcesIfNecessary() {
+    private static void createBaseProvidersResourcesIfNecessary() {
         Arrays.stream(Containers.values()).forEach(containers ->
                 Stream.of(containers.getContainer().getResourceNames().split(",")).parallel()
                         .forEach(res -> Steps.addResourceToProvider(
@@ -52,14 +52,14 @@ public class TestDataGeneration {
         );
     }
 
-    public static void createBaseCMProvidersIfNecessary() {
+    private static void createBaseCMProvidersIfNecessary() {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
         Stream.of(ConsentRequestContainers.values()).forEach(containers ->
                 new OnboardingSteps(containers.provider, consumerId)
                         .onboardTestProvider());
     }
 
-    public static void createBaseCMApplicationIfNecessary() {
+    private static void createBaseCMApplicationIfNecessary() {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
         Stream.of(ConsentRequestContainers.values()).forEach(containers ->
                 new OnboardingSteps(containers.provider.getName(), consumerId)
@@ -67,7 +67,7 @@ public class TestDataGeneration {
     }
 
 
-    public static void createPoliciesForProviderGroup() {
+    private static void createPoliciesForProviderGroup() {
         new AaaCall().addGroupToPolicy(Conf.nsUsers().getProviderGroupId(),
                 Conf.nsUsers().getProviderPolicyId());
     }
