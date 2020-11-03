@@ -9,9 +9,7 @@ import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
-import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -42,9 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     private static final String staticPageUrl = ConsentPageUrl.getEnvUrlRoot() + "purpose/info";
-    protected ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
     private final MPConsumers mpConsumer = providerApplication.consumer;
-    private ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(providerApplication.provider.getName());
     private final List<String> cridsToRemove = new ArrayList<>();
     HereUser hereUser = null;
     DataSubject dataSubjectIm;
@@ -106,7 +102,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @Test
     @DisplayName("Verify Purpose page")
     void verifyPurposePageTest() {
-        var mpConsumer = providerApplication.consumer;
         //todo after implemented ConsentInfo.privacyPolicy/additionalLinks fields refactor to
         // var consentRequest = ConsentRequestSteps.createConsentRequestWithVINFor(providerApplication, dataSubject.vin)
         //var consentRequest = generateConsentData(mpConsumer);

@@ -10,7 +10,6 @@ import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
@@ -40,7 +39,6 @@ import org.junit.jupiter.api.Test;
 public class DashboardTests extends BaseUITests {
 
     private final List<String> cridsToRemove = new ArrayList<>();
-    private final ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
     HereUser hereUser = null;
     DataSubject dataSubjectIm;
 

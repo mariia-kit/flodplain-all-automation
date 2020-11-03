@@ -3,7 +3,6 @@ package com.here.platform.cm;
 import com.github.javafaker.Crypto;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
-import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.common.TestResultLoggerExtension;
 import lombok.SneakyThrows;
