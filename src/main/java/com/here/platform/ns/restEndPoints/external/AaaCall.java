@@ -8,7 +8,6 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.path.json.JsonPath;
@@ -219,7 +218,6 @@ public class AaaCall {
 
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
-                .filter(new AllureRestAssuredCustom("Create AA Policy " + resHrn))
                 .when()
                 .body(body)
                 .post(url)

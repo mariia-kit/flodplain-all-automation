@@ -10,9 +10,6 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.HERETokenController;
-import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -42,8 +39,6 @@ import org.junit.jupiter.api.Test;
 @DisplayName("User Account")
 public class UserAccountUITests extends BaseUITests {
 
-    protected ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-    private ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
     private final List<String> vinsToRemove = new ArrayList<>();
     private ConsentInfo consentRequestInfo;
     private String crid;
@@ -56,7 +51,7 @@ public class UserAccountUITests extends BaseUITests {
         dataSubjectIm = new DataSubject();
         dataSubjectIm.setEmail(hereUser.getEmail());
         dataSubjectIm.setPass(hereUser.getPassword());
-        dataSubjectIm.setVin(VIN.generate(targetApp.provider.vinLength));
+        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
         new HereUserManagerController().createHereUser(hereUser);
 
 
@@ -76,11 +71,11 @@ public class UserAccountUITests extends BaseUITests {
     @DisplayName("Second time opened the approved consent request link for registered user")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
         vinsToRemove.add(dataSubjectIm.getVin());
 
-        consentRequestInfo.resources(targetApp.container.resources);
+        consentRequestInfo.resources(providerApplication.container.resources);
         String token = new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
         ConsentFlowSteps.approveConsentForVIN(crid, testContainer, dataSubjectIm.getVin(), token);
 
@@ -99,7 +94,7 @@ public class UserAccountUITests extends BaseUITests {
     @DisplayName("Second time opened the approved consent and proceed with new vehicle")
     void openSecondTimeApprovedConsentAndProceedWithNewVehicleTest() {
         consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
         vinsToRemove.add(dataSubjectIm.getVin());
 
@@ -108,9 +103,9 @@ public class UserAccountUITests extends BaseUITests {
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
         String token = getUICmToken();
 
-        var secondVIN = VIN.generate(targetApp.provider.vinLength);
+        var secondVIN = VIN.generate(providerApplication.provider.vinLength);
         userAccountController.attachVinToUserAccount(secondVIN, token);
-        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, secondVIN);
+        ConsentRequestSteps.addVINsToConsentRequest(providerApplication, crid, secondVIN);
         vinsToRemove.add(secondVIN);
 
         closeWebDriver();
@@ -119,15 +114,15 @@ public class UserAccountUITests extends BaseUITests {
         HereLoginSteps.loginDataSubject(dataSubjectIm);
 
         new DashBoardPage().isLoaded().openDashboardNewTab()
-                .verifyConsentOfferTab(1, targetApp.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
-                .verifyConsentOfferTab(0, targetApp.consumer, consentRequestInfo, secondVIN, PENDING);
+                .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
+                .verifyConsentOfferTab(0, providerApplication.consumer, consentRequestInfo, secondVIN, PENDING);
     }
 
     @Test
     @DisplayName("Open UI with vehicle already attached to account")
     void openSecondTimeWithVehicleTest() {
         consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApp, dataSubjectIm.getVin(), testContainer);
+                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
         vinsToRemove.add(dataSubjectIm.getVin());
 

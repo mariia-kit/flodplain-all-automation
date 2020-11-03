@@ -54,7 +54,8 @@ public class BaseUITests extends BaseCMTest {
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(ProviderApplications.DAIMLER_CONS_1.provider.getName());
+    protected final ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(providerApplication.provider.getName());
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
