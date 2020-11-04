@@ -21,12 +21,13 @@ import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.helpers.Steps;
+import io.qameta.allure.Issue;
+import io.restassured.response.Response;
 import java.io.File;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,8 @@ import org.junit.jupiter.api.Test;
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
-    private final ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
+    private final ConsentRequestContainer testContainer = ConsentRequestContainers
+            .generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
@@ -128,18 +130,31 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
     }
 
     @Test
-    @Disabled("Cos of https://saeljira.it.here.com/browse/NS-2802")
-    @DisplayName("Dublicated VINs test")
-    void dublicatedViNsTest() {
+    @Issue("NS-2802")
+    @DisplayName("Add duplicated VINs in single file")
+    void duplicatedVINsTest() {
         var testVin = VIN.generate(17);
-        var validVINs = new String[]{VIN.generate(17), testVin, testVin};
+        var targetVINsWithDuplication = new String[]{VIN.generate(17), testVin, testVin};
+        testFileWithVINs = new VinsToFile(targetVINsWithDuplication).json();
 
-        testFileWithVINs = new VinsToFile(validVINs).json();
         consentRequestController.withConsumerToken(mpConsumer);
         var addVinsResponse = consentRequestController
                 .addVinsToConsentRequest(crid, testFileWithVINs);
 
         new ResponseAssertion(addVinsResponse).statusCodeIsEqualTo(StatusCode.OK);
+
+        Response statusForConsentRequestById = consentRequestController.getStatusForConsentRequestById(crid);
+
+        new ResponseAssertion(statusForConsentRequestById)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(
+                        new ConsentRequestStatus()
+                                .approved(0)
+                                .pending(targetVINsWithDuplication.length - 1)
+                                .revoked(0)
+                                .expired(0)
+                                .rejected(0)
+                );
     }
 
 }

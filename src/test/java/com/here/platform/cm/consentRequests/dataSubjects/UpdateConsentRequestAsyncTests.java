@@ -72,7 +72,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProvider();
         onboard.onboardTestProviderApplication(
-                testContainer.getName(),
+                testContainer.getId(),
                 targetApp.container.clientId,
                 targetApp.container.clientSecret);
         crid = ConsentRequestSteps.createConsentRequestFor(
