@@ -5,6 +5,7 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.SelenideElement;
+import com.here.platform.common.DataSubject;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
@@ -15,9 +16,9 @@ import lombok.experimental.UtilityClass;
 public class DaimlerLoginPage {
 
     @Step("Login data subject on Mercedes.me site")
-    public void loginDataSubjectOnDaimlerSite(DataSubjects dataSubject) {
+    public void loginDataSubjectOnDaimlerSite(DataSubject dataSubject) {
         sleep(3000); //hotfix cos of FE developer rotation
-        $("#username").setValue(dataSubject.getUserName());
+        $("#username").setValue(dataSubject.getEmail());
         $("#continue").click();
         $("#login-with-password").click();
         $("#password").setValue(dataSubject.getPass());
@@ -25,21 +26,29 @@ public class DaimlerLoginPage {
     }
 
     @Step("Login data subject on Mercedes.me site")
-    public void loginDataSubjectOnDaimlerSiteOld(DataSubjects dataSubject) {
+    public void loginDataSubjectOnDaimlerSiteOld(DataSubject dataSubject) {
         sleep(3000); //hotfix cos of FE developer rotation
-        $("#name").setValue(dataSubject.getUserName());
+        $("#name").setValue(dataSubject.getEmail());
         $("#password").setValue(dataSubject.getPass());
         $("#ciam-weblogin-auth-login-button").click();
     }
 
     @Step("Accept consent scopes")
     @SneakyThrows
-    public void approveDaimlerScopesAndSubmit() {
-        for (SelenideElement scope : $$("#legaltext0")) {
-            scope.click();
+    public void approveDaimlerLegalAndSubmit() {
+        if (!$("#allow").isDisplayed()) {
+            for (SelenideElement scope : $$("#legaltext0")) {
+                scope.click();
+            }
+            Thread.sleep(1000);
+            $("#continue").click();
         }
-        Thread.sleep(1000);
-        $("#continue").click();
+    }
+
+    @Step("Accept consent scopes")
+    public void approveDaimlerScopesAndSubmit() {
+        //no need to enable scopes, all of tem enabled by default
+        $("#allow").click();
     }
 
     @Step("Accept consent scopes")

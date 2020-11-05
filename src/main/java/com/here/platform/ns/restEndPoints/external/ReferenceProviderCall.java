@@ -10,6 +10,7 @@ import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import io.restassured.response.Response;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +27,10 @@ public class ReferenceProviderCall {
         Assertions.assertEquals(HttpStatus.SC_OK, resp.getStatusCode(),
                 "Wipe reference provider response not as expected!");
         Container manual = Containers.generateNew(Providers.REFERENCE_PROVIDER.getName())
-                .withName("manual-testing-marketplace-1")
-                .withId("manual-testing-marketplace-1")
+                .withName("sit-regular-fuel-nopii")
+                .withId("sit-regular-fuel-nopii")
                 .withResourceNames(ContainerResources.FUEL.getResource().getName())
-                .withConsentRequired(true);
+                .withConsentRequired(false);
         createContainer(manual);
     }
 

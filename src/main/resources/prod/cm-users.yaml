@@ -1,7 +1,12 @@
 daimlerApp:
-  clientId: 93dc654d-eabe-4437-a3ae-fdb0ce32b58b
-  clientSecret: 3b789e8a-e472-4cd5-875a-f4c773f4bc4d
+  clientId: afe66227-b539-441c-8543-84079a97198b
+  clientSecret: lNPhiBSFXpicigxqJthIueijeFjhOjxlqCZAlApfssKUhJnqrphgeDRiIYkrkbrp
   callBackUrl: https://platform.here.com/consent/oauth2/daimler/auth/callback
+
+bmwApp:
+  clientId: S00I000M001OK
+  clientSecret: "no secret"
+  callBackUrl: https://portal.platform.in.here.com/consent/oauth2/bmw/auth/callback
 
 
 dataSubj1:

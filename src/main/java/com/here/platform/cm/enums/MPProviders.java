@@ -14,7 +14,8 @@ public enum MPProviders {
     DAIMLER("daimler", 17, "daimler", "https://id.mercedes-benz.com/as/authorization.oauth2", ""),
     DAIMLER_REFERENCE("daimleR", 17, "test-daimler", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token"),
     BMW_TEST("test-bmw", 17, "test-bmw", "", ""),
-    BMW("bmw", 17, "bmw", "", "");
+    BMW("bmw", 17, "bmw", "", ""),
+    REFERENCE("exelsior", 17, "test-daimler", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token");
 
     private final String name;
     public int vinLength;

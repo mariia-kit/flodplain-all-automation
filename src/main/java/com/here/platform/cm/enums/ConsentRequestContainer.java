@@ -1,5 +1,6 @@
 package com.here.platform.cm.enums;
 
+import com.here.platform.common.DaimlerApp;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,12 @@ public class ConsentRequestContainer {
 
     public ConsentRequestContainer withResources(List<String> resources) {
         this.resources = resources;
+        return this;
+    }
+
+    public ConsentRequestContainer withClientIdSecret(DaimlerApp app) {
+        this.clientId = app.getClientId();
+        this.clientSecret = app.getClientSecret();
         return this;
     }
 }

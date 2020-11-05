@@ -1,7 +1,12 @@
 daimlerApp:
-  clientId: 837df42f-500f-4b3d-be3d-c57e11b61f45
-  clientSecret: 240c3498-d266-4b30-a837-7d7220987cef
+  clientId: 0f75cb55-8ed2-4e6c-9aee-39814b040d26
+  clientSecret: tNZeeNEChBCyyurafYrVGCjnVpLrJNfsuggQUtlfiCremlLxSZiuqxGiTTfbkaqi
   callBackUrl: https://platform.in.here.com/consent/oauth2/daimler/auth/callback
+
+bmwApp:
+  clientId: S00I000M001OK
+  clientSecret: "no secret"
+  callBackUrl: https://portal.platform.in.here.com/consent/oauth2/bmw/auth/callback
 
 dataSubj1:
   email: noxohi7910@aprimail.com

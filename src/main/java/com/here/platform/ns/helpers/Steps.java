@@ -4,7 +4,9 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.controllers.provider.ResourceController;
@@ -78,7 +80,7 @@ public class Steps {
     @Step("Create regular Container {container.name} of provider {container.dataProviderName}")
     public static void createRegularContainer(Container container) {
         if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD, Providers.BMW_TEST)
-                .anyMatch(prov -> prov.getProvider().getName().equalsIgnoreCase(container.getDataProviderName()))) {
+                .anyMatch(prov -> prov.getProvider().getName().equals(container.getDataProviderName()))) {
             ReferenceProviderCall.createContainer(container);
         }
         var response = new ContainerController()
@@ -159,6 +161,19 @@ public class Steps {
         new MarketplaceManageListingCall()
                 .deleteListing(listing)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Step("Get vehicle resources by Data Consumer from Data Provider")
+    public static void getVehicleResourceAndVerify(String crid, String vin, Container container) {
+        var response = new ContainerDataController()
+                .withBearerToken(MPConsumers.OLP_CONS_1.generateToken())
+                .withCampaignId(crid)
+                .getContainerForVehicle(
+                        container.getDataProviderByName(),
+                        vin,
+                        container
+                );
+        new NeutralServerResponseAssertion(response).expectedCode(200);
     }
 
 }

@@ -55,30 +55,51 @@ public enum ContainerResources {
 
     //BMW resources
     mileage(new ProviderResource("mileage")),
-    doorsstatus(new ProviderResource("doorsstatus"));
+    doorsstatus(new ProviderResource("doorsstatus")),
 
     //TODO: add bmw resource if necessary
     //Electric Vehicle
+    bmw_voltage(new ProviderResource("bmwcardata_batteryVoltage")),
+    bmw_remainrage(new ProviderResource("bmwcardata_naviInformationRemainingRange")),
     //bmwcardata_batteryVoltage,bmwcardata_naviInformationRemainingRange
     //Fuel Status
+    bmw_rangefuel(new ProviderResource("bmwcardata_kombiCurrentRemainingRangeFuel")),
+    bmw_remainfuel(new ProviderResource("bmwcardata_remainingFuel")),
     //bmwcardata_kombiCurrentRemainingRangeFuel
     //bmwcardata_remainingFuel
     //Pay As You Drive (PAYD)
+    bmw_mileage(new ProviderResource("bmwcardata_mileage")),
     //bmwcardata_mileage
     //Vehicle Lock Status
+    bmw_vehicleStatusDoors(new ProviderResource("bmwcardata_vehicleStatusDoors")),
+    bmw_trunkState(new ProviderResource("bmwcardata_trunkState")),
+    bmw_hoodState(new ProviderResource("bmwcardata_hoodState")),
+    bmw_sunroofState(new ProviderResource("bmwcardata_sunroofState")),
+    bmw_heading(new ProviderResource("bmwcardata_heading")),
     //bmwcardata_vehicleStatusDoors
     //bmwcardata_trunkState
     //bmwcardata_hoodState
     //bmwcardata_sunroofState
     //bmwcardata_heading
     //Vehicle Status
+    bmw_sunroofPosition(new ProviderResource("bmwcardata_sunroofPosition")),
+    bmw_vehicleStatusLightstatus(new ProviderResource("bmwcardata_vehicleStatusLightstatus")),
+    bmw_windowDriverFront(new ProviderResource("bmwcardata_windowDriverFront")),
+    bmw_windowDriverRear(new ProviderResource("bmwcardata_windowDriverRear")),
+    bmw_windowPassengerFront(new ProviderResource("bmwcardata_windowPassengerFront")),
+    bmw_windowPassengerRear(new ProviderResource("bmwcardata_windowPassengerRear")),
+    bmw_doorDriverFront(new ProviderResource("bmwcardata_doorDriverFront")),
+    bmw_doorDriverRear(new ProviderResource("bmwcardata_doorDriverRear")),
+    bmw_doorLockState(new ProviderResource("bmwcardata_doorLockState")),
+    bmw_doorPassengerFront(new ProviderResource("bmwcardata_doorPassengerFront")),
+    bmw_doorPassengerRear(new ProviderResource("bmwcardata_doorPassengerRear"));
     //bmwcardata_sunroofPosition
     //bmwcardata_sunroofState
     //bmwcardata_trunkState
     //bmwcardata_vehicleStatusLightstatus
     //bmwcardata_windowDriverFront
     //bmwcardata_windowDriverRear
-    //bmwcardata_windowPassengerFront
+    //bmwcardata_windowDriverRear
     //bmwcardata_windowPassengerRear
     //bmwcardata_doorDriverFront
     //bmwcardata_doorDriverRear

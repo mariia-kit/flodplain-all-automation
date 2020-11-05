@@ -43,7 +43,7 @@ daimlerUser:
 hereUser:
   email: Gwyn42501@mail.com
   pass: As123456789
-
+  vin: 2AD190A6AD057824E
 
 #------------------Consumer App Credentials------------------------------------------
 consumerApp:

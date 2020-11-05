@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.atn.RangeTransition;
 @AllArgsConstructor
 public enum Providers {
     DAIMLER_EXPERIMENTAL(
-            new DataProvider("daimler_experimental", "https://api.mercedes-benz.com/experimental/connectedvehicle/v1")
+            new DataProvider("daimler_experimental", "https://api.mercedes-benz.com/experimental/connectedvehicle/v2")
                     .addResources(List.of(
                             ContainerResources.ODOMETER,
                             ContainerResources.FUEL,
@@ -25,7 +25,30 @@ public enum Providers {
                     ))
     ),
     BMW(new DataProvider("bmw", "https://api.bmwgroup.com/otpdatadelivery/api/thirdparty/v1")
-            .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL, ContainerResources.doorsstatus))),
+            .addResources(List.of(ContainerResources.mileage,
+                    ContainerResources.FUEL,
+                    ContainerResources.doorsstatus,
+                    ContainerResources.bmw_voltage,
+                    ContainerResources.bmw_remainrage,
+                    ContainerResources.bmw_rangefuel,
+                    ContainerResources.bmw_remainfuel,
+                    ContainerResources. bmw_mileage,
+                    ContainerResources.bmw_vehicleStatusDoors,
+                    ContainerResources.bmw_trunkState,
+                    ContainerResources.bmw_hoodState,
+                    ContainerResources.bmw_sunroofState,
+                    ContainerResources.bmw_heading,
+                    ContainerResources.bmw_sunroofPosition,
+                    ContainerResources.bmw_vehicleStatusLightstatus,
+                    ContainerResources.bmw_windowDriverFront,
+                    ContainerResources.bmw_windowDriverRear,
+                    ContainerResources.bmw_windowPassengerFront,
+                    ContainerResources.bmw_windowPassengerRear,
+                    ContainerResources.bmw_doorDriverFront,
+                    ContainerResources.bmw_doorDriverRear,
+                    ContainerResources.bmw_doorLockState,
+                    ContainerResources.bmw_doorPassengerFront,
+                    ContainerResources.bmw_doorPassengerRear))),
     BMW_TEST(new DataProvider("test-bmw", Conf.ns().getRefProviderUrl() + "/bmw")
             .addResources(List.of(ContainerResources.mileage, ContainerResources.FUEL))),
     NOT_EXIST(new DataProvider("rimak", "http://www.rim.com")),
@@ -42,7 +65,7 @@ public enum Providers {
                             ContainerResources.fuelstatus
                     ))
     ),
-    DAIMLER_REFERENCE(new DataProvider("daimleR_experimental", Conf.ns().getRefProviderUrl())
+    DAIMLER_REFERENCE(new DataProvider("daimleR", Conf.ns().getRefProviderUrl())
             .addResources(List.of(
                     ContainerResources.ODOMETER,
                     ContainerResources.FUEL,

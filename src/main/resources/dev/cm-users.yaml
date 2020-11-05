@@ -3,6 +3,11 @@ daimlerApp:
   clientSecret: ybnndydkpLnCWGZrhxlHVKDnGbeSrItwamGKZMaSTNjyyrWjtYIVNDGXQgTCQftk
   callBackUrl: https://portal.platform.in.here.com/consent/oauth2/daimler/auth/callback
 
+bmwApp:
+  clientId: S00I000M001OK
+  clientSecret: "no secret"
+  callBackUrl: https://portal.platform.in.here.com/consent/oauth2/bmw/auth/callback
+
 dataSubj1:
   email: noxohi7910@aprimail.com
   pass: 7wdh@#*EDjdk

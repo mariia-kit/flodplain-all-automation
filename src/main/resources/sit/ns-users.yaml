@@ -43,7 +43,7 @@ daimlerUser:
 hereUser:
   email: Gwyn42501@mail.com
   pass: As123456789
-
+  vin: 2AD190A6AD057824E
 
 #------------------Consumer App Credentials------------------------------------------
 consumerApp:
@@ -58,5 +58,5 @@ aaService:
   appName: NS Service Application
   appId: SERVICE-679ab544-0ab9-4723-afc5-370a65c9604b
   appClientId: xxx
-  appKeyId: F8dItBfiC5CQrlRpXzNhsg
-  appKeySecret: dc9DRIx2ZxfTgjP3bys8DCUW2fL2OC_-_Dfh-ZZJPT-SNmnGtv50EYj-ePwn2u5fUTGfEPffBUhr0jxNhK79qA
+  appKeyId: 8sESpEeRYsSMUw-wlguIGg
+  appKeySecret: qr-1lV50obaUNBR0Qwz82gYl3-UaZIzwl7Sm6BwlS00_SORz1EuRxM-KTSTgnd0asXHozub6mrcfmbuNBONIow

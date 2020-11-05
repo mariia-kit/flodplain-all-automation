@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -69,24 +70,28 @@ public class UserAccountUITests extends BaseUITests {
     @Test
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent request link for registered user")
+    @Disabled("Disable until redirect is fixed. NS-3004")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         consentRequestInfo = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
         vinsToRemove.add(dataSubjectIm.getVin());
 
-        consentRequestInfo.resources(providerApplication.container.resources);
-        String token = new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, dataSubjectIm.getVin(), token);
+        open(crid);
+        System.out.println(Configuration.baseUrl + crid);
+
+        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequestInfo);
+
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
+
+        SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
 
         open(crid);
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
-        $(".container-offers.current").waitUntil(Condition.visible, 10000);
-        $(".offer-box .offer-title").shouldHave(Condition.text(consentRequestInfo.getTitle()));
-        $("lui-status").shouldHave(Condition.textCaseSensitive("ACCEPTED"));
-        $(".offer-box").click();
-        $$(".container-content [data-cy='resource']")
-                .shouldHave(CollectionCondition.textsInAnyOrder(consentRequestInfo.getResources()));
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
+
     }
 
     @Test

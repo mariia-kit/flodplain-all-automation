@@ -52,8 +52,8 @@ public class ConsentRequestSteps {
         onboard.onboardValidConsumer();
         onboard.onboardTestProviderApplication(
                 container.getName(),
-                targetApp.container.clientId,
-                targetApp.container.clientSecret);
+                container.getClientId(),
+                container.getClientSecret());
         return ConsentRequestSteps.createConsentRequestWithVINFor(
                 targetApp.provider.getName(),
                 targetApp.consumer.getConsumerName(),

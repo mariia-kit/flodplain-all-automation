@@ -1,7 +1,8 @@
 package com.here.platform.common.extensions;
 
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.controllers.UserAccountController;
-import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.common.DataSubject;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 @Builder
 public class UserAccountExtension implements BeforeEachCallback, AfterEachCallback {
 
-    private final DataSubjects targetDataSubject;
+    private final DataSubject targetDataSubject;
     private final List<String> additionalVINsToRemove = new ArrayList<>();
 
     @Override
@@ -30,7 +31,7 @@ public class UserAccountExtension implements BeforeEachCallback, AfterEachCallba
     @Step("Remove all VINs and data consumers for the user")
     private void dataSubjectCleanUp() {
         var userAccountController = new UserAccountController();
-        var cmToken = targetDataSubject.getBearerToken();
+        var cmToken = new HERETokenController().loginAndGenerateCMToken(targetDataSubject.getEmail(), targetDataSubject.getPass());
 
         userAccountController.deleteVINForUser(targetDataSubject.getVin(), cmToken);
 

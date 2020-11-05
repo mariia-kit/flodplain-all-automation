@@ -4,6 +4,7 @@ import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.common.TestDataGeneration;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.Container;
@@ -37,7 +38,9 @@ class ProdIntegrationTest extends BaseE2ETest {
                 .withName("payasyoudrive")
                 .withResourceNames("payasyoudrive")
                 .withConsentRequired(false);
-
+        TestDataGeneration.createBaseProvidersIfNecessaryProd();
+        TestDataGeneration.createBaseContainersIfNecessaryProd();
+        TestDataGeneration.createBaseCMApplicationIfNecessaryProd();
         var response = new ContainerDataController()
                 .withToken(MP_CONSUMER)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);

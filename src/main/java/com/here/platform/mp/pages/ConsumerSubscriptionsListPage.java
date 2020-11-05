@@ -20,7 +20,7 @@ public class ConsumerSubscriptionsListPage extends BaseMPPage {
 
     public ConsumerSubscriptionsListPage waitSubscriptionWithName(String subscriptionResourceName) {
         $(byXpath("//td[text() = '" + subscriptionResourceName + "']/..//span[text() = 'active']"))
-                .waitUntil(Condition.visible.because("Subscription not in active state, while expected!"), 2*60*1000, 10000);
+                .waitUntil(Condition.visible.because("Subscription not in active state, while expected!"), 10*60*1000, 20000);
         return this;
     }
 }

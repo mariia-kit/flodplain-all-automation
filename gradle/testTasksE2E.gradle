@@ -58,6 +58,16 @@ task e2eTestsUI(type: TestE2E, dependsOn: "initTokensNS") {
     }
 }
 
+task e2eTestsUiContract(type: TestE2E, dependsOn: "initTokensNS") {
+    dependsOn "testDataGeneration"
+    group "e2e tests"
+    systemProperty "env", finalEnv
+    useJUnitPlatform {
+        includeTags "e2e_contract"
+        excludeTags "ignored", "ignored-$finalEnv"
+    }
+}
+
 task e2eProdTests(type: TestE2E) {
     group "e2e tests"
     systemProperty "env", "prod"

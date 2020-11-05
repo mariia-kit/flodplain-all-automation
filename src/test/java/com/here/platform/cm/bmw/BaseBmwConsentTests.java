@@ -37,7 +37,8 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
     protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName())
-            .withResources(List.of("fuel"));
+            .withResources(List.of("fuel"))
+            .withClientIdSecret(Conf.cmUsers().getBmwApp());
 
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
     protected ConsentRequestController consentRequestController = new ConsentRequestController();

@@ -20,7 +20,7 @@ public class VINEnteringPage extends BaseCMPage {
         return this;
     }
 
-    @Step
+    @Step("Fill vin page with vehicle number {vin}")
     public void fillVINAndContinue(String vin) {
         this.vinNumberInput.setValue(vin);
         $(byText("Continue")).click();

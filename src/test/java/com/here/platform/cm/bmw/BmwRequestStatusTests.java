@@ -26,12 +26,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
 @Tag("bmw_cm")
+@Execution(ExecutionMode.SAME_THREAD)
 public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
     private String crid;
@@ -92,7 +95,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer).getConsentRequestId();
-        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin, testVin1);
+        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin1);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
