@@ -22,7 +22,7 @@ public class NSErrors {
                 HttpStatus.SC_NOT_FOUND,
                 "E502116",
                 String.format("Container name '%s' for data provider '%s' not found",
-                        container.getId(), container.getDataProviderName()),
+                        container.getName(), container.getDataProviderName()),
                 "Request a valid container");
     }
 

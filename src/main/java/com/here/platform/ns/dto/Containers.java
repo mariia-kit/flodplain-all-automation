@@ -174,7 +174,7 @@ public enum Containers {
         String id = getContainerNamePrefix() + UniqueId.getUniqueKey();
         Container container = new Container(
                 id,
-                id,
+                id + " container name",
                 providerName,
                 "Automated Test Container",
                 ContainerResourcesHelper.REGULAR_RESOURCE,

@@ -6,11 +6,7 @@ import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.rest.model.Health;
-import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.common.ResponseAssertion;
-import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.controller.ReferenceProviderController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
@@ -421,7 +417,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProviderApplication(
-                container.getName(),
+                container.getId(),
                 bmwContainer2,
                 targetApp.container.clientSecret);
         var response1 = new ContainerDataController()

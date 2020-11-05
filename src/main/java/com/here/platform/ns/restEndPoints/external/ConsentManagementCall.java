@@ -6,11 +6,11 @@ import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.aaa.DaimlerTokenController;
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.common.DaimlerApp;
 import com.here.platform.common.ResponseExpectMessages;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.config.Conf;
+import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
@@ -36,7 +36,7 @@ public class ConsentManagementCall {
                 + "  \"consumerId\": \"" + cmConsumerId + "\",\n"
                 + "  \"providerId\": \"" + providerId + "\",\n"
                 + "  \"purpose\": \"" + Conf.cm().getQaTestDataMarker() + "test_consent\",\n"
-                + "  \"containerName\": \"" + container.getId() + "\",\n"
+                + "  \"containerId\": \"" + container.getId() + "\",\n"
                 + "  \"title\": \"" + Conf.cm().getQaTestDataMarker() + container.getId() + "\"\n"
                 + "}";
         Response resp = RestHelper.post("Init Consent Campaign Id", url, token, body,

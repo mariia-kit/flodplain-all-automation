@@ -6,11 +6,9 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import io.restassured.response.Response;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -75,7 +73,7 @@ public class ReferenceProviderCall {
                 + "    ]\n"
                 + "  }";
         Response r = RestHelper
-                .post("Create new Container on Reference Provider side:" + container.getName(), url, authToken, body);
+                .post("Create new Container on Reference Provider side:" + container.getId(), url, authToken, body);
         Assertions.assertEquals(HttpStatus.SC_OK, r.getStatusCode(),
                 "Create new Container on Reference Provider side response not as expected!");
     }

@@ -23,8 +23,6 @@ import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import org.assertj.core.api.Assertions;
@@ -70,7 +68,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         Steps.createRegularContainer(testContainer);
         OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
         onboard.onboardTestProviderApplication(
-                testContainer.getName(),
+                testContainer.getId(),
                 targetApp.container.clientId,
                 targetApp.container.clientSecret);
         consentRequestController.withConsumerToken();

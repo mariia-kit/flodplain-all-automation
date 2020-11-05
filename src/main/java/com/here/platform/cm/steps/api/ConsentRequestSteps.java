@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.dataAdapters.ConsentRequestToConsentInfo;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AdditionalLink;
@@ -51,14 +50,14 @@ public class ConsentRequestSteps {
         onboard.onboardTestProvider();
         onboard.onboardValidConsumer();
         onboard.onboardTestProviderApplication(
-                container.getName(),
+                container.getId(),
                 container.getClientId(),
                 container.getClientSecret());
         return ConsentRequestSteps.createConsentRequestWithVINFor(
                 targetApp.provider.getName(),
                 targetApp.consumer.getConsumerName(),
                 targetApp.consumer.getRealm(),
-                container.getName(),
+                container.getId(),
                 testVin);
     }
 

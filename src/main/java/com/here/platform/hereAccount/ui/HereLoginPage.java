@@ -3,6 +3,7 @@ package com.here.platform.hereAccount.ui;
 import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
 
 
@@ -48,6 +49,8 @@ public class HereLoginPage {
     public HereLoginPage clickSignIn() {
         $("#signInBtn").click();
         $("#signInBtn").shouldBe(Condition.hidden);
+        Selenide.sleep(5000);
+        $(".spinner-overlay[data-ng-show='changings.loading']").waitUntil(Condition.hidden, 10000);
         return this;
     }
 
