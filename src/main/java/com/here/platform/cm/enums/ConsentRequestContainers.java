@@ -7,9 +7,6 @@ import com.github.javafaker.Faker;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
-import com.here.platform.ns.dto.ProviderResource;
-import com.here.platform.ns.dto.Providers;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,35 +27,35 @@ public enum ConsentRequestContainers {
 
     PAY_AS_YOU_DRIVE(
             "payasyoudrive", "Pay as you drive insurance", "Pay as you drive insurance",
-            "mb:vehicle:mbdata:payasyoudrive",
+            "mb:vehicle:mbdata:payasyoudrive offline_access",
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
     ),
     VEHICLE_STATUS(
             "vehiclestatus", "Vehicle status", "Vehicle status",
-            "mb:vehicle:mbdata:vehiclestatus",
+            "mb:vehicle:mbdata:vehiclestatus offline_access",
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
     ),
     ELECTRIC_VEHICLE_STATUS(
             "electricvehicle", "Electric vehicle status", "Electric vehicle status",
-            "mb:vehicle:mbdata:evstatus",
+            "mb:vehicle:mbdata:evstatus offline_access",
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
     ),
     FUEL_STATUS(
             "fuelstatus", "Fuel status", "Fuel status",
-            "mb:vehicle:mbdata:fuelstatus",
+            "mb:vehicle:mbdata:fuelstatus offline_access",
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
     ),
     VEHICLE_LOCK_STATUS(
             "vehiclelockstatus", "Vehicle lock status", "Vehicle lock status",
-            "mb:vehicle:mbdata:vehiclelock",
+            "mb:vehicle:mbdata:vehiclelock offline_access",
             CLIENT_ID, CLIENT_SECRET,
             List.of("odometer"),
             MPProviders.DAIMLER
@@ -66,7 +63,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_ODOMETER(
             "odometer", "odometer",
             "Provides odometer specific information.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             Conf.cmUsers().getDaimlerApp().getClientId(),
             Conf.cmUsers().getDaimlerApp().getClientSecret(),
             List.of("odometer"),
@@ -75,7 +72,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_FUEL(
             "fuel", "fuel",
             "Provides fuel specific information.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             Conf.cmUsers().getDaimlerApp().getClientId(),
             Conf.cmUsers().getDaimlerApp().getClientSecret(),
             List.of("fuel"),
@@ -84,7 +81,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_TIRES(
             "tires", "tires",
             "Provides information about the tire pressure.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
             List.of("tires"),
@@ -93,7 +90,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_DOORS(
             "doors", "doors",
             "Provides information about the doors status.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
             List.of("doors"),
@@ -102,7 +99,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_LOCATION(
             "location", "location",
             "Provides location information about vehicle.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
             List.of("location"),
@@ -111,7 +108,7 @@ public enum ConsentRequestContainers {
     DAIMLER_EXPERIMENTAL_CHARGE(
             "stateofcharge", "stateofcharge",
             "Provides charge status of the battery pack.",
-            "mb:user:pool:reader mb:vehicle:status:general",
+            "mb:user:pool:reader mb:vehicle:status:general offline_access",
             DAIMLER_EXPERIMENTAL_ODOMETER.clientId,
             DAIMLER_EXPERIMENTAL_ODOMETER.clientSecret,
             List.of("stateofcharge"),
@@ -133,7 +130,7 @@ public enum ConsentRequestContainers {
     ),
     DAIMLER_REFERENCE(
             "odometer", "odometer", "Automated Test Container",
-            "mb:vehicle:mbdata:payasyoudrive",
+            "mb:vehicle:mbdata:payasyoudrive offline_access",
             Conf.ns().getReferenceApp().getClientId(),
             Conf.ns().getReferenceApp().getClientSecret(),
             List.of("odometer"),
@@ -141,7 +138,7 @@ public enum ConsentRequestContainers {
     ),
     REFERENCE_NEW(
             "odometer", "odometer", "Automated Test Container",
-            "mb:vehicle:mbdata:payasyoudrive",
+            "mb:vehicle:mbdata:payasyoudrive offline_access",
             Conf.ns().getReferenceApp().getClientId(),
             Conf.ns().getReferenceApp().getClientSecret(),
             List.of("odometer"),
@@ -215,8 +212,8 @@ public enum ConsentRequestContainers {
                 .resources(List.of(container.getResourceNames()))
                 .containerDescription(container.getDescription())
                 .provider(MPProviders.findByProviderId(providerName))
-                .clientId( Conf.ns().getReferenceApp().getClientId())
-                .clientSecret( Conf.ns().getReferenceApp().getClientSecret())
+                .clientId(Conf.ns().getReferenceApp().getClientId())
+                .clientSecret(Conf.ns().getReferenceApp().getClientSecret())
                 .build();
     }
 

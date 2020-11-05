@@ -190,6 +190,20 @@ test_e2e_dev:
     - when: never
   allow_failure: true
 
+test_ui_dev:
+  extends: .test_run
+  stage: test_dev
+  variables:
+    ENV: "dev"
+    TASK: "uiTests"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+  rules:
+    - if: '$TASK_NS == null && $TASK_CM == null'
+      when: manual
+    - when: never
+  allow_failure: true
+
 #sit operations
 test_ns_smoke_sit:
   extends: .test_run

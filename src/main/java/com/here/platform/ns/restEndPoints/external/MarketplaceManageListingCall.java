@@ -185,7 +185,7 @@ public class MarketplaceManageListingCall {
     public NeutralServerResponseAssertion beginCancellation(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = baseMpUrl + "/subscriptions/" + subsId
-                + "/cancel";
+                + "/beginCancellation?duration=0";
         String body = "{}";
         Response response = RestHelper
                 .post("Cancel subscription: " + subsId, url, providerToken, body);
@@ -276,7 +276,7 @@ public class MarketplaceManageListingCall {
     public void waitForAsyncTask(int taskId, Users requester) {
         String url = baseMpUrl + "/tasks/" + taskId;
         String token = "Bearer " + requester.getToken();
-        int maxCount = 30;
+        int maxCount = 50;
         do {
             maxCount--;
             Response resp = RestHelper
@@ -284,6 +284,9 @@ public class MarketplaceManageListingCall {
             if (resp.getStatusCode() == HttpStatus.SC_OK) {
                 if (resp.jsonPath().getString("status").equals("SUCCESS")) {
                     break;
+                }
+                if (resp.jsonPath().getString("status").equals("FAILED")) {
+                    throw new RuntimeException("Error creating subscription. Async status is FAILED");
                 }
                 try {
                     Thread.sleep(20*1000);

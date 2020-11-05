@@ -19,7 +19,7 @@ public class OnboardAndRemoveApplicationExtension implements BeforeEachCallback,
 
     private final ConsentRequestData consentRequestData;
     private final boolean cleanUpAfter;
-    private boolean onboardProviderWithContainerToNS = false;
+    private boolean onboardProviderWithContainerToNS;
 
     @Override
     public void beforeEach(ExtensionContext context) {

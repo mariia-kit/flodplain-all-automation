@@ -5,7 +5,6 @@ import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
@@ -22,7 +21,7 @@ public class OnboardingSteps {
     private final ConsumerController consumerController = new ConsumerController();
     private final ProvidersController providersController = new ProvidersController();
     private String providerTypeName = MPProviders.DAIMLER.getName();
-    private String providerAuthUrl = "https://api.secure.mercedes-benz.com/oidc10/auth/oauth/v2/authorize";
+    private String providerAuthUrl = "https://id.mercedes-benz.com/as/authorization.oauth2";
     private String providerTokenUrl = StringUtils.EMPTY;
 
     public OnboardingSteps(String providerId, String consumerId) {

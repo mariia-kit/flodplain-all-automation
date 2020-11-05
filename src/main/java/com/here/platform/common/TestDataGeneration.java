@@ -26,6 +26,11 @@ public class TestDataGeneration {
             createBaseContainersIfNecessary();
             createBaseCMProvidersIfNecessary();
             createBaseCMApplicationIfNecessary();
+        } else {
+            //TODO: enable provider onboard after new provider logic deploy to prod.
+            //createBaseProvidersIfNecessaryProd();
+            //createBaseContainersIfNecessaryProd();
+            //createBaseCMApplicationIfNecessaryProd();
         }
     }
 
@@ -35,13 +40,27 @@ public class TestDataGeneration {
                 .forEach(providers -> Steps.createRegularProvider(providers.getProvider()));
     }
 
-    private static void createBaseContainersIfNecessary() {
+    public static void createBaseProvidersIfNecessaryProd() {
+        Stream.of(Providers.DAIMLER_REAL, Providers.DAIMLER_EXPERIMENTAL, Providers.BMW, Providers.BMW_TEST, Providers.REFERENCE_PROVIDER_PROD)
+                .forEach(providers -> Steps.createRegularProvider(providers.getProvider()));
+    }
+
+    public static void createBaseContainersIfNecessary() {
         Arrays.stream(Containers.values()).forEach(containers ->
                 Steps.createRegularContainer(containers.getContainer())
         );
     }
 
-    private static void createBaseProvidersResourcesIfNecessary() {
+    public static void createBaseContainersIfNecessaryProd() {
+        Arrays.stream(Containers.values())
+                .filter(container -> container.getContainer().getDataProviderName().equals(Providers.DAIMLER_EXPERIMENTAL.getName()) ||
+                container.getContainer().getDataProviderName().equals(Providers.DAIMLER_REAL.getName()))
+                .forEach(containers ->
+                Steps.createRegularContainer(containers.getContainer())
+        );
+    }
+
+    public static void createBaseProvidersResourcesIfNecessary() {
         Arrays.stream(Containers.values()).forEach(containers ->
                 Stream.of(containers.getContainer().getResourceNames().split(",")).parallel()
                         .forEach(res -> Steps.addResourceToProvider(
@@ -66,6 +85,15 @@ public class TestDataGeneration {
                         .onboardTestProviderApplication(containers.getConsentContainer()));
     }
 
+    public static void createBaseCMApplicationIfNecessaryProd() {
+        String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
+        Stream.of(ConsentRequestContainers.values())
+                .filter(container -> container.getProvider().getName().equals(Providers.DAIMLER_EXPERIMENTAL.getName()) ||
+                        container.getProvider().getName().equals(Providers.DAIMLER_REAL.getName()))
+                .forEach(containers ->
+                new OnboardingSteps(containers.provider.getName(), consumerId)
+                        .onboardTestProviderApplication(containers.getConsentContainer()));
+    }
 
     private static void createPoliciesForProviderGroup() {
         new AaaCall().addGroupToPolicy(Conf.nsUsers().getProviderGroupId(),

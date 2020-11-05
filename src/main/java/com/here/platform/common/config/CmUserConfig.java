@@ -10,6 +10,7 @@ import lombok.Data;
 public class CmUserConfig {
 
     private DaimlerApp daimlerApp;
+    private DaimlerApp bmwApp;
 
     private DataSubject dataSubj1;
     private DataSubject dataSubj2;

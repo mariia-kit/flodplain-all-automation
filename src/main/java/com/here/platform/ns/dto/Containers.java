@@ -15,42 +15,42 @@ public enum Containers {
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides odometer specific information.",
                     ContainerResources.ODOMETER.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_FUEL(
             new Container("fuel", "fuel",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides fuel specific information.",
                     ContainerResources.FUEL.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_TIRES(
             new Container("tires", "tires",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides information about the tire pressure.",
                     ContainerResources.TIRES.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_DOORS(
             new Container("doors", "doors",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides information about the doors status.",
                     ContainerResources.DOORS.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_LOCATION(
             new Container("location", "location",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides location information about vehicle.",
                     ContainerResources.LOCATION.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_CHARGE(
             new Container("stateofcharge", "stateofcharge",
                     Providers.DAIMLER_EXPERIMENTAL.getName(),
                     "Provides charge status of the battery pack.",
                     ContainerResources.CHARGE.getResource().getName(), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_EXPERIMENTAL_CONNECTED_VEHICLE(
             new Container("connectedvehicle", "connectedvehicle",
@@ -59,14 +59,14 @@ public enum Containers {
                     String.join(",",
                             "odometer", "location"
                     ), true,
-                    "mb:user:pool:reader mb:vehicle:status:general")
+                    "mb:user:pool:reader mb:vehicle:status:general offline_access")
     ),
     DAIMLER_PAYASYOUDRIVE(
             new Container("payasyoudrive", "payasyoudrive",
                     Providers.DAIMLER_REAL.getName(),
                     "Pay As You Drive Insurance service for view all Pay As You Drive Insurance vehicle data points",
                     ContainerResources.odo.getResource().getName(),
-                    true, "mb:vehicle:mbdata:payasyoudrive")
+                    true, "mb:vehicle:mbdata:payasyoudrive offline_access")
     ),
     DAIMLER_ELECTRICVEHICLE(
             new Container("electricvehicle", "electricvehicle",
@@ -76,7 +76,7 @@ public enum Containers {
                             ContainerResources.soc.getResource().getName(),
                             ContainerResources.rangeelectric.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:electricvehicle")
+                    true, "mb:vehicle:mbdata:electricvehicle offline_access")
     ),
     DAIMLER_FUEALSTATUS(
             new Container("fuelstatus", "fuelstatus",
@@ -86,7 +86,7 @@ public enum Containers {
                             ContainerResources.rangeliquid.getResource().getName(),
                             ContainerResources.tankLevelpercent.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:fuelstatus")
+                    true, "mb:vehicle:mbdata:fuelstatus offline_access")
     ),
     DAIMLER_VEHICLELOCK(
             new Container("vehiclelockstatus", "vehiclelockstatus",
@@ -98,7 +98,7 @@ public enum Containers {
                             ContainerResources.doorlockstatusgas.getResource().getName(),
                             ContainerResources.positionHeading.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:vehiclelockstatus")
+                    true, "mb:vehicle:mbdata:vehiclelockstatus offline_access")
     ),
     DAIMLER_VEHICLESTATUS(
             new Container("vehiclestatus", "vehiclestatus",
@@ -122,7 +122,7 @@ public enum Containers {
                             ContainerResources.windowstatusrearleft.getResource().getName(),
                             ContainerResources.windowstatusrearright.getResource().getName()
                     ),
-                    true, "mb:vehicle:mbdata:vehiclestatus")
+                    true, "mb:vehicle:mbdata:vehiclestatus offline_access")
     ),
     REF_DAIMLER_ODOMETER(
             new Container(
