@@ -17,4 +17,6 @@ public class CmConfig {
 
     private String bmwClearanceSecret;
 
+    private String referenceProviderName;
+
 }

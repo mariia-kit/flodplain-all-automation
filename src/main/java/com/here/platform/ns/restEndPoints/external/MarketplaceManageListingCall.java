@@ -38,7 +38,7 @@ public class MarketplaceManageListingCall {
         negotiate(subsId);
         ack_prov(subsId);
         int taskId = ack_cons(subsId);
-        waitForAsyncTask(taskId, MP_CONSUMER);
+        waitForAsyncTask(taskId, MP_CONSUMER.getToken());
         return subsId;
     }
 
@@ -273,10 +273,9 @@ public class MarketplaceManageListingCall {
         }
     }
 
-    public void waitForAsyncTask(int taskId, Users requester) {
+    public void waitForAsyncTask(int taskId, String token) {
         String url = baseMpUrl + "/tasks/" + taskId;
-        String token = "Bearer " + requester.getToken();
-        int maxCount = 50;
+        int maxCount = 60;
         do {
             maxCount--;
             Response resp = RestHelper
@@ -289,14 +288,39 @@ public class MarketplaceManageListingCall {
                     throw new RuntimeException("Error creating subscription. Async status is FAILED");
                 }
                 try {
-                    Thread.sleep(20*1000);
+                    Thread.sleep(30 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
-                throw new RuntimeException("Error waiting for MP async task " + taskId + "to complete!");
+                throw new RuntimeException("Error waiting for MP async task " + taskId + " to complete!");
             }
         } while (maxCount > 1);
+        throw  new RuntimeException("Error waiting for MP async task " + taskId + " to complete! Status not success after wait for 30 min.");
+    }
+
+    public int getIdOfAsyncTaskForList(String listingHrn, String token) {
+        String url = baseMpUrl + "/tasks";
+        Response resp = RestHelper
+                .get("Get list of all async tasks on mp.", url, token);
+        if (resp.getStatusCode() == HttpStatus.SC_OK) {
+            return resp.jsonPath().getInt(
+                    "items.find {it.data.consumerSubscriptionResponse.listingHrn == '" + listingHrn + "'}.id");
+        } else {
+            throw new RuntimeException(String.format("Error getting list of async tasks. %s %s", resp.getStatusCode(), resp.body().print()));
+        }
+    }
+
+    public String getIdOfSubsFromAsyncTask(int taskId, String token) {
+        String url = baseMpUrl + "/tasks/" + taskId;
+        Response resp = RestHelper
+                .get("Get list of all async tasks on mp.", url, token);
+        if (resp.getStatusCode() == HttpStatus.SC_OK) {
+            return resp.jsonPath().getString(
+                    "data.consumerSubscriptionResponse.id");
+        } else {
+            throw new RuntimeException(String.format("Error getting async task. %s ", taskId));
+        }
     }
 
     @Step("Delete all Provider data from MP.")

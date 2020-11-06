@@ -1,6 +1,8 @@
 package com.here.platform.cm.consentStatus.approve;
 
 
+import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
@@ -9,20 +11,19 @@ import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.SuccessApproveData;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import java.util.Objects;
+import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Approve consent")
@@ -32,12 +33,12 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     private final String privateBearer = dataSubject.getBearerToken();
     private String crid;
 
+    @RegisterExtension
+    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
 
     @AfterEach
     void cleanUp() {
-        if (Objects.nonNull(crid)) {
-            RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-        }
+        Steps.removeRegularContainer(new ConsentContainerToNsContainer(testContainer).nsContainer());
     }
 
     @Test
@@ -45,6 +46,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Tag("cm_prod")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin);
 
         var validCode = ReferenceTokenController
                 .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
@@ -140,6 +142,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @DisplayName("Verify Sentry Block Approve ConsentRequest")
     void sentryBlockApproveConsentRequestTest() {
         crid = createValidConsentRequest();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin);
 
         final var consentToApprove = NewConsent.builder()
                 .vinHash(new VIN(testVin).hashed())
