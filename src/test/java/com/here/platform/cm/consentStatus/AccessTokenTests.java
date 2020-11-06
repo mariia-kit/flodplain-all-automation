@@ -2,7 +2,9 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
@@ -13,11 +15,11 @@ import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
+import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Getting of access tokens for consents")
@@ -34,14 +37,18 @@ class AccessTokenTests extends BaseConsentStatusTests {
     private final AccessTokenController accessTokenController = new AccessTokenController();
     private String crid;
 
+    @RegisterExtension
+    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
+
     @BeforeEach
     void createConsentRequest() {
         this.crid = createValidConsentRequest();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin);
     }
 
     @AfterEach
     void cleanUp() {
-        RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
+        Steps.removeRegularContainer(new ConsentContainerToNsContainer(testContainer).nsContainer());
     }
 
     @Test
@@ -108,6 +115,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
             var secondConsentRequestId = ConsentRequestSteps
                     .createValidConsentRequestWithNSOnboardings(ProviderApplications.REFERENCE_CONS_1, testVin, container2)
                     .getConsentRequestId();
+            consentRequestRemoveExtension.cridToRemove(secondConsentRequestId).vinToRemove(testVin);
             //second time with the same VIN
 
             var secondDaimlerToken = ReferenceTokenController.produceConsentAuthCode(testVin, container2.getId() + ":general");

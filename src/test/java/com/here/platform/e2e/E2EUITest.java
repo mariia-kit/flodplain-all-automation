@@ -6,6 +6,8 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
@@ -35,6 +37,7 @@ import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
+import com.here.platform.ns.helpers.TokenManager;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.io.File;
@@ -101,6 +104,7 @@ public class E2EUITest extends BaseE2ETest {
 
     @AfterEach
     void afterEach() {
+        TokenManager.resetUserLogins();
         MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn);
 
     }
@@ -217,5 +221,4 @@ public class E2EUITest extends BaseE2ETest {
         var pathSegments = UriComponentsBuilder.fromUriString(consentRequestUrl).build().getPathSegments();
         return pathSegments.get(pathSegments.size() - 1);
     }
-
 }

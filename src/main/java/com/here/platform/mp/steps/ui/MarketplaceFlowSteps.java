@@ -3,6 +3,7 @@ package com.here.platform.mp.steps.ui;
 import static com.codeborne.selenide.Selenide.open;
 import static io.qameta.allure.Allure.step;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -26,6 +27,7 @@ import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.List;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -53,7 +55,7 @@ public class MarketplaceFlowSteps {
         open("marketplace/consumer/listings/");
         HereLoginSteps.loginMPUser(mpUser);
         new ListingsListPage().isLoaded();
-    };
+    }
 
     @Step("Create and Submit listing {listingName} for container {targetContainer.id} for consumer {consumerEmail}")
     public void createAndSubmitListing(String listingName, Container targetContainer, String consumerEmail) {
@@ -62,6 +64,8 @@ public class MarketplaceFlowSteps {
         selectPublishOption(consumerEmail);
         publishListing();
         getCurrentListingHrn(listingName);
+        Selenide.sleep(20000);
+
     }
 
     @Step("Create listing for daimler experimental container {listingName}")
@@ -133,13 +137,19 @@ public class MarketplaceFlowSteps {
                 .acceptTermsAndConditions()
                 .startSubscription()
                 .confirmSubscriptionActivation();
+
+        String bearerToken = new ListingsListPage().fetchHereAccessToken();
+        MarketplaceManageListingCall marketplaceManageListingCall = new MarketplaceManageListingCall();
+        int taskId = marketplaceManageListingCall.getIdOfAsyncTaskForList(listingHrn, bearerToken);
+        subscriptionId = marketplaceManageListingCall.getIdOfSubsFromAsyncTask(taskId, bearerToken);
+        marketplaceManageListingCall.waitForAsyncTask(taskId, bearerToken);
     }
 
     @Step("Create consent request by Data Consumer for {targetContainer.id} {vin}")
     public String createConsentByConsumer(ConsentInfo consentRequest, Container targetContainer, String vin) {
         new ConsumerSubscriptionsListPage().isLoaded()
-                .waitSubscriptionWithName(targetContainer.getResourceNames())
-                .openSubscriptionWithName(targetContainer.getResourceNames());
+                .waitSubscriptionWithName(targetContainer.getName())
+                .openSubscriptionWithName(targetContainer.getName());
         var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();
         subscriptionId = getSubscriptionIdFromUrl();
 

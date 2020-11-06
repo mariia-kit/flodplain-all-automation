@@ -110,7 +110,8 @@ public class Steps {
                 .withToken(PROVIDER)
                 .deleteContainer(container);
         new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expected(resp -> resp.getStatusCode()==HttpStatus.SC_NO_CONTENT || resp.getStatusCode()==HttpStatus.SC_NOT_FOUND,
+                        "Container deletion result not as expected");
     }
 
     @Step("Create regular Listing for {container.name}")
