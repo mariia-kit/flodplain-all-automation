@@ -282,7 +282,7 @@ public class MarketplaceManageListingCall {
                     .get("Wait for asynk task to complete " + taskId, url, token);
             if (resp.getStatusCode() == HttpStatus.SC_OK) {
                 if (resp.jsonPath().getString("status").equals("SUCCESS")) {
-                    break;
+                    return;
                 }
                 if (resp.jsonPath().getString("status").equals("FAILED")) {
                     throw new RuntimeException("Error creating subscription. Async status is FAILED");

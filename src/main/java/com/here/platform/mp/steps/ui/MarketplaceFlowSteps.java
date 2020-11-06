@@ -137,8 +137,8 @@ public class MarketplaceFlowSteps {
                 .acceptTermsAndConditions()
                 .startSubscription()
                 .confirmSubscriptionActivation();
-
-        String bearerToken = new ListingsListPage().fetchHereAccessToken();
+        Selenide.sleep(5000);
+        String bearerToken = "Bearer " + new ListingsListPage().fetchHereAccessToken();
         MarketplaceManageListingCall marketplaceManageListingCall = new MarketplaceManageListingCall();
         int taskId = marketplaceManageListingCall.getIdOfAsyncTaskForList(listingHrn, bearerToken);
         subscriptionId = marketplaceManageListingCall.getIdOfSubsFromAsyncTask(taskId, bearerToken);
