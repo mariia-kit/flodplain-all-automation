@@ -2,7 +2,6 @@ package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -15,7 +14,6 @@ public class VINEnteringPage extends BaseCMPage {
 
     @Step("VIN entering page is loaded")
     public VINEnteringPage isLoaded() {
-        sleep(3000); //hotfix cos of FE developer rotation
         this.vinNumberInput.waitUntil(Condition.visible, 10000);
         return this;
     }
@@ -24,6 +22,7 @@ public class VINEnteringPage extends BaseCMPage {
     public void fillVINAndContinue(String vin) {
         this.vinNumberInput.setValue(vin);
         $(byText("Continue")).click();
+        this.vinNumberInput.waitUntil(Condition.hidden, 10000);
     }
 
 }

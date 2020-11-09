@@ -109,18 +109,18 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @DisplayName("E2E create approve consent and get access token Daimler")
     @Tag("dynamic_ui")
     void e2eTestDaimler() {
+        var targetDaimlerDataSubject = DataSubjects.getNextBy18VINLength();
         providerApplication = ProviderApplications.DAIMLER_CONS_1;
         testContainer = ConsentRequestContainers.generateNew(providerApplication.provider.getName());
         testContainer.setClientId(Conf.cmUsers().getDaimlerApp().getClientId());
         testContainer.setClientSecret(Conf.cmUsers().getDaimlerApp().getClientSecret());
-        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
+        dataSubjectIm.setVin(targetDaimlerDataSubject.getVin()); //override Data Subject's VIN to remove after test
         var vin = dataSubjectIm.getVin();
         ConsentInfo consentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
-        System.out.println(Configuration.baseUrl + crid);
 
         HereLoginSteps.loginDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
@@ -128,7 +128,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
 
-        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(DataSubjects._1AE0B89918406F0957.dataSubject);
+        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(targetDaimlerDataSubject.dataSubject);
         if (!SuccessConsentPageSteps.isLoaded()) {
             DaimlerLoginPage.approveDaimlerLegalAndSubmit();
             DaimlerLoginPage.approveDaimlerScopesAndSubmit();

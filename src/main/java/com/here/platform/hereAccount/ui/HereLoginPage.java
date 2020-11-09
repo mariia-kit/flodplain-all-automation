@@ -48,7 +48,7 @@ public class HereLoginPage {
     @Step("Click on sign in button")
     public HereLoginPage clickSignIn() {
         $("#signInBtn").click();
-        $("#signInBtn").shouldBe(Condition.hidden);
+        $("#signInBtn").waitUntil(Condition.hidden, 10000);
         Selenide.sleep(5000);
         $(".spinner-overlay[data-ng-show='changings.loading']").waitUntil(Condition.hidden, 10000);
         return this;

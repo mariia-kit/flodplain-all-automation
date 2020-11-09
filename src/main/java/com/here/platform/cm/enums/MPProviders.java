@@ -11,7 +11,7 @@ import lombok.ToString;
 public enum MPProviders {
 
     DAIMLER_EXPERIMENTAL(
-            "daimler_experimental", 18, "test-daimler",
+            "daimler_experimental", 18, "daimler_experimental",
             "https://id.mercedes-benz.com/as/authorization.oauth2",
             "https://id.mercedes-benz.com/as/token.oauth2"
     ),

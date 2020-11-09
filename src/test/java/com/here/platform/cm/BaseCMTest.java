@@ -21,6 +21,7 @@ public class BaseCMTest {
     static {
         //To run on specific environment CM tests use following "env" values: dev, sit, prod
         //System.setProperty("env", "dev");
+        //System.setProperty("dynamicUrl", "pre-dev-web-rest.consent.api.platform.in.here.com");
     }
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
