@@ -1,8 +1,6 @@
 package com.here.platform.ns.common;
 
-import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.instruments.CleanUp;
-import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import java.io.File;
 

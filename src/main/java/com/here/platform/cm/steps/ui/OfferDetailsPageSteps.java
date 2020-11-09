@@ -2,7 +2,6 @@ package com.here.platform.cm.steps.ui;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import com.here.platform.cm.rest.model.ConsentInfo;

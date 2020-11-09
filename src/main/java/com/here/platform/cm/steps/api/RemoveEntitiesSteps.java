@@ -42,7 +42,7 @@ public class RemoveEntitiesSteps {
         var deleteConsentRequestResponse = privateController
                 .withConsumerToken()
                 .hardDeleteConsentRequest(crid);
-        StepExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
+        StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
 
     @Step
@@ -66,7 +66,7 @@ public class RemoveEntitiesSteps {
         privateController.withCMToken();
         var deleteProviderAppResponse = privateController.deleteProviderApplication(providerApplication);
 
-        StepExpects.expectNOCONSTENTStatusCode(deleteProviderAppResponse);
+        StatusCodeExpects.expectNOCONSTENTStatusCode(deleteProviderAppResponse);
     }
 
     public void removeProvider(String providerId) {
@@ -75,7 +75,7 @@ public class RemoveEntitiesSteps {
         }
         privateController.withCMToken();
         var deleteProviderResponse = privateController.deleteProvider(providerId);
-        StepExpects.expectNOCONSTENTStatusCode(deleteProviderResponse);
+        StatusCodeExpects.expectNOCONSTENTStatusCode(deleteProviderResponse);
     }
 
     public void removeConsumer(String consumerId) {
@@ -84,7 +84,7 @@ public class RemoveEntitiesSteps {
         }
         privateController.withCMToken();
         var deleteConsumerResponse = privateController.deleteConsumer(consumerId);
-        StepExpects.expectNOCONSTENTStatusCode(deleteConsumerResponse);
+        StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsumerResponse);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.here.platform.common;
+package com.here.platform.common.config.dto;
 
 import lombok.Data;
 

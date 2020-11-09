@@ -78,7 +78,8 @@ public class Steps {
 
     @Step("Create regular Container {container.name} of provider {container.dataProviderName}")
     public static void createRegularContainer(Container container) {
-        if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD, Providers.BMW_TEST)
+        if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD,
+                Providers.BMW_TEST)
                 .anyMatch(prov -> prov.getProvider().getName().equals(container.getDataProviderName()))) {
             ReferenceProviderCall.createContainer(container);
         }
@@ -110,7 +111,8 @@ public class Steps {
                 .withToken(PROVIDER)
                 .deleteContainer(container);
         new NeutralServerResponseAssertion(response)
-                .expected(resp -> resp.getStatusCode()==HttpStatus.SC_NO_CONTENT || resp.getStatusCode()==HttpStatus.SC_NOT_FOUND,
+                .expected(resp -> resp.getStatusCode() == HttpStatus.SC_NO_CONTENT
+                                || resp.getStatusCode() == HttpStatus.SC_NOT_FOUND,
                         "Container deletion result not as expected");
     }
 

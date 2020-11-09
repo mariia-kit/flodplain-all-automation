@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.antlr.v4.runtime.atn.RangeTransition;
 
 
 @Getter
@@ -32,7 +31,7 @@ public enum Providers {
                     ContainerResources.bmw_remainrage,
                     ContainerResources.bmw_rangefuel,
                     ContainerResources.bmw_remainfuel,
-                    ContainerResources. bmw_mileage,
+                    ContainerResources.bmw_mileage,
                     ContainerResources.bmw_vehicleStatusDoors,
                     ContainerResources.bmw_trunkState,
                     ContainerResources.bmw_hoodState,

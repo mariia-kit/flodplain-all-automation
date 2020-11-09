@@ -10,9 +10,9 @@ import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
-import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.helpers.Steps;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
@@ -23,16 +23,6 @@ public class ConsentRequestSteps {
 
     private final Faker faker = new Faker();
     private final ConsentRequestController consentRequestController = new ConsentRequestController();
-
-    //TODO fix duplications for consent request creation
-    @Step("Create valid consent request for VIN: '{vin}'")
-    public ConsentInfo createConsentRequestWithVINFor(ProviderApplications providerApplication, String vin) {
-        ConsentInfo consentInfo = createConsentRequestFor(providerApplication);
-
-        addVINsToConsentRequest(providerApplication, consentInfo.getConsentRequestId(), vin);
-
-        return consentInfo.vinLabel(new VIN(vin).label());
-    }
 
     @Step("Create valid consent request for VIN: '{vin}'")
     public ConsentInfo createConsentRequestWithVINFor(String providerId, String consumerName, String consumerRealm,
@@ -67,7 +57,7 @@ public class ConsentRequestSteps {
         var addVINsResponse = consentRequestController.addVinsToConsentRequest(
                 crid, new VinsToFile(vins).csv()
         );
-        StepExpects.expectOKStatusCode(addVINsResponse);
+        StatusCodeExpects.expectOKStatusCode(addVINsResponse);
     }
 
     @Step("Add VINs: '{vins}', to consent request: '{crid}'")
@@ -76,7 +66,7 @@ public class ConsentRequestSteps {
         var addVINsResponse = consentRequestController.addVinsToConsentRequest(
                 crid, new VinsToFile(vins).csv()
         );
-        StepExpects.expectOKStatusCode(addVINsResponse);
+        StatusCodeExpects.expectOKStatusCode(addVINsResponse);
     }
 
     public ConsentInfo createConsentRequestFor(ProviderApplications providerApplication) {
@@ -104,7 +94,7 @@ public class ConsentRequestSteps {
 
         consentRequestController.withConsumerToken();
         var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
-        StepExpects.expectCREATEDStatusCode(consentRequestResponse);
+        StatusCodeExpects.expectCREATEDStatusCode(consentRequestResponse);
 
         var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
         return new ConsentRequestToConsentInfo(consentRequestId, targetConsentRequest)

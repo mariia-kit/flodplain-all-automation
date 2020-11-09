@@ -2,7 +2,6 @@ package com.here.platform.cm.dataAdapters;
 
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.ns.dto.Container;
-import java.util.stream.Collectors;
 
 
 public class ConsentContainerToNsContainer {
@@ -15,7 +14,7 @@ public class ConsentContainerToNsContainer {
                 container.getName(),
                 container.getProvider().getName(),
                 container.getContainerDescription(),
-                container.getResources().stream().collect(Collectors.joining(",")),
+                String.join(",", container.getResources()),
                 true,
                 container.getScopeValue());
 
@@ -24,4 +23,5 @@ public class ConsentContainerToNsContainer {
     public Container nsContainer() {
         return nsContainer;
     }
+
 }

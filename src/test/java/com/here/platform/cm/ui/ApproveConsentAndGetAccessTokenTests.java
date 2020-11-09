@@ -21,8 +21,8 @@ import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
@@ -85,6 +85,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
 
+        System.out.println(dataSubjectIm);
         HereLoginSteps.loginDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);

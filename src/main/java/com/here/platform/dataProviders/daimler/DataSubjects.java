@@ -1,12 +1,13 @@
 package com.here.platform.dataProviders.daimler;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.FileIO;
 import com.here.platform.common.config.Conf;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -40,18 +41,6 @@ public enum DataSubjects {
         this.dataSubject = dataSubject;
     }
 
-    public String getUserName() {
-        return dataSubject.getEmail();
-    }
-
-    public String getPass() {
-        return dataSubject.getPass();
-    }
-
-    public String getVin() {
-        return dataSubject.getVin();
-    }
-
     public static DataSubjects getNextBy18VINLength() {
         return getNextVinLength(18);
     }
@@ -73,7 +62,21 @@ public enum DataSubjects {
     public static DataSubjects getByVin(String vin) {
         return Stream.of(values())
                 .filter(subj -> vin.equals(subj.getVin()))
-                .findFirst().orElseThrow(() -> new RuntimeException("No DataSubject with vin " + vin + " detected."));
+                .findFirst().orElseThrow(() -> new RuntimeException(
+                        sbb("No DataSubject with vin").w().sQuoted(vin).w().append("detected.").bld()
+                ));
+    }
+
+    public String getUserName() {
+        return dataSubject.getEmail();
+    }
+
+    public String getPass() {
+        return dataSubject.getPass();
+    }
+
+    public String getVin() {
+        return dataSubject.getVin();
     }
 
     public String getBearerToken() {
@@ -90,7 +93,8 @@ public enum DataSubjects {
 
     @SneakyThrows
     public String generateBearerToken() {
-        var token = FileIO.writeStringToLockedFile(vinFile(), () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
+        var token = FileIO.writeStringToLockedFile(vinFile(),
+                () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
         return token;
     }
 

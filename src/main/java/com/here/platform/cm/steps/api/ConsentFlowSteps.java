@@ -6,11 +6,11 @@ import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.MPProviders;
-import com.here.platform.common.VIN;
-import com.here.platform.common.controller.ReferenceProviderController;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
+import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
 
@@ -40,7 +40,7 @@ public class ConsentFlowSteps {
                 .build();
         var approveResponse = new ConsentStatusController().approveConsent(consentToApprove, token);
 
-        StepExpects.expectOKStatusCode(approveResponse);
+        StatusCodeExpects.expectOKStatusCode(approveResponse);
     }
 
     @Step
@@ -48,7 +48,7 @@ public class ConsentFlowSteps {
         var clearanceId = new ReferenceProviderController().getClearanceByVin(targetVIN, bmwContainer).jsonPath()
                 .get("clearanceId").toString();
         var response = new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.APPROVED.name());
-        StepExpects.expectOKStatusCode(response);
+        StatusCodeExpects.expectOKStatusCode(response);
     }
 
     @Step
@@ -64,6 +64,7 @@ public class ConsentFlowSteps {
                 .vinHash(new VIN(targetVIN).hashed())
                 .build();
         var revokeResponse = new ConsentStatusController().revokeConsent(consentToRevoke, token);
-        StepExpects.expectOKStatusCode(revokeResponse);
+        StatusCodeExpects.expectOKStatusCode(revokeResponse);
     }
+
 }

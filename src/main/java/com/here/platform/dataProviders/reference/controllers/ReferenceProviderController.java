@@ -1,4 +1,4 @@
-package com.here.platform.common.controller;
+package com.here.platform.dataProviders.reference.controllers;
 
 import static io.restassured.RestAssured.given;
 
@@ -115,6 +115,7 @@ public class ReferenceProviderController {
 
         @JsonProperty("clientSecret")
         private String clientSecret;
+
     }
 
 }

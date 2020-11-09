@@ -1,4 +1,4 @@
-package com.here.platform.common;
+package com.here.platform.common.strings;
 
 import com.github.javafaker.Faker;
 import com.google.common.hash.Hashing;

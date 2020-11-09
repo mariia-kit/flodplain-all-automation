@@ -1,15 +1,11 @@
 package com.here.platform.ns.helpers.authentication;
 
 import com.here.platform.aaa.ApplicationTokenController;
-import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.common.DataSubject;
-import com.here.platform.dataProviders.daimler.DaimlerTokenController;
 import com.here.platform.aaa.HERECMTokenController;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.helpers.TokenManager;
-import java.util.Base64;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

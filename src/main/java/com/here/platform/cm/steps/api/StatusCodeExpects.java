@@ -10,7 +10,7 @@ import org.hamcrest.Matchers;
 
 
 @UtilityClass
-class StepExpects {
+public class StatusCodeExpects {
 
     private void expectStatusCodeFor(StatusCode statusCode, Response targetResponse) {
         //ignore if forbidden to execute the request, for example deleteProvider, dataConsumer
@@ -21,16 +21,19 @@ class StepExpects {
         targetResponse.then().assertThat().statusCode(Matchers.describedAs(errorMessage, equalTo(statusCode.code)));
     }
 
-    void expectCREATEDStatusCode(Response targetResponse) {
+    public Response expectCREATEDStatusCode(Response targetResponse) {
         expectStatusCodeFor(StatusCode.CREATED, targetResponse);
+        return targetResponse;
     }
 
-    void expectOKStatusCode(Response targetResponse) {
+    public Response expectOKStatusCode(Response targetResponse) {
         expectStatusCodeFor(StatusCode.OK, targetResponse);
+        return targetResponse;
     }
 
-    void expectNOCONSTENTStatusCode(Response targetResponse) {
+    public Response expectNOCONSTENTStatusCode(Response targetResponse) {
         expectStatusCodeFor(StatusCode.NO_CONTENT, targetResponse);
+        return targetResponse;
     }
 
 }

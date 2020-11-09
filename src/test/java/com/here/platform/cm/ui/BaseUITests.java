@@ -8,7 +8,6 @@ import com.codeborne.selenide.junit5.TextReportExtension;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
-import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
@@ -42,7 +41,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class BaseUITests extends BaseCMTest {
 
     static {
-        Configuration.baseUrl = ConsentPageUrl.getConsentRequestsUrl();
+        Configuration.baseUrl = Conf.cm().getConsentPageUrlDynamic();
         Configuration.driverManagerEnabled = true;
         Configuration.pollingInterval = 400;
         Configuration.browserSize = "1366x1000";

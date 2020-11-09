@@ -17,7 +17,7 @@ import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
-import com.here.platform.common.controller.ReferenceProviderController;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;

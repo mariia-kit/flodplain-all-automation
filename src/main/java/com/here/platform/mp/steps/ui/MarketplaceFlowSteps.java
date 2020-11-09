@@ -1,7 +1,6 @@
 package com.here.platform.mp.steps.ui;
 
 import static com.codeborne.selenide.Selenide.open;
-import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
@@ -27,13 +26,13 @@ import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.List;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
 @UtilityClass
 public class MarketplaceFlowSteps {
+
     Faker faker = new Faker();
     private String subscriptionId;
     private String listingHrn;
@@ -44,14 +43,14 @@ public class MarketplaceFlowSteps {
     }
 
     @Step("Login Data Consumer ")
-    public void loginDataProvider(User mpUser){
+    public void loginDataProvider(User mpUser) {
         open("marketplace/provider/listings");
         HereLoginSteps.loginMPUser(mpUser);
         new ListingsListPage().isLoaded();
-    };
+    }
 
     @Step("Login Data Consumer ")
-    public void loginDataConsumer(User mpUser){
+    public void loginDataConsumer(User mpUser) {
         open("marketplace/consumer/listings/");
         HereLoginSteps.loginMPUser(mpUser);
         new ListingsListPage().isLoaded();
@@ -86,12 +85,12 @@ public class MarketplaceFlowSteps {
 
     @Step("Select subscription option")
     public void selectSubsOption() {
-    new CreateListingPage()
-            .addEvaluationSubscription()
-            .describeSubscription(faker.company().catchPhrase())
-            .fillLinkForTermsAndCondiotion(faker.company().url())
-            .clickAddSubscription()
-            .clickNext();
+        new CreateListingPage()
+                .addEvaluationSubscription()
+                .describeSubscription(faker.company().catchPhrase())
+                .fillLinkForTermsAndCondiotion(faker.company().url())
+                .clickAddSubscription()
+                .clickNext();
     }
 
     @Step("Select publishing options")
@@ -202,4 +201,5 @@ public class MarketplaceFlowSteps {
         mpListings.beginCancellation(subsOptionId);
         mpListings.deleteListing(listingHrn);
     }
+
 }

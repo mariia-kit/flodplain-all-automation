@@ -13,5 +13,5 @@ public enum BMWStatus {
     REVOKED(StateEnum.REVOKED),
     TIMED_OUT(StateEnum.EXPIRED);
 
-    private StateEnum cmStatus;
+    private final StateEnum cmStatus;
 }

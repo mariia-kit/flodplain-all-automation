@@ -1,9 +1,10 @@
 package com.here.platform.common;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import io.restassured.response.Response;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
-import org.apache.http.HttpStatus;
 
 
 public class ResponseExpectMessages {
@@ -15,29 +16,31 @@ public class ResponseExpectMessages {
     }
 
     public String expectedStatuesCode(StatusCode expectedStatusCode) {
-        return new StringBuilder().append("\n")
-                .append("Expected status code: ").append(expectedStatusCode.code).append("\n")
-                .append("Actual status code: ").append(targetResponse.statusCode()).append("\n")
-                .append("Actual response body:").append("\n")
-                .append(targetResponse.body().asString()).append("\n")
-                .toString();
+        return sbb().n()
+                .append("Expected status code:").w().sQuoted(expectedStatusCode.code).n()
+                .append("Actual status code:").w().sQuoted(targetResponse.statusCode()).n()
+                .append("Actual response body:").n()
+                .append(targetResponse.body().asString()).n()
+                .bld();
     }
 
     public String expectedStatuesCode(int expectedStatusCode) {
-        return new StringBuilder().append("\n")
-                .append("Expected status code: ").append(expectedStatusCode).append("\n")
-                .append("Actual status code: ").append(targetResponse.statusCode()).append("\n")
-                .append("Actual response body:").append("\n")
-                .append(targetResponse.body().asString()).append("\n")
-                .toString();
+        return sbb().n()
+                .append("Expected status code:").w().sQuoted(expectedStatusCode).n()
+                .append("Actual status code:").w().sQuoted(targetResponse.statusCode()).n()
+                .append("Actual response body:").n()
+                .append(targetResponse.body().asString()).n()
+                .bld();
     }
 
     public String expectedResponseBodyClass(Class expectedClass) {
-        return new StringBuilder().append("\n")
-                .append("Unexpected response body:").append("\n")
-                .append(targetResponse.asString()).append("\n")
-                .append("Expected body type: ").append(expectedClass.getSimpleName())
-                .toString();
+        return sbb().n()
+                .append("Unexpected response body:").n()
+                .append(targetResponse.asString()).n()
+                .append("Expected body type:").w().sQuoted(expectedClass.getSimpleName()).n()
+                .append("With fields:").n()
+                .append(expectedClass.getDeclaredFields())
+                .bld();
     }
 
     @AllArgsConstructor
@@ -53,7 +56,7 @@ public class ResponseExpectMessages {
         public static StatusCode byValue(int value) {
             return Stream.of(StatusCode.values())
                     .filter(code -> code.code == value).findFirst()
-                    .orElseThrow(() -> new RuntimeException("No such status code known " + value));
+                    .orElseThrow(() -> new RuntimeException(sbb("No such status code known").w().append(value).bld()));
         }
     }
 

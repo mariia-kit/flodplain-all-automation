@@ -1,12 +1,14 @@
 package com.here.platform.ns.helpers;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.NSError;
 import com.here.platform.ns.dto.ProviderResource;
 import org.apache.http.HttpStatus;
 
-
+//todo refactor with SBB
 public class NSErrors {
 
     public static NSError getContainersForProviderNotFoundError(String providerName) {
@@ -118,20 +120,11 @@ public class NSErrors {
                 "Modify request according to data provider requirements");
     }
 
-    public static NSError getDaimleRResourceNotFoundError(String providerName, String resourceName) {
-        return new NSError("Request processing exception",
-                HttpStatus.SC_NOT_FOUND,
-                "E501114",
-                "Data provider '" + providerName + "' response: {exveErrorId=5, exveErrorMsg=No resource with id:" +
-                        resourceName + " found., exveErrorRef=asdsdsdsda-asdasda-12123, exveNote=Provide request with valid data}",
-                "Modify request according to data provider requirements");
-    }
-
     public static NSError getCMInvalidVehicleError(String consentId) {
         return new NSError("Consent token not found",
                 HttpStatus.SC_NOT_FOUND,
                 "E501126",
-                "Token is not provided for consent request id '" + consentId + "'",
+                sbb("Token is not provided for consent request id").w().sQuoted(consentId).bld(),
                 "Clarify with Consent Management team if requested vehicle id has consent");
     }
 
@@ -149,9 +142,9 @@ public class NSErrors {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_CONFLICT,
                 "E502109",
-                String.format(
-                        "You can't delete container '%s' for provider '%s', because it has subscriptions",
-                        container.getName(), container.getDataProviderName()),
+                sbb("You can't delete container").w().sQuoted(container.getName()).w()
+                        .append("for provider").w()
+                        .sQuoted(container.getDataProviderName()).w().append(", because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
 
@@ -159,9 +152,9 @@ public class NSErrors {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_CONFLICT,
                 "E502109",
-                String.format(
-                        "You can't update container '%s' for provider '%s', because it has subscriptions",
-                        container.getName(), container.getDataProviderName()),
+                sbb("You can't update container").w().sQuoted(container.getName()).w()
+                        .append("for provider").w().sQuoted(container.getDataProviderName()).w()
+                        .append(" because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
 

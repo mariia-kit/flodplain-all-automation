@@ -1,8 +1,10 @@
 package com.here.platform.hereAccount.controllers;
 
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.github.javafaker.Faker;
-import com.here.platform.common.JConvert;
+import com.here.platform.cm.steps.api.StatusCodeExpects;
 import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
 import io.restassured.http.Cookies;
@@ -28,58 +30,54 @@ public class HereUserManagerController extends BaseHereAccountController {
     @Step("Delete HERE user {hereUser.email}")
     public void deleteHereUser(HereUser hereUser) {
         String token = getHereCurrentToken(hereUser);
-        deleteHereAccount("Bearer " + token);
+        deleteHereAccount(sbb("Bearer").w().append(token).bld());
     }
 
     public String createHereAccount(HereUser hereUser) {
-        Response create = hereAccountClient("/user")
-                .body(new JConvert(new CreateHereUserRequest(hereUser)).toJson())
-                .post()
-                .then()
-                .statusCode(HttpStatus.SC_CREATED)
-                .extract().response();
-
-        return create.body().jsonPath().get("userId");
+        var create = hereAccountClient("/user")
+                .body(new CreateHereUserRequest(hereUser))
+                .post();
+        return StatusCodeExpects.expectCREATEDStatusCode(create)
+                .body().jsonPath().get("userId");
     }
 
     public void deleteHereAccount(String bearerToken) {
-        hereAccountClient("/user/me")
+        Response authorization = hereAccountClient("/user/me")
                 .header("Authorization", bearerToken)
-                .delete()
-                .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+                .delete();
+        StatusCodeExpects.expectNOCONSTENTStatusCode(authorization);
     }
 
     public String getHereCurrentToken(HereUser hereUser) {
         Response tokenResponse = hereAccountClient(Conf.ns().getAuthUrlGetToken())
                 .header("x-ha-realm", hereUser.getRealm())
-                .when().body(new JConvert(new GetCurrentTokenRequest(hereUser)).toJson())
+                .when().body(new GetCurrentTokenRequest(hereUser))
                 .post();
         if (tokenResponse.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED) {
             return tokenResponse.jsonPath().get("termsReacceptanceToken");
         } else if (tokenResponse.getStatusCode() == HttpStatus.SC_OK) {
             return tokenResponse.jsonPath().get("accessToken");
         } else {
-            Assertions.fail("Error receiving token or acceptance token! " + tokenResponse.asString());
+            Assertions.fail(
+                    sbb("Error receiving token or acceptance token!").w().append(tokenResponse.asString()).bld()
+            );
             return null;
         }
     }
 
     public void acceptHereTerms(HereUser hereUser, String termsToken) {
-        hereAccountClient("/terms")
-                .body(new JConvert(new AcceptTermsRequest(termsToken, hereUser)).toJson())
-                .post()
-                .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+        var termsResponse = hereAccountClient("/terms")
+                .body(new AcceptTermsRequest(termsToken, hereUser))
+                .post();
+        StatusCodeExpects.expectNOCONSTENTStatusCode(termsResponse);
     }
 
     public void acceptCMConsent(Cookies cookie) {
-        hereAccountClient("/api/account/save-consent")
-                .body(new JConvert(new AcceptConsentRequest()).toJson())
+        Response saveConsentResponse = hereAccountClient("/api/account/save-consent")
+                .body(new AcceptConsentRequest())
                 .cookies(cookie)
-                .post()
-                .then()
-                .statusCode(HttpStatus.SC_CREATED);
+                .post();
+        StatusCodeExpects.expectCREATEDStatusCode(saveConsentResponse);
     }
 
 
@@ -194,6 +192,7 @@ public class HereUserManagerController extends BaseHereAccountController {
 
     @Data
     public static class AcceptConsentRequest {
+
         String realm, clientId;
         List<String> scope;
 
@@ -202,6 +201,7 @@ public class HereUserManagerController extends BaseHereAccountController {
             clientId = "yEx4GXjPeJtfJKmKOFU5";
             scope = List.of("openid", "email", "profile", "readwrite:ha");
         }
+
     }
 
 }

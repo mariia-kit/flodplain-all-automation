@@ -3,7 +3,6 @@ package com.here.platform.ns.controllers.access;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
-import com.here.platform.ns.dto.Providers;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 

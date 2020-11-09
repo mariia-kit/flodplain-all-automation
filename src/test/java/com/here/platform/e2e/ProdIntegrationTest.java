@@ -1,7 +1,6 @@
 package com.here.platform.e2e;
 
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
-import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.common.TestDataGeneration;

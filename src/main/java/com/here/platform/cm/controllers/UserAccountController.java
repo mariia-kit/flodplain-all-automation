@@ -1,7 +1,7 @@
 package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.HereAccountRequestTokenData;
-import com.here.platform.common.VIN;
+import com.here.platform.common.strings.VIN;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Map;

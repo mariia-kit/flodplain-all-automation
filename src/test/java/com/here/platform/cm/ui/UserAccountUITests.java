@@ -1,25 +1,22 @@
 package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
-import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;

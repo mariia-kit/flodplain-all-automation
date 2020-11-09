@@ -161,8 +161,7 @@ public enum Containers {
                     "Status of doors",
                     "doorsstatus",
                     true, "")
-    )
-    ;
+    );
 
     private final Container container;
 
@@ -176,7 +175,7 @@ public enum Containers {
                 id,
                 id + " container name",
                 providerName,
-                "Automated Test Container",
+                "Automated Test Container for " + id,
                 ContainerResourcesHelper.REGULAR_RESOURCE,
                 true,
                 null);

@@ -7,7 +7,7 @@ import com.here.platform.cm.controllers.BMWController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.common.controller.ReferenceProviderController;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -374,8 +374,9 @@ public class ZConsentManagementTest extends BaseE2ETest {
         String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
-        var clearanceId = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer).jsonPath()
-                .get("clearanceId").toString();
+        var clearanceId = new ReferenceProviderController()
+                .getClearanceByVin(Vehicle.validVehicleId, bmwContainer)
+                .jsonPath().get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.REVOKED.name());
 
         var response = new ContainerDataController()
@@ -400,18 +401,19 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
 
-
         String crid1 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
-        var clearanceId1 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer1).jsonPath()
+        var clearanceId1 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer1)
+                .jsonPath()
                 .get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId1, BMWStatus.REVOKED.name());
 
         String crid2 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
-        var clearanceId2 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer2).jsonPath()
+        var clearanceId2 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer2)
+                .jsonPath()
                 .get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId2, BMWStatus.APPROVED.name());
 
@@ -432,4 +434,5 @@ public class ZConsentManagementTest extends BaseE2ETest {
         new NeutralServerResponseAssertion(response2)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED);
     }
+
 }

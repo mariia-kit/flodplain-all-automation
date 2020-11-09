@@ -1,11 +1,9 @@
 package com.here.platform.cm.consentStatus.approve;
 
 
-import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
+import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
@@ -13,10 +11,12 @@ import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.SuccessApproveData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;

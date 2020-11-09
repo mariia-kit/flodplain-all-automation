@@ -4,6 +4,7 @@ package com.here.platform.cm.enums;
 import static com.here.platform.cm.enums.CMErrorResponse.Constants.CORRECT_DATA;
 import static com.here.platform.cm.enums.CMErrorResponse.Constants.CORRECT_VALUE;
 import static com.here.platform.cm.enums.CMErrorResponse.Constants.TRY_AGAIN_ACTION;
+import static com.here.platform.common.strings.SBB.sbb;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,13 +21,17 @@ public enum CMErrorResponse {
             "Use Consent Management REST Service OpenAPI specification methods only"),
     MEDIA_TYPE_NOT_SUPPORTED("E503102", "Invalid request media type",
             "Use Consent Management REST Service OpenAPI specification media types only"),
-    CONSENT_NOT_APPROVED("E503103", "Consent not approved", CORRECT_DATA + " for consent approval"),
-    CONSENT_NOT_FOUND("E503104", "Consent not found", CORRECT_DATA + " for consent"),
+    CONSENT_NOT_APPROVED("E503103", "Consent not approved",
+            sbb(CORRECT_DATA).w().append("for consent approval").bld()),
+    CONSENT_NOT_FOUND("E503104", "Consent not found",
+            sbb(CORRECT_DATA).w().append("for consent").bld()),
     CONSENT_REQUEST_VALIDATION("E503105", "Consent request validation",
-            CORRECT_VALUE + " for consent request creation"),
+            sbb(CORRECT_VALUE).w().append("for consent request creation").bld()),
     CONSENT_REQUEST_UPDATE("E503131", "Consent request update error", CORRECT_DATA),
-    CONSENT_VALIDATION("E503106", "Consent validation failed", CORRECT_VALUE + " for consent"),
-    CONSUMER_VALIDATION("E503107", "Consumer validation failed", CORRECT_VALUE + " for consumer"),
+    CONSENT_VALIDATION("E503106", "Consent validation failed",
+            sbb(CORRECT_VALUE).w().append("for consent").bld()),
+    CONSUMER_VALIDATION("E503107", "Consumer validation failed",
+            sbb(CORRECT_VALUE).w().append("for consumer").bld()),
     DATA_MANIPULATION("E503108", "Data manipulation failed", CORRECT_DATA),
     PROVIDER_TOKEN_REFRESH("E503109", "Token refresh exception", CORRECT_DATA),
     TOKEN_VALIDATION("E503110", "Token validation failed", "Provide correct token"),
@@ -43,7 +48,7 @@ public enum CMErrorResponse {
     OAUTH_PROCESS_EXCEPTION("E503117", "Error response from CM OAUTH service",
             "Try again later or contact Consent Management team"),
     ACCESS_TOKEN_VIN_MISMATCH("E503118", "Access token does not match with provided VIN",
-            "Please " + CORRECT_DATA.toLowerCase()),
+            sbb("Please").w().append(CORRECT_DATA.toLowerCase()).bld()),
     COMMUNICATION_EXCEPTION("E503119", "Error while communicating to external service", TRY_AGAIN_ACTION),
     DAIMLER_EXCEPTION("E503120", "Data can't be processed by Daimler", CORRECT_DATA),
     CHAIN_CODES_EXCEPTION("E503121", "Data can't be processed by Chaincodes Service", CORRECT_DATA),
