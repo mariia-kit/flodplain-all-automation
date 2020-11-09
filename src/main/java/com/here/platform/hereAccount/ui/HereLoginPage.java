@@ -49,13 +49,13 @@ public class HereLoginPage {
     public HereLoginPage clickSignIn() {
         $("#signInBtn").click();
         $("#signInBtn").waitUntil(Condition.hidden, 10000);
-        Selenide.sleep(5000);
         $(".spinner-overlay[data-ng-show='changings.loading']").waitUntil(Condition.hidden, 10000);
         return this;
     }
 
     @Step("Approve HERE consent for new user")
     public HereLoginPage approveConsentIfPresent() {
+        Selenide.sleep(5000);
         if ($("#authorizeFlowBtn").isDisplayed()) {
             $("#authorizeFlowBtn").click();
         }
