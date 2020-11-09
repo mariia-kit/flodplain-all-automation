@@ -30,6 +30,7 @@ public class SuccessConsentPageSteps {
         $(".container-offers-link").click();
     }
 
+    @Step("Wait for success offer page is loaded")
     public boolean isLoaded() {
         Selenide.sleep(5000);
         return $(".container").isDisplayed();
