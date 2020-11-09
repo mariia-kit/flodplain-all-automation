@@ -5,7 +5,6 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 
-import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
@@ -126,7 +125,7 @@ public class DashboardTests extends BaseUITests {
         var crid = firstConsentRequest.getConsentRequestId();
         cridsToRemove.add(crid);
 
-        open(Configuration.baseUrl + crid);
+        open(crid);
 
         HereLoginSteps.loginDataSubject(dataSubjectIm);
 
@@ -138,7 +137,7 @@ public class DashboardTests extends BaseUITests {
 
     @Test
     @DisplayName("Verify Revoke thru Dashboard page")
-    void verifyRevokeDashBoardTest() {
+    void verifyRevokeDashboardTest() {
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainer testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider.getName());
@@ -147,7 +146,7 @@ public class DashboardTests extends BaseUITests {
         var crid = consentRequest.getConsentRequestId();
         cridsToRemove.add(crid);
 
-        open(Configuration.baseUrl + crid);
+        open(crid);
 
         HereLoginSteps.loginDataSubject(dataSubjectIm);
 

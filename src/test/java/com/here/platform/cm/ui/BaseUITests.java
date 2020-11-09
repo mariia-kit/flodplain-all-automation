@@ -11,13 +11,9 @@ import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.common.config.Conf;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
-import java.io.File;
 import java.util.logging.Level;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +27,6 @@ import org.openqa.selenium.remote.RemoteExecuteMethod;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.html5.RemoteWebStorage;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -52,8 +47,7 @@ public class BaseUITests extends BaseCMTest {
     @Container
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
-                    .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
-                    .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
+                    .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
     protected ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
     protected ConsentRequestContainer testContainer = ConsentRequestContainers
             .generateNew(providerApplication.provider.getName());
@@ -75,16 +69,6 @@ public class BaseUITests extends BaseCMTest {
     @AfterEach
     public void tearDownBrowser() {
         WebDriverRunner.closeWebDriver();
-    }
-
-    ConsentRequestData generateConsentData(MPConsumers mpConsumer) {
-        return new ConsentRequestData()
-                .providerId(testContainer.getProvider().getName())
-                .consumerId(mpConsumer.getRealm())
-                .containerId(testContainer.getId())
-                .privacyPolicy(faker.internet().url())
-                .purpose(faker.commerce().productName() + "_purpose")
-                .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote() + "_title");
     }
 
 }
