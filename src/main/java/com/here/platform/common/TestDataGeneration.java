@@ -1,5 +1,6 @@
 package com.here.platform.common;
 
+import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -41,7 +42,8 @@ public class TestDataGeneration {
     }
 
     public static void createBaseProvidersIfNecessaryProd() {
-        Stream.of(Providers.DAIMLER_REAL, Providers.DAIMLER_EXPERIMENTAL, Providers.BMW, Providers.BMW_TEST, Providers.REFERENCE_PROVIDER_PROD)
+        Stream.of(Providers.DAIMLER_REAL, Providers.DAIMLER_EXPERIMENTAL, Providers.BMW, Providers.BMW_TEST,
+                Providers.REFERENCE_PROVIDER_PROD)
                 .forEach(providers -> Steps.createRegularProvider(providers.getProvider()));
     }
 
@@ -53,11 +55,13 @@ public class TestDataGeneration {
 
     public static void createBaseContainersIfNecessaryProd() {
         Arrays.stream(Containers.values())
-                .filter(container -> container.getContainer().getDataProviderName().equals(Providers.DAIMLER_EXPERIMENTAL.getName()) ||
-                container.getContainer().getDataProviderName().equals(Providers.DAIMLER_REAL.getName()))
+                .filter(container ->
+                        container.getContainer().getDataProviderName().equals(Providers.DAIMLER_EXPERIMENTAL.getName())
+                                ||
+                                container.getContainer().getDataProviderName().equals(Providers.DAIMLER_REAL.getName()))
                 .forEach(containers ->
-                Steps.createRegularContainer(containers.getContainer())
-        );
+                        Steps.createRegularContainer(containers.getContainer())
+                );
     }
 
     public static void createBaseProvidersResourcesIfNecessary() {
@@ -88,11 +92,12 @@ public class TestDataGeneration {
     public static void createBaseCMApplicationIfNecessaryProd() {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
         Stream.of(ConsentRequestContainers.values())
-                .filter(container -> container.getProvider().getName().equals(Providers.DAIMLER_EXPERIMENTAL.getName()) ||
+                .filter(container -> container.getProvider().getName().equals(Providers.DAIMLER_EXPERIMENTAL.getName())
+                        ||
                         container.getProvider().getName().equals(Providers.DAIMLER_REAL.getName()))
                 .forEach(containers ->
-                new OnboardingSteps(containers.provider.getName(), consumerId)
-                        .onboardTestProviderApplication(containers.getConsentContainer()));
+                        new OnboardingSteps(containers.provider.getName(), consumerId)
+                                .onboardTestProviderApplication(containers.getConsentContainer()));
     }
 
     private static void createPoliciesForProviderGroup() {
@@ -104,13 +109,14 @@ public class TestDataGeneration {
         String token = Users.DAIMLER.getToken().split(":")[0];
         String refresh = Users.DAIMLER.getToken().split(":")[1];
         for (String vin : Arrays.asList(Vehicle.validVehicleIdLong, Vehicle.validVehicleId)) {
-            String url = Conf.ns().getNsUrlBaseAccess() + Conf.ns().getNsUrlAccess() + "token?" +
-                    "access_token=" + token +
-                    "&refresh_token=" + refresh +
-                    "&client_id=88440bf1-2fff-42b6-8f99-0510b6b5e6f8" +
-                    "&client_secret=2d839912-c5e6-4cfb-8543-9a1bed38efe6" +
-                    "&vehicle_id=" + vin +
-                    "&scope=mb:user:pool:reader mb:vehicle:status:general";
+            String url = sbb(Conf.ns().getNsUrlBaseAccess()).append(Conf.ns().getNsUrlAccess()).append("token?")
+                    .append("access_token=").append(token)
+                    .append("&refresh_token=").append(refresh)
+                    .append("&client_id=88440bf1-2fff-42b6-8f99-0510b6b5e6f8")
+                    .append("&client_secret=2d839912-c5e6-4cfb-8543-9a1bed38efe6")
+                    .append("&vehicle_id=").append(vin)
+                    .append("&scope=mb:user:pool:reader mb:vehicle:status:general")
+                    .bld();
             given()
                     .headers("Content-Type", "application/json",
                             "Authorization", "Bearer " + Users.PROVIDER.getToken())

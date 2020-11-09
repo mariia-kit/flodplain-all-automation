@@ -1,4 +1,4 @@
-package com.here.platform.common;
+package com.here.platform.common.strings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

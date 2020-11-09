@@ -1,7 +1,6 @@
 package com.here.platform.ns.controllers.access;
 
 import com.here.platform.common.config.Conf;
-import com.here.platform.ns.controllers.BaseNeutralService;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 

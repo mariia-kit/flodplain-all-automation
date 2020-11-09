@@ -1,6 +1,7 @@
 package com.here.platform.common;
 
 import com.github.javafaker.Faker;
+import com.here.platform.common.strings.JConvert;
 import java.io.File;
 
 

@@ -6,29 +6,25 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
-
 import com.here.platform.cm.steps.ui.ConsentManagementFlowSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
-import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.UserAccountExtension;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.mp.models.CreatedInvite;
-import com.here.platform.mp.pages.ListingsListPage;
 import com.here.platform.mp.steps.ui.MarketplaceFlowSteps;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -74,7 +70,6 @@ public class E2EUITest extends BaseE2ETest {
         SelenideLogger.addListener("AllureListener", new AllureSelenide().enableLogs(LogType.BROWSER, Level.ALL));
     }
 
-    private final ListingsListPage listingsPage = new ListingsListPage();
     private final DataSubject targetDataSubject = DataSubjects.getNextBy18VINLength().dataSubject;
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
@@ -138,7 +133,8 @@ public class E2EUITest extends BaseE2ETest {
 
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
-        String consentUrl = MarketplaceFlowSteps.createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
+        String consentUrl = MarketplaceFlowSteps
+                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
 
         var consentRequestUrl = new AtomicReference<>(consentUrl);
         var crid = getCridFromUrl(consentRequestUrl.get());
@@ -200,7 +196,8 @@ public class E2EUITest extends BaseE2ETest {
 
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
-        String consentUrl = MarketplaceFlowSteps.createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
+        String consentUrl = MarketplaceFlowSteps
+                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
 
         var consentRequestUrl = new AtomicReference<>(consentUrl);
         var crid = getCridFromUrl(consentRequestUrl.get());
@@ -221,4 +218,5 @@ public class E2EUITest extends BaseE2ETest {
         var pathSegments = UriComponentsBuilder.fromUriString(consentRequestUrl).build().getPathSegments();
         return pathSegments.get(pathSegments.size() - 1);
     }
+
 }

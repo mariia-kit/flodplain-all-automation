@@ -1,5 +1,7 @@
 package com.here.platform.cm.controllers;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import io.qameta.allure.Step;
@@ -15,7 +17,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
     private String consumerBearerToken = "";
 
     public ConsentStatusController withConsumerToken(MPConsumers consumer) {
-        this.consumerBearerToken = "Bearer " + consumer.getToken();
+        this.consumerBearerToken = sbb("Bearer").w().append(consumer.getToken()).bld();
         return this;
     }
 

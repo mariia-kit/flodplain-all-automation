@@ -14,9 +14,9 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
@@ -39,11 +39,12 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     private final UserAccountController userAccountController = new UserAccountController();
     private final List<String> vinsToRemove = new ArrayList<>();
     private String crid;
-    private ProviderApplications targetApplication = ProviderApplications.REFERENCE_CONS_1;
+    private final ProviderApplications targetApplication = ProviderApplications.REFERENCE_CONS_1;
     private ConsentInfo targetConsentRequest;
 
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApplication.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers
+            .generateNew(targetApplication.provider.getName());
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
@@ -53,7 +54,8 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
         vinsToRemove.add(vin);
 
-        targetConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
+        targetConsentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
         crid = targetConsentRequest.getConsentRequestId();
         ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, token);
         fuSleep();

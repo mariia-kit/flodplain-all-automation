@@ -1,5 +1,7 @@
 package com.here.platform.cm.enums;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.common.config.Conf;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +17,7 @@ public class ConsentManagementServiceUrl {
         String host;
         var dynamicEnvUrl = System.getProperty("dynamicUrl");
         if (StringUtils.isNotBlank(dynamicEnvUrl)) {
-            host = String.format("https://%s", dynamicEnvUrl);
+            host = sbb("https://").append(dynamicEnvUrl).bld();
         } else {
             host = Conf.cm().getServiceUrl();
         }

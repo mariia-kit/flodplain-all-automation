@@ -1,7 +1,7 @@
 package com.here.platform.common.config;
 
 import com.here.platform.common.DataSubject;
-import com.here.platform.common.HereApplication;
+import com.here.platform.common.config.dto.HereApplication;
 import com.here.platform.ns.dto.User;
 import lombok.Data;
 

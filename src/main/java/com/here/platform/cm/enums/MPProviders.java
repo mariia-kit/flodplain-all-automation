@@ -2,38 +2,49 @@ package com.here.platform.cm.enums;
 
 import com.here.platform.common.config.Conf;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 
 
-@AllArgsConstructor
 @ToString
+@Getter
 public enum MPProviders {
 
-    DAIMLER_EXPERIMENTAL("daimler_experimental", 18, "daimler_experimental", "https://id.mercedes-benz.com/as/authorization.oauth2", "https://id.mercedes-benz.com/as/token.oauth2"),
-    DAIMLER("daimler", 17, "daimler", "https://id.mercedes-benz.com/as/authorization.oauth2", ""),
-    DAIMLER_REFERENCE(Conf.cm().getReferenceProviderName(), 17, "test-daimler", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token"),
+    DAIMLER_EXPERIMENTAL(
+            "daimler_experimental", 18, "test-daimler",
+            "https://id.mercedes-benz.com/as/authorization.oauth2",
+            "https://id.mercedes-benz.com/as/token.oauth2"
+    ),
+    DAIMLER(
+            "daimler", 17, "daimler",
+            "https://id.mercedes-benz.com/as/authorization.oauth2", ""
+    ),
+    DAIMLER_REFERENCE(
+            Conf.cm().getReferenceProviderName(), 17, "test-daimler",
+            Conf.ns().getReferenceProviderAuthUrl(),
+            Conf.ns().getReferenceProviderTokenUrl()
+    ),
     BMW_TEST("test-bmw", 17, "test-bmw", "", ""),
     BMW("bmw", 17, "bmw", "", ""),
-    REFERENCE("exelsior", 17, "test-daimler", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize", Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/token");
+    REFERENCE(
+            "exelsior", 17, "test-daimler",
+            Conf.ns().getReferenceProviderAuthUrl(),
+            Conf.ns().getReferenceProviderTokenUrl()
+    );
 
-    private final String name;
-    public int vinLength;
-    private final String type;
-    private final String authUrl;
-    private final String tokenUrl;
+    public final int vinLength;
+    private final String
+            name,
+            type,
+            authUrl,
+            tokenUrl;
 
-    public String getName() {
-        return name;
-    }
-    public String getType() {
-        return type;
-    }
-    public String getAuthUrl() {
-        return authUrl;
-    }
-    public String getTokenUrl() {
-        return tokenUrl;
+    MPProviders(String name, int vinLength, String type, String authUrl, String tokenUrl) {
+        this.name = name;
+        this.vinLength = vinLength;
+        this.type = type;
+        this.authUrl = authUrl;
+        this.tokenUrl = tokenUrl;
     }
 
     public static MPProviders findByProviderId(String providerId) {

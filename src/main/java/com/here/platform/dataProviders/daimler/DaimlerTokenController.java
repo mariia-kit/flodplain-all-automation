@@ -4,7 +4,6 @@ import static io.restassured.RestAssured.given;
 
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.common.DataSubject;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
@@ -61,8 +60,6 @@ public class DaimlerTokenController {
                 .when().get()
                 .then().extract().response();
         mercedesCookies = authorizeResponse.detailedCookies();
-
-        authorizeResponse.prettyPrint();
 
         String locationHeaderValue = authorizeResponse.getHeader("Location");
         resume = fetchQueryParamsFromUrl(locationHeaderValue).getFirst("resume");
@@ -125,7 +122,8 @@ public class DaimlerTokenController {
         return UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
     }
 
-    public static String createDaimlerToken(String authCode, String clientId, String clientSecret, String callbackUrl) { ;
+    public static String createDaimlerToken(String authCode, String clientId, String clientSecret, String callbackUrl) {
+        ;
         var authorizeResponse = given()
                 .baseUri(MERSEDES_API_URL)
                 .basePath("/as/token.oauth2")
@@ -139,7 +137,8 @@ public class DaimlerTokenController {
                 .then()
                 .statusCode(200)
                 .extract().response();
-        return authorizeResponse.jsonPath().get("access_token") + ":" + authorizeResponse.jsonPath().get("refresh_token");
+        return authorizeResponse.jsonPath().get("access_token") + ":" + authorizeResponse.jsonPath()
+                .get("refresh_token");
     }
 
 }

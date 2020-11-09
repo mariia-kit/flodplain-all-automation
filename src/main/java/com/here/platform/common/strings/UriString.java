@@ -1,4 +1,4 @@
-package com.here.platform.common;
+package com.here.platform.common.strings;
 
 import java.net.URI;
 import java.util.Map;

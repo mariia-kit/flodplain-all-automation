@@ -36,4 +36,5 @@ public class ListingsController extends BaseMPController<ListingsController> {
                 .then().assertThat().statusCode(200)
                 .extract().response();
     }
+
 }

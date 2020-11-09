@@ -4,12 +4,13 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
+import static com.here.platform.common.strings.SBB.sbb;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.common.VIN;
+import com.here.platform.common.strings.VIN;
 import io.qameta.allure.Step;
 
 
@@ -41,8 +42,14 @@ public class DashBoardPage extends BaseCMPage {
 
     @Step
     public DashBoardPage openConsentRequestOfferBox(ConsentInfo consentRequest) {
-        SelenideElement offerBox = $$("div.offer-box .offer-title").findBy(text(consentRequest.getTitle()));
-        offerBox.shouldBe(Condition.visible.because("Consent request " + consentRequest.getConsentRequestId() + " should be present on dashboard!"));
+        SelenideElement offerBox = $$("app-offer .offer-title").findBy(text(consentRequest.getTitle()));
+        offerBox.shouldBe(Condition.visible
+                .because(sbb("Consent request").w()
+                        .append(consentRequest.getConsentRequestId()).w()
+                        .append("should be present on dashboard!")
+                        .bld()
+                )
+        );
         offerBox.click();
         return this;
     }
@@ -55,7 +62,7 @@ public class DashBoardPage extends BaseCMPage {
             String vinNumber,
             ConsentInfo.StateEnum status
     ) {
-        SelenideElement offerBox = $("div.offer-box", index).shouldBe(Condition.visible);
+        SelenideElement offerBox = $("app-offer", index).shouldBe(Condition.visible);
         offerBox.$(".offer-title").shouldHave(text(consentRequest.getTitle()));
         offerBox.$(".provider-name").shouldHave(text(mpConsumer.getConsumerName()));
         offerBox.$(".offer-description").shouldHave(text(consentRequest.getPurpose()));

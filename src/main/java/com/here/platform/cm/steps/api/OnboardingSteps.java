@@ -20,9 +20,11 @@ public class OnboardingSteps {
     private final Faker faker = new Faker();
     private final ConsumerController consumerController = new ConsumerController();
     private final ProvidersController providersController = new ProvidersController();
-    private String providerTypeName = MPProviders.DAIMLER.getName();
-    private String providerAuthUrl = "https://id.mercedes-benz.com/as/authorization.oauth2";
-    private String providerTokenUrl = StringUtils.EMPTY;
+    private final MPProviders targetProvider = MPProviders.DAIMLER;
+    private String
+            providerTypeName = targetProvider.getName(),
+            providerAuthUrl = targetProvider.getAuthUrl(),
+            providerTokenUrl = StringUtils.EMPTY;
 
     public OnboardingSteps(String providerId, String consumerId) {
         this.providerId = providerId;
@@ -65,7 +67,7 @@ public class OnboardingSteps {
                 .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
         var applicationResponse = this.providersController.withConsumerToken().onboardApplication(testApplication);
-        StepExpects.expectCREATEDStatusCode(applicationResponse);
+        StatusCodeExpects.expectCREATEDStatusCode(applicationResponse);
     }
 
     @Step("Onboard test Provider")
@@ -84,7 +86,7 @@ public class OnboardingSteps {
         var providerResponse = this.providersController
                 .withConsumerToken()
                 .onboardDataProvider(testDataProvider);
-        StepExpects.expectCREATEDStatusCode(providerResponse);
+        StatusCodeExpects.expectCREATEDStatusCode(providerResponse);
     }
 
     @Step("Onboard valid Consumer")
@@ -96,7 +98,7 @@ public class OnboardingSteps {
         var consumerResponse = this.consumerController
                 .withConsumerToken()
                 .onboardDataConsumer(testConsumer);
-        StepExpects.expectOKStatusCode(consumerResponse);
+        StatusCodeExpects.expectOKStatusCode(consumerResponse);
     }
 
 }

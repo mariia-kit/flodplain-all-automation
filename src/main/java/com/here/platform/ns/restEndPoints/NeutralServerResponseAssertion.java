@@ -1,7 +1,6 @@
 package com.here.platform.ns.restEndPoints;
 
 import com.here.platform.common.ResponseExpectMessages;
-import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.NSError;

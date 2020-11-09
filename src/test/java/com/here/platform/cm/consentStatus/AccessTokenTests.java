@@ -2,13 +2,11 @@ package com.here.platform.cm.consentStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
-import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
+import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
@@ -17,8 +15,10 @@ import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
+import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;

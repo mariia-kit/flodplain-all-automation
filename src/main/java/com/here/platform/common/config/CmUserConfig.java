@@ -1,7 +1,7 @@
 package com.here.platform.common.config;
 
-import com.here.platform.common.DaimlerApp;
 import com.here.platform.common.DataSubject;
+import com.here.platform.common.config.dto.DaimlerApp;
 import lombok.Data;
 
 

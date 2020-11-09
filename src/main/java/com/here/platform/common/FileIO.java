@@ -1,19 +1,17 @@
 package com.here.platform.common;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 
 
 public interface FileIO {
@@ -54,10 +52,12 @@ public interface FileIO {
                 lock = channel.getChannel().tryLock();
             }
             if (lock == null) {
-                throw new RuntimeException("Wait for file un lock take too long:" + targetFile.getName());
+                throw new RuntimeException(
+                        sbb("Wait for file unlock take too long:").w().append(targetFile.getName()).bld()
+                );
             }
             lock.release();
-        } catch (IOException|InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             System.err.format("Error waiting for unlock file: %s%n", ex);
         }
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(targetFile.getAbsolutePath()))) {

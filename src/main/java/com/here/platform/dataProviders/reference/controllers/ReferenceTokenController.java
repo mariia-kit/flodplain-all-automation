@@ -1,9 +1,9 @@
-package com.here.platform.dataProviders.reference;
+package com.here.platform.dataProviders.reference.controllers;
 
+import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.common.config.Conf;
-import com.here.platform.common.controller.ReferenceProviderController;
 import io.restassured.response.Response;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ public class ReferenceTokenController {
         Response consentCall = approve(consentId, vin);
 
         Assertions.assertTrue(consentCall != null && !StringUtils.isEmpty(consentCall.getHeader("Location")),
-                "Can't allocate auth code for reference provider!" + consentCall.getStatusCode());
+                sbb("Can't allocate auth code for reference provider!").append(consentCall.getStatusCode()).bld());
         return consentCall.getHeader("Location")
                 .replace(CALLBACK_URL + "?code=", StringUtils.EMPTY);
     }
@@ -37,8 +37,7 @@ public class ReferenceTokenController {
                 .urlEncodingEnabled(false)
                 .redirects().follow(false)
                 .when().get(authorize);
-        String consentId = StringUtils.substringBetween(authResp.asString(),
-                "consent?consent_id=", "\">");
+        String consentId = StringUtils.substringBetween(authResp.asString(), "consent?consent_id=", "\">");
         return consentId;
     }
 

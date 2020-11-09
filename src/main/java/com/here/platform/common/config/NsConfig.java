@@ -1,6 +1,8 @@
 package com.here.platform.common.config;
 
-import com.here.platform.common.DaimlerApp;
+import static com.here.platform.common.strings.SBB.sbb;
+
+import com.here.platform.common.config.dto.DaimlerApp;
 import lombok.Data;
 
 
@@ -34,5 +36,13 @@ public class NsConfig {
     private DaimlerApp daimlerApp;
     private DaimlerApp referenceApp;
     private DaimlerApp bmwApp;
+
+    public String getReferenceProviderAuthUrl() {
+        return sbb(getRefProviderUrl()).append("/auth/oauth/v2/authorize").bld();
+    }
+
+    public String getReferenceProviderTokenUrl() {
+        return sbb(getRefProviderUrl()).append("/auth/oauth/v2/token").bld();
+    }
 
 }

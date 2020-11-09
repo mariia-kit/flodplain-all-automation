@@ -9,7 +9,7 @@ import com.codeborne.selenide.Condition;
 public class ConsumerSubscriptionsListPage extends BaseMPPage {
 
     public ConsumerSubscriptionsListPage isLoaded() {
-        $(".subscriptions-table").waitUntil(Condition.visible, 10000);
+        $(".subscriptions-table").waitUntil(Condition.visible, 30000);
         return this;
     }
 
@@ -20,7 +20,9 @@ public class ConsumerSubscriptionsListPage extends BaseMPPage {
 
     public ConsumerSubscriptionsListPage waitSubscriptionWithName(String subscriptionResourceName) {
         $(byXpath("//td[text() = '" + subscriptionResourceName + "']/..//span[text() = 'active']"))
-                .waitUntil(Condition.visible.because("Subscription not in active state, while expected!"),2*60*1000, 20000);
+                .waitUntil(Condition.visible.because("Subscription not in active state, while expected!"),
+                        2 * 60 * 1000, 20000);
         return this;
     }
+
 }

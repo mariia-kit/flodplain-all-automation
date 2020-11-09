@@ -5,8 +5,6 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.User;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
@@ -267,7 +265,7 @@ public class MarketplaceManageListingCall {
 
     public void mpDelayMinute() {
         try {
-            Thread.sleep(1*60*1000);
+            Thread.sleep(1 * 60 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -296,7 +294,8 @@ public class MarketplaceManageListingCall {
                 throw new RuntimeException("Error waiting for MP async task " + taskId + " to complete!");
             }
         } while (maxCount > 1);
-        throw  new RuntimeException("Error waiting for MP async task " + taskId + " to complete! Status not success after wait for 30 min.");
+        throw new RuntimeException("Error waiting for MP async task " + taskId
+                + " to complete! Status not success after wait for 30 min.");
     }
 
     public int getIdOfAsyncTaskForList(String listingHrn, String token) {
@@ -307,7 +306,8 @@ public class MarketplaceManageListingCall {
             return resp.jsonPath().getInt(
                     "items.find {it.data.consumerSubscriptionResponse.listingHrn == '" + listingHrn + "'}.id");
         } else {
-            throw new RuntimeException(String.format("Error getting list of async tasks. %s %s", resp.getStatusCode(), resp.body().print()));
+            throw new RuntimeException(String.format("Error getting list of async tasks. %s %s", resp.getStatusCode(),
+                    resp.body().print()));
         }
     }
 

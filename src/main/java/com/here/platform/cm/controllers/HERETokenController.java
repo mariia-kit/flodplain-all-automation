@@ -1,5 +1,6 @@
 package com.here.platform.cm.controllers;
 
+import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import io.restassured.RestAssured;
@@ -7,6 +8,7 @@ import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,7 +32,7 @@ public class HERETokenController {
 
         String clientId = fetchQueryParamsFromUrl(authorizeUrl).getFirst("client_id");
 
-        String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
+        String signInWithPassword = sbb(portalUrl).append("/api/account/sign-in-with-password").bld();
 
         Response authorizeResp = given()
                 .noFilters()
@@ -77,8 +79,14 @@ public class HERETokenController {
                         "Sec-Fetch-Mode", "cors",
                         "Sec-Fetch-Site", "same-origin"
                 )
-                .body("{\"realm\":\"here\",\"email\":\"" + userLogin + "\",\"password\":\"" + userPass
-                        + "\",\"rememberMe\":false}")
+                .body(
+                        Map.of(
+                                "realm", "here",
+                                "email", userLogin,
+                                "password", userPass,
+                                "rememberMe", false
+                        )
+                )
                 .post(signInWithPassword)
                 .then()
                 .extract().response();
@@ -97,7 +105,7 @@ public class HERETokenController {
         String callBackUrl = sign2Result.getHeader("Location");
 
         if (StringUtils.isEmpty(callBackUrl)) {
-            throw new RuntimeException("Error during generation of here token! " + userLogin);
+            throw new RuntimeException(sbb("Error during generation of here token!").w().append(userLogin).bld());
         }
 
         return fetchQueryParamsFromUrl(callBackUrl).getFirst("code");
@@ -105,7 +113,7 @@ public class HERETokenController {
 
     private String generateCMToken(String authCode) {
         Response userSignIn = userAccountController.userAccountSignIn(authCode);
-        return "Bearer " + userSignIn.jsonPath().get("cm_token");
+        return sbb("Bearer").w().append(userSignIn.jsonPath().get("cm_token")).bld();
     }
 
     public String loginAndGenerateCMToken(String userLogin, String userPass) {

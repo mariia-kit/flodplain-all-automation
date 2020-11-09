@@ -1,7 +1,6 @@
 package com.here.platform.cm.consentStatus;
 
 
-import com.here.platform.dataProviders.reference.ReferenceTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
@@ -12,16 +11,16 @@ import com.here.platform.cm.rest.model.ErrorResponse;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VIN;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

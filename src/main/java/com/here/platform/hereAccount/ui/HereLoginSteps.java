@@ -4,7 +4,6 @@ import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.Selenide;
 import com.here.platform.common.DataSubject;
-import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
@@ -23,10 +22,6 @@ public class HereLoginSteps {
                 .fillUserPassword(dataSubject.getPass())
                 .clickSignIn()
                 .approveConsentIfPresent();
-    }
-
-    public void loginDataSubject(DataSubjects dataSubject) {
-        loginDataSubject(dataSubject.dataSubject);
     }
 
     @Step("Login as Marketplace user")
