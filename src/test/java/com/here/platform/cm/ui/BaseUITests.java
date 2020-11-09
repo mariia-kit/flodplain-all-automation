@@ -8,6 +8,7 @@ import com.codeborne.selenide.junit5.TextReportExtension;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
+import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPConsumers;
@@ -41,7 +42,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class BaseUITests extends BaseCMTest {
 
     static {
-        Configuration.baseUrl = Conf.cm().getConsentPageUrlDynamic();
+        Configuration.baseUrl = ConsentPageUrl.getConsentRequestsUrl();
         Configuration.driverManagerEnabled = true;
         Configuration.pollingInterval = 400;
         Configuration.browserSize = "1366x1000";
@@ -54,7 +55,8 @@ public class BaseUITests extends BaseCMTest {
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
     protected ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(providerApplication.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers
+            .generateNew(providerApplication.provider.getName());
     protected UserAccountController userAccountController = new UserAccountController();
 
     public static String getUICmToken() {
