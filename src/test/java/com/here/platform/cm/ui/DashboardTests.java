@@ -85,7 +85,7 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(consentRequestId2);
 
         open(ConsentPageUrl.getEnvUrlRoot());
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         String token = getUICmToken();
 
@@ -127,7 +127,7 @@ public class DashboardTests extends BaseUITests {
 
         open(crid);
 
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 
@@ -148,7 +148,7 @@ public class DashboardTests extends BaseUITests {
 
         open(crid);
 
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 

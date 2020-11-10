@@ -3,7 +3,6 @@ package com.here.platform.hereAccount.ui;
 import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
 
 
@@ -53,12 +52,9 @@ public class HereLoginPage {
         return this;
     }
 
-    @Step("Approve HERE consent for new user")
-    public HereLoginPage approveConsentIfPresent() {
-        Selenide.sleep(5000);
-        if ($("#authorizeFlowBtn").isDisplayed()) {
-            $("#authorizeFlowBtn").click();
-        }
+    @Step("Approve HERE consents for new user")
+    public HereLoginPage approveHEREAccountConsents() {
+        $("#authorizeFlowBtn").click();
         return this;
     }
 

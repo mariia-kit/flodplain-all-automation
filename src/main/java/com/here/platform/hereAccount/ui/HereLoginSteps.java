@@ -14,14 +14,23 @@ public class HereLoginSteps {
 
     private final HereLoginPage loginPage = new HereLoginPage();
 
-    @Step("Login as Data subject")
-    public void loginDataSubject(DataSubject dataSubject) {
-        loginPage
+    @Step("Login as new Data subject and approve HERE account consents")
+    public void loginNewDataSubjectWithHEREConsentApprove(DataSubject dataSubject) {
+        signInHEREAccountUser(dataSubject)
+                .approveHEREAccountConsents();
+    }
+
+    @Step("Login as registered Data subject and approve HERE account consents")
+    public void loginRegisteredDataSubject(DataSubject dataSubject) {
+        signInHEREAccountUser(dataSubject);
+    }
+
+    private HereLoginPage signInHEREAccountUser(DataSubject dataSubject) {
+        return loginPage
                 .isLoaded()
                 .fillUserEmail(dataSubject.getEmail())
                 .fillUserPassword(dataSubject.getPass())
-                .clickSignIn()
-                .approveConsentIfPresent();
+                .clickSignIn();
     }
 
     @Step("Login as Marketplace user")

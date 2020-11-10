@@ -143,7 +143,7 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.logout();
 
         ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
-        HereLoginSteps.loginDataSubject(targetDataSubject);
+        HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject.getVin());
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
@@ -206,7 +206,7 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.logout();
 
         ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
-        HereLoginSteps.loginDataSubject(targetDataSubject);
+        HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         ConsentFlowSteps
                 .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);

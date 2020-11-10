@@ -86,7 +86,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         System.out.println(Configuration.baseUrl + crid);
 
         System.out.println(dataSubjectIm);
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);
 
@@ -122,7 +122,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
         open(crid);
 
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);
 
@@ -163,7 +163,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         fuSleep();
         verifyStaticPurposeInfoPage();
         openPurposePageLink();
-        HereLoginSteps.loginDataSubject(dataSubjectIm);
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
         verifyPurposeInfoPage(mpConsumer, consentRequest, testContainer);
     }
