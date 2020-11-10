@@ -38,7 +38,6 @@ dependencies {
             "io.qameta.allure:allure-rest-assured:$allureVer",
             "io.qameta.allure:allure-junit5:$allureVer",
             "org.aspectj:aspectjweaver:1.9.4",
-            "org.mock-server:mockserver-client-java:5.9.0",
             'com.here.account:here-oauth-client:0.4.20',
             "com.atlassian.jira:jira-rest-java-client-core:5.1.6",
             "lv.ctco.zephyr:zephyr-sync-cli:0.0.15",
