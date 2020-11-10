@@ -21,7 +21,7 @@ public class ContainerController extends BaseNeutralService<ContainerController>
     @Step
     public Response addContainer(Container container) {
         return neutralServerClient(containersBasePath)
-                .body(container.generateBody())
+                .body(container.generateContainerBody())
                 .put("/{providerId}/containers_info/{containerId}", container.getDataProviderName(), container.getId());
     }
 
