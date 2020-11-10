@@ -6,6 +6,7 @@ import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -61,13 +62,23 @@ public class Container {
     }
 
     public Map<String, Object> generateContainerBody() {
-        return Map.of(
-                "name", this.getName(),
-                "description", this.getDescription(),
-                "resourceNames", this.getResourceNames(),
-                "consentRequired", this.getConsentRequired(),
-                "scope", this.getScope()
-        );
+        Map<String, Object> containerBody = new HashMap<>();
+        if (this.getId() != null) {
+            containerBody.put("name", this.getName());
+        }
+        if (this.getDescription() != null) {
+            containerBody.put("description", this.getDescription());
+        }
+        if (this.getResourceNames() != null) {
+            containerBody.put("resourceNames", this.getResourceNames());
+        }
+        if (this.getConsentRequired() != null) {
+            containerBody.put("consentRequired", this.getConsentRequired());
+        }
+        if (this.getScope() != null) {
+            containerBody.put("scope", this.getScope());
+        }
+        return containerBody;
     }
 
     @Step("Set id value for container to '{0}'")
