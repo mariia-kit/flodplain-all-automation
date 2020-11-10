@@ -6,11 +6,10 @@ import com.here.platform.common.config.Conf;
 import io.qameta.allure.Step;
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 @Getter
@@ -61,58 +60,14 @@ public class Container {
         }
     }
 
-    public String generateBody() {
-        JSONObject object = new JSONObject();
-        try {
-            if (this.getId() != null) {
-                object.put("name", this.getName());
-            }
-            if (this.getDescription() != null) {
-                object.put("description", this.getDescription());
-            }
-            if (this.getResourceNames() != null) {
-                object.put("resourceNames", this.getResourceNames());
-            }
-            if (this.getConsentRequired() != null) {
-                object.put("consentRequired", this.getConsentRequired());
-            }
-            if (this.getScope() != null) {
-                object.put("scope", this.getScope());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return object.toString();
-    }
-
-    public String generateFullBody() {
-        JSONObject object = new JSONObject();
-        try {
-            if (this.getId() != null) {
-                object.put("id", this.getId());
-            }
-            if (this.getDescription() != null) {
-                object.put("description", this.getDescription());
-            }
-            if (this.getResourceNames() != null) {
-                object.put("resourceNames", this.getResourceNames());
-            }
-            if (this.getConsentRequired() != null) {
-                object.put("consentRequired", this.getConsentRequired());
-            }
-            if (this.getDataProviderName() != null) {
-                object.put("dataProviderName", this.getDataProviderName());
-            }
-            if (this.getName() != null) {
-                object.put("name", this.getName());
-            }
-            if (this.getScope() != null) {
-                object.put("scope", this.getScope());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return object.toString();
+    public Map<String, Object> generateContainerBody() {
+        return Map.of(
+                "name", this.getName(),
+                "description", this.getDescription(),
+                "resourceNames", this.getResourceNames(),
+                "consentRequired", this.getConsentRequired(),
+                "scope", this.getScope()
+        );
     }
 
     @Step("Set id value for container to '{0}'")

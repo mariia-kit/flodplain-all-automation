@@ -6,13 +6,12 @@ import com.here.platform.common.config.Conf;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 @Getter
@@ -33,16 +32,8 @@ public class DataProvider {
         this.resources = new ArrayList<>();
     }
 
-    public String generateBody() {
-        JSONObject object = new JSONObject();
-        if (this.getUrl() != null) {
-            try {
-                object.put("url", this.getUrl());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return object.toString();
+    public Map<String, String> generateBody() {
+        return Map.of("url", this.getUrl());
     }
 
     public void addResource(ProviderResource resource) {
