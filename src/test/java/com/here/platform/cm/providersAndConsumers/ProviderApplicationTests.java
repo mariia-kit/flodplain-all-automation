@@ -10,6 +10,7 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -43,8 +44,12 @@ public class ProviderApplicationTests extends BaseCMTest {
     @TmsLink("NS-2699")
     void onboardDataProviderApplicationTest() {
         var testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        var targetConsumer = MPConsumers.OLP_CONS_1;
+        new OnboardingSteps(testContainer.getProvider(), targetConsumer.getRealm())
+                .onboardTestProvider();
+
         var testConsentRequest = new ConsentRequestData()
-                .consumerId(MPConsumers.OLP_CONS_1.getRealm())
+                .consumerId(targetConsumer.getRealm())
                 .providerId(testContainer.provider.getName())
                 .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
                 .purpose(faker.commerce().productName())

@@ -25,7 +25,7 @@ public class ReferenceProviderController {
     }
 
     @Step
-    public Response getClearanceByVin(String vin, String bmwContainerName) {
+    public Response getClearanceByVinAndContainerId(String vin, String bmwContainerName) {
         return referenceProviderClient("/admin")
                 .get("/clearance/container/{containerId}/vehicles/{vehicleId}", bmwContainerName, vin);
     }

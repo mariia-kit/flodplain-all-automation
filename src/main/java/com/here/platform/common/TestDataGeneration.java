@@ -15,6 +15,7 @@ import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -77,9 +78,12 @@ public class TestDataGeneration {
 
     private static void createBaseCMProvidersIfNecessary() {
         String consumerId = Conf.mpUsers().getMpConsumer().getRealm();
-        Stream.of(ConsentRequestContainers.values()).forEach(containers ->
-                new OnboardingSteps(containers.provider, consumerId)
-                        .onboardTestProvider());
+        Stream.of(ConsentRequestContainers.values())
+                .map(ConsentRequestContainers::getProvider)
+                .collect(Collectors.toSet())
+                .forEach(provider ->
+                        new OnboardingSteps(provider, consumerId).onboardTestProvider()
+                );
     }
 
     private static void createBaseCMApplicationIfNecessary() {

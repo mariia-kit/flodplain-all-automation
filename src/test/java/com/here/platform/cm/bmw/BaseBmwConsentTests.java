@@ -13,7 +13,6 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
-import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Issues;
 import java.io.File;
@@ -29,13 +28,11 @@ public class BaseBmwConsentTests extends BaseCMTest {
     protected static Faker faker = new Faker();
 
     String
-            testVin = "2AD190A6AD057824E",
-            testVin1 = "2AD190A6AD0578AAA",
-            bmwContainer = "S00I000M001OK";
+            testVin1 = "2AD190A6AD057824E",
+            testVin2 = "2AD190A6AD0578AAA";
 
     protected File testFileWithVINs = null;
 
-    protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
     protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName())
             .withResources(List.of("fuel"))
             .withClientIdSecret(Conf.cmUsers().getBmwApp());
@@ -52,8 +49,8 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
 
     protected String createValidBmwConsentRequest() {
-        testFileWithVINs = new VinsToFile(testVin).json();
-        String crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer)
+        testFileWithVINs = new VinsToFile(testVin1).json();
+        String crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
                 .getConsentRequestId();
         testConsentRequestData.setContainerId(testContainer.getId());
         return crid;

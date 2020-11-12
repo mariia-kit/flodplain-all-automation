@@ -375,7 +375,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
         var clearanceId = new ReferenceProviderController()
-                .getClearanceByVin(Vehicle.validVehicleId, bmwContainer)
+                .getClearanceByVinAndContainerId(Vehicle.validVehicleId, bmwContainer)
                 .jsonPath().get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.REVOKED.name());
 
@@ -404,7 +404,8 @@ public class ZConsentManagementTest extends BaseE2ETest {
         String crid1 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
-        var clearanceId1 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer1)
+        var clearanceId1 = new ReferenceProviderController()
+                .getClearanceByVinAndContainerId(Vehicle.validVehicleId, bmwContainer1)
                 .jsonPath()
                 .get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId1, BMWStatus.REVOKED.name());
@@ -412,7 +413,8 @@ public class ZConsentManagementTest extends BaseE2ETest {
         String crid2 = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .getConsentRequestId();
-        var clearanceId2 = new ReferenceProviderController().getClearanceByVin(Vehicle.validVehicleId, bmwContainer2)
+        var clearanceId2 = new ReferenceProviderController()
+                .getClearanceByVinAndContainerId(Vehicle.validVehicleId, bmwContainer2)
                 .jsonPath()
                 .get("clearanceId").toString();
         new BMWController().setClearanceStatusByBMW(clearanceId2, BMWStatus.APPROVED.name());
