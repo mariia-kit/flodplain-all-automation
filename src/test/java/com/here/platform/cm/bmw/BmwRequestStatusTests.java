@@ -65,14 +65,14 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
 
         var responseBefore = consentStatusController
                 .withConsumerToken(MPConsumers.OLP_CONS_1)
-                .getConsentStatusByIdAndVin(crid, testVin);
+                .getConsentStatusByIdAndVin(crid, testVin1);
         new ResponseAssertion(responseBefore).statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
                         .state(StateEnum.PENDING.getValue())
-                        .vin(testVin));
+                        .vin(testVin1));
 
-        var clearanceId = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath()
+        var clearanceId = referenceProviderController.getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
 
         var response = bmwController.setClearanceStatusByBMW(clearanceId, bmwStatus.name());
@@ -81,21 +81,22 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(new Health().status("OK"));
 
-        var responseAfter = consentStatusController.getConsentStatusByIdAndVin(crid, testVin);
+        var responseAfter = consentStatusController.getConsentStatusByIdAndVin(crid, testVin1);
         new ResponseAssertion(responseAfter).statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()
                         .consentRequestId(crid)
                         .state(bmwStatus.getCmStatus().getValue())
-                        .vin(testVin));
+                        .vin(testVin1));
     }
 
     @Test
     @DisplayName("Positive BMW flow of updating consent statuses for consent request with multiple VINs")
     void setClearanceStatusByBMWMultiple() {
-        testFileWithVINs = new VinsToFile(testVin, testVin1).json();
+        testFileWithVINs = new VinsToFile(testVin1, testVin2).json(); //for cascade remove
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
-        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer).getConsentRequestId();
-        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin1);
+        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
+                .getConsentRequestId();
+        ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin2);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
@@ -111,9 +112,9 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
-        var clearanceId1 = referenceProviderController.getClearanceByVin(testVin, bmwContainer).jsonPath()
+        var clearanceId1 = referenceProviderController.getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
-        var clearanceId2 = referenceProviderController.getClearanceByVin(testVin1, bmwContainer).jsonPath()
+        var clearanceId2 = referenceProviderController.getClearanceByVinAndContainerId(testVin2, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
         bmwController.setClearanceStatusByBMW(clearanceId1, BMWStatus.APPROVED.name());
         bmwController.setClearanceStatusByBMW(clearanceId2, BMWStatus.REVOKED.name());
@@ -137,12 +138,12 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer).getConsentRequestId();
-        testFileWithVINs = new VinsToFile(testVin1).json();
+        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer).getConsentRequestId();
+        testFileWithVINs = new VinsToFile(testVin2).json();
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
                 .addVinsToConsentRequestAsync(crid, testFileWithVINs);
-        testFileWithVINs = new VinsToFile(testVin, testVin1).json();
+        testFileWithVINs = new VinsToFile(testVin1, testVin2).json();
         String updateInfoUrl = new ResponseAssertion(addVinsToConsentRequest)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class)

@@ -45,7 +45,7 @@ public class ConsentFlowSteps {
 
     @Step
     public void approveConsentForVinBMW(String bmwContainer, String targetVIN) {
-        var clearanceId = new ReferenceProviderController().getClearanceByVin(targetVIN, bmwContainer).jsonPath()
+        var clearanceId = new ReferenceProviderController().getClearanceByVinAndContainerId(targetVIN, bmwContainer).jsonPath()
                 .get("clearanceId").toString();
         var response = new BMWController().setClearanceStatusByBMW(clearanceId, BMWStatus.APPROVED.name());
         StatusCodeExpects.expectOKStatusCode(response);

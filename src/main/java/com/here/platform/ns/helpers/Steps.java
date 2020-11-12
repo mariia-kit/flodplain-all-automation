@@ -20,7 +20,6 @@ import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import io.qameta.allure.Step;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -99,7 +98,7 @@ public class Steps {
                 container.getName(),
                 container.getProvider().getName(),
                 container.getContainerDescription(),
-                container.getResources().stream().collect(Collectors.joining(",")),
+                String.join(",", container.getResources()),
                 true,
                 container.getScopeValue());
         createRegularContainer(cont);
