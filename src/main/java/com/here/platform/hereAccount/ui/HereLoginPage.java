@@ -4,6 +4,7 @@ import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import io.qameta.allure.Step;
 
 
@@ -55,8 +56,10 @@ public class HereLoginPage {
 
     @Step("Approve HERE consents for new user")
     public HereLoginPage approveHEREAccountConsents() {
+        Configuration.clickViaJs = true;
         $(withText("The app Consent Manager needs access to some of your HERE account info")).shouldBe(Condition.visible);
-        $("#authorizeFlowBtn").click();
+        $("#authorizeFlowBtn span").click();
+        Configuration.clickViaJs = false;
         return this;
     }
 
