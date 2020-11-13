@@ -1,5 +1,6 @@
 package com.here.platform.hereAccount.ui;
 
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 
 import com.codeborne.selenide.Condition;
@@ -54,6 +55,7 @@ public class HereLoginPage {
 
     @Step("Approve HERE consents for new user")
     public HereLoginPage approveHEREAccountConsents() {
+        $(withText("The app Consent Manager needs access to some of your HERE account info")).shouldBe(Condition.visible);
         $("#authorizeFlowBtn").click();
         return this;
     }
