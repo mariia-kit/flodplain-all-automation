@@ -40,6 +40,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     @Test
     @Tag("external")
+    @Tag("e2e_contract")
     @DisplayName("Verify NS Providers call Successful")
     void verifyNSProvidersCall() {
         DataProvider provider = Providers.generateNew();
@@ -56,6 +57,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     @Test
     @Tag("external")
+    @Tag("e2e_contract")
     @DisplayName("Verify NS Container call Successful")
     void verifyNSContainerCall() {
         DataProvider provider = Providers.generateNew();
@@ -82,7 +84,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                         "ConsentRequired of Container not as expected.")
                 .expectedJsonContains("[0].hrn",
                         "hrn:here-dev:neutral::" + PROVIDER.getUser().getRealm() + ":" + container
-                                .getDataProviderName() + "/containers/" + container.getName(),
+                                .getDataProviderName() + "/containers/" + container.getId(),
                         "HRN of Container not as expected.");
 
     }
@@ -168,6 +170,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     @Test
     @Tag("external")
+    @Tag("e2e_contract")
     @DisplayName("Verify NS Get Container info call Successful")
     void verifyNSGetContainerInfoCall() {
         DataProvider provider = Providers.generateNew();
