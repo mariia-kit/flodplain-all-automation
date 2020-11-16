@@ -14,8 +14,8 @@ public class MarketplaceNSGetContainerCall extends BaseRestControllerNS<Marketpl
     public MarketplaceNSGetContainerCall(String providerName) {
         callMessage = "Perform MP call to gather NS Containers list info";
         setDefaultUser(MP_PROVIDER);
-        endpointUrl = Conf.mp().getMarketplaceUrl() + "/neutral_server/providers/" + providerName
-                + "/containers";
+
+        endpointUrl = String.format("%s/neutralServer/providers/%s/containers", Conf.mp().getMarketplaceUrl(), providerName);
     }
 
     @Override

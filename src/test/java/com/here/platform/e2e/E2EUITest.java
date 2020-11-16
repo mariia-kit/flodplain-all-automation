@@ -106,7 +106,6 @@ public class E2EUITest extends BaseE2ETest {
 
     @Test
     @Tag("e2e_prod")
-    @Tag("e2e_contract")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
         Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_TIRES.getContainer();

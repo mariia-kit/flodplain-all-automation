@@ -289,6 +289,20 @@ test_e2e_ui_sit:
     - when: never
   allow_failure: true
 
+test_mp_contract_sit:
+  extends: .test_run
+  stage: test_sit
+  variables:
+    ENV: "sit"
+    TASK: "e2eTestsUiContract"
+    REPORT_URL: "build/reports_e2e"
+    HISTORY_URL: "history_e2e"
+  rules:
+    - if: '$TASK_NS == null && $TASK_CM == null'
+      when: manual
+    - when: never
+  allow_failure: true
+
 test_ns_prod:
   extends: .test_run
   stage: test_prod

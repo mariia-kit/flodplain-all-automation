@@ -25,7 +25,9 @@ public class MarketplaceManageListingCall {
                 .expectedCode(HttpStatus.SC_OK);
         String hrn = listing.getResponse().getBody().jsonPath()
                 .get("resourceId").toString();
-        mpDelayStep();
+        int taskId = listing.getResponse().getBody().jsonPath()
+                .getInt("taskId");
+        waitForAsyncTask(taskId, "Bearer " + MP_PROVIDER.getUser().getToken());
         String invite = inviteConsumer(hrn);
         inviteClicked(invite);
         return hrn;

@@ -22,6 +22,7 @@ import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -30,10 +31,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.runners.MethodSorters;
 
 
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
 @Tag("bmw_cm")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Execution(ExecutionMode.SAME_THREAD)
 public class BmwRequestStatusTests extends BaseBmwConsentTests {
 

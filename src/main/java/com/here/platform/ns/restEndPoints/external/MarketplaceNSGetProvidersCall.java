@@ -14,7 +14,7 @@ public class MarketplaceNSGetProvidersCall extends BaseRestControllerNS<Marketpl
     public MarketplaceNSGetProvidersCall() {
         callMessage = "Perform MP call to gather NS Data Providers info";
         setDefaultUser(PROVIDER);
-        endpointUrl = Conf.mp().getMarketplaceUrl() + "/neutral_server/providers";
+        endpointUrl = String.format("%s/neutralServer/providers", Conf.mp().getMarketplaceUrl());
     }
 
     @Override
