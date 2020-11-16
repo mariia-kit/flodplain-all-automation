@@ -18,7 +18,7 @@ public class OfferDetailsPageSteps {
         acceptAndContinueConsent();
     }
 
-    @Step("Verify consent details page")
+    @Step("Verify offer details page")
     public void verifyConsentDetailsPage(ConsentInfo consentInfo) {
         $(".container-content [data-cy=title]").shouldHave(Condition.text(consentInfo.getTitle()));
         $(".container-content [data-cy=consumerName]")
@@ -33,19 +33,19 @@ public class OfferDetailsPageSteps {
         $(byText("Accept and continue")).click();
     }
 
-    @Step("Revoke current consent")
+    @Step("Open popup to Revoke offer")
     public void revokeConsent() {
         $(byText("Revoke consent")).click();
     }
 
-    @Step("Revoke current consent popup")
+    @Step("Revoke offer in popup")
     public void revokeConsentPopupYes() {
         $("#modal-notification-negative").$(byText("Revoke")).click();
     }
 
-    @Step("View all offers click")
-    public void viewAllOffers() {
-        $(byText("View all offers")).click();
+    @Step("Close current offer to open dashboard")
+    public void closeCurrentOffer() {
+        $(".go-back .circle").click();
     }
 
 }

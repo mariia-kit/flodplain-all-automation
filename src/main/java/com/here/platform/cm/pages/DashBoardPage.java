@@ -3,6 +3,7 @@ package com.here.platform.cm.pages;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.refresh;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.common.strings.SBB.sbb;
 
@@ -19,6 +20,7 @@ public class DashBoardPage extends BaseCMPage {
     @Step("Dash Board Page is loaded")
     public DashBoardPage isLoaded() {
         $(".offers-list").waitUntil(Condition.visible.because("Dashboard page should be present"), 10000);
+        refresh(); //todo temp hotfix for visibility of dashboard tabs
         return this;
     }
 
