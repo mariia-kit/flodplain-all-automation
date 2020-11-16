@@ -1,6 +1,7 @@
 package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.here.platform.common.strings.SBB.sbb;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
@@ -56,7 +57,7 @@ public class BaseUITests extends BaseCMTest {
     public static String getUICmToken() {
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();
-        return "Bearer " + storage.getItem("cmToken");
+        return sbb("Bearer").w().append(storage.getItem("CM_TOKEN")).bld();
     }
 
     @BeforeEach
