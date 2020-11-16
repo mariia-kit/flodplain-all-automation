@@ -131,7 +131,7 @@ public class DashboardTests extends BaseUITests {
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
 
-        OfferDetailsPageSteps.viewAllOffers();
+        OfferDetailsPageSteps.closeCurrentOffer();
         new DashBoardPage().isLoaded();
     }
 
