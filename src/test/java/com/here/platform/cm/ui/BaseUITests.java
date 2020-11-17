@@ -57,7 +57,9 @@ public class BaseUITests extends BaseCMTest {
     public static String getUICmToken() {
         var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
         LocalStorage storage = webStorage.getLocalStorage();
-        return sbb("Bearer").w().append(storage.getItem("CM_TOKEN")).bld();
+        var tokenValue = storage.getItem("cmToken") == null ? storage.getItem("CM_TOKEN") : storage.getItem("cmToken");
+        //todo temp hot fix to pass UI tests for both implementations
+        return sbb("Bearer").w().append(tokenValue).bld();
     }
 
     @BeforeEach
