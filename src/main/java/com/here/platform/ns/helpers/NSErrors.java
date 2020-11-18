@@ -24,7 +24,7 @@ public class NSErrors {
                 HttpStatus.SC_NOT_FOUND,
                 "E502116",
                 String.format("Container name '%s' for data provider '%s' not found",
-                        container.getName(), container.getDataProviderName()),
+                        container.getId(), container.getDataProviderName()),
                 "Request a valid container");
     }
 
@@ -210,7 +210,7 @@ public class NSErrors {
                 "E502113",
                 String.format(
                         "You can't delete resource '%s' because it is used in following containers: '%s'",
-                        res.getName(), container.getName()),
+                        res.getName(), container.getId()),
                 "Delete resource relations mentioned above and try again");
     }
 

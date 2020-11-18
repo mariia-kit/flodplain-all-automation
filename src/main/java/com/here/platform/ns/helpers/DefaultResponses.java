@@ -112,12 +112,12 @@ public class DefaultResponses {
         return res;
     }
 
-    public static Container extractContainerPresentInList(String containerName, Response response) {
+    public static Container extractContainerPresentInList(String containerId, Response response) {
         if (response.getStatusCode() == 200) {
             try {
                 Container[] res = response.getBody().as(Container[].class);
                 for (Container cont : res) {
-                    if (cont.getName().equals(containerName)) {
+                    if (cont.getId().equals(containerId)) {
                         return cont;
                     }
                 }

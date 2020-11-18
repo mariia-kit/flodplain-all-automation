@@ -12,33 +12,30 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class ConsentRequestRemoveExtension implements AfterEachCallback {
 
     private final List<String> cridsToRemove = new ArrayList<>();
-    private File fileWithVINs;
+    private List<String> vins = new ArrayList<>();
 
     public ConsentRequestRemoveExtension cridToRemove(String cridToRemove) {
         this.cridsToRemove.add(cridToRemove);
         return this;
     }
 
-    public ConsentRequestRemoveExtension vinToRemove(String vinToRemove) {
-        fileWithVINsToRemove(new VinsToFile(vinToRemove).csv());
+    public ConsentRequestRemoveExtension vinToRemove(String... vinToRemove) {
+        for (String vin: vinToRemove) {
+            vins.add(vin);
+        }
         return this;
     }
 
-    public ConsentRequestRemoveExtension fileWithVINsToRemove(File fileWithVINs) {
-        this.fileWithVINs = fileWithVINs;
-        return this;
-    }
-
-    public ConsentRequestRemoveExtension consentRequestToRemove(String cridToRemove, File fileWithVINsToRemove) {
+    public ConsentRequestRemoveExtension consentRequestToRemove(String cridToRemove, String vinToRemove) {
         cridToRemove(cridToRemove);
-        fileWithVINsToRemove(fileWithVINsToRemove);
+        vinToRemove(vinToRemove);
         return this;
     }
 
     @Override
     public void afterEach(ExtensionContext context) {
         for (String crid : cridsToRemove) {
-            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, fileWithVINs);
+            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(vins.toArray(new String[vins.size()])).csv());
         }
     }
 

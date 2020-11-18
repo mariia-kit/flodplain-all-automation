@@ -76,10 +76,9 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         var crid = createConsentRequestWith(testConsentRequest);
 
         var testVin = VIN.generate(17);
-        File testFileWithVINs = new VinsToFile(
-                testVin,
-                VIN.generate(17)
-        ).json();
+        var testVin1 = VIN.generate(17);
+        File testFileWithVINs = new VinsToFile(testVin, testVin1).json();
+        consentRequestRemoveExtension.vinToRemove(testVin, testVin1);
 
         consentRequestController.withConsumerToken(mpConsumer);
         consentRequestController
@@ -99,7 +98,6 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
-        consentRequestRemoveExtension.fileWithVINsToRemove(testFileWithVINs);
     }
 
     private String createConsentRequestWith(ConsentRequestData targetConsentRequest) {

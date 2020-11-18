@@ -2,6 +2,7 @@ package com.here.platform.cm.bmw;
 
 
 import com.here.platform.cm.controllers.BMWController;
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.MPConsumers;
@@ -17,6 +18,7 @@ import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,10 +47,8 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     private final BMWController bmwController = new BMWController();
     private final ReferenceProviderController referenceProviderController = new ReferenceProviderController();
 
-    @AfterEach
-    void cleanUp() {
-        RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-    }
+    @RegisterExtension
+    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
 
     @Test
     @Issue("NS-2427")
@@ -65,6 +66,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @EnumSource(BMWStatus.class)
     void setClearanceStatusByBMW(BMWStatus bmwStatus) {
         crid = createValidBmwConsentRequest();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
 
         var responseBefore = consentStatusController
                 .withConsumerToken(MPConsumers.OLP_CONS_1)
@@ -95,12 +97,12 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @Test
     @DisplayName("Positive BMW flow of updating consent statuses for consent request with multiple VINs")
     void setClearanceStatusByBMWMultiple() {
-        testFileWithVINs = new VinsToFile(testVin1, testVin2).json(); //for cascade remove
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
                 .getConsentRequestId();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
         ConsentRequestSteps.addVINsToConsentRequest(targetApp, crid, testVin2);
-
+        consentRequestRemoveExtension.vinToRemove(testVin2);
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(0)
                 .pending(2)
@@ -119,6 +121,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .get("clearanceId").toString();
         var clearanceId2 = referenceProviderController.getClearanceByVinAndContainerId(testVin2, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
+
         bmwController.setClearanceStatusByBMW(clearanceId1, BMWStatus.APPROVED.name());
         bmwController.setClearanceStatusByBMW(clearanceId2, BMWStatus.REVOKED.name());
         expectedConsentRequestStatuses = new ConsentRequestStatus()
@@ -142,11 +145,11 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
         crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer).getConsentRequestId();
-        testFileWithVINs = new VinsToFile(testVin2).json();
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
-                .addVinsToConsentRequestAsync(crid, testFileWithVINs);
-        testFileWithVINs = new VinsToFile(testVin1, testVin2).json();
+                .addVinsToConsentRequestAsync(crid, new VinsToFile(testVin2).json());
+        consentRequestRemoveExtension.vinToRemove(testVin2);
         String updateInfoUrl = new ResponseAssertion(addVinsToConsentRequest)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class)
@@ -157,7 +160,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .startsWith(ConsentManagementServiceUrl.getEnvUrl() + consentRequestAsyncUpdateInfo);
         String asyncId = StringUtils.substringAfter(updateInfoUrl, consentRequestAsyncUpdateInfo);
 
-        fuSleep();
+        waitForAsyncBMWReqwest(asyncId);
         new ResponseAssertion(consentRequestController.getConsentRequestAsyncUpdateInfo(asyncId))
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
@@ -177,5 +180,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                         .rejected(0)
                 );
     }
+
+
 
 }

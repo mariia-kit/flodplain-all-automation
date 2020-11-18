@@ -277,6 +277,7 @@ class ContainersInfoAddTest extends BaseNSTest {
         var response2 = new ContainerController()
                 .withToken(PROVIDER)
                 .addContainer(container2);
+        container.setName(container.getId());
         new NeutralServerResponseAssertion(response2)
                 .expectedEqualsContainer(container, "Container content not as expected!");
     }
@@ -325,13 +326,13 @@ class ContainersInfoAddTest extends BaseNSTest {
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 3,
                         "Expected list should not be equals to 3!")
                 .expected(
-                        res -> DefaultResponses.isContainerPresentInList(container1.getName(), res),
+                        res -> DefaultResponses.isContainerPresentInList(container1.getId(), res),
                         "No expected container in result!")
                 .expected(
-                        res -> DefaultResponses.isContainerPresentInList(container2.getName(), res),
+                        res -> DefaultResponses.isContainerPresentInList(container2.getId(), res),
                         "No expected container in result!")
                 .expected(
-                        res -> DefaultResponses.isContainerPresentInList(container3.getName(), res),
+                        res -> DefaultResponses.isContainerPresentInList(container3.getId(), res),
                         "No expected container in result!");
     }
 

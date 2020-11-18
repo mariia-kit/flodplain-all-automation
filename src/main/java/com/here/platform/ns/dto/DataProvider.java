@@ -33,7 +33,11 @@ public class DataProvider {
     }
 
     public Map<String, String> generateBody() {
-        return Map.of("url", this.getUrl());
+        if (this.getUrl() != null) {
+            return Map.of("url", this.getUrl());
+        } else {
+            return Map.of();
+        }
     }
 
     public void addResource(ProviderResource resource) {

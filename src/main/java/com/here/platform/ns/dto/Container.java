@@ -63,7 +63,7 @@ public class Container {
 
     public Map<String, Object> generateContainerBody() {
         Map<String, Object> containerBody = new HashMap<>();
-        if (this.getId() != null) {
+        if (this.getName() != null) {
             containerBody.put("name", this.getName());
         }
         if (this.getDescription() != null) {
