@@ -59,7 +59,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Approve consent with single pending consent")
     void approveConsentWithSinglePendingConsentTest() {
-        testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+        testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
         var cridForPendingConsent = createValidConsentRequest();
         cridsToRemove.add(cridForPendingConsent);
 

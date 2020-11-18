@@ -19,7 +19,7 @@ import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.common.extensions.UserAccountExtension;
+import com.here.platform.common.extensions.UserAccountCleanUpExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
@@ -84,7 +84,7 @@ public class E2EUITest extends BaseE2ETest {
     @RegisterExtension
     ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
     @RegisterExtension
-    UserAccountExtension userAccountCleanUpExtension = UserAccountExtension.builder()
+    UserAccountCleanUpExtension userAccountCleanUpExtension = UserAccountCleanUpExtension.builder()
             .targetDataSubject(targetDataSubject)
             .build();
 

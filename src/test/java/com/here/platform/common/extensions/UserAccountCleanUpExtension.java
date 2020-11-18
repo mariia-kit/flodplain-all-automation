@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 
 @Builder
-public class UserAccountExtension implements BeforeEachCallback, AfterEachCallback {
+public class UserAccountCleanUpExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final DataSubject targetDataSubject;
     private final List<String> additionalVINsToRemove = new ArrayList<>();

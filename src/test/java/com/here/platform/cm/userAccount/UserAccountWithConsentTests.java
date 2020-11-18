@@ -44,7 +44,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
 
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
     protected ConsentRequestContainer testContainer = ConsentRequestContainers
-            .generateNew(targetApplication.provider.getName());
+            .generateNew(targetApplication.provider);
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {

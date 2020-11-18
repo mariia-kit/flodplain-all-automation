@@ -38,7 +38,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
     private final ConsentRequestContainer testContainer = ConsentRequestContainers
-            .generateNew(MPProviders.DAIMLER_EXPERIMENTAL.getName());
+            .generateNew(MPProviders.DAIMLER_EXPERIMENTAL);
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())

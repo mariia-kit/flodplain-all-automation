@@ -25,7 +25,7 @@ public class BaseConsentStatusTests extends BaseCMTest {
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
     protected ConsentRequestContainer testContainer = ConsentRequestContainers
-            .generateNew(targetApp.provider.getName());
+            .generateNew(targetApp.provider);
     protected String
             testConsumerId = mpConsumer.getRealm(),
             testProviderId = targetApp.provider.getName(),

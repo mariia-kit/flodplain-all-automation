@@ -2,6 +2,7 @@ package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -21,6 +22,7 @@ public class VINEnteringPage extends BaseCMPage {
     @Step("Fill vin page with vehicle number {vin}")
     public void fillVINAndContinue(String vin) {
         this.vinNumberInput.setValue(vin);
+        sleep(1000); //hotfix for slow validation
         $(byText("Continue")).click();
         this.vinNumberInput.waitUntil(Condition.hidden, 10000);
     }
