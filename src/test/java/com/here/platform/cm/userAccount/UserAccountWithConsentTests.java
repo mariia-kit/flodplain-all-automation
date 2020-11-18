@@ -99,6 +99,20 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     }
 
     @Test
+    @Issue("NS-2949")
+    @DisplayName("Forbidden to get consent by empty consentRequestId")
+    void isNotPossibleToGetByEmptyConsentId() {
+        var userConsentsInState = userAccountController.getConsentsForUser(
+                dataSubject.getBearerToken(),
+                Map.of("consentRequestId", "", "state", "")
+        );
+
+        new ResponseAssertion(userConsentsInState)
+                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+    }
+
+    @Test
     @Issue("NS-1709")
     @DisplayName("Get consents for user by consentRequestId and state")
     void getConsentRequestForUserByCridAndStateTest() {

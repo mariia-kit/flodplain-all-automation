@@ -101,7 +101,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .deleteProvider(provider);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getName(), container.getName()));
+                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getName(), container.getId()));
 
         var verify = new ProviderController()
                 .withToken(PROVIDER)

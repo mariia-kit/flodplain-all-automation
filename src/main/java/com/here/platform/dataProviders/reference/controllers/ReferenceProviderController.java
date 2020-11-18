@@ -1,5 +1,6 @@
 package com.here.platform.dataProviders.reference.controllers;
 
+import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,6 +29,17 @@ public class ReferenceProviderController {
     public Response getClearanceByVinAndContainerId(String vin, String bmwContainerName) {
         return referenceProviderClient("/admin")
                 .get("/clearance/container/{containerId}/vehicles/{vehicleId}", bmwContainerName, vin);
+    }
+
+    @Step
+    public Response setClearanceByVinAndContainerId(String clearanceId, String containerId, String vin) {
+        return referenceProviderClient("/admin")
+                .body(sbb("{").n()
+                        .dQuote("clearanceId").append(":").dQuote(clearanceId).append(",").n()
+                        .dQuote("containerId").append(":").append(containerId).append(",").n()
+                        .dQuote("vin").append(":").dQuote(vin).n()
+                        .append("}"))
+                .post("/clearance/container");
     }
 
     @Step

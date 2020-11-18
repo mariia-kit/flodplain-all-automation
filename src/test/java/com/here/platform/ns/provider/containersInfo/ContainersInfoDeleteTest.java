@@ -182,7 +182,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
                         "Expected list should not be equals to 1!")
                 .expected(
-                        res -> DefaultResponses.isContainerPresentInList(container2.getName(), res),
+                        res -> DefaultResponses.isContainerPresentInList(container2.getId(), res),
                         "No expected container in result!");
     }
 
@@ -223,7 +223,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
                         "Expected list should not be equals to 1!")
                 .expected(
-                        res -> DefaultResponses.isContainerPresentInList(container2.getName(), res),
+                        res -> DefaultResponses.isContainerPresentInList(container2.getId(), res),
                         "No expected container in result!");
     }
 

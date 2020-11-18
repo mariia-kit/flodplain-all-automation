@@ -49,7 +49,7 @@ public class NeutralServerResponseAssertion {
     @Step("Expected response value in Container list equals to Container: '{expected.name}'")
     public NeutralServerResponseAssertion expectedEqualsContainerInList(Container expected, String message) {
         Assertions.assertEquals(expected,
-                DefaultResponses.extractContainerPresentInList(expected.getName(), response),
+                DefaultResponses.extractContainerPresentInList(expected.getId(), response),
                 message);
         return this;
     }
