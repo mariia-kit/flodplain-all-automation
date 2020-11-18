@@ -33,7 +33,7 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
     protected File testFileWithVINs = null;
 
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName())
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider)
             .withResources(List.of("fuel"))
             .withClientIdSecret(Conf.cmUsers().getBmwApp());
 

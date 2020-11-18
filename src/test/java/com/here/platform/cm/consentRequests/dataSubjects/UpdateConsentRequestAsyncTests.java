@@ -55,7 +55,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
             vin2 = VIN.generate(vinLength),
             vin3 = VIN.generate(vinLength);
 
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())

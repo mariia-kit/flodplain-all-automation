@@ -202,8 +202,8 @@ public enum ConsentRequestContainers {
         return consentRequestContainers.orElse(mockContainer);
     }
 
-    public static ConsentRequestContainer generateNew(String providerName) {
-        Container container = Containers.generateNew(providerName)
+    public static ConsentRequestContainer generateNew(MPProviders targetProvider) {
+        Container container = Containers.generateNew(targetProvider.getName())
                 .withDescription(Conf.cm().getQaTestDataMarker() + "cm_automated_container");
         return ConsentRequestContainer.builder()
                 .id(container.getId())
@@ -211,7 +211,7 @@ public enum ConsentRequestContainers {
                 .scopeValue(container.getScope())
                 .resources(List.of(container.getResourceNames()))
                 .containerDescription(container.getDescription())
-                .provider(MPProviders.findByProviderId(providerName))
+                .provider(targetProvider)
                 .clientId(Conf.ns().getReferenceApp().getClientId())
                 .clientSecret(Conf.ns().getReferenceApp().getClientSecret())
                 .build();

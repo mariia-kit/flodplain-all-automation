@@ -48,7 +48,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
 
     protected final MPConsumers mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider.getName());
+    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
     
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())

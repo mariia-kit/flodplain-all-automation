@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Verify Dashboard UI")
-@Tag("ui")
 @Tag("dynamic_ui")
 public class DashboardTests extends BaseUITests {
 
@@ -74,12 +73,12 @@ public class DashboardTests extends BaseUITests {
         var mpConsumer = providerApplication.consumer;
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainer testContainer1 = ConsentRequestContainers
-                .generateNew(providerApplication.provider.getName());
+                .generateNew(providerApplication.provider);
         var firstConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
         var consentRequestId1 = firstConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId1);
         ConsentRequestContainer testContainer2 = ConsentRequestContainers
-                .generateNew(providerApplication.provider.getName());
+                .generateNew(providerApplication.provider);
         var secondConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer2);
         var consentRequestId2 = secondConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId2);
@@ -119,7 +118,7 @@ public class DashboardTests extends BaseUITests {
     void verifyOpenDashBoardTest() {
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainer testContainer1 = ConsentRequestContainers
-                .generateNew(providerApplication.provider.getName());
+                .generateNew(providerApplication.provider);
         var firstConsentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
         var crid = firstConsentRequest.getConsentRequestId();
@@ -140,7 +139,7 @@ public class DashboardTests extends BaseUITests {
     void verifyRevokeDashboardTest() {
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainer testContainer1 = ConsentRequestContainers
-                .generateNew(providerApplication.provider.getName());
+                .generateNew(providerApplication.provider);
         var consentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
         var crid = consentRequest.getConsentRequestId();

@@ -1,12 +1,10 @@
 package com.here.platform.hereAccount.ui;
 
-import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
 
@@ -59,9 +57,8 @@ public class HereLoginPage {
     @Step("Approve HERE consents for new user")
     public HereLoginPage approveHEREAccountConsents() {
         Configuration.clickViaJs = true;
-        $(withText("The app Consent Manager needs access to some of your HERE account info"))
-                .shouldBe(Condition.visible);
-        SelenideElement acceptBtn = $("#authorizeFlowBtn span");
+        $("#consent-page").shouldBe(Condition.visible);
+        var acceptBtn = $("#authorizeFlowBtn span");
         acceptBtn.click();
         sleep(2000);
         if (acceptBtn.isDisplayed()) {

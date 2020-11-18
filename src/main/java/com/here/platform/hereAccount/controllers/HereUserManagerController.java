@@ -178,7 +178,8 @@ public class HereUserManagerController extends BaseHereAccountController {
     @Data
     public static class AcceptTermsRequest {
 
-        String termsReacceptanceToken,
+        private String
+                termsReacceptanceToken,
                 clientId,
                 clientSecret;
 
