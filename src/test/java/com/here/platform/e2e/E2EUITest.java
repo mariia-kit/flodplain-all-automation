@@ -6,7 +6,6 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -31,6 +30,7 @@ import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.helpers.TokenManager;
@@ -113,7 +113,7 @@ public class E2EUITest extends BaseE2ETest {
                 new ConsentInfo()
                         .title(faker.company().buzzword())
                         .purpose(faker.backToTheFuture().quote())
-                        .consumerName(MPConsumers.OLP_CONS_1.getConsumerName())
+                        .consumerName(Users.MP_CONSUMER.getUser().getName())
                         .containerName(targetContainer.getName())
                         .containerDescription(targetContainer.getDescription())
                         .resources(List.of(targetContainer.getResourceNames()))
@@ -169,7 +169,7 @@ public class E2EUITest extends BaseE2ETest {
                 new ConsentInfo()
                         .title(faker.company().buzzword())
                         .purpose(faker.backToTheFuture().quote())
-                        .consumerName(MPConsumers.OLP_CONS_1.getConsumerName())
+                        .consumerName(Users.MP_CONSUMER.getUser().getName())
                         .containerName(targetContainer.getName())
                         .containerDescription(targetContainer.getDescription())
                         .resources(List.of(targetContainer.getResourceNames()))

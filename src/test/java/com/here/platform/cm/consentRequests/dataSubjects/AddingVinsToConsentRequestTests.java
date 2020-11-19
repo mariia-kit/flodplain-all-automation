@@ -5,7 +5,6 @@ import static com.here.platform.cm.enums.CMErrorResponse.CONSENT_REQUEST_UPDATE;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -20,6 +19,8 @@ import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.dto.Container;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.Steps;
 import io.qameta.allure.Issue;
 import io.restassured.response.Response;
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.Test;
 @UpdateConsentRequest
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
-    private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
+    private final User mpConsumer = Users.MP_CONSUMER.getUser();
     private final ConsentRequestContainer testContainer = ConsentRequestContainers
             .generateNew(MPProviders.DAIMLER_EXPERIMENTAL);
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
@@ -82,7 +83,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         var vinInUpperCaseButLastSymbol = VIN.generate(16) + "a";
         var validVIN = VIN.generate(17);
 
-        consentRequestController.withConsumerToken(mpConsumer);
+        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         var addVinsToConsentRequestResponse = consentRequestController
                 .addVinsToConsentRequest(crid, new VinsToFile(vinInLowerCase, vinInUpperCaseButLastSymbol).json());
 
@@ -103,7 +104,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         var validVINs = new String[]{VIN.generate(17), VIN.generate(17)};
 
         testFileWithVINs = new VinsToFile(validVINs).json();
-        consentRequestController.withConsumerToken(mpConsumer);
+        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         var addVinsResponse = consentRequestController
                 .addVinsToConsentRequest(crid, testFileWithVINs);
 
@@ -137,7 +138,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         var targetVINsWithDuplication = new String[]{VIN.generate(17), testVin, testVin};
         testFileWithVINs = new VinsToFile(targetVINsWithDuplication).json();
 
-        consentRequestController.withConsumerToken(mpConsumer);
+        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         var addVinsResponse = consentRequestController
                 .addVinsToConsentRequest(crid, testFileWithVINs);
 

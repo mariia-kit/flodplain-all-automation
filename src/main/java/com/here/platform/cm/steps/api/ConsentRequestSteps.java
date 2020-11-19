@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.dataAdapters.ConsentRequestToConsentInfo;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -13,6 +12,7 @@ import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.Steps;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
@@ -45,7 +45,7 @@ public class ConsentRequestSteps {
                 container.getClientSecret());
         return ConsentRequestSteps.createConsentRequestWithVINFor(
                 targetApp.provider.getName(),
-                targetApp.consumer.getConsumerName(),
+                targetApp.consumer.getName(),
                 targetApp.consumer.getRealm(),
                 container.getId(),
                 testVin);
@@ -53,7 +53,7 @@ public class ConsentRequestSteps {
 
     @Step("Add VINs: '{vins}', to consent request: '{crid}'")
     public void addVINsToConsentRequest(ProviderApplications providerApplication, String crid, String... vins) {
-        consentRequestController.withConsumerToken(providerApplication.consumer);
+        consentRequestController.withAuthorizationValue(providerApplication.consumer.getToken());
         var addVINsResponse = consentRequestController.addVinsToConsentRequest(
                 crid, new VinsToFile(vins).csv()
         );
@@ -62,7 +62,7 @@ public class ConsentRequestSteps {
 
     @Step("Add VINs: '{vins}', to consent request: '{crid}'")
     public void addVINsToConsentRequestAsConsumer(String crid, String... vins) {
-        consentRequestController.withConsumerToken(MPConsumers.OLP_CONS_1);
+        consentRequestController.withAuthorizationValue(Users.MP_CONSUMER.getToken());
         var addVINsResponse = consentRequestController.addVinsToConsentRequest(
                 crid, new VinsToFile(vins).csv()
         );
@@ -72,7 +72,7 @@ public class ConsentRequestSteps {
     public ConsentInfo createConsentRequestFor(ProviderApplications providerApplication) {
         return createConsentRequestFor(
                 providerApplication.provider.getName(),
-                providerApplication.consumer.getConsumerName(),
+                providerApplication.consumer.getName(),
                 providerApplication.consumer.getRealm(),
                 providerApplication.container.id
         );

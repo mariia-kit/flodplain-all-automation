@@ -8,7 +8,6 @@ import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
@@ -27,6 +26,7 @@ import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
 import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 
     private final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     private final String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-    private final MPConsumers mpConsumer = targetApp.consumer;
+    private final User mpConsumer = targetApp.consumer;
 
     private final int vinLength = targetApp.provider.vinLength;
     private final String
@@ -77,7 +77,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 targetApp.container.clientSecret);
         crid = ConsentRequestSteps.createConsentRequestFor(
                 targetApp.provider.getName(),
-                targetApp.consumer.getConsumerName(),
+                targetApp.consumer.getName(),
                 targetApp.consumer.getRealm(),
                 testContainer.getId())
                 .getConsentRequestId();

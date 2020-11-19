@@ -6,11 +6,13 @@ import static io.restassured.config.HeaderConfig.headerConfig;
 
 import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
-import com.here.platform.cm.enums.MPConsumers;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import org.springframework.util.StringUtils;
 
 
 abstract class BaseConsentService<T> {
@@ -27,7 +29,7 @@ abstract class BaseConsentService<T> {
                 .accept(ContentType.JSON)
                 .filters(new AllureRestAssured());
 
-        if (!authorizationToken.isEmpty()) {
+        if (!StringUtils.isEmpty(authorizationToken)) {
             baseService.header("Authorization", authorizationToken);
         }
 
@@ -44,7 +46,12 @@ abstract class BaseConsentService<T> {
     }
 
     public T withConsumerToken() {
-        setAuthorizationToken(MPConsumers.OLP_CONS_1.getToken());
+        setAuthorizationToken(Users.MP_CONSUMER.getToken());
+        return (T) this;
+    }
+
+    public T withConsumerToken(User consumerToken) {
+        setAuthorizationToken(consumerToken.getToken());
         return (T) this;
     }
 

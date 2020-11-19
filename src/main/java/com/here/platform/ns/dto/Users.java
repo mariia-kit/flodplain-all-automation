@@ -14,7 +14,7 @@ public enum Users {
     CONSUMER(Conf.nsUsers().getConsumer()),
     EXTERNAL_USER(Conf.nsUsers().getNonConsumerManager()),
     APPLICATION(new User("Application", StringUtils.EMPTY).withUserType(UserType_NS.APP)),
-    AAA(new User("AAA Connector", StringUtils.EMPTY).withUserType(UserType_NS.AA)),
+    AAA(new User("AAA Connector " + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.AA)),
     DAIMLER(new User(
             new String(Base64.getDecoder().decode(Conf.nsUsers().getDaimlerUser().getEmail())),
             new String(Base64.getDecoder().decode(Conf.nsUsers().getDaimlerUser().getPass())))

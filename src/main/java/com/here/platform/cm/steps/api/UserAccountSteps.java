@@ -1,6 +1,5 @@
 package com.here.platform.cm.steps.api;
 
-import com.here.platform.aaa.HERECMTokenController;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import lombok.experimental.UtilityClass;
@@ -10,7 +9,6 @@ import lombok.experimental.UtilityClass;
 public class UserAccountSteps {
 
     private final UserAccountController accountController = new UserAccountController();
-    private final HERECMTokenController hereUserController = new HERECMTokenController();
 
     public void attachVINToUserAccount(DataSubjects targetDataSubject, String targetVIN) {
         var attachVinToUserAccount = accountController.attachVinToUserAccount(

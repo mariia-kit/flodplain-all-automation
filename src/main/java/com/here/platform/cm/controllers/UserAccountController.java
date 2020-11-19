@@ -24,7 +24,7 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
     @Step("Sign in user to CM by authorization code: '{authorizationCode}'")
     public Response userAccountSignIn(String authorizationCode) {
         return consentServiceClient(StringUtils.EMPTY)
-                .noFilters()
+                //.noFilters()
                 .body(new HereAccountRequestTokenData().authorizationCode(authorizationCode))
                 .redirects().follow(false)
                 .post("/sign-in");

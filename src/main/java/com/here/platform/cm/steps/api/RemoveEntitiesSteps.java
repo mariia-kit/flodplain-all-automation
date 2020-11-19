@@ -2,9 +2,9 @@ package com.here.platform.cm.steps.api;
 
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.PrivateController;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Step;
 import java.io.File;
 import lombok.experimental.UtilityClass;
@@ -36,7 +36,7 @@ public class RemoveEntitiesSteps {
         }
         if (fileWithVINs != null) {
             consentRequestController
-                    .withConsumerToken(MPConsumers.OLP_CONS_1)
+                    .withAuthorizationValue(Users.MP_CONSUMER.getToken())
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
         }
         var deleteConsentRequestResponse = privateController

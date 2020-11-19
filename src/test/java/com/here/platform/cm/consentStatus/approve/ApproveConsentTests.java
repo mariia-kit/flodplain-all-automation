@@ -57,7 +57,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .authorizationCode(validCode)
                 .build();
 
-        var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
+        var approveConsentResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(consentToApprove, privateBearer);
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -67,7 +69,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .consentRequestId(crid)
                 .purpose(testConsentRequestData.getPurpose())
                 .title(testConsentRequestData.getTitle())
-                .consumerName(mpConsumer.getConsumerName())
+                .consumerName(mpConsumer.getName())
                 .state(StateEnum.APPROVED)
                 .revokeTime(null)
                 .containerName(testContainer.getName())
@@ -105,7 +107,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .authorizationCode(crypto.sha1())
                 .build();
 
-        var approveResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
+        var approveResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(consentToApprove, privateBearer);
         new ResponseAssertion(approveResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
                 .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_NOT_FOUND);
@@ -130,7 +134,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @ErrorHandler
     @DisplayName("Verify Approve with Empty Consent for ConsentRequest")
     void approveConsentErrorHandlerTest() {
-        var approveResponse = consentStatusController.approveConsent(NewConsent.builder().build(), privateBearer);
+        var approveResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(NewConsent.builder().build(), privateBearer);
 
         new ResponseAssertion(approveResponse)
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
@@ -150,7 +156,9 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .authorizationCode(crypto.sha1())
                 .build();
 
-        var approveResponse = consentStatusController.approveConsent(consentToApprove, "");
+        var approveResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(consentToApprove, "");
         new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
     }
 

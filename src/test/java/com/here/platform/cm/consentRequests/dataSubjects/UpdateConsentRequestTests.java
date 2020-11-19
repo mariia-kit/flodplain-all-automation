@@ -4,7 +4,6 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -23,6 +22,7 @@ import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
 import com.here.platform.ns.helpers.Steps;
 import java.io.File;
 import org.assertj.core.api.Assertions;
@@ -46,7 +46,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
 
     private File testFileWithVINs = new VinsToFile(vin1, vin2, vin3).csv();
 
-    protected final MPConsumers mpConsumer = targetApp.consumer;
+    protected final User mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
     protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
     

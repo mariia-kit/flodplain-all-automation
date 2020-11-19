@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
@@ -40,6 +41,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     }
 
     @Test
+    @Tag("fabric_test")
     @DisplayName("Verify revoke of ConsentRequest")
     void revokeConsentRequestPositiveTest() {
         new UserAccountController().attachVinToUserAccount(testVin, dataSubject.getBearerToken());
@@ -53,7 +55,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
         fuSleep();
         var privateBearer = dataSubject.getBearerToken();
-        var revokedConsentResponse = consentStatusController.revokeConsent(consentToRevoke, privateBearer);
+        var revokedConsentResponse = consentStatusController
+                .withConsumerToken()
+                .revokeConsent(consentToRevoke, privateBearer);
 
         new ResponseAssertion(revokedConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -90,7 +94,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                                 .additionalLinks(testConsentRequestData.getAdditionalLinks())
                                 .consentRequestId(crid)
                                 .state(StateEnum.REVOKED)
-                                .consumerName(mpConsumer.getConsumerName())
+                                .consumerName(mpConsumer.getName())
                                 .vinLabel(new VIN(testVin).label())
                                 .title(testConsentRequestData.getTitle())
                                 .purpose(testConsentRequestData.getPurpose())
@@ -119,7 +123,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .build();
 
         var privateBearer = dataSubject.getBearerToken();
-        var approveResponse = consentStatusController.revokeConsent(consentToRevoke, privateBearer);
+        var approveResponse = consentStatusController
+                .withConsumerToken()
+                .revokeConsent(consentToRevoke, privateBearer);
         new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.NOT_FOUND);
 
         consentRequestController.withConsumerToken();
@@ -165,7 +171,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                     .vinHash(new VIN(testVin).hashed())
                     .build();
 
-            var revokedConsentResponse = consentStatusController.revokeConsent(consentUnderTest, privateBearer);
+            var revokedConsentResponse = consentStatusController
+                    .withConsumerToken()
+                    .revokeConsent(consentUnderTest, privateBearer);
             new ResponseAssertion(revokedConsentResponse)
                     .statusCodeIsEqualTo(StatusCode.OK)
                     .responseIsEmpty();
@@ -189,7 +197,9 @@ class RevokeConsentTests extends BaseConsentStatusTests {
             fuSleep();
             consentStatusController.revokeConsent(consentUnderTest, privateBearer);
             fuSleep();
-            var approveResponse = consentStatusController.approveConsent(consentUnderTest, privateBearer);
+            var approveResponse = consentStatusController
+                    .withConsumerToken()
+                    .approveConsent(consentUnderTest, privateBearer);
             ErrorResponse errorResponse = new ResponseAssertion(approveResponse)
                     .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
                     .expectedErrorResponse(CMErrorResponse.CONSENT_ALREADY_REVOKED);

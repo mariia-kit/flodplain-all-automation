@@ -1,8 +1,8 @@
 package com.here.platform.cm.controllers;
 
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.ns.dto.User;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -14,13 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 public class ConsentRequestController extends BaseConsentService<ConsentRequestController> {
 
     private final String consentRequestBasePath = "/consentRequests";
-    private String consumerBearerToken = "";
-
-    @Step("Perform the next request to CM with Data Consumer '{consumer.realm}' token")
-    public ConsentRequestController withConsumerToken(MPConsumers consumer) {
-        this.consumerBearerToken = String.join(" ", "Bearer", consumer.getToken());
-        return this;
-    }
 
     @Step("Create consent request with: {consentRequestBody}")
     public Response createConsentRequest(ConsentRequestData consentRequestBody) {
@@ -51,7 +44,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/addDataSubjects", consentRequestId);
     }
 
@@ -61,7 +54,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/addDataSubjectsAsync", consentRequestId);
     }
 
@@ -70,7 +63,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/removeDataSubjectsExceptApproved", consentRequestId);
     }
 
@@ -79,7 +72,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/removeNonApprovedVINsAsync", consentRequestId);
     }
 
@@ -88,7 +81,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/removeAllDataSubjects", consentRequestId);
     }
 
@@ -97,14 +90,14 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
         return consentServiceClient(consentRequestBasePath)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .put("/{consentRequestId}/removeAllDataSubjectsAsync", consentRequestId);
     }
 
     @Step("ASYNC Get consent request update info for Update info ID: '{asyncUpdateInfoId}'")
     public Response getConsentRequestAsyncUpdateInfo(String asyncUpdateInfoId) {
         return consentServiceClient(StringUtils.EMPTY)
-                .header("Authorization", consumerBearerToken)
+                //.header("Authorization", consumerBearerToken)
                 .get("/consentRequestAsyncUpdateInfo/{asyncUpdateInfoId}", asyncUpdateInfoId);
     }
 

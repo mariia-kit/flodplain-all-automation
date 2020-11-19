@@ -124,7 +124,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         new ResponseAssertion(userConsentsInState)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(List.of(targetConsentRequest
-                        .consumerName(targetApplication.consumer.getConsumerName())
+                        .consumerName(targetApplication.consumer.getName())
                         .containerDescription(targetApplication.container.containerDescription)
                         .resources(targetApplication.container.resources)
                         .state(StateEnum.APPROVED)).toArray(ConsentInfo[]::new)
@@ -147,7 +147,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         Assertions.assertThat(consentInfos)
                 .usingElementComparatorIgnoringFields(ResponseAssertion.timeFieldsToIgnore)
                 .contains(targetConsentRequest
-                        .consumerName(targetApplication.consumer.getConsumerName())
+                        .consumerName(targetApplication.consumer.getName())
                         .containerName(testContainer.getName())
                         .containerDescription(testContainer.getContainerDescription())
                         .resources(testContainer.getResources())

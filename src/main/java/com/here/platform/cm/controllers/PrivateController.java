@@ -4,20 +4,22 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class PrivateController extends BaseConsentService<PrivateController> {
 
     private final List<String>
             forbiddenToRemoveProviders = stream(MPProviders.values()).map(MPProviders::getName).collect(toList()),
-            forbiddenToRemoveConsumers = stream(MPConsumers.values()).map(MPConsumers::getRealm).collect(toList());
+            forbiddenToRemoveConsumers = Stream.of(Users.MP_CONSUMER.getUser()).map(User::getRealm).collect(toList());
 
     private RequestSpecification basePrivateController() {
         return consentServiceClient("private");
@@ -76,7 +78,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         return providerApplication == null || forbiddenApplications.anyMatch(
                 containers -> containers.getId().equalsIgnoreCase(providerApplication.getContainer())
                         && containers.getProvider().getName().equals(providerApplication.getProviderId())
-                        && (providerApplication.getConsumerId().equalsIgnoreCase(MPConsumers.OLP_CONS_1.getRealm())
+                        && (providerApplication.getConsumerId().equalsIgnoreCase(Users.MP_CONSUMER.getUser().getRealm())
                         || providerApplication.getConsumerId().equalsIgnoreCase("olp-here-dataeval")));
     }
 

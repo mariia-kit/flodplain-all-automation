@@ -3,7 +3,6 @@ package com.here.platform.ns.helpers;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
@@ -13,6 +12,7 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
@@ -168,7 +168,7 @@ public class Steps {
     @Step("Get vehicle resources by Data Consumer from Data Provider")
     public static void getVehicleResourceAndVerify(String crid, String vin, Container container) {
         var response = new ContainerDataController()
-                .withBearerToken(MPConsumers.OLP_CONS_1.generateToken())
+                .withBearerToken(Users.MP_CONSUMER.getToken())
                 .withCampaignId(crid)
                 .getContainerForVehicle(
                         container.getDataProviderByName(),

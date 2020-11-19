@@ -9,7 +9,6 @@ import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
@@ -17,6 +16,7 @@ import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
+import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,12 +112,12 @@ public class PurposePageTests extends BaseUITests {
     }
 
     @Step
-    private void verifyPurposeInfoPage(MPConsumers mpConsumer, ConsentInfo consentRequest,
+    private void verifyPurposeInfoPage(User mpConsumer, ConsentInfo consentRequest,
             ConsentRequestContainer container) {
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
         $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));
-        $(".purpose-content .from p").shouldHave(Condition.text(mpConsumer.getConsumerName()));
+        $(".purpose-content .from p").shouldHave(Condition.text(mpConsumer.getName()));
         $(".purpose-content h4 + p").shouldHave(Condition.text(consentRequest.getPurpose()));
         $(".source.description")
                 .shouldHave(Condition.text("Requested data\n" + String.join("\n", container.getResources())));
@@ -125,7 +125,7 @@ public class PurposePageTests extends BaseUITests {
 
         $(".source p a").shouldHave(Condition.attribute("href", ConsentPageUrl.getAcceptedOffersUrl()));
         $(".purpose-content p:nth-child(6)")
-                .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getConsumerName()
+                .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getName()
                         + ", visit their privacy policy."));
         $(".purpose-content p:nth-child(6) a")
                 .shouldHave(Condition.attribute("href", "https://" + consentRequest.getPrivacyPolicy() + "/"));
