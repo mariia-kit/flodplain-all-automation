@@ -144,6 +144,14 @@ task prodTests(type: TestCM) {
     }
 }
 
+task fabricTests(type: TestCM) {
+    group "cm tests"
+    systemProperty "env", finalEnv
+    useJUnitPlatform {
+        includeTags "fabric_test"
+    }
+}
+
 task zephyrCMSync(type: JavaExec) {
     main = "lv.ctco.zephyr.Runner"
     description = "Run Sync test results into Zephyr test cycle"

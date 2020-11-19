@@ -2,10 +2,8 @@ package com.here.platform.cm.bmw;
 
 
 import com.here.platform.cm.controllers.BMWController;
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
@@ -14,18 +12,17 @@ import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -69,7 +66,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
 
         var responseBefore = consentStatusController
-                .withConsumerToken(MPConsumers.OLP_CONS_1)
+                .withAuthorizationValue(Users.MP_CONSUMER.getToken())
                 .getConsentStatusByIdAndVin(crid, testVin1);
         new ResponseAssertion(responseBefore).statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentStatus()

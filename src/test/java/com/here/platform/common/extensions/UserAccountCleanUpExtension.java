@@ -1,8 +1,8 @@
 package com.here.platform.common.extensions;
 
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.common.DataSubject;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class UserAccountCleanUpExtension implements BeforeEachCallback, AfterEac
     @Step("Remove all VINs and data consumers for the user")
     private void dataSubjectCleanUp() {
         var userAccountController = new UserAccountController();
-        var cmToken = new HERETokenController().loginAndGenerateCMToken(targetDataSubject.getEmail(), targetDataSubject.getPass());
+        var cmToken = DataSubjects.getBearerToken(targetDataSubject);
 
         userAccountController.deleteVINForUser(targetDataSubject.getVin(), cmToken);
 

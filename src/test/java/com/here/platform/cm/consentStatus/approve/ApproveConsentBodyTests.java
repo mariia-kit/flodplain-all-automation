@@ -63,7 +63,9 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
         var cridForPendingConsent = createValidConsentRequest();
         cridsToRemove.add(cridForPendingConsent);
 
-        var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
+        var approveConsentResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(consentToApprove, privateBearer);
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -73,7 +75,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                 .usingElementComparatorIgnoringFields("createTime", "vinHash")
                 .contains(new ConsentInfo()
                         .consentRequestId(cridForPendingConsent)
-                        .consumerName(mpConsumer.getConsumerName())
+                        .consumerName(mpConsumer.getName())
                         .title(testConsentRequestData.getTitle())
                         .purpose(testConsentRequestData.getPurpose())
                         .additionalLinks(testConsentRequestData.getAdditionalLinks())

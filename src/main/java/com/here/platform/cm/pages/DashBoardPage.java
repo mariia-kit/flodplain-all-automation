@@ -9,9 +9,9 @@ import static com.here.platform.common.strings.SBB.sbb;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.ns.dto.User;
 import io.qameta.allure.Step;
 
 
@@ -59,14 +59,14 @@ public class DashBoardPage extends BaseCMPage {
     @Step
     public DashBoardPage verifyConsentOfferTab(
             int index,
-            MPConsumers mpConsumer,
+            User mpConsumer,
             ConsentInfo consentRequest,
             String vinNumber,
             ConsentInfo.StateEnum status
     ) {
         SelenideElement offerBox = $("app-offer", index).shouldBe(Condition.visible);
         offerBox.$(".offer-title").shouldHave(text(consentRequest.getTitle()));
-        offerBox.$(".provider-name").shouldHave(text(mpConsumer.getConsumerName()));
+        offerBox.$(".provider-name").shouldHave(text(mpConsumer.getName()));
         offerBox.$(".offer-description").shouldHave(text(consentRequest.getPurpose()));
         offerBox.$(".vin-code").shouldHave(text(new VIN(vinNumber).label()));
         if (!PENDING.equals(status)) {

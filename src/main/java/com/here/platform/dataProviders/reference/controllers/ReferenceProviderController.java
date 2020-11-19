@@ -82,6 +82,27 @@ public class ReferenceProviderController {
                 .post("/containers");
     }
 
+    @Step
+    public Response readSyncEntity(String key) {
+        return referenceProviderClient("/sync")
+                .get("/entity/" + key);
+    }
+
+    @Step
+    public Response readServerTime() {
+        return referenceProviderClient("/sync")
+                .get("/now");
+    }
+
+    @Step
+    public Response writeSyncEntity(String key, String value, long expirationTime) {
+        return referenceProviderClient("/sync")
+                .param("key", key)
+                .param("value", value)
+                .param("expiresIn", expirationTime)
+                .post("/entity");
+    }
+
     @Data
     @AllArgsConstructor
     public static class ReferenceToken {

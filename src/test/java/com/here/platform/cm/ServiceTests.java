@@ -58,6 +58,7 @@ class ServiceTests extends BaseCMTest {
     @Test
     @DisplayName("Check healthDeep status of the consent service")
     @Issue("NS-825")
+    @Tag("fabric_test")
     void deepHealthTest() {
         var actualHealthResponse = this.serviceController.deepHealth();
 

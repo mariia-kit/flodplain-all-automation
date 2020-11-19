@@ -4,7 +4,6 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.ConsumerController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.Consumer;
@@ -16,6 +15,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import io.qameta.allure.TmsLink;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class ProviderApplicationTests extends BaseCMTest {
     @TmsLink("NS-2699")
     void onboardDataProviderApplicationTest() {
         var testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        var targetConsumer = MPConsumers.OLP_CONS_1;
+        var targetConsumer = Users.MP_CONSUMER.getUser();
         new OnboardingSteps(testContainer.getProvider(), targetConsumer.getRealm())
                 .onboardTestProvider();
 

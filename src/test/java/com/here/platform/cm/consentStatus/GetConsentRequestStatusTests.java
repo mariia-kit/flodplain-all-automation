@@ -1,7 +1,6 @@
 package com.here.platform.cm.consentStatus;
 
 
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -11,6 +10,8 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test;
 @GetConsentRequestStatus
 public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
 
-    private final MPConsumers mpConsumers = MPConsumers.OLP_CONS_1;
+    private final User mpConsumer = Users.MP_CONSUMER.getUser();
     private String crid;
 
     @AfterEach
@@ -68,7 +69,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
                 vinToPending = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
 
         crid = createValidConsentRequest();
-        consentRequestController.withConsumerToken(mpConsumers);
+        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         testFileWithVINs = new VinsToFile(testVin, vinToRevoke, vinToPending).csv();
         consentRequestController
                 .addVinsToConsentRequest(crid, new VinsToFile(testVin, vinToRevoke, vinToPending).csv());

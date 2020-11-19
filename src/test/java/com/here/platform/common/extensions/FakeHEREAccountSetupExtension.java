@@ -1,11 +1,11 @@
 package com.here.platform.common.extensions;
 
 import com.github.javafaker.Faker;
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -62,7 +62,7 @@ public class FakeHEREAccountSetupExtension implements BeforeEachCallback, AfterE
     }
 
     private String getCMBearerTokenForFakeUser() {
-        return new HERETokenController().loginAndGenerateCMToken(fakeDataSubject.getEmail(), fakeDataSubject.getPass());
+        return DataSubjects.getBearerToken(fakeDataSubject);
     }
 
     @Override

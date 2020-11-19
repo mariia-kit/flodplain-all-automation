@@ -1,11 +1,11 @@
 package com.here.platform.ns.helpers.authentication;
 
 import com.here.platform.aaa.ApplicationTokenController;
-import com.here.platform.aaa.HERECMTokenController;
 import com.here.platform.aaa.PortalTokenController;
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.helpers.TokenManager;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,7 +35,7 @@ public class AuthController {
                     return PortalTokenController.produceToken(user.getRealm(), user.getEmail(), user.getPass());
                 case CM:
                     logger.info("------------- Creating new CM user token ------------");
-                    return new HERECMTokenController().loginAndGenerateCMToken(user.getEmail(), user.getPass());
+                    return new HERETokenController().loginAndGenerateCMToken(user.getEmail(), user.getPass());
                 case APP:
                     logger.info("------------- Creating new APP LIKE user token ------------");
                     String host = Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken();
@@ -60,10 +60,11 @@ public class AuthController {
     }
 
     public static String loadOrGenerate(User user, Supplier<String> supplier) {
-        String currentT = TokenManager.loadToken(user.getEmail() + "_" + user.getRealm());
+        String key = user.getEmail() + "_" + user.getRealm();
+        String currentT = SyncPointIO.readSyncToken(key);
         if (StringUtils.isEmpty(currentT)) {
             String token = supplier.get();
-            TokenManager.saveToken(user.getEmail() + "_" + user.getRealm(), token);
+            SyncPointIO.writeNewTokenValue(key, token, 3600);
             return token;
         } else {
             return currentT;

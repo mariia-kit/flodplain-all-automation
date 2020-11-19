@@ -1,8 +1,5 @@
 package com.here.platform.cm.controllers;
 
-import static com.here.platform.common.strings.SBB.sbb;
-
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -14,12 +11,6 @@ import lombok.Data;
 public class ConsentStatusController extends BaseConsentService<ConsentStatusController> {
 
     private final String consentsBasePath = "/consents";
-    private String consumerBearerToken = "";
-
-    public ConsentStatusController withConsumerToken(MPConsumers consumer) {
-        this.consumerBearerToken = sbb("Bearer").w().append(consumer.getToken()).bld();
-        return this;
-    }
 
     @Step("Approve consent: '{consent}'")
     public Response approveConsent(NewConsent consent, String privateBearerToken) {
@@ -41,7 +32,6 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
     @Step("Get consent status by consent request id: '{consentRequestId}', VIN: '{vin}'")
     public Response getConsentStatusByIdAndVin(String consentRequestId, String vin) {
         return consentServiceClient(consentsBasePath)
-                .header("Authorization", this.consumerBearerToken)
                 .queryParams(Map.of("consentRequestId", consentRequestId, "vin", vin))
                 .get("/status");
     }

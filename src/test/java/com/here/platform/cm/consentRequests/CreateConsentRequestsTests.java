@@ -1,7 +1,6 @@
 package com.here.platform.cm.consentRequests;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
@@ -15,6 +14,8 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.TmsLink;
 import java.io.File;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @Tag("smoke_cm")
 public class CreateConsentRequestsTests extends BaseCMTest {
 
-    private final MPConsumers mpConsumer = MPConsumers.OLP_CONS_1;
+    private final User mpConsumer = Users.MP_CONSUMER.getUser();
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(crypto.sha1())
@@ -80,7 +81,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         File testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         consentRequestRemoveExtension.vinToRemove(testVin, testVin1);
 
-        consentRequestController.withConsumerToken(mpConsumer);
+        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         consentRequestController
                 .addVinsToConsentRequest(crid, testFileWithVINs);
         fuSleep();

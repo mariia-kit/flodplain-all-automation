@@ -6,6 +6,8 @@ import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.FileIO;
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.syncpoint.SyncPointIO;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -80,30 +82,19 @@ public enum DataSubjects {
     }
 
     public String getBearerToken() {
-        String cmToken = FileIO.readFile(vinFile());
-        if (StringUtils.isBlank(cmToken)) {
-            return generateBearerToken();
+        return getBearerToken(dataSubject);
+    }
+
+    public static String getBearerToken(DataSubject dataSubject) {
+        String key = dataSubject.getEmail() + "_" + System.getProperty("env");
+        String currentT = SyncPointIO.readSyncToken(key);
+        if (StringUtils.isEmpty(currentT)) {
+            String token = new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass());
+            SyncPointIO.writeNewTokenValue(key, token, 3600);
+            return token;
+        } else {
+            return currentT;
         }
-        return cmToken;
-    }
-
-    public void setBearerToken(String targetToken) {
-        FileIO.writeStringToFile(vinFile(), targetToken);
-    }
-
-    @SneakyThrows
-    public String generateBearerToken() {
-        var token = FileIO.writeStringToLockedFile(vinFile(),
-                () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
-        return token;
-    }
-
-    private File vinFile() {
-        return new File(String.format("%s/%s.token", FileIO.basePath, dataSubject.getVin()));
-    }
-
-    public void clearBearerToken() {
-        vinFile().delete();
     }
 
 }

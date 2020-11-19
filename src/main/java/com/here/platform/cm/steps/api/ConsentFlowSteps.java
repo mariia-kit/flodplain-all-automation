@@ -38,7 +38,8 @@ public class ConsentFlowSteps {
                 .consentRequestId(crid)
                 .authorizationCode(validCode)
                 .build();
-        var approveResponse = new ConsentStatusController().approveConsent(consentToApprove, token);
+        var approveResponse = new ConsentStatusController()
+                .approveConsent(consentToApprove, token);
 
         StatusCodeExpects.expectOKStatusCode(approveResponse);
     }
@@ -63,7 +64,7 @@ public class ConsentFlowSteps {
                 .consentRequestId(crid)
                 .vinHash(new VIN(targetVIN).hashed())
                 .build();
-        var revokeResponse = new ConsentStatusController().revokeConsent(consentToRevoke, token);
+        var revokeResponse = new ConsentStatusController().withConsumerToken().revokeConsent(consentToRevoke, token);
         StatusCodeExpects.expectOKStatusCode(revokeResponse);
     }
 

@@ -3,11 +3,11 @@ package com.here.platform.cm.consentStatus;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
 import com.here.platform.common.annotations.ErrorHandler;
+import com.here.platform.ns.dto.Users;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
 
     private final ConsentStatusController consentStatusController = new ConsentStatusController()
-            .withConsumerToken(MPConsumers.OLP_CONS_1);
+            .withAuthorizationValue(Users.MP_CONSUMER.getToken());
 
     static Stream<Arguments> consentRequestIdAndVins() {
         return Stream.of(

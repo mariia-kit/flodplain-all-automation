@@ -6,7 +6,6 @@ import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.MPConsumers;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
@@ -26,6 +25,7 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
+import com.here.platform.ns.dto.User;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Approve and get access token E2E")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
-    private final MPConsumers mpConsumer = providerApplication.consumer;
+    private final User mpConsumer = providerApplication.consumer;
     private final List<String> cridsToRemove = new ArrayList<>();
     HereUser hereUser = null;
     DataSubject dataSubjectIm;
