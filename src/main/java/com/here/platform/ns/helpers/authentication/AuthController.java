@@ -67,14 +67,20 @@ public class AuthController {
     public static String loadOrGenerate(String key, Supplier<String> supplier) {
         String currentT = SyncPointIO.readSyncToken(key);
         if (StringUtils.isEmpty(currentT)) {
-            String token = supplier.get();
-            if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
-                //no valid token generated, no sync to server, unlock record...
+            try {
+                SyncPointIO.lock(key);
+                String token = supplier.get();
+                if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
+                    //no valid token generated, no sync to server, unlock record...
+                    SyncPointIO.unlock(key);
+                } else {
+                    SyncPointIO.writeNewTokenValue(key, token, 3599);
+                }
+                return token;
+            } catch (Error er){
                 SyncPointIO.unlock(key);
-            } else {
-                SyncPointIO.writeNewTokenValue(key, token, 3599);
+                return StringUtils.EMPTY;
             }
-            return token;
         } else {
             return currentT;
         }

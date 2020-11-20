@@ -53,4 +53,8 @@ public class SyncPointIO {
     public static void unlock(String key) {
         new ReferenceProviderController().unlockSyncEtity(key);
     }
+
+    public static void lock(String key) {
+        new ReferenceProviderController().lockSyncEtity(key);
+    }
 }
