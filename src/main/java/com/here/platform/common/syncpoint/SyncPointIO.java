@@ -50,4 +50,7 @@ public class SyncPointIO {
         throw new RuntimeException("Failed to wait for Sync to unlock:" + key);
     }
 
+    public static void unlock(String key) {
+        new ReferenceProviderController().unlockSyncEtity(key);
+    }
 }

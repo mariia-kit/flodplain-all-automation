@@ -32,16 +32,10 @@ public enum Users {
     private final User user;
 
     public User getUser() {
-        if (StringUtils.isEmpty(user.getToken())) {
-            AuthController.setUserToken(user);
-        }
         return user;
     }
 
     public String getToken() {
-        if (StringUtils.isEmpty(user.getToken())) {
-            AuthController.setUserToken(user);
-        }
         return user.getToken();
     }
 
