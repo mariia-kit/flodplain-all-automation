@@ -103,6 +103,12 @@ public class ReferenceProviderController {
                 .post("/entity");
     }
 
+    @Step
+    public Response unlockSyncEtity(String key) {
+        return referenceProviderClient("/sync")
+                .post("/unlock/{key}", key);
+    }
+
     @Data
     @AllArgsConstructor
     public static class ReferenceToken {

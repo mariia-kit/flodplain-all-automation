@@ -1,5 +1,6 @@
 package com.here.platform.ns.dto;
 
+import com.here.platform.ns.helpers.authentication.AuthController;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,4 +52,8 @@ public class User {
         return this;
     }
 
+    public String getToken() {
+        this.token = AuthController.getUserToken(this);
+        return this.token;
+    }
 }
