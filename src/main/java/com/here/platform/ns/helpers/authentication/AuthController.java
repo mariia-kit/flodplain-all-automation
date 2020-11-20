@@ -21,7 +21,7 @@ public class AuthController {
     }
 
     public synchronized static String getUserToken(User user) {
-        String token = loadOrGenerate(user, () -> {
+        String token = loadOrGenerate(user.getEmail() + "_" + user.getRealm(), () -> {
             switch (user.getType()) {
                 case NS:
                     if ("prod".equalsIgnoreCase(System.getProperty("env"))) {
