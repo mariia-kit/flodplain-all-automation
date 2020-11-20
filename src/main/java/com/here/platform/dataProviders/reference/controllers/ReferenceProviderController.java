@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.util.Arrays;
@@ -20,7 +21,8 @@ public class ReferenceProviderController {
     protected RequestSpecification referenceProviderClient(final String targetPath) {
         var baseService = given()
                 .baseUri(Conf.ns().getRefProviderUrl())
-                .basePath(targetPath);
+                .basePath(targetPath)
+                .filters(new AllureRestAssured());
 
         return baseService;
     }
@@ -107,6 +109,12 @@ public class ReferenceProviderController {
     public Response unlockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/unlock/{key}", key);
+    }
+
+    @Step
+    public Response lockSyncEtity(String key) {
+        return referenceProviderClient("/sync")
+                .post("/lock/{key}", key);
     }
 
     @Data
