@@ -87,14 +87,7 @@ public enum DataSubjects {
 
     public static String getBearerToken(DataSubject dataSubject) {
         String key = dataSubject.getEmail() + "_" + System.getProperty("env");
-        String currentT = SyncPointIO.readSyncToken(key);
-        if (StringUtils.isEmpty(currentT)) {
-            String token = new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass());
-            SyncPointIO.writeNewTokenValue(key, token, 3600);
-            return token;
-        } else {
-            return currentT;
-        }
+        return  AuthController.loadOrGenerate(key, () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
     }
 
 }

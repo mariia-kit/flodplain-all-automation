@@ -29,7 +29,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @Execution(ExecutionMode.SAME_THREAD)
 public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
-    private final String privateBearer = dataSubject.getBearerToken();
     private final List<String> cridsToRemove = new ArrayList<>();
     private NewConsent consentToApprove;
     private String crid;
@@ -65,7 +64,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
         var approveConsentResponse = consentStatusController
                 .withConsumerToken()
-                .approveConsent(consentToApprove, privateBearer);
+                .approveConsent(consentToApprove, dataSubject.getBearerToken());
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -100,7 +99,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
         var thirdPendingCrid = createValidConsentRequest();
         cridsToRemove.add(thirdPendingCrid);
 
-        var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, privateBearer);
+        var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, dataSubject.getBearerToken());
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
