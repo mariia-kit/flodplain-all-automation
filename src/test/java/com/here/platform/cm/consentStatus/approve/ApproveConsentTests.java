@@ -30,7 +30,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @ApproveConsent
 class ApproveConsentTests extends BaseConsentStatusTests {
 
-    private final String privateBearer = dataSubject.getBearerToken();
     private String crid;
 
     @RegisterExtension
@@ -58,8 +57,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .build();
 
         var approveConsentResponse = consentStatusController
-                .withConsumerToken()
-                .approveConsent(consentToApprove, privateBearer);
+                .approveConsent(consentToApprove, dataSubject.getBearerToken());
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -109,7 +107,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
 
         var approveResponse = consentStatusController
                 .withConsumerToken()
-                .approveConsent(consentToApprove, privateBearer);
+                .approveConsent(consentToApprove, dataSubject.getBearerToken());
         new ResponseAssertion(approveResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
                 .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_NOT_FOUND);
@@ -136,7 +134,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     void approveConsentErrorHandlerTest() {
         var approveResponse = consentStatusController
                 .withConsumerToken()
-                .approveConsent(NewConsent.builder().build(), privateBearer);
+                .approveConsent(NewConsent.builder().build(), dataSubject.getBearerToken());
 
         new ResponseAssertion(approveResponse)
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)

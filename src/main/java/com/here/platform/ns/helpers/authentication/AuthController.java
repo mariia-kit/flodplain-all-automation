@@ -16,7 +16,7 @@ public class AuthController {
     private final static Logger logger = Logger.getLogger(AuthController.class);
 
     public synchronized static void setUserToken(User user) {
-        String token = loadOrGenerate(user, () -> {
+        String token = loadOrGenerate(user.getEmail() + "_" + user.getRealm(), () -> {
             switch (user.getType()) {
                 case NS:
                     if ("prod".equalsIgnoreCase(System.getProperty("env"))) {
@@ -59,12 +59,11 @@ public class AuthController {
         user.setToken(token);
     }
 
-    public static String loadOrGenerate(User user, Supplier<String> supplier) {
-        String key = user.getEmail() + "_" + user.getRealm();
+    public static String loadOrGenerate(String key, Supplier<String> supplier) {
         String currentT = SyncPointIO.readSyncToken(key);
         if (StringUtils.isEmpty(currentT)) {
             String token = supplier.get();
-            SyncPointIO.writeNewTokenValue(key, token, 3600);
+            SyncPointIO.writeNewTokenValue(key, token, 3599);
             return token;
         } else {
             return currentT;
