@@ -17,6 +17,7 @@ import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,7 @@ public class PurposePageTests extends BaseUITests {
 
     @AfterEach
     void afterEach() {
+        AuthController.deleteToken(registeredDataSubject.dataSubject);
         UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
     }
 
@@ -116,18 +118,18 @@ public class PurposePageTests extends BaseUITests {
             ConsentRequestContainer container) {
         $("lui-notification[impact='negative']")
                 .shouldNot(Condition.appear);
-        $(".purpose-content h2").shouldHave(Condition.text(consentRequest.getTitle()));
-        $(".purpose-content .from p").shouldHave(Condition.text(mpConsumer.getName()));
-        $(".purpose-content h4 + p").shouldHave(Condition.text(consentRequest.getPurpose()));
+        $(".purpose-title").shouldHave(Condition.text(consentRequest.getTitle()));
+        $(".purpose-consumer-name").shouldHave(Condition.text(mpConsumer.getName()));
+        $(".purpose-purpose-name").shouldHave(Condition.text(consentRequest.getPurpose()));
         $(".source.description")
                 .shouldHave(Condition.text("Requested data\n" + String.join("\n", container.getResources())));
-        $(".source p").shouldHave(Condition.text(container.getContainerDescription()));
+        $(".purpose-container-description").shouldHave(Condition.text(container.getContainerDescription()));
 
-        $(".source p a").shouldHave(Condition.attribute("href", ConsentPageUrl.getAcceptedOffersUrl()));
-        $(".purpose-content p:nth-child(6)")
+        $(".purpose-legal-basis-description a").shouldHave(Condition.attribute("href", ConsentPageUrl.getAcceptedOffersUrl()));
+        $(".purpose-privacy-policy")
                 .shouldHave(Condition.text("To learn more about privacy practices of " + mpConsumer.getName()
                         + ", visit their privacy policy."));
-        $(".purpose-content p:nth-child(6) a")
+        $(".purpose-privacy-policy a")
                 .shouldHave(Condition.attribute("href", "https://" + consentRequest.getPrivacyPolicy() + "/"));
     }
 

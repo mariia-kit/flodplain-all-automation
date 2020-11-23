@@ -43,6 +43,13 @@ public class DashBoardPage extends BaseCMPage {
     }
 
     @Step
+    public DashBoardPage openDashboardProductName() {
+        $(".lui-productlogo__seed").click();
+        return this;
+    }
+
+
+    @Step
     public DashBoardPage openConsentRequestOfferBox(ConsentInfo consentRequest) {
         SelenideElement offerBox = $$("app-offer .offer-title").findBy(text(consentRequest.getTitle()));
         offerBox.shouldBe(Condition.visible

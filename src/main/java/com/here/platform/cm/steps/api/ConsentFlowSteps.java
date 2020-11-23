@@ -64,7 +64,7 @@ public class ConsentFlowSteps {
                 .consentRequestId(crid)
                 .vinHash(new VIN(targetVIN).hashed())
                 .build();
-        var revokeResponse = new ConsentStatusController().withConsumerToken().revokeConsent(consentToRevoke, token);
+        var revokeResponse = new ConsentStatusController().revokeConsent(consentToRevoke, token);
         StatusCodeExpects.expectOKStatusCode(revokeResponse);
     }
 

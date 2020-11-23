@@ -1,7 +1,10 @@
 package com.here.platform.common.syncpoint;
 
+import com.here.platform.common.strings.SBB;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import io.restassured.response.Response;
+import java.util.Arrays;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -16,8 +19,15 @@ public class SyncPointIO {
         Response getResp = referenceProviderController.readSyncEntity(key);
         if (getResp.getStatusCode() == HttpStatus.SC_OK) {
             record = getResp.then().extract().as(SyncEntity.class);
-        } else {
+        } else if (getResp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+            writeNewTokenValue(key, "", 3599);
+            lock(key);
             return StringUtils.EMPTY;
+        } else {
+            throw new RuntimeException(SBB.sbb()
+                    .append("Error reading sync entity fro server:").w()
+                    .append(getResp.getStatusCode()).w()
+                    .append(getResp.body().print()).build());
         }
 
         if (record.isLocked()) {
@@ -31,8 +41,15 @@ public class SyncPointIO {
     }
 
     public static void writeNewTokenValue(String key, String value, long expirationTime) {
-        ReferenceProviderController referenceProviderController = new ReferenceProviderController();
-        referenceProviderController.writeSyncEntity(key, value, expirationTime);
+        new ReferenceProviderController().writeSyncEntity(key, value, expirationTime);
+    }
+
+    public static List<SyncEntity> getAllEtityes() {
+        return Arrays.asList(new ReferenceProviderController().getAllEntities().then().extract().as(SyncEntity[].class));
+    }
+
+    public static void deleteEntity(String key) {
+        new ReferenceProviderController().deleteSyncEtity(key);
     }
 
     @SneakyThrows

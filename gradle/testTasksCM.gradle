@@ -59,8 +59,7 @@ task smokeCMTests(type: TestCM) {
     useJUnitPlatform {
         includeTags "smoke_cm"
     }
-
-    if (!dynamicEnvUrl && isHotDeploy) dependsOn "initTokens"
+    
     dependsOn "testDataGeneration"
 }
 
@@ -82,16 +81,6 @@ task fePreDevTests(type: TestCM) {
     finalizedBy "allureAggregatedReportCM"
 }
 
-task initTokens(type: JavaExec) {
-    onlyIf { !isHotDeploy }
-
-    logging.captureStandardOutput(LogLevel.QUIET)
-
-    systemProperty "env", finalEnv
-    classpath sourceSets.main.runtimeClasspath
-    main = "com.here.platform.common.DataPreparation"
-}
-
 task userAccount(type: TestCM) {
     onlyIf { !isHotDeploy }
 
@@ -105,7 +94,7 @@ task userAccount(type: TestCM) {
     }
 }
 
-task uiTests(type: TestCM, dependsOn: "initTokens") {
+task uiTests(type: TestCM) {
     onlyIf { !isHotDeploy }
 
     maxParallelForks = 1
@@ -115,6 +104,8 @@ task uiTests(type: TestCM, dependsOn: "initTokens") {
     useJUnitPlatform {
         includeTags "ui"
     }
+
+    dependsOn "testDataGeneration"
 }
 
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
