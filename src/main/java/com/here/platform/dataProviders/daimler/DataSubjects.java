@@ -86,8 +86,7 @@ public enum DataSubjects {
     }
 
     public static String getBearerToken(DataSubject dataSubject) {
-        String key = dataSubject.getEmail() + "_" + System.getProperty("env");
-        return  AuthController.loadOrGenerate(key, () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
+        return AuthController.getDataSubjectToken(dataSubject);
     }
 
 }

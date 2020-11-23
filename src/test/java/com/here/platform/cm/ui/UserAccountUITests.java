@@ -21,6 +21,7 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +56,9 @@ public class UserAccountUITests extends BaseUITests {
 
     @AfterEach
     void afterEach() {
-        var privateBearer =  new HERETokenController().loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        var privateBearer = AuthController.getDataSubjectToken(dataSubjectIm);
         vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, privateBearer));
+        AuthController.deleteToken(dataSubjectIm);
         if (hereUser != null) {
             new HereUserManagerController().deleteHereUser(hereUser);
         }
@@ -111,9 +113,12 @@ public class UserAccountUITests extends BaseUITests {
         closeWebDriver();
 
         open(crid);
-        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
 
-        new DashBoardPage().isLoaded().openDashboardNewTab()
+        new DashBoardPage()
+                .openDashboardProductName()
+                .isLoaded()
+                .openDashboardNewTab()
                 .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
                 .verifyConsentOfferTab(0, providerApplication.consumer, consentRequestInfo, secondVIN, PENDING);
     }
@@ -137,7 +142,7 @@ public class UserAccountUITests extends BaseUITests {
         closeWebDriver();
 
         open(crid);
-        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
     }
 

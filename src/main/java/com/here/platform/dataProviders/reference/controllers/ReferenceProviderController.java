@@ -84,7 +84,7 @@ public class ReferenceProviderController {
                 .post("/containers");
     }
 
-    @Step
+    @Step("Read {key} entity.")
     public Response readSyncEntity(String key) {
         return referenceProviderClient("/sync")
                 .get("/entity/" + key);
@@ -96,7 +96,7 @@ public class ReferenceProviderController {
                 .get("/now");
     }
 
-    @Step
+    @Step("Sync {key} entity.")
     public Response writeSyncEntity(String key, String value, long expirationTime) {
         return referenceProviderClient("/sync")
                 .param("key", key)
@@ -115,6 +115,18 @@ public class ReferenceProviderController {
     public Response lockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/lock/{key}", key);
+    }
+
+    @Step("Delete {key} entity.")
+    public Response deleteSyncEtity(String key) {
+        return referenceProviderClient("/sync")
+                .delete("/entity/{key}", key);
+    }
+
+    @Step("Get all entities.")
+    public Response getAllEntities() {
+        return referenceProviderClient("/sync")
+                .get("/entity");
     }
 
     @Data

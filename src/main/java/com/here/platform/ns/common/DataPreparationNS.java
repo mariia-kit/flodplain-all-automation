@@ -12,15 +12,6 @@ public class DataPreparationNS {
     public static void main(String[] args) {
         ReferenceProviderCall.wipeAllData();
 
-        Users.PROVIDER.getUser();
-        Users.CONSUMER.getUser();
-        Users.DAIMLER.getUser();
-        String env = System.getProperty("env");
-        if (!"prod".equalsIgnoreCase(env)) {
-            Users.AAA.getUser();
-            Users.HERE_USER.getUser();
-        }
-
         EnvDataCollector.create();
         if (Conf.ns().isConsentMock()) {
             TestDataGeneration.setVehicleTokenForDaimler();

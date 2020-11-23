@@ -3,10 +3,15 @@ package com.here.platform.ns.helpers.authentication;
 import com.here.platform.aaa.ApplicationTokenController;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.cm.controllers.HERETokenController;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.UserType_NS;
+import java.time.Instant;
 import java.util.function.Supplier;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -15,13 +20,32 @@ public class AuthController {
 
     private final static Logger logger = Logger.getLogger(AuthController.class);
 
+    private static String getDataSubjectKey(String email) {
+        return email + "_" + System.getProperty("env");
+    }
+
+    private static String getUserKey(User user) {
+        return user.getEmail() + "_" + user.getRealm();
+    }
+
     public synchronized static void setUserToken(User user) {
         String token = getUserToken(user);
         user.setToken(token);
     }
 
+    public synchronized static String getDataSubjectToken(DataSubject dataSubject) {
+        String key = getDataSubjectKey(dataSubject.getEmail());
+        return AuthController.loadOrGenerate(key, () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
+    }
+
+    public synchronized static void deleteToken(DataSubject dataSubject) {
+        String key = getDataSubjectKey(dataSubject.getEmail());
+        SyncPointIO.deleteEntity(key);
+    }
+
     public synchronized static String getUserToken(User user) {
-        String token = loadOrGenerate(user.getEmail() + "_" + user.getRealm(), () -> {
+        String key = user.getType().equals(UserType_NS.CM) ? getDataSubjectKey(user.getEmail()) : getUserKey(user);
+        String token = loadOrGenerate(key, () -> {
             switch (user.getType()) {
                 case NS:
                     if ("prod".equalsIgnoreCase(System.getProperty("env"))) {
@@ -64,11 +88,11 @@ public class AuthController {
         return token;
     }
 
+    @SneakyThrows
     public static String loadOrGenerate(String key, Supplier<String> supplier) {
         String currentT = SyncPointIO.readSyncToken(key);
         if (StringUtils.isEmpty(currentT)) {
             try {
-                SyncPointIO.lock(key);
                 String token = supplier.get();
                 if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
                     //no valid token generated, no sync to server, unlock record...
@@ -76,10 +100,10 @@ public class AuthController {
                 } else {
                     SyncPointIO.writeNewTokenValue(key, token, 3599);
                 }
-                return token;
+                return SyncPointIO.readSyncToken(key);
             } catch (Error er){
                 SyncPointIO.unlock(key);
-                return StringUtils.EMPTY;
+                throw new RuntimeException("Error Writing sync entity fro server:", er);
             }
         } else {
             return currentT;

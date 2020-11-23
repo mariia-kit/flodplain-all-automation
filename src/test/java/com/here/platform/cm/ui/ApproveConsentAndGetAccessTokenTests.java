@@ -19,6 +19,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
@@ -26,6 +27,7 @@ import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -57,9 +59,9 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     @AfterEach
     void afterEach() {
-        var privateBearer = new HERETokenController()
-                .loginAndGenerateCMToken(dataSubjectIm.getEmail(), dataSubjectIm.getPass());
+        var privateBearer = AuthController.getDataSubjectToken(dataSubjectIm);
         userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
+        AuthController.deleteToken(dataSubjectIm);
         if (hereUser != null) {
             new HereUserManagerController().deleteHereUser(hereUser);
         }
