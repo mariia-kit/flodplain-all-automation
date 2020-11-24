@@ -85,6 +85,7 @@ public class UserAccountVINTests extends BaseCMTest {
     @Test
     @ErrorHandler
     @Issue("NS-1888")
+    @Issue("NS-3024")
     @DisplayName("Forbidden to add one VIN for another user")
     void forbiddenToAddVINToAnotherUserTest() {
         var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
@@ -96,6 +97,24 @@ public class UserAccountVINTests extends BaseCMTest {
         new ResponseAssertion(secondAdd)
                 .statusCodeIsEqualTo(StatusCode.CONFLICT)
                 .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
+        new ResponseAssertion(secondAdd)
+                .expectedErrorCause("Provided VIN already used by other account");
+    }
+
+    @Test
+    @ErrorHandler
+    @Issue("NS-3024")
+    @DisplayName("Forbidden to add one VIN for same user")
+    void forbiddenToAddVINToSameUserTest() {
+        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
+        new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
+
+        var secondAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
+        new ResponseAssertion(secondAdd)
+                .statusCodeIsEqualTo(StatusCode.CONFLICT)
+                .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
+        new ResponseAssertion(secondAdd)
+                .expectedErrorCause("Provided VIN already used by this account");
     }
 
     @Test

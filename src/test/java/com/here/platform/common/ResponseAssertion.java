@@ -82,6 +82,13 @@ public class ResponseAssertion {
         return actualErrorResponse;
     }
 
+    @Step
+    public ErrorResponse expectedErrorCause(String  exeptionCause) {
+        var actualErrorResponse = bindAs(ErrorResponse.class);
+        Assertions.assertThat(actualErrorResponse.getCause()).isEqualTo(exeptionCause);
+        return actualErrorResponse;
+    }
+
     public void responseIsEmpty() {
         Assertions.assertThat(targetResponse.asString()).isEmpty();
     }
