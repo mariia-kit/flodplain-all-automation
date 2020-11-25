@@ -43,6 +43,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Approve Consent GetStatus")
     @Tag("cm_prod")
+    @Tag("fabric_test")
     void createApproveGetConsentStatusTest() {
         crid = createValidConsentRequest();
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin);

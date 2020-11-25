@@ -48,6 +48,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
 
     @Test
     @DisplayName("Success flow of consent request creation and getting consent request by ID")
+    @Tag("fabric_test")
     void createAndGetConsentRequest() {
         var crid = createConsentRequestWith(testConsentRequest);
 
@@ -73,6 +74,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
     @Test
     @DisplayName("Verify Adding Vins To Empty ConsentRequest Via File")
     @TmsLink("NS-1382")
+    @Tag("fabric_test")
     void addVinsToEmptyConsentRequestViaFileTest() {
         var crid = createConsentRequestWith(testConsentRequest);
 
