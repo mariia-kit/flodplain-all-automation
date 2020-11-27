@@ -50,6 +50,8 @@ public class UserAccountVINTests extends BaseCMTest {
         }
     }
 
+    //todo implement test to check removing of consents for the VIN
+
     @Test
     @DisplayName("Add VIN to the user")
     void addVinToUserTest() {

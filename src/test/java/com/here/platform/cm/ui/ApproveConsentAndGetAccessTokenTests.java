@@ -2,12 +2,9 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.open;
 
-import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.AccessTokenController;
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -20,7 +17,6 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
-import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
@@ -79,7 +75,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
-        System.out.println(Configuration.baseUrl + crid);
 
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);

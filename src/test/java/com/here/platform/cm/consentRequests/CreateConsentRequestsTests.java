@@ -16,6 +16,7 @@ import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import io.qameta.allure.Issue;
 import io.qameta.allure.TmsLink;
 import java.io.File;
 import org.junit.jupiter.api.DisplayName;
@@ -101,6 +102,37 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
+    }
+
+    @Issue("NS-3043")
+    @Test
+    @DisplayName("Is possible to create consent reqeust without privacy policy and additional links")
+    void isPossibleToCreateConsentReqeustWithoutPrivacyPolicyAndAdditionalLinks() {
+        testConsentRequest.privacyPolicy(null).additionalLinks(null);
+        var consentRequestResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(testConsentRequest);
+
+        var crid = new ResponseAssertion(consentRequestResponse)
+                .statusCodeIsEqualTo(StatusCode.CREATED)
+                .bindAs(ConsentRequestIdResponse.class).getConsentRequestId();
+        consentRequestRemoveExtension.cridToRemove(crid);
+
+        var expectedConsentRequestResponse = new ConsentRequestResponse()
+                .consentRequestId(crid)
+                .additionalLinks(null)
+                .privacyPolicy("/") //if privacy policy is empty - service should set default value to the field "/"
+                .consumerId(testConsentRequest.getConsumerId())
+                .containerId(testConsentRequest.getContainerId())
+                .containerName(testConsentRequest.getContainerId())
+                .providerId(testConsentRequest.getProviderId())
+                .title(testConsentRequest.getTitle())
+                .purpose(testConsentRequest.getPurpose());
+
+        var getConsentRequestData = consentRequestController.getConsentRequestById(crid);
+        new ResponseAssertion(getConsentRequestData)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(expectedConsentRequestResponse);
     }
 
     private String createConsentRequestWith(ConsentRequestData targetConsentRequest) {
