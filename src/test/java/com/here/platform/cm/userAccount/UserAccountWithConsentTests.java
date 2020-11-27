@@ -49,15 +49,14 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
         var vin = VIN.generate(targetApplication.provider.vinLength);
-        String token = dataSubject.getBearerToken();
-        var addVins = userAccountController.attachVinToUserAccount(vin, token);
+        var addVins = userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
         new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
         vinsToRemove.add(vin);
 
         targetConsentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
         crid = targetConsentRequest.getConsentRequestId();
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, token);
+        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, dataSubject.getBearerToken());
         fuSleep();
     }
 

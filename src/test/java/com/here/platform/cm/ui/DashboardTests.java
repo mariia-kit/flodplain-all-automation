@@ -10,6 +10,7 @@ import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.pages.DashBoardPage;
+import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
@@ -86,13 +87,14 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(consentRequestId2);
 
         open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         String token = getUICmToken();
 
         new DashBoardPage()
-                .isLoaded()
                 .openDashboardNewTab()
+                .isLoaded()
                 .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, PENDING)
                 .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, PENDING);
 
@@ -100,7 +102,6 @@ public class DashboardTests extends BaseUITests {
         ConsentFlowSteps.approveConsentForVIN(consentRequestId2, testContainer, vin, token);
 
         new DashBoardPage()
-                .isLoaded()
                 .openDashboardAcceptedTab()
                 .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, APPROVED)
                 .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, APPROVED);
@@ -109,7 +110,6 @@ public class DashboardTests extends BaseUITests {
         ConsentFlowSteps.revokeConsentForVIN(consentRequestId2, vin, token);
 
         new DashBoardPage()
-                .isLoaded()
                 .openDashboardRevokedTab()
                 .verifyConsentOfferTab(0, mpConsumer, secondConsentRequest, vin, REVOKED)
                 .verifyConsentOfferTab(1, mpConsumer, firstConsentRequest, vin, REVOKED);
@@ -127,7 +127,6 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(crid);
 
         open(crid);
-
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
@@ -148,7 +147,6 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(crid);
 
         open(crid);
-
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
@@ -160,15 +158,15 @@ public class DashboardTests extends BaseUITests {
 
         new DashBoardPage()
                 .isLoaded()
-                .openDashboardAcceptedTab()
+                .openDashboardProductName()
                 .openConsentRequestOfferBox(consentRequest);
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
         OfferDetailsPageSteps.revokeConsent();
         OfferDetailsPageSteps.revokeConsentPopupYes();
 
         new DashBoardPage()
-                .isLoaded()
                 .openDashboardRevokedTab()
+                .isLoaded()
                 .verifyConsentOfferTab(0, providerApplication.consumer, consentRequest, vin, REVOKED)
                 .openConsentRequestOfferBox(consentRequest);
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);

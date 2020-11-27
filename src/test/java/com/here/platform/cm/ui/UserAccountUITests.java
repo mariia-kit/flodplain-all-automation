@@ -9,6 +9,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.pages.DashBoardPage;
+import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@DisplayName("User Account")
+@DisplayName("User Account UI")
 public class UserAccountUITests extends BaseUITests {
 
     private final List<String> vinsToRemove = new ArrayList<>();
@@ -67,7 +68,7 @@ public class UserAccountUITests extends BaseUITests {
     @Test
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent request link for registered user")
-    @Disabled("Disable until redirect is fixed. NS-3004")
+    @Disabled("Disable until vin page in not optional for second try")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         consentRequestInfo = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
@@ -76,7 +77,6 @@ public class UserAccountUITests extends BaseUITests {
 
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
-
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
@@ -106,7 +106,6 @@ public class UserAccountUITests extends BaseUITests {
         String token = getUICmToken();
 
         var secondVIN = VIN.generate(providerApplication.provider.vinLength);
-        userAccountController.attachVinToUserAccount(secondVIN, token);
         ConsentRequestSteps.addVINsToConsentRequest(providerApplication, crid, secondVIN);
         vinsToRemove.add(secondVIN);
 
@@ -114,10 +113,10 @@ public class UserAccountUITests extends BaseUITests {
 
         open(crid);
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
-
+        new VINEnteringPage().isLoaded().fillVINAndContinue(secondVIN);
+        consentRequestInfo.setVinLabel(new VIN(secondVIN).label());
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
         new DashBoardPage()
-                .openDashboardProductName()
-                .isLoaded()
                 .openDashboardNewTab()
                 .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
                 .verifyConsentOfferTab(0, providerApplication.consumer, consentRequestInfo, secondVIN, PENDING);
