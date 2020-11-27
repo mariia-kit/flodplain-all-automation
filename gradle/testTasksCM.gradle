@@ -64,11 +64,13 @@ task smokeCMTests(type: TestCM) {
 }
 
 task fePreDevTests(type: TestCM) {
-    failFast true
     def dynamicUIUrl = System.getenv("DYNAMIC_ENV_URL")
     
     println "Will be used dynamic url: $dynamicEnvUrl"
     println "Will be used dynamic ui url: $dynamicUIUrl"
+    
+    maxParallelForks = 1
+    forkEvery = 0
     
     systemProperty "dynamicUrl", dynamicEnvUrl
     systemProperty "env", "dev"
