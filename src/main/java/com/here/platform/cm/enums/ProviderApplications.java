@@ -10,7 +10,7 @@ import com.here.platform.ns.dto.Users;
 //todo extend as builder to simplify onboarding and removing for tests
 public enum ProviderApplications {
 
-    DAIMLER_CONS_1(Users.MP_CONSUMER.getUser(), ConsentRequestContainers.DAIMLER_EXPERIMENTAL_ODOMETER),
+    DAIMLER_CONS_1(Users.MP_CONSUMER.getUser(), ConsentRequestContainers.getNextDaimlerExperimental()),
     BMW_CONS_1(Users.MP_CONSUMER.getUser(), ConsentRequestContainers.BMW_MILEAGE),
     REFERENCE_CONS_1(Users.MP_CONSUMER.getUser(), ConsentRequestContainers.DAIMLER_REFERENCE);
 

@@ -2,8 +2,8 @@ package com.here.platform.common.extensions;
 
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.VinsToFile;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -20,9 +20,7 @@ public class ConsentRequestRemoveExtension implements AfterEachCallback {
     }
 
     public ConsentRequestRemoveExtension vinToRemove(String... vinToRemove) {
-        for (String vin: vinToRemove) {
-            vins.add(vin);
-        }
+        Collections.addAll(vins, vinToRemove);
         return this;
     }
 
