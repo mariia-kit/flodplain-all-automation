@@ -95,11 +95,13 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                                 .consentRequestId(crid)
                                 .state(StateEnum.REVOKED)
                                 .consumerName(mpConsumer.getName())
+                                .consumerId(mpConsumer.getRealm())
                                 .vinLabel(new VIN(testVin).label())
                                 .title(testConsentRequestData.getTitle())
                                 .purpose(testConsentRequestData.getPurpose())
                                 .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
                                 .containerName(testContainer.getName())
+                                .containerId(testContainer.getId())
                                 .containerDescription(testContainer.getContainerDescription())
                                 .resources(testContainer.getResources())
                 );
