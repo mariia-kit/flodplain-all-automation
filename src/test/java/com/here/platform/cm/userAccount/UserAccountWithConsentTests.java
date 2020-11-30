@@ -86,11 +86,10 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Forbidden to get consent by not owner")
     void isNotPossibleToGetByNotOwnerUserConsentTest() {
         var anotherDataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
-        var anotherToken = anotherDataSubject.getBearerToken();
-        userAccountController.attachVinToUserAccount(anotherDataSubject.getVin(), anotherToken);
+        userAccountController.attachVinToUserAccount(anotherDataSubject.getVin(), anotherDataSubject.getBearerToken());
 
         var userConsentsInState = userAccountController.getConsentsForUser(
-                anotherToken, Map.of("consentRequestId", crid, "state", ""));
+                anotherDataSubject.getBearerToken(), Map.of("consentRequestId", crid, "state", ""));
 
         new ResponseAssertion(userConsentsInState)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -147,6 +146,8 @@ public class UserAccountWithConsentTests extends BaseCMTest {
                 .usingElementComparatorIgnoringFields(ResponseAssertion.timeFieldsToIgnore)
                 .contains(targetConsentRequest
                         .consumerName(targetApplication.consumer.getName())
+                        .consumerId(targetApplication.consumer.getRealm())
+                        .containerId(testContainer.getId())
                         .containerName(testContainer.getName())
                         .containerDescription(testContainer.getContainerDescription())
                         .resources(testContainer.getResources())
