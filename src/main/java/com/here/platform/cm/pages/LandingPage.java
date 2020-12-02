@@ -1,5 +1,6 @@
 package com.here.platform.cm.pages;
 
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 
@@ -16,13 +17,27 @@ public class LandingPage extends BaseCMPage {
 
     @Step("Press Sign-Up on landing page")
     public LandingPage signUp() {
-        $(".action-button").click();
+        $(byText("Sign Up")).click();
         return this;
     }
 
     @Step("Press Sign-IN on landing page")
     public LandingPage signIn() {
         $(".action-button.-secondary").click();
+        return this;
+    }
+
+    @Step("Verify is Sign-Up on landing page is not present")
+    public LandingPage isSignUpNotPresent() {
+        $(byText("Sign Up"))
+                .shouldHave(Condition.hidden.because("Sign Up button should be not present!"));
+        return this;
+    }
+
+    @Step("Verify is Sign-Up on landing page is present")
+    public LandingPage isSignUpPresent() {
+        $(byText("Sign Up"))
+                .shouldHave(Condition.visible.because("Sign Up button should be present!"));
         return this;
     }
 }

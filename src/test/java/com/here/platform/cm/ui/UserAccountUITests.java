@@ -77,6 +77,7 @@ public class UserAccountUITests extends BaseUITests {
 
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
@@ -87,6 +88,7 @@ public class UserAccountUITests extends BaseUITests {
         SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
 
     }
@@ -101,6 +103,7 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(dataSubjectIm.getVin());
 
         open(Configuration.baseUrl + crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
         String token = getUICmToken();
@@ -112,6 +115,7 @@ public class UserAccountUITests extends BaseUITests {
         closeWebDriver();
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(secondVIN);
         consentRequestInfo.setVinLabel(new VIN(secondVIN).label());
@@ -131,6 +135,7 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(dataSubjectIm.getVin());
 
         open(Configuration.baseUrl + crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
@@ -141,6 +146,7 @@ public class UserAccountUITests extends BaseUITests {
         closeWebDriver();
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
     }

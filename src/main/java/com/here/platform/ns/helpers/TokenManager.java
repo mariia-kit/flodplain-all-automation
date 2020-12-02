@@ -1,6 +1,7 @@
 package com.here.platform.ns.helpers;
 
 import com.here.platform.ns.dto.Users;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,9 +54,8 @@ public class TokenManager {
     }
 
     public static void resetUserLogins() {
-        new File(TOKEN_URL).delete();
-        boolean exists = new File(TOKEN_URL).exists();
         for (Users user : Users.values()) {
+            AuthController.deleteToken(user.getUser());
             user.getUser().setToken("");
         }
     }

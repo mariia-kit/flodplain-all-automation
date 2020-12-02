@@ -5,6 +5,7 @@ import static com.codeborne.selenide.Selenide.open;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -75,7 +76,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
-
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);
@@ -112,6 +113,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);

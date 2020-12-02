@@ -6,11 +6,15 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.here.platform.cm.controllers.UserAccountController;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.cm.steps.ui.ConsentManagementFlowSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
@@ -22,6 +26,7 @@ import com.here.platform.common.extensions.UserAccountCleanUpExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
+import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.mp.models.CreatedInvite;
 import com.here.platform.mp.steps.ui.MarketplaceFlowSteps;
@@ -40,6 +45,7 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -99,16 +105,14 @@ public class E2EUITest extends BaseE2ETest {
 
     @AfterEach
     void afterEach() {
-        TokenManager.resetUserLogins();
         MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn);
-
     }
 
     @Test
     @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_TIRES.getContainer();
+        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_ODOMETER.getContainer();
         ConsentInfo consentRequest =
                 new ConsentInfo()
                         .title(faker.company().buzzword())
@@ -126,7 +130,7 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
         CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
         listingHrn = MarketplaceFlowSteps.getListingHrn();
-        HereLoginSteps.logout();
+        HereLoginSteps.logout(targetDataProvider);
 
         MarketplaceFlowSteps.loginDataConsumer(targetDataConsumer);
 
@@ -139,7 +143,7 @@ public class E2EUITest extends BaseE2ETest {
         var crid = getCridFromUrl(consentRequestUrl.get());
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
-        HereLoginSteps.logout();
+        HereLoginSteps.logout(targetDataConsumer);
 
         ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
@@ -189,7 +193,7 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
         CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
         listingHrn = MarketplaceFlowSteps.getListingHrn();
-        HereLoginSteps.logout();
+        HereLoginSteps.logout(targetDataProvider);
 
         MarketplaceFlowSteps.loginDataConsumer(targetDataConsumer);
 
@@ -202,7 +206,7 @@ public class E2EUITest extends BaseE2ETest {
         var crid = getCridFromUrl(consentRequestUrl.get());
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
-        HereLoginSteps.logout();
+        HereLoginSteps.logout(targetDataConsumer);
 
         ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);

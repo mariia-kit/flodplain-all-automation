@@ -20,11 +20,11 @@ public class AuthController {
 
     private final static Logger logger = Logger.getLogger(AuthController.class);
 
-    private static String getDataSubjectKey(String email) {
+    public static String getDataSubjectKey(String email) {
         return email + "_" + System.getProperty("env");
     }
 
-    private static String getUserKey(User user) {
+    public static String getUserKey(User user) {
         return user.getEmail() + "_" + user.getRealm();
     }
 
@@ -41,6 +41,15 @@ public class AuthController {
     public synchronized static void deleteToken(DataSubject dataSubject) {
         String key = getDataSubjectKey(dataSubject.getEmail());
         SyncPointIO.deleteEntity(key);
+    }
+
+    public synchronized static void deleteToken(User user) {
+        String key = getUserKey(user);
+        SyncPointIO.deleteEntity(key);
+    }
+
+    public synchronized static void writeKeyValue(String key, String value) {
+        SyncPointIO.writeNewTokenValue(key, value, 3599);
     }
 
     public synchronized static String getUserToken(User user) {
@@ -98,7 +107,7 @@ public class AuthController {
                     //no valid token generated, no sync to server, unlock record...
                     SyncPointIO.unlock(key);
                 } else {
-                    SyncPointIO.writeNewTokenValue(key, token, 3599);
+                    writeKeyValue(key, token);
                 }
                 return SyncPointIO.readSyncToken(key);
             } catch (Error er){

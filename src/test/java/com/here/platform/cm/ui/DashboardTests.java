@@ -127,6 +127,7 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(crid);
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
@@ -147,6 +148,7 @@ public class DashboardTests extends BaseUITests {
         cridsToRemove.add(crid);
 
         open(crid);
+        new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
