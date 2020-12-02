@@ -79,7 +79,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         new LandingPage().isLoaded().signIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-        cridsToRemove.add(vin);
+        cridsToRemove.add(crid);
 
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
 
