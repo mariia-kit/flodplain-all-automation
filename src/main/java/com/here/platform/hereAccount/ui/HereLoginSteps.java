@@ -4,7 +4,9 @@ import static com.codeborne.selenide.Selenide.open;
 
 import com.codeborne.selenide.Selenide;
 import com.here.platform.common.DataSubject;
+import com.here.platform.mp.pages.ListingsListPage;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Step;
 import lombok.experimental.UtilityClass;
 
@@ -43,12 +45,15 @@ public class HereLoginSteps {
                 .clickNextRealm()
                 .fillUserPassword(mpUser.getPass())
                 .clickSignIn();
+        String token = new ListingsListPage().fetchHereAccessToken();
+        AuthController.writeKeyValue(AuthController.getUserKey(mpUser), token);
     }
 
     @Step("Logout from HERE portal")
-    public void logout() {
+    public void logout(User user) {
         open("logout");
         loginPage.isLoaded();
+        AuthController.deleteToken(user);
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
     }
