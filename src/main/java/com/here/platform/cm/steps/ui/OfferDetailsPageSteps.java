@@ -48,4 +48,9 @@ public class OfferDetailsPageSteps {
         $(".go-back .circle").click();
     }
 
+    @Step("View full request info")
+    public void openFullInfo() {
+        $(byText("View full request info")).click();
+    }
+
 }
