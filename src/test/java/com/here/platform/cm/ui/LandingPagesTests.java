@@ -20,7 +20,6 @@ public class LandingPagesTests extends BaseUITests {
 
     @Test
     @Issue("NS-2761")
-    @Disabled("Disabled until bug NS-3054")
     @DisplayName("Verify Landing page direct access")
     public void verifyLandingPageDirect() {
         open(ConsentPageUrl.getEnvUrlRoot());
@@ -29,7 +28,6 @@ public class LandingPagesTests extends BaseUITests {
 
     @Test
     @Issue("NS-2761")
-    @Disabled("Disabled until bug NS-3054")
     @DisplayName("Verify Landing page through link access")
     public void verifyLandingPageThroughLink() {
         String crid = "1234567890";
@@ -39,7 +37,6 @@ public class LandingPagesTests extends BaseUITests {
 
     @Test
     @Issue("NS-2760")
-    @Disabled("Disabled until bug NS-3054")
     @DisplayName("Verify Welcome page access though link")
     public void verifyWelcomePage() {
         String crid = "1234567890";

@@ -18,7 +18,7 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
         return consentServiceClient(StringUtils.EMPTY)
                 .noFilters()
                 .redirects().follow(false)
-                .get("/oauth");
+                .get("/oauth/sign-in");
     }
 
     @Step("Sign in user to CM by authorization code: '{authorizationCode}'")

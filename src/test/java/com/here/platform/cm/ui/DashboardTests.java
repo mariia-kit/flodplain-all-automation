@@ -5,13 +5,14 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
+import com.here.platform.cm.pages.PurposePage;
 import com.here.platform.cm.pages.VINEnteringPage;
+import com.here.platform.cm.pages.WelcomePage;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -172,6 +173,36 @@ public class DashboardTests extends BaseUITests {
                 .verifyConsentOfferTab(0, providerApplication.consumer, consentRequest, vin, REVOKED)
                 .openConsentRequestOfferBox(consentRequest);
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
+    }
+
+    @Test
+    @DisplayName("Verify Dashboard open more info page")
+    void verifyOpenDashBoardMoreInfoTest() {
+        var vin = dataSubjectIm.getVin();
+        ConsentRequestContainer testContainer1 = ConsentRequestContainers
+                .generateNew(providerApplication.provider);
+        var consentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
+        var crid = consentRequest.getConsentRequestId();
+        cridsToRemove.add(crid);
+
+        open(crid);
+        new LandingPage().isLoaded().signIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+
+        new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
+
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
+        OfferDetailsPageSteps.openFullInfo();
+        PurposePage purposePage = new PurposePage();
+        purposePage.verifyStaticPurposeInfoPage();
+        purposePage.openConsentRequestLink();
+        purposePage.verifyPurposeInfoPage(
+                providerApplication.consumer,
+                consentRequest,
+                testContainer1
+        );
+
     }
 
 }
