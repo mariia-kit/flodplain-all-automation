@@ -116,7 +116,7 @@ public class DeleteResourceTest extends BaseNSTest {
                 .withToken(EXTERNAL_USER)
                 .deleteResource(provider, res);
         new NeutralServerResponseAssertion(delete)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

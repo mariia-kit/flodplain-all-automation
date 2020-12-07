@@ -66,10 +66,10 @@ class DataProvidersGetListTest extends BaseNSTest {
     @DisplayName("Verify receive list of DataProviders with invalid Token")
     void verifyGetContainersListWithWrongToken() {
         var verify = new ProviderController()
-                .withToken(EXTERNAL_USER)
+                .withToken("Bearer 12345")
                 .getProviderList();
         new NeutralServerResponseAssertion(verify)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_CORRUPTED.getError());
     }
 
 }

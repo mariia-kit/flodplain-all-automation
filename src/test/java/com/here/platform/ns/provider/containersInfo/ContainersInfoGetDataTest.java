@@ -64,10 +64,10 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularContainer(container);
 
         var response = new ContainerController()
-                .withToken(Users.EXTERNAL_USER)
+                .withToken("Bearer 12345")
                 .getContainer(container);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_CORRUPTED.getError());
     }
 
     @Test

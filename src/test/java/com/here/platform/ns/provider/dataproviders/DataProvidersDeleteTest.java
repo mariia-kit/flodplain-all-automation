@@ -77,7 +77,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
                 .withToken(EXTERNAL_USER)
                 .deleteProvider(provider);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
+                .expectedSentryError(SentryErrorsList.FORBIDDEN);
 
         var verify = new ProviderController()
                 .withToken(PROVIDER)

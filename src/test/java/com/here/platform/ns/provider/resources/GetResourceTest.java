@@ -88,10 +88,10 @@ public class GetResourceTest extends BaseNSTest {
                 .expectedCode(HttpStatus.SC_OK);
 
         var getResource = new ResourceController()
-                .withToken(EXTERNAL_USER)
+                .withToken("Bearer 12345")
                 .getResource(provider, res.getName());
         new NeutralServerResponseAssertion(getResource)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_CORRUPTED.getError());
     }
 
     @Test

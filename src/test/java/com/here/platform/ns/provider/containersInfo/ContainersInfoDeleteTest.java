@@ -75,7 +75,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
                 .withToken(Users.EXTERNAL_USER)
                 .deleteContainer(container);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test
