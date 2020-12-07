@@ -194,10 +194,7 @@ public class DashboardTests extends BaseUITests {
 
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
         OfferDetailsPageSteps.openFullInfo();
-        PurposePage purposePage = new PurposePage();
-        purposePage.verifyStaticPurposeInfoPage();
-        purposePage.openConsentRequestLink();
-        purposePage.verifyPurposeInfoPage(
+        new PurposePage().verifyPurposeInfoPage(
                 providerApplication.consumer,
                 consentRequest,
                 testContainer1
