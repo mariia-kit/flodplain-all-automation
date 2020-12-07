@@ -54,6 +54,7 @@ public class PurposePageTests extends BaseUITests {
         ).consentRequestData();
 
         cascadeRemoveExtension.consentRequestToCleanUp(consentReqToRemove);
+        cascadeRemoveExtension.vinToRemove(registeredDataSubject.getVin());
 
     }
 

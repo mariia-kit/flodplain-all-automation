@@ -85,7 +85,7 @@ public class AddResourcesTest extends BaseNSTest {
                 .withToken(EXTERNAL_USER)
                 .addResource(provider, res);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

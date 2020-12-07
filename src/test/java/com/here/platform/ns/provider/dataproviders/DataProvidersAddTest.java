@@ -60,8 +60,8 @@ class DataProvidersAddTest extends BaseNSTest {
                 .withToken(EXTERNAL_USER)
                 .addProvider(provider);
         new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_UNAUTHORIZED)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedCode(HttpStatus.SC_FORBIDDEN)
+                .expectedSentryError(SentryErrorsList.FORBIDDEN.getError());
     }
 
     @Test

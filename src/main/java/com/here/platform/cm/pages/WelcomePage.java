@@ -35,4 +35,11 @@ public class WelcomePage extends BaseCMPage {
                 .shouldHave(Condition.text(expected).because("Welcome page sub-title not as expected!"));
         return this;
     }
+
+    @Step("Press Next button")
+    public WelcomePage verifyHERESignInOpened() {
+        $("#form-sign-up")
+                .shouldBe(Condition.visible.because("HERE sign-up form expected after Welcome page!"));
+        return this;
+    }
 }

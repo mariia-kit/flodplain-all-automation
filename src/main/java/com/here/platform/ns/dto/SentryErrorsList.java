@@ -16,6 +16,10 @@ public enum SentryErrorsList {
             HttpStatus.SC_UNAUTHORIZED,
             "Unauthorized",
             "Token Validation Failure - Unable to verify signature segment")),
+    TOKEN_CORRUPTED(new SentryError(
+            HttpStatus.SC_UNAUTHORIZED,
+            "Unauthorized",
+            "Token Validation Failure - unrecognized kid null")),
     METHOD_NOT_ALLOWED(new SentryError(
             HttpStatus.SC_METHOD_NOT_ALLOWED,
             "Method not allowed for this action",

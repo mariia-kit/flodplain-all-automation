@@ -1,13 +1,12 @@
 package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.here.platform.cm.controllers.HERETokenController;
+import com.codeborne.selenide.WebDriverRunner;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
@@ -31,6 +30,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.html5.WebStorage;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testcontainers.containers.BrowserWebDriverContainer;
 
 
 @UserAccount
@@ -51,8 +56,6 @@ public class UserAccountUITests extends BaseUITests {
         dataSubjectIm.setPass(hereUser.getPassword());
         dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
         new HereUserManagerController().createHereUser(hereUser);
-
-
     }
 
     @AfterEach
@@ -112,7 +115,7 @@ public class UserAccountUITests extends BaseUITests {
         ConsentRequestSteps.addVINsToConsentRequest(providerApplication, crid, secondVIN);
         vinsToRemove.add(secondVIN);
 
-        closeWebDriver();
+        restartBrowser();
 
         open(crid);
         new LandingPage().isLoaded().signIn();
@@ -143,7 +146,7 @@ public class UserAccountUITests extends BaseUITests {
         ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
         SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
 
-        closeWebDriver();
+        restartBrowser();
 
         open(crid);
         new LandingPage().isLoaded().signIn();
@@ -151,4 +154,14 @@ public class UserAccountUITests extends BaseUITests {
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
     }
 
+
+    public void restartBrowser() {
+        WebDriverRunner.closeWindow();
+        chrome.stop();
+        chrome = new BrowserWebDriverContainer()
+                        .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
+        chrome.start();
+        WebDriverRunner.setWebDriver(chrome.getWebDriver());
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+    }
 }

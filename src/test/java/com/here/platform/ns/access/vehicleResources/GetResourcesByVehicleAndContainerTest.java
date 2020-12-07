@@ -108,7 +108,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withCampaignId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID);
+                .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
 
     @Test

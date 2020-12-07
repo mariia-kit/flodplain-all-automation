@@ -76,10 +76,10 @@ class ContainersInfoGetListTest extends BaseNSTest {
     @DisplayName("Verify receive list of Containers with invalid Token")
     void verifyGetContainersListWithWrongToken() {
         var response = new ContainerController()
-                .withToken(EXTERNAL_USER)
+                .withToken("Bearer 12345")
                 .getContainersList(DAIMLER_REFERENCE.getName());
         new NeutralServerResponseAssertion(response)
-                .expectedSentryError(SentryErrorsList.TOKEN_INVALID.getError());
+                .expectedSentryError(SentryErrorsList.TOKEN_CORRUPTED.getError());
     }
 
     @Test
