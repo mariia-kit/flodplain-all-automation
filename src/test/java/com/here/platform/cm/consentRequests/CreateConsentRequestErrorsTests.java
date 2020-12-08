@@ -49,7 +49,10 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .expectedErrorResponse(CMErrorResponse.PROVIDER_APPLICATION_NOT_FOUND)
                 .getCause();
         assertThat(actualCause)
-                .isEqualTo("Couldn't find provider application by id: " + testConsentRequest.getConsumerId());
+                .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
+                .contains(testConsentRequest.getConsumerId())
+                .contains(testConsentRequest.getProviderId())
+                .contains(testConsentRequest.getContainerId());
     }
 
     @Test
