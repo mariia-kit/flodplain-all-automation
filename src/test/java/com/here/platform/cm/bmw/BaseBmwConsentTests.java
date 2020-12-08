@@ -67,7 +67,7 @@ public class BaseBmwConsentTests extends BaseCMTest {
 
     protected void waitForAsyncBMWReqwest(String asyncId) {
         int maxCount = 10;
-        while(maxCount > 0) {
+        while (maxCount > 0) {
             maxCount--;
             Response resp = consentRequestController.getConsentRequestAsyncUpdateInfo(asyncId);
             ConsentRequestAsyncUpdateInfo convertedObject = resp.as(ConsentRequestAsyncUpdateInfo.class);

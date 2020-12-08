@@ -16,7 +16,6 @@ ext {
     jacksonVer = "2.10.1"
     springVer = "4.3.9.RELEASE"
     testContainersVer = "1.12.5"
-    jdbiVer = "3.9.1"
     allureVer = "2.13.5"
 }
 
@@ -27,38 +26,44 @@ dependencies {
     compileOnly("org.projectlombok:lombok:$lombokVer")
 
     implementation(
-            "org.springframework:spring-web:$springVer",
+            "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
+
             "io.rest-assured:rest-assured:4.2.0",
             "com.github.scribejava:scribejava-apis:2.5.3",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVer",
+
             "io.swagger:swagger-annotations:$swaggerVer",
             "com.github.javafaker:javafaker:1.0.0",
-            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVer",
-            "org.jdbi:jdbi3-core:$jdbiVer",
+
+            "org.springframework:spring-web:$springVer",
+            "org.aspectj:aspectjweaver:1.9.4",
+
             "io.qameta.allure:allure-java-commons:$allureVer",
             "io.qameta.allure:allure-assertj:$allureVer",
             "io.qameta.allure:allure-rest-assured:$allureVer",
             "io.qameta.allure:allure-junit5:$allureVer",
-            "org.aspectj:aspectjweaver:1.9.4",
+
             'com.here.account:here-oauth-client:0.4.20',
             "com.atlassian.jira:jira-rest-java-client-core:5.1.6",
             "lv.ctco.zephyr:zephyr-sync-cli:0.0.15",
             "io.atlassian.fugue:fugue:4.7.2",
-            "com.github.viclovsky.swagger.coverage:swagger-coverage-rest-assured:1.1.4",
-            "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
-            "log4j:log4j:1.2.17",
+
             "com.codeborne:selenide:5.13.0",
             "io.qameta.allure:allure-selenide:$allureVer",
+
+            "log4j:log4j:1.2.17",
             "org.yaml:snakeyaml:1.26"
     )
     testImplementation(
             "org.junit.jupiter:junit-jupiter-api:$junit5Ver",
             "org.junit.jupiter:junit-jupiter-params:$junit5Ver",
             "org.junit.jupiter:junit-jupiter-engine:${junit5Ver}",
+
             "org.assertj:assertj-core:3.11.1",
+
             "org.testcontainers:selenium:$testContainersVer",
             "org.testcontainers:junit-jupiter:$testContainersVer",
-            "org.postgresql:postgresql:42.2.5",
-            "org.jdbi:jdbi3-postgres:$jdbiVer",
+
             "org.junit-pioneer:junit-pioneer:0.9.0"
     )
 

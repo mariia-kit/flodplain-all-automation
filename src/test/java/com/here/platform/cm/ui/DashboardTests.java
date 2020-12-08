@@ -12,7 +12,6 @@ import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.PurposePage;
 import com.here.platform.cm.pages.VINEnteringPage;
-import com.here.platform.cm.pages.WelcomePage;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -78,12 +77,14 @@ public class DashboardTests extends BaseUITests {
         var vin = dataSubjectIm.getVin();
         ConsentRequestContainer testContainer1 = ConsentRequestContainers
                 .generateNew(providerApplication.provider);
-        var firstConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
+        var firstConsentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer1);
         var consentRequestId1 = firstConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId1);
         ConsentRequestContainer testContainer2 = ConsentRequestContainers
                 .generateNew(providerApplication.provider);
-        var secondConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer2);
+        var secondConsentRequest = ConsentRequestSteps
+                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer2);
         var consentRequestId2 = secondConsentRequest.getConsentRequestId();
         cridsToRemove.add(consentRequestId2);
 

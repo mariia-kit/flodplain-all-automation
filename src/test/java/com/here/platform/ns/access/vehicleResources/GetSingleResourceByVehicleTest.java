@@ -33,7 +33,7 @@ public class GetSingleResourceByVehicleTest extends BaseNSTest {
 
 
     @Test
-    @DisplayName("Verify single ContainerResources by vehicle Id no-PII")
+    @DisplayName("Verify get Single Container Resource by vehicle Id no-PII")
     void verifySingleResourceRetrievedReferenceL() {
         provider.addResource(res1);
         Steps.createRegularProvider(provider);
@@ -54,7 +54,7 @@ public class GetSingleResourceByVehicleTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify single ContainerResources by vehicle Id no-PII empty responce")
+    @DisplayName("Verify get single container Resource by vehicle Id no-PII empty response Expected")
     void verifySingleResourceRetrievedReferenceEmpty() {
         provider.addResource(res1);
         Steps.createRegularProvider(provider);

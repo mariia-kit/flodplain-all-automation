@@ -108,7 +108,8 @@ class AccessTokenTests extends BaseConsentStatusTests {
         @Test
         @DisplayName("Verify It Is Possible To Approve Two Consents For Single Vin")
         void approveTwoConsentsForSingleVinTest() {
-            ConsentRequestContainer container2 = ConsentRequestContainers.generateNew(ProviderApplications.REFERENCE_CONS_1.provider);
+            ConsentRequestContainer container2 = ConsentRequestContainers
+                    .generateNew(ProviderApplications.REFERENCE_CONS_1.provider);
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
             fuSleep();
@@ -118,7 +119,8 @@ class AccessTokenTests extends BaseConsentStatusTests {
             consentRequestRemoveExtension.cridToRemove(secondConsentRequestId).vinToRemove(testVin);
             //second time with the same VIN
 
-            var secondDaimlerToken = ReferenceTokenController.produceConsentAuthCode(testVin, container2.getId() + ":general");
+            var secondDaimlerToken = ReferenceTokenController
+                    .produceConsentAuthCode(testVin, container2.getId() + ":general");
             NewConsent secondConsumerConsent = NewConsent.builder()
                     .consentRequestId(secondConsentRequestId)
                     .vinHash(new VIN(testVin).hashed())

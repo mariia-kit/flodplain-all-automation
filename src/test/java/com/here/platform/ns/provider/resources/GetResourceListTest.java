@@ -1,6 +1,5 @@
 package com.here.platform.ns.provider.resources;
 
-import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;
@@ -18,11 +17,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("Verify get all ContainerResources for DataProvider")
+@DisplayName("Verify get all Resources for DataProvider")
 public class GetResourceListTest extends BaseNSTest {
 
     @Test
-    @DisplayName("Verify receive list of DataProvider ContainerResources Successful")
+    @DisplayName("Verify receive Resources list of DataProvider Successful")
     void verifyGetResourceListCanBeRetrieved() {
         DataProvider provider = Providers.generateNew();
         var addDataProvider = new ProviderController()
@@ -60,7 +59,7 @@ public class GetResourceListTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify receive list of DataProvider ContainerResources with empty Token")
+    @DisplayName("Verify receive Resources list of DataProvider with empty Token")
     void verifyGetResourceListWithEmptyToken() {
         DataProvider provider = Providers.generateNew();
         var addDataProvider = new ProviderController()
@@ -86,7 +85,7 @@ public class GetResourceListTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify receive list of DataProvider ContainerResources with invalid Token")
+    @DisplayName("Verify receive Resources list of DataProvider with invalid Token")
     void verifyGetResourceListWithWrongToken() {
         DataProvider provider = Providers.generateNew();
         var addDataProvider = new ProviderController()
