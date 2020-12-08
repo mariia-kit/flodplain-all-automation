@@ -14,7 +14,6 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ContainerResources;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
-import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Vehicle;
@@ -25,7 +24,6 @@ import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.Issue;
-import io.restassured.http.Header;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +38,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
     @Test
     @DisplayName("Verify get resources by vehicle Id and container Id Successful")
-    void verifyGetContainersDataRetrieved() {
+    void verifyGetContainersDatconsentRequestIdaRetrieved() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
         Container container = Containers.generateNew(provider).withResourceNames("odometer");
 
@@ -54,7 +52,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withXCorrelationId("X-corr-1")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
@@ -84,7 +82,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsISOContainerData(
@@ -105,7 +103,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(EXTERNAL_USER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -124,7 +122,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(PROVIDER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -144,7 +142,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsISOContainerData(Vehicle.chargeResource,
@@ -168,7 +166,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
@@ -189,7 +187,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -211,7 +209,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.invalidVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getCMInvalidVehicleError(crid));
@@ -251,7 +249,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("empty", "on")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
@@ -276,6 +274,24 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    @DisplayName("Verify get resources by vehicle Id and container Id no consentId")
+    void verifyGetContainersDataRetrievedNoConsentId() {
+        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
+        Container container = Containers.generateNew(provider);
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withConsentId(null)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedError(NSErrors.getCMNoConsentIdProvided());
+
     }
 
 }

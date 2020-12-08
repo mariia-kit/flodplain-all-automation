@@ -52,7 +52,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
@@ -76,7 +76,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentRevokeError(crid));
@@ -94,7 +94,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(StringUtils.EMPTY)
+                .withConsentId(StringUtils.EMPTY)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentNotFoundError(StringUtils.EMPTY));
@@ -118,7 +118,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentRevokeError(crid));
@@ -141,7 +141,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -157,7 +157,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(StringUtils.EMPTY)
+                .withConsentId(StringUtils.EMPTY)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -185,7 +185,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
@@ -213,7 +213,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedError(NSErrors.getTokenForConsentNotFoundError(crid));
@@ -241,14 +241,14 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response1 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(SecondCrid)
+                .withConsentId(SecondCrid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response1)
                 .expectedCode(HttpStatus.SC_OK);
 
         var response2 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(firstCrid)
+                .withConsentId(firstCrid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response2)
                 .expectedCode(HttpStatus.SC_OK);
@@ -355,7 +355,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED);
@@ -381,7 +381,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(MP_CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED);
@@ -426,12 +426,12 @@ public class ZConsentManagementTest extends BaseE2ETest {
                 targetApp.container.clientSecret);
         var response1 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid1)
+                .withConsentId(crid1)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
 
         var response2 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid2)
+                .withConsentId(crid2)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response2)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED);

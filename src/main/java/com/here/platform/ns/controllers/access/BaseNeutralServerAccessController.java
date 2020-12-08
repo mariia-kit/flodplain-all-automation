@@ -15,7 +15,7 @@ public class BaseNeutralServerAccessController<T> extends BaseNeutralService<T> 
         var baseService = neutralServerClient(targetPath, Conf.ns().getNsUrlBaseAccess());
 
         if (crid != null) {
-            baseService.header("CampaignID", crid);
+            baseService.header("ConsentRequestID", crid);
         }
         if (queryParam != null) {
             queryParam.entrySet().forEach(e -> baseService.queryParam(e.getKey(), e.getValue()));
@@ -23,7 +23,7 @@ public class BaseNeutralServerAccessController<T> extends BaseNeutralService<T> 
         return baseService;
     }
 
-    public T withCampaignId(String campaignId) {
+    public T withConsentId(String campaignId) {
         crid = campaignId;
         return (T) this;
     }

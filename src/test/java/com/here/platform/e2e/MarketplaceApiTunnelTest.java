@@ -261,7 +261,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(consentRequestId)
+                .withConsentId(consentRequestId)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);

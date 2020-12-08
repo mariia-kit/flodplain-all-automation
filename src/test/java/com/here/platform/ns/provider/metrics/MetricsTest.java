@@ -79,7 +79,7 @@ public class MetricsTest extends BaseNSTest {
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("resource", "distancesincereset")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer)
@@ -95,7 +95,7 @@ public class MetricsTest extends BaseNSTest {
 
         var getContainer1 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer1)
                 .expectedCode(HttpStatus.SC_OK);
@@ -130,7 +130,7 @@ public class MetricsTest extends BaseNSTest {
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
@@ -160,7 +160,7 @@ public class MetricsTest extends BaseNSTest {
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer)
                 .expectedCode(HttpStatus.SC_OK);
@@ -190,7 +190,7 @@ public class MetricsTest extends BaseNSTest {
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("empty", "on")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(getContainer)

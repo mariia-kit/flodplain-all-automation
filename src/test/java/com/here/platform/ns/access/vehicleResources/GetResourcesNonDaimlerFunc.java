@@ -48,7 +48,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         var response1 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("resource", "distancesincereset")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response1)
@@ -58,7 +58,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         var response2 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("resourceName", "odometer")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response2)
@@ -68,7 +68,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
         var response3 = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .withQueryParam("resource", "notrealres")
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response3)

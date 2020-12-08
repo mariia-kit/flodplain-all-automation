@@ -46,7 +46,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
@@ -179,7 +179,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
@@ -199,7 +199,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
@@ -219,7 +219,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
                 .getConsentRequestId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
