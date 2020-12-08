@@ -169,7 +169,7 @@ public class Steps {
     public static void getVehicleResourceAndVerify(String crid, String vin, Container container) {
         var response = new ContainerDataController()
                 .withBearerToken(Users.MP_CONSUMER.getToken())
-                .withCampaignId(crid)
+                .withConsentId(crid)
                 .getContainerForVehicle(
                         container.getDataProviderByName(),
                         vin,

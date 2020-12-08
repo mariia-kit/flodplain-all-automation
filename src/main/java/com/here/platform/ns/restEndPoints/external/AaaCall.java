@@ -51,8 +51,6 @@ public class AaaCall {
                     .extract().response().getBody().jsonPath();
             parseData(res, policy);
         }
-
-        policy.forEach(p -> System.out.println(">" + p.getLeft() + " - " + p.getRight()));
         return policy;
     }
 

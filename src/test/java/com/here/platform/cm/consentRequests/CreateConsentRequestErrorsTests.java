@@ -14,6 +14,7 @@ import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.config.Conf;
+import io.qameta.allure.Issue;
 import io.qameta.allure.TmsLink;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -37,6 +38,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
+    @Issue("NS-3048")
     @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Consumer")
     void isNotPossibleToCreateConsentRequestWithOutConsumer() {
         consentRequestController.withConsumerToken();
@@ -44,10 +46,10 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
 
         var actualCause = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
-                .expectedErrorResponse(CMErrorResponse.CONSUMER_NOT_FOUND)
+                .expectedErrorResponse(CMErrorResponse.PROVIDER_APPLICATION_NOT_FOUND)
                 .getCause();
         assertThat(actualCause)
-                .isEqualTo("Couldn't find consumer by consumer id: " + testConsentRequest.getConsumerId());
+                .isEqualTo("Couldn't find provider application by id: " + testConsentRequest.getConsumerId());
     }
 
     @Test
@@ -95,6 +97,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
 
         @Test
         @ErrorHandler
+        @Issue("NS-3048")
         @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Provider")
         void isNotPossibleToCreateConsentRequestWithOutProvider() {
             new OnboardingSteps(StringUtils.EMPTY, testConsentRequest.getConsumerId()).onboardValidConsumer();
@@ -107,7 +110,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                     .expectedErrorResponse(CMErrorResponse.PROVIDER_APPLICATION_NOT_FOUND)
                     .getCause();
             assertThat(actualCause)
-                    .startsWith("Couldn't find provider by id: ProviderApplicationPK")
+                    .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
                     .contains(testConsentRequest.getConsumerId())
                     .contains(testConsentRequest.getProviderId())
                     .contains(testConsentRequest.getContainerId());
