@@ -35,7 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class DeleteResourceTest extends BaseNSTest {
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources Successful")
+    @DisplayName("Verify deletion of Resources Successful")
     void verifyDeleteResources() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -70,7 +70,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources no Token")
+    @DisplayName("Verify deletion of Resources no Token")
     void verifyDeleteResourcesNoToken() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -95,7 +95,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources invalid Token")
+    @DisplayName("Verify deletion of Resources invalid Token")
     void verifyDeleteResourcesInvalidToken() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -120,7 +120,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources invalid Provider")
+    @DisplayName("Verify deletion of Resources for not exist DataProvider")
     void verifyDeleteResourcesInvalidProvider() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -146,7 +146,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources invalid ContainerResources")
+    @DisplayName("Verify deletion of not exist Resources from DataProvider")
     void verifyDeleteResourcesInvalidResources() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -173,7 +173,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources alien Provider")
+    @DisplayName("Verify deletion of Resources alien Provider")
     void verifyDeleteResourcesAlienContainer() {
         DataProvider provider = Providers.generateNew();
         DataProvider provider2 = Providers.generateNew();
@@ -205,7 +205,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources already Deleted")
+    @DisplayName("Verify deletion of Resources already Deleted")
     void verifyDeleteResourcesAlreadyDeleted() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -235,7 +235,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources if Multiple exist")
+    @DisplayName("Verify deletion of Resources if Multiple exist")
     void verifyDeleteResourcesIfMultipleExist() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res1 = ProviderResource.generateNew();
@@ -280,7 +280,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources if same name exist")
+    @DisplayName("Verify deletion of Resources if same name exist")
     void verifyDeleteResourcesIfSameNameExist() {
         DataProvider provider1 = Providers.generateNew();
         DataProvider provider2 = Providers.generateNew();
@@ -334,7 +334,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources used in Container")
+    @DisplayName("Verify deletion of Resources that is used in Container")
     void verifyDeleteResourcesUsedInContainer() {
         ProviderResource res = ProviderResource.generateNew();
         DataProvider provider = Providers.generateNew()
@@ -361,7 +361,7 @@ public class DeleteResourceTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify deletion of ContainerResources used in Container Capital")
+    @DisplayName("Verify deletion of Resources that is used in Container Capital")
     void verifyDeleteResourcesUsedInContainerCapital() {
         ProviderResource res1 = ProviderResource.generateNew();
         ProviderResource res2 = new ProviderResource(res1.getName().toUpperCase());

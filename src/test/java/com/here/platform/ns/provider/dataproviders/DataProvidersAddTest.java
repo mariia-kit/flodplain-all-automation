@@ -176,7 +176,7 @@ class DataProvidersAddTest extends BaseNSTest {
 
 
     @Test
-    @DisplayName("Verify create new DataProvider invalid Name long")
+    @DisplayName("Verify create new DataProvider invalid long Name")
     void verifyDataProviderCreationInvalidName() {
         DataProvider provider = Providers.generateNew();
         provider.setName(provider.getName() + StringUtils

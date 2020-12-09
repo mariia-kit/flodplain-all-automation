@@ -130,7 +130,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container false Consent Req flag.")
+    @DisplayName("Verify create of Container with flag consentRequired = false")
     void verifyAddNewContainerEmptyConsentFalse() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -152,7 +152,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container empty Consent Req flag.")
+    @DisplayName("Verify create of Container empty consentRequired flag.")
     void verifyAddNewContainerEmptyConsentReq() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -174,7 +174,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container with Scope.")
+    @DisplayName("Verify create of Container with defined Scope")
     void verifyAddNewContainerSetScope() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -197,7 +197,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container with long Scope.")
+    @DisplayName("Verify create of Container with long Scope")
     void verifyAddNewContainerSetScopeLong() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -221,7 +221,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container missing description")
+    @DisplayName("Verify create of Container with empty description")
     void verifyAddNewContainerMissingDescription() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -242,7 +242,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container with no name")
+    @DisplayName("Verify create of Container with empty name")
     void verifyAddNewContainerNoName() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -259,7 +259,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify update of Container with no name")
+    @DisplayName("Verify update of the Container with empty name")
     void verifyAddNewContainerSetNameToNull() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider);
@@ -283,7 +283,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container if invalid body")
+    @DisplayName("Verify create of Container without resources")
     void verifyAddNewContainerInvalidEntity() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider)
@@ -376,7 +376,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container with invalid Id")
+    @DisplayName("Verify create of Container with invalid long ID")
     void verifyAddNewContainerInvalidID() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider);
@@ -394,7 +394,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Container no such resource set into provider")
+    @DisplayName("Verify create of Container no such resource set into provider Expected")
     void verifyAddNewContainerNoSuchResource() {
         DataProvider provider = Providers.generateNew();
         ProviderResource res = ProviderResource.generateNew();
@@ -410,7 +410,7 @@ class ContainersInfoAddTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify update of Container no such resource set into provider")
+    @DisplayName("Verify update of Container no such resource set into provider Expected")
     void verifyUpdateContainerNoSuchResource() {
         DataProvider provider = Providers.generateNew();
         Container container = Containers.generateNew(provider);

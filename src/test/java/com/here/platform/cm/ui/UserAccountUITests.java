@@ -122,7 +122,8 @@ public class UserAccountUITests extends BaseUITests {
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
         new DashBoardPage()
                 .openDashboardNewTab()
-                .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
+                .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(),
+                        PENDING)
                 .verifyConsentOfferTab(0, providerApplication.consumer, consentRequestInfo, secondVIN, PENDING);
     }
 
@@ -156,9 +157,10 @@ public class UserAccountUITests extends BaseUITests {
         WebDriverRunner.closeWindow();
         chrome.stop();
         chrome = new BrowserWebDriverContainer()
-                        .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
+                .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
         chrome.start();
         WebDriverRunner.setWebDriver(chrome.getWebDriver());
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
     }
+
 }

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class AddResourcesTest extends BaseNSTest {
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider Successful")
+    @DisplayName("Verify create new Resources for DataProvider Successful")
     void verifyDataProviderResourcesCanBeCreated() {
         DataProvider provider = Providers.generateNew();
 
@@ -50,7 +50,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider with empty Token")
+    @DisplayName("Verify create new Resources for DataProvider with empty Token")
     void verifyDataProviderResourcesWithEmptyToken() {
         DataProvider provider = Providers.generateNew();
         var create = new ProviderController()
@@ -70,7 +70,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider with invalid Token")
+    @DisplayName("Verify create new Resources for DataProvider with invalid Token")
     void verifyDataProviderResourcesWithWrongToken() {
         DataProvider provider = Providers.generateNew();
         var create = new ProviderController()
@@ -89,7 +89,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider Already exist")
+    @DisplayName("Verify create new Resources for DataProvider Already exist")
     void verifyDataProviderResourcesAlreadyExist() {
         DataProvider provider = Providers.generateNew();
         var create = new ProviderController()
@@ -127,7 +127,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider Multiple")
+    @DisplayName("Verify create new Resources for DataProvider Multiple")
     void verifyDataProviderResourcesCanBeCreatedMultiple() {
         DataProvider provider = Providers.generateNew();
         var addDataProvider = new ProviderController()
@@ -172,7 +172,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create of Resource with no Provider exist")
+    @DisplayName("Verify create of Resource to not exist DataProvider")
     void verifyDataProviderResourcesNoProvider() {
         DataProvider provider = new DataProvider("no_such_provider_name", "ppp");
         ProviderResource res = ProviderResource.generateNew();
@@ -184,7 +184,7 @@ public class AddResourcesTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify create new ContainerResources DataProvider Empty ID")
+    @DisplayName("Verify create new Resources for DataProvider with Empty ID")
     void verifyDataProviderResourcesEmptyID() {
         DataProvider provider = Providers.generateNew();
         var create = new ProviderController()

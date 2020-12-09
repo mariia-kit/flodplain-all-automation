@@ -1,4 +1,4 @@
-image: gradle:6.3-jdk11
+image: gradle:6.7-jdk11
 services:
    - docker:19.03.0-dind
 

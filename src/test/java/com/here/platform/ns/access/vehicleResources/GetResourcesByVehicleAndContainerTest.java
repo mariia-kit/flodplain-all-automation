@@ -91,7 +91,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id bad token")
+    @DisplayName("Verify get resources by vehicle Id and container Id bad token Expected")
     void verifyGetContainersDataRetrievedBadToken() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
         Container container = Containers.generateNew(provider);
@@ -110,7 +110,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id token")
+    @DisplayName("Verify get resources by vehicle Id and container Id forbidden Expected")
     void verifyGetContainersDataRetrievedBadWrong() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
         Container container = Containers.generateNew(provider);
@@ -129,7 +129,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id: Charge")
+    @DisplayName("Verify get resources by vehicle Id and container Id: Charge resource expected")
     void verifyGetContainersDataRetrievedResourceCharge() {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
         Container container = Containers.REF_DAIMLER_CHARGE.getContainer();

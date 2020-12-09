@@ -42,7 +42,8 @@ public class ConsentRequestSteps {
         onboard.onboardTestProviderApplication(
                 container.getId(),
                 container.getClientId(),
-                container.getClientSecret());
+                container.getClientSecret()
+        );
         return ConsentRequestSteps.createConsentRequestWithVINFor(
                 targetApp.provider.getName(),
                 targetApp.consumer.getName(),

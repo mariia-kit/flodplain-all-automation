@@ -9,7 +9,6 @@ import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.SentryErrorsList;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;

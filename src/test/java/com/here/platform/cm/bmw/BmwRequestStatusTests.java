@@ -74,8 +74,10 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                         .state(StateEnum.PENDING.getValue())
                         .vin(testVin1));
 
-        var clearanceId = referenceProviderController.getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
-                .get("clearanceId").toString();
+        var clearanceId = referenceProviderController
+                .getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
+                .get("clearanceId")
+                .toString();
 
         var response = bmwController.setClearanceStatusByBMW(clearanceId, bmwStatus.name());
 
@@ -114,9 +116,11 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(expectedConsentRequestStatuses);
 
-        var clearanceId1 = referenceProviderController.getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
+        var clearanceId1 = referenceProviderController
+                .getClearanceByVinAndContainerId(testVin1, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
-        var clearanceId2 = referenceProviderController.getClearanceByVinAndContainerId(testVin2, testContainer.getClientId()).jsonPath()
+        var clearanceId2 = referenceProviderController
+                .getClearanceByVinAndContainerId(testVin2, testContainer.getClientId()).jsonPath()
                 .get("clearanceId").toString();
 
         bmwController.setClearanceStatusByBMW(clearanceId1, BMWStatus.APPROVED.name());
@@ -141,7 +145,8 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer).getConsentRequestId();
+        crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
+                .getConsentRequestId();
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
@@ -177,7 +182,6 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                         .rejected(0)
                 );
     }
-
 
 
 }

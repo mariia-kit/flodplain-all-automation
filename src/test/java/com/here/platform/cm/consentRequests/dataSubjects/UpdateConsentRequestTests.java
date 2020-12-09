@@ -49,7 +49,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
     protected final User mpConsumer = targetApp.consumer;
     protected DataSubjects dataSubject = DataSubjects._2AD190A6AD057824E;
     protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
-    
+
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(mpConsumer.getRealm())
             .providerId(targetApp.provider.getName())
@@ -247,7 +247,7 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).csv();
         consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
 
-       ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
+        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
 
         fuSleep();
         //remove consents in approved and pending state

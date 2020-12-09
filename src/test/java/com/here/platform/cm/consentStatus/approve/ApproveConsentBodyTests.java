@@ -101,7 +101,8 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
         var thirdPendingCrid = createValidConsentRequest();
         cridsToRemove.add(thirdPendingCrid);
 
-        var approveConsentResponse = consentStatusController.approveConsent(consentToApprove, dataSubject.getBearerToken());
+        var approveConsentResponse = consentStatusController
+                .approveConsent(consentToApprove, dataSubject.getBearerToken());
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)

@@ -55,7 +55,6 @@ public class TestResultLoggerExtension implements TestWatcher {
         Allure.getLifecycle().getCurrentTestCase().orElseThrow(() -> new RuntimeException(
                 "Allure context not detected for current test: " + context.getDisplayName()));
 
-
         Allure.getLifecycle().updateTestCase(resList::add);
 
         if (isParametrised && context.getDisplayName().contains("[")) {

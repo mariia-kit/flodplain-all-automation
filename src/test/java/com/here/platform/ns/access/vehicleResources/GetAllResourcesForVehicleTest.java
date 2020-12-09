@@ -25,13 +25,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
-@DisplayName("Get all provider resources by vehicle Id")
+@DisplayName("Get all provider's resources by vehicle Id")
 @ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
 @Tag("ignored")
 public class GetAllResourcesForVehicleTest extends BaseNSTest {
 
     @Test
-    @DisplayName("Verify All ContainerResources by vehicle Id no-PII")
+    @DisplayName("Verify get all Container's Resources by Vehicle ID for No-PII container")
     void verifyAllResourceRetrievedReference() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
         ProviderResource res1 = new ProviderResource("electricvehicle");

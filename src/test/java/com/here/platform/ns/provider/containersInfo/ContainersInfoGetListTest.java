@@ -2,7 +2,6 @@ package com.here.platform.ns.provider.containersInfo;
 
 import static com.here.platform.ns.dto.Providers.DAIMLER_REAL;
 import static com.here.platform.ns.dto.Providers.DAIMLER_REFERENCE;
-import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.ns.BaseNSTest;

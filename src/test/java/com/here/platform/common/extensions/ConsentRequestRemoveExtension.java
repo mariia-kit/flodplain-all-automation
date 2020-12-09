@@ -33,7 +33,8 @@ public class ConsentRequestRemoveExtension implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) {
         for (String crid : cridsToRemove) {
-            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid, new VinsToFile(vins.toArray(new String[vins.size()])).csv());
+            RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(crid,
+                    new VinsToFile(vins.toArray(new String[vins.size()])).csv());
         }
     }
 
