@@ -1,5 +1,6 @@
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def finalEnv = "dev"
+def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
 if(targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = targetEnv
     println "Receive env from CI_ENVIRONMENT_SLUG ${targetEnv}"
@@ -67,6 +68,13 @@ task testDataGeneration(type: JavaExec) {
             "prod.access.key.id"    : System.getenv("ACCESS_KEY_ID_PROD"),
             "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD")
     ]
+    if (!dynamicEnvUrl) {
+        systemProperty "env", finalEnv
+    } else {
+        println "Will be used dynamic url: $finalEnv"
+        systemProperty "dynamicUrl", dynamicEnvUrl
+        systemProperty "env", "dev"
+    }
     systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.TestDataGeneration"
