@@ -54,7 +54,7 @@ public class RemoveEntitiesSteps {
         var appToRemove = new ProviderApplication()
                 .consumerId(consentRequestData.getConsumerId())
                 .providerId(consentRequestData.getProviderId())
-                .container(consentRequestData.getContainerId());
+                .containerId(consentRequestData.getContainerId());
         removeProviderApplication(appToRemove);
 
         removeProvider(consentRequestData.getProviderId());

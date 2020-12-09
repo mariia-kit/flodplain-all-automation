@@ -61,7 +61,7 @@ public class ProviderApplicationTests extends BaseCMTest {
                 .consumerId(testConsentRequest.getConsumerId())
                 .clientId(crypto.sha1())
                 .clientSecret(crypto.sha1())
-                .container(crypto.md5())
+                .containerId(crypto.md5())
                 .redirectUri(faker.internet().url());
 
         var applicationResponse = providerController
@@ -106,7 +106,7 @@ public class ProviderApplicationTests extends BaseCMTest {
                 .providerId(testDataProviderId)
                 .clientId(crypto.md5())
                 .clientSecret(crypto.md5())
-                .container(crypto.sha256())
+                .containerId(crypto.sha256())
                 .consumerId(crypto.sha512())
                 .redirectUri(faker.internet().url());
 
@@ -138,7 +138,7 @@ public class ProviderApplicationTests extends BaseCMTest {
                 .providerId(crypto.md5())
                 .clientId(crypto.md5())
                 .clientSecret(crypto.md5())
-                .container(crypto.sha256())
+                .containerId(crypto.sha256())
                 .consumerId(testDataConsumerId)
                 .redirectUri(faker.internet().url());
 

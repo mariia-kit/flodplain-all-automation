@@ -26,7 +26,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
     }
 
     @Step("Delete data provider application for "
-            + "containerId: '{providerApplication.container}', "
+            + "containerId: '{providerApplication.containerId}', "
             + "providerId: '{providerApplication.providerId}, "
             + "consumerId: '{providerApplication.consumerId}'")
     public Response deleteProviderApplication(ProviderApplication providerApplication) {
@@ -37,7 +37,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
                 .params(
                         "providerId", providerApplication.getProviderId(),
                         "consumerId", providerApplication.getConsumerId(),
-                        "container", providerApplication.getContainer()
+                        "container", providerApplication.getContainerId()
                 )
                 .delete("/providerApplication");
     }
@@ -76,7 +76,7 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         var forbiddenApplications = stream(ConsentRequestContainers.values());
 
         return providerApplication == null || forbiddenApplications.anyMatch(
-                containers -> containers.getId().equalsIgnoreCase(providerApplication.getContainer())
+                containers -> containers.getId().equalsIgnoreCase(providerApplication.getContainerId())
                         && containers.getProvider().getName().equals(providerApplication.getProviderId())
                         && (providerApplication.getConsumerId().equalsIgnoreCase(Users.MP_CONSUMER.getUser().getRealm())
                         || providerApplication.getConsumerId().equalsIgnoreCase("olp-here-dataeval")));
