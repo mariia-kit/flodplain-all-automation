@@ -1,6 +1,6 @@
 #------------------NS URL's--------------------
-nsUrlBaseAccess: https://neutral-server-dev.ns.api.platform.in.here.com/
-nsUrlBaseProvider: https://neutral-server-dev.ns.api.platform.in.here.com/
+nsUrlBaseAccess: https://access-dev.ns.api.platform.in.here.com/
+nsUrlBaseProvider: https://provider-dev.ns.api.platform.in.here.com/
 nsUrlAccess: access/v1/
 nsUrlProvider: provider/v1/
 
