@@ -63,7 +63,7 @@ public class OnboardingSteps {
                 .consumerId(this.consumerId)
                 .clientId(clientId)
                 .clientSecret(secret)
-                .container(containerId)
+                .containerId(containerId)
                 .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
 
         var applicationResponse = this.providersController

@@ -2,9 +2,9 @@ package com.here.platform.cm.consentRequests;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.rest.model.AdditionalLink;
+import com.here.platform.cm.rest.model.ConsentRequest;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
-import com.here.platform.cm.rest.model.ConsentRequestResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -53,14 +53,13 @@ public class CreateConsentRequestsTests extends BaseCMTest {
     void createAndGetConsentRequest() {
         var crid = createConsentRequestWith(testConsentRequest);
 
-        ConsentRequestResponse expectedResponse = new ConsentRequestResponse()
+        ConsentRequest expectedResponse = new ConsentRequest()
                 .consentRequestId(crid)
                 .additionalLinks(testConsentRequest.getAdditionalLinks())
                 .privacyPolicy(testConsentRequest.getPrivacyPolicy())
                 .consumerId(testConsentRequest.getConsumerId())
                 .providerId(testConsentRequest.getProviderId())
                 .containerId(testConsentRequest.getContainerId())
-                .containerName(testConsentRequest.getContainerId()) //todo bug?
                 .purpose(testConsentRequest.getPurpose())
                 .title(testConsentRequest.getTitle());
 
@@ -118,13 +117,12 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .bindAs(ConsentRequestIdResponse.class).getConsentRequestId();
         consentRequestRemoveExtension.cridToRemove(crid);
 
-        var expectedConsentRequestResponse = new ConsentRequestResponse()
+        var expectedConsentRequestResponse = new ConsentRequest()
                 .consentRequestId(crid)
                 .additionalLinks(null)
                 .privacyPolicy("/") //if privacy policy is empty - service should set default value to the field "/"
                 .consumerId(testConsentRequest.getConsumerId())
                 .containerId(testConsentRequest.getContainerId())
-                .containerName(testConsentRequest.getContainerId())
                 .providerId(testConsentRequest.getProviderId())
                 .title(testConsentRequest.getTitle())
                 .purpose(testConsentRequest.getPurpose());
