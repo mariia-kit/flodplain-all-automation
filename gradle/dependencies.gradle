@@ -68,5 +68,6 @@ dependencies {
     )
 
     testCompileOnly("org.projectlombok:lombok:$lombokVer")
+    testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.30'
     testAnnotationProcessor("org.projectlombok:lombok:$lombokVer")
 }
