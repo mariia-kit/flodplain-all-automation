@@ -145,7 +145,7 @@ public class ConsentManagementCall {
         String body = "{\n"
                 + "    \"providerId\": \"" + providerId + "\",\n"
                 + "    \"consumerId\": \"" + consumerId + "\",\n"
-                + "    \"container\": \"" + container.getId() + "\",\n"
+                + "    \"containerId\": \"" + container.getId() + "\",\n"
                 + "    \"clientId\": \"" + app.getClientId() + "\",\n"
                 + "    \"clientSecret\": \"" + app.getClientSecret() + "\",\n"
                 + "    \"redirectUri\": \"" + app.getCallBackUrl() + "\"\n"
@@ -168,7 +168,7 @@ public class ConsentManagementCall {
             String url = Conf.ns().getConsentUrl() + "/private/providerApplication?"
                     + "providerId=" + providerId
                     + "&consumerId=" + consumerId
-                    + "&container=" + containerId;
+                    + "&containerId=" + containerId;
             Response r = RestHelper
                     .delete("Hard delete Application from CM " + containerId, url, token);
         }
