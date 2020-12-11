@@ -121,7 +121,7 @@ public class ConsentManagerHelper {
     public ConsentManagerHelper createApplicationForContainer() {
         if (!Conf.ns().isConsentMock()) {
             new ConsentManagementCall().addCMApplication(container, container.getDataProviderName());
-            CleanUpHelper.addToAppsList(container.getDataProviderName(), container.getName());
+            CleanUpHelper.addToAppsList(container.getDataProviderName(), container.getId());
         }
         return this;
     }
