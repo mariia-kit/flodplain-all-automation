@@ -26,6 +26,7 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.Issue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -126,27 +127,6 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
-    }
-
-    @Test
-    @DisplayName("Verify get resources by vehicle Id and container Id: Charge resource expected")
-    void verifyGetContainersDataRetrievedResourceCharge() {
-        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
-        Container container = Containers.REF_DAIMLER_CHARGE.getContainer();
-
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
-        var response = new ContainerDataController()
-                .withToken(CONSUMER)
-                .withConsentId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
-        new NeutralServerResponseAssertion(response)
-                .expectedEqualsISOContainerData(Vehicle.chargeResource,
-                        "Provider content not as expected!");
     }
 
     @Test
@@ -290,7 +270,24 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withConsentId(null)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getCMNoConsentIdProvided());
+                .expectedError(NSErrors.getCMNoConsentIdProvided("null"));
+    }
+
+    @Test
+    @DisplayName("Verify get resources by vehicle Id and container Id no Token")
+    void verifyGetContainersDataRetrievedNoToken() {
+        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
+        Container container = Containers.generateNew(provider);
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        var response = new ContainerDataController()
+                .withToken(StringUtils.EMPTY)
+                .withConsentId(null)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
 
     }
 
