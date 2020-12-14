@@ -17,6 +17,10 @@ public class SyncPointIO {
         SyncEntity record;
         ReferenceProviderController referenceProviderController = new ReferenceProviderController();
         Response getResp = referenceProviderController.readSyncEntity(key);
+
+        if (getResp.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+            getResp = referenceProviderController.readSyncEntity(key);
+        }
         if (getResp.getStatusCode() == HttpStatus.SC_OK) {
             record = getResp.then().extract().as(SyncEntity.class);
         } else if (getResp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {

@@ -141,7 +141,7 @@ public class MarketplaceFlowSteps {
         MarketplaceManageListingCall marketplaceManageListingCall = new MarketplaceManageListingCall();
         int taskId = marketplaceManageListingCall.getIdOfAsyncTaskForList(listingHrn, bearerToken);
         subscriptionId = marketplaceManageListingCall.getIdOfSubsFromAsyncTask(taskId, bearerToken);
-        marketplaceManageListingCall.waitForAsyncTask(taskId, bearerToken);
+        marketplaceManageListingCall.waitForAsyncTask(taskId, () -> bearerToken);
     }
 
     @Step("Create consent request by Data Consumer for {targetContainer.id} {vin}")
