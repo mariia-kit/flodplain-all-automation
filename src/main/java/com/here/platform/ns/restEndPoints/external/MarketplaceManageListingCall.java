@@ -4,6 +4,7 @@ import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.common.strings.SBB;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.resthelper.RestHelper;
@@ -11,6 +12,7 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Random;
+import java.util.function.Supplier;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
@@ -27,7 +29,7 @@ public class MarketplaceManageListingCall {
                 .get("resourceId").toString();
         int taskId = listing.getResponse().getBody().jsonPath()
                 .getInt("taskId");
-        waitForAsyncTask(taskId, "Bearer " + MP_PROVIDER.getUser().getToken());
+        waitForAsyncTask(taskId, () -> "Bearer " + MP_PROVIDER.getUser().getToken());
         String invite = inviteConsumer(hrn);
         inviteClicked(invite);
         return hrn;
@@ -38,7 +40,7 @@ public class MarketplaceManageListingCall {
         negotiate(subsId);
         ack_prov(subsId);
         int taskId = ack_cons(subsId);
-        waitForAsyncTask(taskId, MP_CONSUMER.getToken());
+        waitForAsyncTask(taskId, () -> "Bearer " + MP_CONSUMER.getToken());
         return subsId;
     }
 
@@ -273,13 +275,13 @@ public class MarketplaceManageListingCall {
         }
     }
 
-    public void waitForAsyncTask(int taskId, String token) {
+    public void waitForAsyncTask(int taskId, Supplier<String> token) {
         String url = baseMpUrl + "/tasks/" + taskId;
         int maxCount = 60;
         do {
             maxCount--;
             Response resp = RestHelper
-                    .get("Wait for asynk task to complete " + taskId, url, token);
+                    .get("Wait for asynk task to complete " + taskId, url, token.get());
             if (resp.getStatusCode() == HttpStatus.SC_OK) {
                 if (resp.jsonPath().getString("status").equals("SUCCESS")) {
                     return;
@@ -293,7 +295,9 @@ public class MarketplaceManageListingCall {
                     e.printStackTrace();
                 }
             } else {
-                throw new RuntimeException("Error waiting for MP async task " + taskId + " to complete!");
+                throw new RuntimeException(SBB.sbb("Error waiting for MP async task!").n()
+                        .append(resp.getStatusCode()).n()
+                        .append(resp.getBody().prettyPrint()).bld());
             }
         } while (maxCount > 1);
         throw new RuntimeException("Error waiting for MP async task " + taskId

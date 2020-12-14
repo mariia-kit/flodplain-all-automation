@@ -2,6 +2,7 @@ package com.here.platform.cm.bmw;
 
 
 import com.here.platform.cm.controllers.BMWController;
+import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ProviderApplications;
@@ -97,6 +98,8 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @DisplayName("Positive BMW flow of updating consent statuses for consent request with multiple VINs")
     void setClearanceStatusByBMWMultiple() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+        testContainer.setClientId(testContainer.getId());
+        new ReferenceProviderController().addContainer(new ConsentContainerToNsContainer(testContainer).nsContainer());
         crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
                 .getConsentRequestId();
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
@@ -145,6 +148,8 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
+        testContainer.setClientId(testContainer.getId());
+        new ReferenceProviderController().addContainer(new ConsentContainerToNsContainer(testContainer).nsContainer());
         crid = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(targetApp, testVin1, testContainer)
                 .getConsentRequestId();
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
