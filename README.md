@@ -1,6 +1,12 @@
 # Neutral Server All Automation project
 
-**It is a repository with automated tests for Neutral Server project.**
+### **It is a repository with automated tests for Neutral Server project.**
+
+- Neutral Server service
+- Consent Management rest-service
+- Consent Manager UI (Angular application) 
+
+**PRE SCRIPTORIUM:** Check and resolve all //TODO comments
 
 ### Tech stack:
 - Gradle 6.7
@@ -31,6 +37,7 @@
 
 
 #### Neutral Server project consists from (components):
+Architecture of the CM System - [confluence page](https://confluence.in.here.com/display/OLP/Consent+Management+architecture+overview)  
 - Neutral Server - Access BE, Provider BE;
 - Consent Management - CM service, Token-Refresher service, UI;
 - Chaincode - mediator API between CM and HL  

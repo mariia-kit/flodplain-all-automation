@@ -12,6 +12,7 @@ import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import io.qameta.allure.Issue;
+import io.qameta.allure.Issues;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 @UserAccount
 @Execution(ExecutionMode.SAME_THREAD)
-@DisplayName("User Account")
 public class UserAccountVINTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();
@@ -50,10 +50,10 @@ public class UserAccountVINTests extends BaseCMTest {
         }
     }
 
-    //todo implement test to check removing of consents for the VIN
+    //todo implement test to check removing of consents for the VIN removing end-point
 
     @Test
-    @DisplayName("Add VIN to the user")
+    @DisplayName("Positive flow of adding VIN to the user account")
     void addVinToUserTest() {
         var addVinsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
 
@@ -65,7 +65,7 @@ public class UserAccountVINTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Positive flow of attaching several VINs to the one User")
+    @DisplayName("Positive flow of adding several VINs to the one User")
     void addSeveralVINsToUserTest() {
         var firstAddVINsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         userVINsToRemove.add(dataSubject.getVin());
@@ -86,9 +86,8 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
-    @Issue("NS-1888")
-    @Issue("NS-3024")
-    @DisplayName("Forbidden to add one VIN for another user")
+    @Issues({@Issue("NS-1888"), @Issue("NS-3024")})
+    @DisplayName("Forbidden to add single VIN for several user accounts")
     void forbiddenToAddVINToAnotherUserTest() {
         var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
@@ -105,8 +104,8 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
-    @Issue("NS-3024")
-    @DisplayName("Forbidden to add one VIN for same user")
+    @Issues({@Issue("NS-1888"), @Issue("NS-3024")})
+    @DisplayName("Forbidden to add single VIN to the same user")
     void forbiddenToAddVINToSameUserTest() {
         var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
@@ -121,21 +120,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
-    @Issue("NS-1888")
-    @DisplayName("Add existent VIN for the user is forbidden")
-    void addExistentVINForUserTest() {
-        var firstAdd = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
-        new ResponseAssertion(firstAdd).statusCodeIsEqualTo(StatusCode.OK);
-
-        var addExistentVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
-        new ResponseAssertion(addExistentVINResponse)
-                .statusCodeIsEqualTo(StatusCode.CONFLICT)
-                .expectedErrorResponse(CMErrorResponse.ALREADY_EXIST_EXCEPTION);
-    }
-
-    @Test
-    @ErrorHandler
-    @DisplayName("Fail flow of adding VIN without Bearer token")
+    @DisplayName("Negative flow of adding VIN with empty Bearer token")
     void forbiddenToAddVINWithoutBearerTokenTest() {
         var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), "");
         new ResponseAssertion(addVINResponse)
@@ -145,7 +130,7 @@ public class UserAccountVINTests extends BaseCMTest {
 
     @Test
     @ErrorHandler
-    @DisplayName("VIN not found if twice remove the VIN")
+    @DisplayName("Negative flow: VIN not found response if twice remove the VIN")
     void VINNotFoundTest() {
         var removeVinResponse = userAccountController.deleteVINForUser(dataSubject.getVin(), privateBearer);
         new ResponseAssertion(removeVinResponse)

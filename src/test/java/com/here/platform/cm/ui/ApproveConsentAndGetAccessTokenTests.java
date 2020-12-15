@@ -21,7 +21,6 @@ import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
-import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
@@ -48,11 +47,12 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @BeforeEach
     void beforeEach() {
         hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
-        dataSubjectIm = new DataSubject();
-        dataSubjectIm.setEmail(hereUser.getEmail());
-        dataSubjectIm.setPass(hereUser.getPassword());
-        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
-        new HereUserManagerController().createHereUser(hereUser);
+        dataSubjectIm = new DataSubject(
+                hereUser.getEmail(),
+                hereUser.getPassword(),
+                VIN.generate(providerApplication.provider.vinLength)
+        );
+        hereUserManagerController.createHereUser(hereUser);
     }
 
     @AfterEach
@@ -61,13 +61,13 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
         AuthController.deleteToken(dataSubjectIm);
         if (hereUser != null) {
-            new HereUserManagerController().deleteHereUser(hereUser);
+            hereUserManagerController.deleteHereUser(hereUser);
         }
     }
 
 
     @Test
-    @DisplayName("E2E create approve consent and get access token")
+    @DisplayName("E2E success flow to approve consent request and get access token for one. Reference(ISO) provider")
     @Tag("dynamic_ui")
     void e2eTest() {
         var vin = dataSubjectIm.getVin();
@@ -76,7 +76,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(crid);
@@ -97,23 +97,24 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     }
 
     @Test
-    @DisplayName("E2E create approve consent and get access token Daimler")
+    @DisplayName("E2E success flow to approve consent request and get access token for one. Daimler(ISO) experimental provider")
     @Tag("dynamic_ui")
     void e2eTestDaimler() {
         var targetDaimlerDataSubject = DataSubjects.getNextBy18VINLength();
+        dataSubjectIm = targetDaimlerDataSubject.dataSubject;
         UserAccountSteps.removeVINFromDataSubject(targetDaimlerDataSubject);
+
         providerApplication = ProviderApplications.DAIMLER_CONS_1;
         testContainer = ConsentRequestContainers.generateNew(providerApplication.provider);
         testContainer.setClientId(Conf.cmUsers().getDaimlerApp().getClientId());
         testContainer.setClientSecret(Conf.cmUsers().getDaimlerApp().getClientSecret());
-        dataSubjectIm.setVin(targetDaimlerDataSubject.getVin()); //override Data Subject's VIN to remove after test
         var vin = dataSubjectIm.getVin();
         ConsentInfo consentRequest = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
         crid = consentRequest.getConsentRequestId();
 
         open(crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);
@@ -136,5 +137,11 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .bindAs(AccessTokenResponse.class);
     }
+
+    //todo automate test when the user has 1 consent request for his 2 cars
+
+    //todo automate following scenario, user has a car and consent request,
+    // but received a new consent request for another his car, onpen the second consent request and add new car
+    // to approve new one
 
 }

@@ -18,7 +18,6 @@ import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
-import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.helpers.authentication.AuthController;
@@ -36,23 +35,23 @@ import org.testcontainers.containers.BrowserWebDriverContainer;
 
 
 @UserAccount
-@DisplayName("User Account UI")
 public class UserAccountUITests extends BaseUITests {
 
     private final List<String> vinsToRemove = new ArrayList<>();
-    private ConsentInfo consentRequestInfo;
-    private String crid;
     HereUser hereUser = null;
     DataSubject dataSubjectIm;
+    private ConsentInfo consentRequestInfo;
+    private String crid;
 
     @BeforeEach
     void beforeEach() {
         hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
-        dataSubjectIm = new DataSubject();
-        dataSubjectIm.setEmail(hereUser.getEmail());
-        dataSubjectIm.setPass(hereUser.getPassword());
-        dataSubjectIm.setVin(VIN.generate(providerApplication.provider.vinLength));
-        new HereUserManagerController().createHereUser(hereUser);
+        dataSubjectIm = new DataSubject(
+                hereUser.getEmail(),
+                hereUser.getPassword(),
+                VIN.generate(providerApplication.provider.vinLength)
+        );
+        hereUserManagerController.createHereUser(hereUser);
     }
 
     @AfterEach
@@ -61,7 +60,7 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, privateBearer));
         AuthController.deleteToken(dataSubjectIm);
         if (hereUser != null) {
-            new HereUserManagerController().deleteHereUser(hereUser);
+            hereUserManagerController.deleteHereUser(hereUser);
         }
     }
 
@@ -77,7 +76,7 @@ public class UserAccountUITests extends BaseUITests {
 
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
@@ -88,7 +87,7 @@ public class UserAccountUITests extends BaseUITests {
         SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
 
         open(crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
 
     }
@@ -103,7 +102,7 @@ public class UserAccountUITests extends BaseUITests {
         vinsToRemove.add(dataSubjectIm.getVin());
 
         open(Configuration.baseUrl + crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
         String token = getUICmToken();
@@ -115,28 +114,26 @@ public class UserAccountUITests extends BaseUITests {
         restartBrowser();
 
         open(crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(secondVIN);
         consentRequestInfo.setVinLabel(new VIN(secondVIN).label());
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
-        new DashBoardPage()
-                .openDashboardNewTab()
-                .verifyConsentOfferTab(1, providerApplication.consumer, consentRequestInfo, dataSubjectIm.getVin(),
-                        PENDING)
-                .verifyConsentOfferTab(0, providerApplication.consumer, consentRequestInfo, secondVIN, PENDING);
+        DashBoardPage.header.openDashboardNewTab()
+                .verifyConsentOfferTab(1, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
+                .verifyConsentOfferTab(0, consentRequestInfo, secondVIN, PENDING);
     }
 
     @Test
-    @DisplayName("Open UI with vehicle already attached to account")
+    @DisplayName("Open Consent Manager as registered user with vehicle already attached to user")
     void openSecondTimeWithVehicleTest() {
         consentRequestInfo = ConsentRequestSteps
                 .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
         crid = consentRequestInfo.getConsentRequestId();
         vinsToRemove.add(dataSubjectIm.getVin());
 
-        open(Configuration.baseUrl + crid);
-        new LandingPage().isLoaded().signIn();
+        open(crid);
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
@@ -147,7 +144,7 @@ public class UserAccountUITests extends BaseUITests {
         restartBrowser();
 
         open(crid);
-        new LandingPage().isLoaded().signIn();
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
     }

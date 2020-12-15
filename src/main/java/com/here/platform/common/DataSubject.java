@@ -1,13 +1,18 @@
 package com.here.platform.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DataSubject {
 
-    String email;
-    String pass;
-    String vin;
+    public String
+            email,
+            pass,
+            vin;
 
 }

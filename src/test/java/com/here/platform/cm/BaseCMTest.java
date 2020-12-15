@@ -5,6 +5,7 @@ import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.ProvidersController;
 import com.here.platform.common.TestResultLoggerExtension;
+import com.here.platform.hereAccount.controllers.HereUserManagerController;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -21,11 +22,14 @@ public class BaseCMTest {
     static {
         //To run on specific environment CM tests use following "env" values: dev, sit, prod
         //System.setProperty("env", "dev");
+
+        //To run on pre-dev environment - dynamic environment for Consent Manager (helpful for debugging UI tests)
         //System.setProperty("dynamicUrl", "pre-dev-web-rest.consent.api.platform.in.here.com");
     }
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
     protected ProvidersController providerController = new ProvidersController();
+    protected final HereUserManagerController hereUserManagerController = new HereUserManagerController();
 
     @SneakyThrows
     protected static void fuSleep() {

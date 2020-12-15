@@ -17,7 +17,6 @@ import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
-import io.qameta.allure.TmsLink;
 import java.io.File;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -73,7 +72,6 @@ public class CreateConsentRequestsTests extends BaseCMTest {
 
     @Test
     @DisplayName("Verify Adding Vins To Empty ConsentRequest Via File")
-    @TmsLink("NS-1382")
     @Tag("fabric_test")
     void addVinsToEmptyConsentRequestViaFileTest() {
         var crid = createConsentRequestWith(testConsentRequest);
@@ -83,16 +81,13 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         File testFileWithVINs = new VinsToFile(testVin, testVin1).json();
         consentRequestRemoveExtension.vinToRemove(testVin, testVin1);
 
-        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
         consentRequestController
+                .withConsumerToken()
                 .addVinsToConsentRequest(crid, testFileWithVINs);
         fuSleep();
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
-                .approved(0)
                 .pending(2)
-                .revoked(0)
-                .expired(0)
-                .rejected(0);
+                .approved(0).revoked(0).expired(0).rejected(0);
 
         consentRequestController.withConsumerToken();
         var statusForConsentRequestByIdResponse = consentRequestController

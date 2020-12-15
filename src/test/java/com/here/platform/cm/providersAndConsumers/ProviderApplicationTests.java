@@ -16,8 +16,8 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Users;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
-import io.qameta.allure.TmsLink;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
+@Feature("On-boarding")
 public class ProviderApplicationTests extends BaseCMTest {
 
     private String
@@ -39,9 +40,8 @@ public class ProviderApplicationTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Onboard Data Provider Application")
+    @DisplayName("Verify successful Data Provider Application on-boarding")
     @Tag("smoke_cm")
-    @TmsLink("NS-2699")
     void onboardDataProviderApplicationTest() {
         var testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
         var targetConsumer = Users.MP_CONSUMER.getUser();
@@ -153,7 +153,7 @@ public class ProviderApplicationTests extends BaseCMTest {
 
     @Test
     @Sentry
-    @DisplayName("Is not possible to onboard Provider Application with invalid Authorization token value")
+    @DisplayName("Is not possible to onboard Provider Application with empty Authorization")
     void isNotPossibleToOnboardProviderApplicationWithInvalidAuthorizationTokenValue() {
         var onboardApplication = providerController
                 .withAuthorizationValue("")
@@ -161,6 +161,19 @@ public class ProviderApplicationTests extends BaseCMTest {
 
         new ResponseAssertion(onboardApplication)
                 .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
+    }
+
+    @Test
+    @Sentry
+    @DisplayName("Possible to onboard Provider Application with CM application token")
+    void possibleToOnboardProviderApplicationWithCMAuthorizationTokenValue() {
+        var onboardApplication = providerController
+                .withCMToken()
+                .onboardApplication(new ProviderApplication());
+
+        new ResponseAssertion(onboardApplication)
+                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
     }
 
 }

@@ -9,7 +9,6 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.rest.model.ErrorResponse;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("Update consent request")
 @UpdateConsentRequest
 public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
@@ -83,47 +81,45 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         var vinInUpperCaseButLastSymbol = VIN.generate(16) + "a";
         var validVIN = VIN.generate(17);
 
-        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
+        consentRequestController.withConsumerToken();
         var addVinsToConsentRequestResponse = consentRequestController
                 .addVinsToConsentRequest(crid, new VinsToFile(vinInLowerCase, vinInUpperCaseButLastSymbol).json());
 
-        Assertions.assertThat(addVinsToConsentRequestResponse.statusCode()).isEqualTo(StatusCode.BAD_REQUEST.code);
-        var actualErrorResponse = addVinsToConsentRequestResponse.as(ErrorResponse.class);
+        String cause = new ResponseAssertion(addVinsToConsentRequestResponse)
+                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                .expectedErrorResponse(CONSENT_REQUEST_UPDATE).getCause();
 
-        Assertions.assertThat(actualErrorResponse.getCode()).isEqualTo(CONSENT_REQUEST_UPDATE.getCode());
-        Assertions.assertThat(actualErrorResponse.getAction()).isEqualTo(CONSENT_REQUEST_UPDATE.getAction());
-        Assertions.assertThat(actualErrorResponse.getTitle()).isEqualTo(CONSENT_REQUEST_UPDATE.getTitle());
-        Assertions.assertThat(actualErrorResponse.getCause())
+        Assertions.assertThat(cause)
                 .contains(List.of(vinInLowerCase, vinInUpperCaseButLastSymbol))
                 .doesNotContain(validVIN);
     }
 
     @Test
-    @DisplayName("Verify Same VINs Ignored During Adding")
+    @DisplayName("Verify adding twice the same VINs are ignored")
     void addTheSameVINsIgnoredTest() {
         var validVINs = new String[]{VIN.generate(17), VIN.generate(17)};
-
         testFileWithVINs = new VinsToFile(validVINs).json();
-        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
-        var addVinsResponse = consentRequestController
-                .addVinsToConsentRequest(crid, testFileWithVINs);
-
-        Assertions.assertThat(addVinsResponse.statusCode()).isEqualTo(StatusCode.OK.code);
-
-        var secondAddVinsResponse = consentRequestController
-                .addVinsToConsentRequest(crid, testFileWithVINs);
-
-        Assertions.assertThat(secondAddVinsResponse.statusCode()).isEqualTo(StatusCode.OK.code);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
-                .approved(0)
                 .pending(2)
-                .revoked(0)
-                .expired(0)
-                .rejected(0);
+                .approved(0).revoked(0).expired(0).rejected(0);
 
         consentRequestController.withConsumerToken();
+        var addVinsResponse = consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
+        new ResponseAssertion(addVinsResponse)
+                .statusCodeIsEqualTo(StatusCode.OK);
+
         var statusForConsentRequestByIdResponse = consentRequestController
+                .getStatusForConsentRequestById(crid);
+        new ResponseAssertion(statusForConsentRequestByIdResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(expectedConsentRequestStatuses);
+
+        var secondAddVinsResponse = consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
+        new ResponseAssertion(secondAddVinsResponse)
+                .statusCodeIsEqualTo(StatusCode.OK);
+
+        statusForConsentRequestByIdResponse = consentRequestController
                 .getStatusForConsentRequestById(crid);
         new ResponseAssertion(statusForConsentRequestByIdResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -132,13 +128,13 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
 
     @Test
     @Issue("NS-2802")
-    @DisplayName("Add duplicated VINs in single file")
+    @DisplayName("Verify adding duplicated VINs in a single file will be ignored")
     void duplicatedVINsTest() {
-        var testVin = VIN.generate(17);
-        var targetVINsWithDuplication = new String[]{VIN.generate(17), testVin, testVin};
+        var duplicatedVin = VIN.generate(17);
+        var targetVINsWithDuplication = new String[]{VIN.generate(17), duplicatedVin, duplicatedVin};
         testFileWithVINs = new VinsToFile(targetVINsWithDuplication).json();
 
-        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
+        consentRequestController.withConsumerToken();
         var addVinsResponse = consentRequestController
                 .addVinsToConsentRequest(crid, testFileWithVINs);
 
@@ -150,11 +146,8 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(
                         new ConsentRequestStatus()
-                                .approved(0)
                                 .pending(targetVINsWithDuplication.length - 1)
-                                .revoked(0)
-                                .expired(0)
-                                .rejected(0)
+                                .approved(0).revoked(0).expired(0).rejected(0)
                 );
     }
 

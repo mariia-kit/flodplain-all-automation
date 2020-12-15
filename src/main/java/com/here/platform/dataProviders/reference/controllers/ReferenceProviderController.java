@@ -27,7 +27,7 @@ public class ReferenceProviderController {
         return baseService;
     }
 
-    @Step
+    @Step("Get clearance ID by VIN and container ID from Reference provider")
     public Response getClearanceByVinAndContainerId(String vin, String bmwContainerName) {
         return referenceProviderClient("/admin")
                 .get("/clearance/container/{containerId}/vehicles/{vehicleId}", bmwContainerName, vin);
@@ -84,7 +84,6 @@ public class ReferenceProviderController {
                 .post("/containers");
     }
 
-    @Step("Read {key} entity.")
     public Response readSyncEntity(String key) {
         return referenceProviderClient("/sync")
                 .get("/entity/" + key);
@@ -96,7 +95,6 @@ public class ReferenceProviderController {
                 .get("/now");
     }
 
-    @Step("Sync {key} entity.")
     public Response writeSyncEntity(String key, String value, long expirationTime) {
         return referenceProviderClient("/sync")
                 .param("key", key)
@@ -105,25 +103,21 @@ public class ReferenceProviderController {
                 .post("/entity");
     }
 
-    @Step
     public Response unlockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/unlock/{key}", key);
     }
 
-    @Step
     public Response lockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/lock/{key}", key);
     }
 
-    @Step("Delete {key} entity.")
     public Response deleteSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .delete("/entity/{key}", key);
     }
 
-    @Step("Get all entities.")
     public Response getAllEntities() {
         return referenceProviderClient("/sync")
                 .get("/entity");

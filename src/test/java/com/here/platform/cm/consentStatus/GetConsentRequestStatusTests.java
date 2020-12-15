@@ -1,6 +1,8 @@
 package com.here.platform.cm.consentStatus;
 
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
@@ -10,19 +12,15 @@ import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import com.here.platform.ns.dto.User;
-import com.here.platform.ns.dto.Users;
 import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("Get consent request status")
 @GetConsentRequestStatus
 public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
 
-    private final User mpConsumer = Users.MP_CONSUMER.getUser();
     private String crid;
 
     @AfterEach
@@ -33,7 +31,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
     }
 
     @Test
-    @DisplayName("Verify Set Consent Status For Non Existent Consent Request Id")
+    @DisplayName("Verify get Consent request status for absent Consent request")
     void getConsentStatusForNonExistentConsentRequestIdTest() {
         consentRequestController.withConsumerToken();
         var actualResponse = consentRequestController
@@ -42,34 +40,30 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
         new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(new ConsentRequestStatus()
-                        .approved(0)
-                        .pending(0)
-                        .revoked(0)
-                        .expired(0)
-                        .rejected(0)
+                        .approved(0).pending(0).revoked(0).expired(0).rejected(0)
                 );
     }
 
     @Test
     @Sentry
-    @DisplayName("Verify Sentry Block Getting ConsentRequest Statuses")
+    @DisplayName("Verify sentry block fetting Consent request status with empty Authorization token")
     void sentryBlockGettingConsentRequestStatusesTest() {
         consentRequestController.clearBearerToken();
         var actualResponse = consentRequestController
-                .getStatusForConsentRequestById("not_found" + crypto.sha512());
+                .getStatusForConsentRequestById(sbb("not_found").append(crypto.sha512()).bld());
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
     }
 
     @Test
-    @DisplayName("Verify Get ConsentRequest In All Statuses")
+    @DisplayName("Verify get Consent request in all statuses")
     void getConsentRequestInAllStatusesTest() {
         String vinToApprove = testVin,
                 vinToRevoke = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin(),
                 vinToPending = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
 
         crid = createValidConsentRequest();
-        consentRequestController.withAuthorizationValue(mpConsumer.getToken());
+        consentRequestController.withConsumerToken();
         testFileWithVINs = new VinsToFile(testVin, vinToRevoke, vinToPending).csv();
         consentRequestController
                 .addVinsToConsentRequest(crid, new VinsToFile(testVin, vinToRevoke, vinToPending).csv());

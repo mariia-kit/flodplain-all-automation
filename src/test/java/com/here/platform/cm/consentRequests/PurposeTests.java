@@ -10,6 +10,7 @@ import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestPurposeData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.annotations.CMFeatures.Purpose;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 
+@Purpose
+@DisplayName("Purpose for consent request")
 public class PurposeTests extends BaseCMTest {
 
     @Test
@@ -58,7 +61,8 @@ public class PurposeTests extends BaseCMTest {
     }
 
     @Nested
-    @DisplayName("Get consent request purpose")
+    @Purpose
+    @DisplayName("Purpose for consent request")
     public class ConsentRequestPurpose {
 
         private final String privateBearer = DataSubjects.getNextBy18VINLength().getBearerToken();
@@ -79,7 +83,7 @@ public class PurposeTests extends BaseCMTest {
         private String crid;
 
         @BeforeEach
-        void beforeEach() {
+        void createConsentRequestBeforeTest() {
             consentRequestController.withConsumerToken();
             var consentRequest = consentRequestController.createConsentRequest(targetConsentRequest);
             crid = new ResponseAssertion(consentRequest)

@@ -10,13 +10,11 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.OnBoardConsumer;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import io.qameta.allure.TmsLink;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("On-board data consumer")
 @OnBoardConsumer
 class ConsumersTests extends BaseCMTest {
 
@@ -24,9 +22,8 @@ class ConsumersTests extends BaseCMTest {
     private final Consumer testConsumer = new Consumer().consumerId(crypto.md5()).consumerName(crypto.md5());
 
     @Test
-    @TmsLink("NS-2694")
     @Tag("smoke_cm")
-    @DisplayName("Onboard Data Consumer")
+    @DisplayName("Verify success on-boarding of a Data Consumer")
     void onboardDataConsumer() {
         var actualOnboardResponse = consumerController
                 .withConsumerToken()
@@ -62,7 +59,7 @@ class ConsumersTests extends BaseCMTest {
 
     @Test
     @Sentry
-    @DisplayName("Possible to onboard consumer with application token")
+    @DisplayName("Possible to onboard consumer with CM Application token")
     void possibleToOnboardConsumerWithApplicationToken() {
         var actualOnboardResponse = consumerController
                 .withCMToken()
@@ -73,18 +70,17 @@ class ConsumersTests extends BaseCMTest {
 
     @Test
     @Sentry
-    @DisplayName("Is not possible to onboard consumer with invalid Authorization token")
+    @DisplayName("Is not possible to onboard consumer without Authorization token")
     void isNotPossibleToOnboardConsumerWithInvalidAuthorizationToken() {
         var actualOnboardResponse = consumerController
                 .onboardDataConsumer(testConsumer);
 
         new ResponseAssertion(actualOnboardResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
-        testConsumer.consumerId(null);
     }
 
     @Test
     @Sentry
-    @DisplayName("Is not possible to onboard consumer with invalid Authorization token")
+    @DisplayName("Is not possible to onboard consumer with empty Authorization token")
     void isNotPossibleToOnboardConsumerWithInvalidAuthorizatinToken() {
         var actualOnboardResponse = consumerController
                 .withAuthorizationValue("")

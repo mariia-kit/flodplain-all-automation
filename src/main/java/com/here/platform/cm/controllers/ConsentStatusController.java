@@ -52,6 +52,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
         private Integer page = 0, pageSize = 10000;
         private StateEnum stateEnum;
 
+        //todo automate all related requests with this component
         public Map<String, String> toMap() {
             return Map.of("page", page.toString(), "pageSize", pageSize.toString(), "state", stateEnum.getValue());
         }

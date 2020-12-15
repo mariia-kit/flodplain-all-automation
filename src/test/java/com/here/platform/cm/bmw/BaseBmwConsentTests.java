@@ -65,7 +65,7 @@ public class BaseBmwConsentTests extends BaseCMTest {
         return crid;
     }
 
-    protected void waitForAsyncBMWReqwest(String asyncId) {
+    protected void waitForAsyncBMWRequest(String asyncId) {
         int maxCount = 10;
         while (maxCount > 0) {
             maxCount--;

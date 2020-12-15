@@ -31,11 +31,10 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
     private final List<String> cridsToRemove = new ArrayList<>();
     private NewConsent consentToApprove;
-    private String crid;
 
     @BeforeEach
     void createAndApproveConsent() {
-        crid = createValidConsentRequest();
+        var crid = createValidConsentRequest();
         cridsToRemove.add(crid);
         var validRefToken = ReferenceTokenController
                 .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
@@ -44,7 +43,6 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                 .consentRequestId(crid)
                 .authorizationCode(validRefToken)
                 .build();
-
     }
 
     @AfterEach
@@ -91,7 +89,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
                 );
     }
 
-    //@Test
+    //@Test //todo why commented?
     @DisplayName("Approve consent with max pending list of consents")
     void approveConsentWithMaxPendingListConsentsTest() {
         testContainer = ConsentRequestContainers.getById(targetApp.provider.getName()).getConsentContainer();

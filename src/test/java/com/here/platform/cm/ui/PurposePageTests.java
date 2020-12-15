@@ -11,6 +11,7 @@ import com.here.platform.cm.pages.PurposePage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
+import com.here.platform.common.annotations.CMFeatures.Purpose;
 import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
@@ -22,20 +23,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 
-@DisplayName("Purpose page")
+@Purpose
+@DisplayName("Purpose for consent request")
 public class PurposePageTests extends BaseUITests {
 
     private final ProviderApplications providerApplicationForPurpose = ProviderApplications.DAIMLER_CONS_1;
     private final ConsentRequestContainer generatedContainerForPurpose =
             ConsentRequestContainers.generateNew(providerApplicationForPurpose.provider);
+    private final PurposePage purposePage = new PurposePage();
+
     @RegisterExtension
     ConsentRequestCascadeRemoveExtension cascadeRemoveExtension = new ConsentRequestCascadeRemoveExtension();
+
     private DataSubjects registeredDataSubject;
     private ConsentInfo testConsentRequest;
-    private PurposePage purposePage = new PurposePage();
 
     @BeforeEach
-    void beforeEach() {
+    void createConsentRequestAndPrepareUser() {
         registeredDataSubject = DataSubjects.getNextBy18VINLength();
 
         UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
@@ -59,14 +63,14 @@ public class PurposePageTests extends BaseUITests {
     }
 
     @AfterEach
-    void afterEach() {
+    void cleanUpUser() {
         AuthController.deleteToken(registeredDataSubject.dataSubject);
         UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
     }
 
 
     @Test
-    @DisplayName("Verify Purpose page for registeredAccount")
+    @DisplayName("Verify Purpose page for registered account")
     void verifyPurposePageTest() {
         open(ConsentPageUrl.getStaticPurposePageLinkFor(
                 providerApplicationForPurpose.consumer.getRealm(),
