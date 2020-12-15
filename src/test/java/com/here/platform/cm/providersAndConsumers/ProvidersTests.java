@@ -1,5 +1,7 @@
 package com.here.platform.cm.providersAndConsumers;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
@@ -14,7 +16,6 @@ import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
-import io.qameta.allure.TmsLink;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 
-@DisplayName("On-board data provider")
 @OnBoardProvider
 class ProvidersTests extends BaseCMTest {
 
@@ -31,14 +31,14 @@ class ProvidersTests extends BaseCMTest {
     private final ConsentRequestData testConsentRequest = new ConsentRequestData()
             .consumerId(crypto.sha1())
             .providerId(testContainer.provider.getName())
-            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
+            .title(sbb(Conf.cm().getQaTestDataMarker()).append(faker.gameOfThrones().quote()).bld())
             .purpose(faker.commerce().productName())
             .privacyPolicy(faker.internet().url())
             .containerId(testContainer.id);
 
     @Test
     @Tag("smoke_cm")
-    @DisplayName("Onboard Data Provider")
+    @DisplayName("Verify success on-boarding of a Data Provider")
     void onboardDataProvider() {
         var testDataProvider = new Provider()
                 .name(faker.commerce().department())
@@ -71,6 +71,7 @@ class ProvidersTests extends BaseCMTest {
     }
 
     @Nested
+    @DisplayName("Redirect to data provider OAUTH")
     public class RedirectDataProvider {
 
         @RegisterExtension
@@ -81,8 +82,7 @@ class ProvidersTests extends BaseCMTest {
         ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
 
         @Test
-        @DisplayName("Verify Data Provider redirect")
-        @TmsLink("NS-1377")
+        @DisplayName("Verify redirect to the Data Provider OAUTH")
         void dataProviderRedirectTest() {
             var consentRequestResponse = consentRequestController
                     .withConsumerToken()

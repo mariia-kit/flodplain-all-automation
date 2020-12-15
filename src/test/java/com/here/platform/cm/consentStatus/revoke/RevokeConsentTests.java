@@ -1,6 +1,7 @@
-package com.here.platform.cm.consentStatus;
+package com.here.platform.cm.consentStatus.revoke;
 
 
+import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;

@@ -24,10 +24,11 @@ public class FakeHEREAccountSetupExtension implements BeforeEachCallback, AfterE
      * Init data subject with HERE user account credentials And set specific VIN for DataSubject
      */
     public DataSubject getFakeDataSubjectWithVIN(String targetVIN) {
-        this.fakeDataSubject = new DataSubject();
-        this.fakeDataSubject.setEmail(this.fakeHEREUSer.getEmail());
-        this.fakeDataSubject.setPass(this.fakeHEREUSer.getPassword());
-        this.fakeDataSubject.setVin(targetVIN);
+        this.fakeDataSubject = new DataSubject(
+                this.fakeHEREUSer.getEmail(),
+                this.fakeHEREUSer.getPassword(),
+                targetVIN
+        );
         return fakeDataSubject;
     }
 

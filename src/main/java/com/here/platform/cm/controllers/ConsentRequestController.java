@@ -2,10 +2,10 @@ package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.ns.dto.User;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import java.io.File;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +15,15 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
 
     private final String consentRequestBasePath = "/consentRequests";
 
+    private RequestSpecification vinMultipartSpec(File fileWithVins) {
+        return consentServiceClient(consentRequestBasePath)
+                .contentType("multipart/form-data")
+                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins));
+    }
+
     @Step("Create consent request with: {consentRequestBody}")
     public Response createConsentRequest(ConsentRequestData consentRequestBody) {
-        Response response = consentServiceClient(consentRequestBasePath)
+        var response = consentServiceClient(consentRequestBasePath)
                 .body(consentRequestBody)
                 .post();
         if (response.getStatusCode() == StatusCode.CREATED.code) {
@@ -39,66 +45,21 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     }
 
     @Step("Add VINs to Consent Request by ID: {consentRequestId}")
-    @SneakyThrows
-    public Response addVinsToConsentRequest(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
+    public Response addVinsToConsentRequest(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
                 .put("/{consentRequestId}/addDataSubjects", consentRequestId);
     }
 
-    @Step("Asynchronously add VINs to Consent Request by ID: {consentRequestId}")
-    @SneakyThrows
-    public Response addVinsToConsentRequestAsync(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
-                .put("/{consentRequestId}/addDataSubjectsAsync", consentRequestId);
-    }
-
     @Step("Remove VINs from Consent Request by ID: {consentRequestId}")
-    public Response removeVinsFromConsentRequest(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
+    public Response removeVinsFromConsentRequest(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
                 .put("/{consentRequestId}/removeDataSubjectsExceptApproved", consentRequestId);
     }
 
-    @Step("ASYNC Remove VINs from consent request for id: '{consentRequestId}'")
-    public Response removeVinsFromConsentRequestAsync(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
-                .put("/{consentRequestId}/removeNonApprovedVINsAsync", consentRequestId);
-    }
-
     @Step("Force remove VINs from consent request for id: '{consentRequestId}'")
-    public Response forceRemoveVinsFromConsentRequest(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
+    public Response forceRemoveVinsFromConsentRequest(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
                 .put("/{consentRequestId}/removeAllDataSubjects", consentRequestId);
-    }
-
-    @Step("ASYNC Force remove VINs from consent request for id: '{consentRequestId}'")
-    public Response forceRemoveVinsFromConsentRequestAsync(String consentRequestId, File fileWithVins) {
-        return consentServiceClient(consentRequestBasePath)
-                .contentType("multipart/form-data")
-                .multiPart("vins", fileWithVins, getContentTypeByFile(fileWithVins))
-                //.header("Authorization", consumerBearerToken)
-                .put("/{consentRequestId}/removeAllDataSubjectsAsync", consentRequestId);
-    }
-
-    @Step("ASYNC Get consent request update info for Update info ID: '{asyncUpdateInfoId}'")
-    public Response getConsentRequestAsyncUpdateInfo(String asyncUpdateInfoId) {
-        return consentServiceClient(StringUtils.EMPTY)
-                //.header("Authorization", consumerBearerToken)
-                .get("/consentRequestAsyncUpdateInfo/{asyncUpdateInfoId}", asyncUpdateInfoId);
     }
 
     @Step("Get consent request purpose for id: '{consentRequestId}'")
@@ -119,6 +80,36 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .get("/purpose");
     }
 
+    @Step("ASYNC add VINs to Consent Request by ID: {consentRequestId}")
+    @SneakyThrows
+    public Response addVinsToConsentRequestAsync(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
+                .put("/{consentRequestId}/addDataSubjectsAsync", consentRequestId);
+    }
+
+    @Step("ASYNC Remove VINs from consent request for id: '{consentRequestId}'")
+    public Response removeVinsFromConsentRequestAsync(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
+                .put("/{consentRequestId}/removeNonApprovedVINsAsync", consentRequestId);
+    }
+
+    @Step("ASYNC Force remove VINs from consent request for id: '{consentRequestId}'")
+    public Response forceRemoveVinsFromConsentRequestAsync(String consentRequestId, File fileWithVINs) {
+        return vinMultipartSpec(fileWithVINs)
+                .put("/{consentRequestId}/removeAllDataSubjectsAsync", consentRequestId);
+    }
+
+    @Step("ASYNC Get consent request update info for Update info ID: '{asyncUpdateInfoId}'")
+    public Response getConsentRequestAsyncUpdateInfo(String asyncUpdateInfoId) {
+        return consentServiceClient(StringUtils.EMPTY)
+                .get("/consentRequestAsyncUpdateInfo/{asyncUpdateInfoId}", asyncUpdateInfoId);
+    }
+
+    /**
+     * See the progress for NS-2950, possible that will be updated implementation for this request,
+     * When will implemented consent request deletion or deactivation by the Data Consumer/Provider
+     * on 'Cancel subscription' from MP.
+     */
     @Step
     public Response deleteConsentRequest(final String consentRequestId) {
         return consentServiceClient(consentRequestBasePath)

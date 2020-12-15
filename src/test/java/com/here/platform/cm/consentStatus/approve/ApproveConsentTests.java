@@ -91,15 +91,15 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .revoked(0)
                 .expired(0)
                 .rejected(0);
-        consentRequestController.withConsumerToken();
         final var actualStatusesForConsent = consentRequestController
+                .withConsumerToken()
                 .getStatusForConsentRequestById(consentToApprove.getConsentRequestId());
 
         new ResponseAssertion(actualStatusesForConsent).responseIsEqualToObject(expectedStatusesForConsent);
     }
 
     @Test
-    @DisplayName("Verify It Is Not Possible To Approve Consent That Does Not Exist")
+    @DisplayName("Verify it is not possible to approve absent consent")
     void isNotPossibleToApproveConsentThatDoesNotExistTest() {
         var randomConsentRequestId = crypto.sha256();
         final var consentToApprove = NewConsent.builder()
@@ -133,7 +133,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
 
     @Test
     @ErrorHandler
-    @DisplayName("Verify Approve with Empty Consent for ConsentRequest")
+    @DisplayName("Verify approve consent with empty Consent body")
     void approveConsentErrorHandlerTest() {
         var approveResponse = consentStatusController
                 .withConsumerToken()
@@ -146,7 +146,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
 
     @Test
     @Sentry
-    @DisplayName("Verify Sentry Block Approve ConsentRequest")
+    @DisplayName("Verify sentry is blocking consent approval with empty CM application token")
     void sentryBlockApproveConsentRequestTest() {
         crid = createValidConsentRequest();
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin);

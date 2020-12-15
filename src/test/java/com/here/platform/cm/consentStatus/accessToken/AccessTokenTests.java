@@ -1,7 +1,8 @@
-package com.here.platform.cm.consentStatus;
+package com.here.platform.cm.consentStatus.accessToken;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 
-@DisplayName("Getting of access tokens for consents")
 @GetAccessToken
 class AccessTokenTests extends BaseConsentStatusTests {
 
@@ -69,7 +69,6 @@ class AccessTokenTests extends BaseConsentStatusTests {
 
     @Nested
     @GetAccessToken
-    @DisplayName("Getting of access tokens for consents")
     public class ApprovedAccessTokens {
 
         @Test
@@ -79,8 +78,8 @@ class AccessTokenTests extends BaseConsentStatusTests {
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
             fuSleep();
-            accessTokenController.withConsumerToken();
             final var actualResponse = accessTokenController
+                    .withConsumerToken()
                     .getAccessToken(crid, testVin, testConsumerId);
             var accessTokenResponse = new ResponseAssertion(actualResponse)
                     .statusCodeIsEqualTo(StatusCode.OK)
@@ -90,7 +89,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         }
 
         @Test
-        @DisplayName("Verify It Is Not Possible To Get Access Token With Invalid ConsumerId")
+        @DisplayName("Verify it is not possible to get Access Token with invalid ConsumerId")
         void isNotPossibleToGetAccessTokenWithInvalidConsumerIdTest() {
             ConsentFlowSteps.approveConsentForVIN(crid, testContainer, testVin);
 
@@ -106,7 +105,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         }
 
         @Test
-        @DisplayName("Verify It Is Possible To Approve Two Consents For Single Vin")
+        @DisplayName("Verify it is possible to approve two consents for single VIN")
         void approveTwoConsentsForSingleVinTest() {
             ConsentRequestContainer container2 = ConsentRequestContainers
                     .generateNew(ProviderApplications.REFERENCE_CONS_1.provider);

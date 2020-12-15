@@ -2,6 +2,7 @@ package com.here.platform.cm.enums;
 
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_ID;
 import static com.here.platform.cm.enums.ConsentRequestContainers.RealDaimlerApplication.CLIENT_SECRET;
+import static com.here.platform.common.strings.SBB.sbb;
 
 import com.github.javafaker.Faker;
 import com.here.platform.common.config.Conf;
@@ -204,7 +205,7 @@ public enum ConsentRequestContainers {
 
     public static ConsentRequestContainer generateNew(MPProviders targetProvider) {
         Container container = Containers.generateNew(targetProvider.getName())
-                .withDescription(Conf.cm().getQaTestDataMarker() + "cm_automated_container");
+                .withDescription(sbb(Conf.cm().getQaTestDataMarker()).append("cm_automated_container").bld());
         return ConsentRequestContainer.builder()
                 .id(container.getId())
                 .name(container.getName())

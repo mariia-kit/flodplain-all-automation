@@ -1,21 +1,25 @@
 package com.here.platform.common.syncpoint;
 
-import com.here.platform.common.strings.SBB;
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import io.restassured.response.Response;
 import java.util.Arrays;
 import java.util.List;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 
 
+@UtilityClass
 public class SyncPointIO {
 
+    private final ReferenceProviderController referenceProviderController = new ReferenceProviderController();
+
     @SneakyThrows
-    public static String readSyncToken(String key) {
+    public String readSyncToken(String key) {
         SyncEntity record;
-        ReferenceProviderController referenceProviderController = new ReferenceProviderController();
         Response getResp = referenceProviderController.readSyncEntity(key);
 
         if (getResp.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
@@ -28,7 +32,7 @@ public class SyncPointIO {
             lock(key);
             return StringUtils.EMPTY;
         } else {
-            throw new RuntimeException(SBB.sbb()
+            throw new RuntimeException(sbb()
                     .append("Error reading sync entity fro server:").w()
                     .append(getResp.getStatusCode()).w()
                     .append(getResp.body().print()).build());
@@ -44,38 +48,38 @@ public class SyncPointIO {
         return record.getValue();
     }
 
-    public static void writeNewTokenValue(String key, String value, long expirationTime) {
-        new ReferenceProviderController().writeSyncEntity(key, value, expirationTime);
+    public void writeNewTokenValue(String key, String value, long expirationTime) {
+        referenceProviderController.writeSyncEntity(key, value, expirationTime);
     }
 
-    public static List<SyncEntity> getAllEtityes() {
-        return Arrays.asList(new ReferenceProviderController().getAllEntities().then().extract().as(SyncEntity[].class));
+    public List<SyncEntity> getAllEtityes() {
+        return Arrays.asList(referenceProviderController.getAllEntities().as(SyncEntity[].class));
     }
 
-    public static void deleteEntity(String key) {
-        new ReferenceProviderController().deleteSyncEtity(key);
+    public void deleteEntity(String key) {
+        referenceProviderController.deleteSyncEtity(key);
     }
 
     @SneakyThrows
-    private static SyncEntity waitForUnLock(String key) {
-        ReferenceProviderController referenceProviderController = new ReferenceProviderController();
-        int max = 10;
-        while(max > 0) {
+    private SyncEntity waitForUnLock(String key) {
+        int maxTimesToWait = 10;
+        while (maxTimesToWait > 0) {
             Thread.sleep(3000);
-            max--;
-            SyncEntity record = referenceProviderController.readSyncEntity(key).then().extract().as(SyncEntity.class);
+            maxTimesToWait--;
+            SyncEntity record = referenceProviderController.readSyncEntity(key).as(SyncEntity.class);
             if (!record.isLocked()) {
                 return record;
             }
         }
-        throw new RuntimeException("Failed to wait for Sync to unlock:" + key);
+        throw new RuntimeException(sbb("Failed to wait for Sync to unlock:").append(key).bld());
     }
 
-    public static void unlock(String key) {
-        new ReferenceProviderController().unlockSyncEtity(key);
+    public void unlock(String key) {
+        referenceProviderController.unlockSyncEtity(key);
     }
 
-    public static void lock(String key) {
-        new ReferenceProviderController().lockSyncEtity(key);
+    public void lock(String key) {
+        referenceProviderController.lockSyncEtity(key);
     }
+
 }

@@ -1,7 +1,8 @@
-package com.here.platform.cm.consentStatus;
+package com.here.platform.cm.consentStatus.revoke;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.common.ResponseAssertion;

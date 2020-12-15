@@ -15,7 +15,6 @@ import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.config.Conf;
 import io.qameta.allure.Issue;
-import io.qameta.allure.TmsLink;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -78,7 +77,6 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @Test
     @ErrorHandler
     @DisplayName("Verify Create Empty ConsentRequest is forbidden")
-    @TmsLink("NS-1350")
     void createEmptyConsentRequestTest() {
         consentRequestController.withConsumerToken();
         final var actualCreateConsentRequestResponse = consentRequestController

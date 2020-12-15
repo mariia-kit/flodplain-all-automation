@@ -8,20 +8,17 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@Issue("OLPPORT-2678")
-@DisplayName("User Account")
 public class UserAccountTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();
 
     @Test
-    @DisplayName("Get registered user account data")
+    @DisplayName("Get user account data for already registered HERE Account")
     void getUserAccountTest() {
         var dataSubject = DataSubjects.getNextBy18VINLength();
         var privateBearer = dataSubject.getBearerToken();

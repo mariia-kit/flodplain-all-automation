@@ -50,6 +50,7 @@ public class SBB {
 
     /**
      * append as single quoted value
+     *
      * @return 'targetPlainText'
      */
     public SBB sQuoted(Object targetPlainText) {
@@ -58,10 +59,15 @@ public class SBB {
 
     /**
      * append as double quoted value
+     *
      * @return "targetPlainText"
      */
     public SBB dQuote(Object targetPlainText) {
         return this.append("\"").append(targetPlainText).append("\"");
+    }
+
+    public SBB slash() {
+        return this.append("/");
     }
 
     public String build() {

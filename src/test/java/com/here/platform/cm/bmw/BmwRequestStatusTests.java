@@ -16,6 +16,7 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.ASYNC;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.dto.Users;
@@ -144,6 +145,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     }
 
     @Test
+    @ASYNC
     @DisplayName("Async Verify adding vins to Consent request for BMW")
     void addVinsToConsentRequestTestAsyncBMW() {
         ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
@@ -167,7 +169,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
                 .startsWith(ConsentManagementServiceUrl.getEnvUrl() + consentRequestAsyncUpdateInfo);
         String asyncId = StringUtils.substringAfter(updateInfoUrl, consentRequestAsyncUpdateInfo);
 
-        waitForAsyncBMWReqwest(asyncId);
+        waitForAsyncBMWRequest(asyncId);
         new ResponseAssertion(consentRequestController.getConsentRequestAsyncUpdateInfo(asyncId))
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()

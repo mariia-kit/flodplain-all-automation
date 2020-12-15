@@ -22,6 +22,7 @@ import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.annotations.CMFeatures.ASYNC;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
@@ -92,7 +93,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     //todo add test for 2mb file
 
     @Test
-    //@Disabled("cos of removing VINs is not working fine for this test")
+    @ASYNC
     @DisplayName("Verify Adding Vins To ConsentRequest Async")
     void addVinsToConsentRequestTestAsync() {
         testFileWithVINs = new VinsToFile(vin1).json();
@@ -134,6 +135,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     }
 
     @Test
+    @ASYNC
     @DisplayName("Force remove approved consents from consent request Async")
     void forceRemoveApprovedDataSubjectsTestAsync() {
         var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
@@ -182,7 +184,8 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     }
 
     @Test
-    @DisplayName("Verify Remove Vins From ConsentRequest Async")
+    @ASYNC
+    @DisplayName("Verify removing VINs from the consent request Asynchronously")
     void removeVinsFromConsentRequestTestAsync() {
         var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
         testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
@@ -246,6 +249,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     }
 
     @Test
+    @ASYNC
     @DisplayName("Verify error of getConsentRequestAsyncUpdateInfo not exist")
     void getConsentRequestAsyncUpdateInfoNotFound() {
         crid = null;

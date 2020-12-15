@@ -1,5 +1,6 @@
-package com.here.platform.cm.consentStatus;
+package com.here.platform.cm.consentStatus.accessToken;
 
+import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;

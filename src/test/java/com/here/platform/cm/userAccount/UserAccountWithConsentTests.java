@@ -33,7 +33,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 @UserAccount
 @Execution(ExecutionMode.SAME_THREAD)
-@DisplayName("User Account")
 public class UserAccountWithConsentTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();
