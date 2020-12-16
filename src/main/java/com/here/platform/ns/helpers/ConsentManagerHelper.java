@@ -1,6 +1,8 @@
 package com.here.platform.ns.helpers;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController.ReferenceToken;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
@@ -11,6 +13,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
@@ -78,6 +81,19 @@ public class ConsentManagerHelper {
                 Assertions.assertEquals(HttpStatus.SC_OK, res.getStatusCode(),
                         "Error during approve of consent " + consentRequestId + " for vin " + vin);
             });
+        }
+        return this;
+    }
+
+    public ConsentManagerHelper updateTokenToExpire() {
+        if (!Conf.ns().isConsentMock()) {
+            ReferenceToken[] tokens = new ReferenceProviderController().getTokens().as(ReferenceToken[].class);
+            ReferenceToken targetToken = Stream.of(tokens)
+                    .filter(token -> token.getScope().contains(container.getId()))
+                    .findAny()
+                    .orElseThrow(() -> new RuntimeException("No reference token for container detected:" + container.getId()));
+            targetToken.setExpiresIn(1);
+            new ReferenceProviderController().addToken(targetToken);
         }
         return this;
     }

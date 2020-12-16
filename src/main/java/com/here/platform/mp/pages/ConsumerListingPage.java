@@ -43,7 +43,7 @@ public class ConsumerListingPage extends BaseMPPage {
     }
 
     public ConsumerListingPage confirmSubscriptionActivation() {
-        $(dataTest("listing-wizard-confirm-subscription-cancel")).click();
+        $(dataTest("listing-wizard-confirm-subscription-confirm")).click();
         return this;
     }
 

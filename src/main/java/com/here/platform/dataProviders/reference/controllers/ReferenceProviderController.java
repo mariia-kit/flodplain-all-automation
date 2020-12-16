@@ -3,6 +3,8 @@ package com.here.platform.dataProviders.reference.controllers;
 import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
@@ -60,8 +62,23 @@ public class ReferenceProviderController {
     public Response addToken(String vinNumber, String token, String refreshToken, String scope) {
         return referenceProviderClient("/admin")
                 .header("Content-Type", "application/json")
-                .body(new ReferenceToken(token, refreshToken, 0, vinNumber, scope))
+                .body(new ReferenceToken(null, token, refreshToken, 0, 0, vinNumber, scope))
                 .post("/tokens");
+    }
+
+    @Step
+    public Response addToken(ReferenceToken token) {
+        return referenceProviderClient("/admin")
+                .header("Content-Type", "application/json")
+                .body(token)
+                .post("/tokens");
+    }
+
+    @Step
+    public Response getTokens() {
+        return referenceProviderClient("/admin")
+                .header("Content-Type", "application/json")
+                .get("/tokens");
     }
 
     @Step
@@ -125,7 +142,11 @@ public class ReferenceProviderController {
 
     @Data
     @AllArgsConstructor
+    @JsonInclude(Include.NON_NULL)
     public static class ReferenceToken {
+
+        @JsonProperty("id")
+        private String id;
 
         @JsonProperty("tokenId")
         private String tokenId;
@@ -136,11 +157,18 @@ public class ReferenceProviderController {
         @JsonProperty("expiresIn")
         private int expiresIn;
 
+        @JsonProperty("timestamp")
+        private long timestamp;
+
         @JsonProperty("vin")
         private String vin;
 
         @JsonProperty("scope")
         private String scope;
+
+        public ReferenceToken() {
+
+        }
 
     }
 

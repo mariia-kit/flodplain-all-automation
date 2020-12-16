@@ -7,6 +7,7 @@ import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
+import lombok.Getter;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class UserAccountCleanUpExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final DataSubject targetDataSubject;
+    @Getter
     private final List<String> additionalVINsToRemove = new ArrayList<>();
 
     @Override
