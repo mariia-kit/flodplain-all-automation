@@ -115,7 +115,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
-        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         cridsToRemove.add(vin);
 
@@ -143,5 +143,4 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     //todo automate following scenario, user has a car and consent request,
     // but received a new consent request for another his car, onpen the second consent request and add new car
     // to approve new one
-
 }

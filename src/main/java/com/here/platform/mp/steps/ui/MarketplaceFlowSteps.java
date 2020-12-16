@@ -156,8 +156,7 @@ public class MarketplaceFlowSteps {
                 .createConsentRequest()
                 .fillConsentRequestTitle(consentRequest.getTitle())
                 .fillConsentRequestDescription(consentRequest.getPurpose())
-                //TODO: enable after mp deploy feature
-                //.fillPolicyLinks(consentRequest.getPrivacyPolicy())
+                .fillPolicyLinks(consentRequest.getPrivacyPolicy())
                 .attachFileWithVINs(new VinsToFile(vin).csv())
                 .saveConsentRequest();
 

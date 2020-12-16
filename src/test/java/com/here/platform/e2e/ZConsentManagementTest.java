@@ -45,7 +45,7 @@ public class ZConsentManagementTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -53,9 +53,34 @@ public class ZConsentManagementTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
+
+    }
+
+    @Test
+    @Tag("ignored-dev")
+    @DisplayName("Verify E2E flow positive Old Token")
+    public void CMFlowPositiveReferenceOldToken() {
+        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
+        Container container = Containers.generateNew(provider);
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
+                .createConsentRequestWithAppAndVin()
+                .approveConsent()
+                .updateTokenToExpire()
+                .getConsentRequestId();
+
+        var response = new ContainerDataController()
+                .withToken(CONSUMER)
+                .withConsentId(crid)
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
+        new NeutralServerResponseAssertion(response)
+                .expectedCode(HttpStatus.SC_UNAUTHORIZED);
 
     }
 

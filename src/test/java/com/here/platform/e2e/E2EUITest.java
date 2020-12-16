@@ -7,6 +7,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
@@ -22,9 +23,11 @@ import com.here.platform.common.extensions.UserAccountCleanUpExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
+import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.mp.models.CreatedInvite;
 import com.here.platform.mp.steps.ui.MarketplaceFlowSteps;
+import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
@@ -33,14 +36,15 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
+import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -70,6 +74,7 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     private final DataSubject targetDataSubject = DataSubjects.getNextBy18VINLength().dataSubject;
+    private final DataSubject targetDataSubject17 = DataSubjects.getNextBy17VINLength().dataSubject;
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();
@@ -85,6 +90,10 @@ public class E2EUITest extends BaseE2ETest {
     @RegisterExtension
     UserAccountCleanUpExtension userAccountCleanUpExtension = UserAccountCleanUpExtension.builder()
             .targetDataSubject(targetDataSubject)
+            .build();
+    @RegisterExtension
+    UserAccountCleanUpExtension userAccountCleanUpExtension17 = UserAccountCleanUpExtension.builder()
+            .targetDataSubject(targetDataSubject17)
             .build();
 
     private String listingHrn;
@@ -132,13 +141,13 @@ public class E2EUITest extends BaseE2ETest {
         String consentUrl = MarketplaceFlowSteps
                 .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
 
-        var consentRequestUrl = new AtomicReference<>(consentUrl);
-        var crid = getCridFromUrl(consentRequestUrl.get());
+        var crid = getCridFromUrl(consentUrl);
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
         HereLoginSteps.logout(targetDataConsumer);
 
-        ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
+        ConsentManagementFlowSteps.openConsentLink(consentUrl);
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject.getVin());
@@ -194,20 +203,82 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.subscribeToListing(listingName);
         String consentUrl = MarketplaceFlowSteps
                 .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
-
-        var consentRequestUrl = new AtomicReference<>(consentUrl);
-        var crid = getCridFromUrl(consentRequestUrl.get());
+        var crid = getCridFromUrl(consentUrl);
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
         HereLoginSteps.logout(targetDataConsumer);
 
-        ConsentManagementFlowSteps.openConsentLink(consentRequestUrl.get());
+        ConsentManagementFlowSteps.openConsentLink(consentUrl);
+        new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         ConsentFlowSteps
                 .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
 
         Steps.getVehicleResourceAndVerify(crid, targetDataSubject.getVin(), targetContainer);
+    }
+
+    @Test
+    @Disabled("Used for flow verification using reference provider")
+    @DisplayName("Simple happy path E2E UI level Reference")
+    void simpleHappyPathTestReference() {
+        ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
+        Container targetContainer = Containers.generateNew(providerApplication.provider.getName());
+        Steps.createRegularContainer(targetContainer);
+        OnboardingSteps onboard = new OnboardingSteps(providerApplication.provider, providerApplication.consumer.getRealm());
+        onboard.onboardTestProviderApplication(
+                targetContainer.getId(),
+                Conf.ns().getReferenceApp().getClientId(),
+                Conf.ns().getReferenceApp().getClientSecret());
+        ConsentInfo consentRequest =
+                new ConsentInfo()
+                        .title(faker.company().buzzword())
+                        .purpose(faker.backToTheFuture().quote())
+                        .consumerName(Users.MP_CONSUMER.getUser().getName())
+                        .containerName(targetContainer.getName())
+                        .containerDescription(targetContainer.getDescription())
+                        .resources(List.of(targetContainer.getResourceNames()))
+                        .vinLabel(new VIN(targetDataSubject17.getVin()).label())
+                        .privacyPolicy(faker.internet().domainName());
+
+        var listingName = "[E2E test] " + faker.company().buzzword();
+
+        MarketplaceFlowSteps.loginDataProvider(targetDataProvider);
+        MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
+        CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
+        listingHrn = MarketplaceFlowSteps.getListingHrn();
+        HereLoginSteps.logout(targetDataProvider);
+
+        MarketplaceFlowSteps.loginDataConsumer(targetDataConsumer);
+
+        MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
+        MarketplaceFlowSteps.subscribeToListing(listingName);
+        String consentUrl = MarketplaceFlowSteps
+                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject17.getVin());
+
+        var crid = getCridFromUrl(consentUrl);
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject17.getVin());
+
+        HereLoginSteps.logout(targetDataConsumer);
+
+        ConsentManagementFlowSteps.openConsentLink(consentUrl);
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginRegisteredDataSubject(targetDataSubject17);
+
+        new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject17.getVin());
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(targetDataSubject17.getVin());
+        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+
+        var response = new ContainerDataController()
+                .withBearerToken(Users.MP_CONSUMER.getToken())
+                .withConsentId(crid)
+                .getContainerForVehicle(
+                        targetContainer.getDataProviderByName(),
+                        targetDataSubject17.getVin(),
+                        targetContainer
+                );
+        new NeutralServerResponseAssertion(response).expectedCode(404);
     }
 
     private String getCridFromUrl(String consentRequestUrl) {

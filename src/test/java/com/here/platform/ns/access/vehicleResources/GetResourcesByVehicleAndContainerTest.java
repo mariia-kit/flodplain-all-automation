@@ -256,6 +256,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
+    @Tag("ignored-dev")
     @DisplayName("Verify get resources by vehicle Id and container Id no consentId")
     void verifyGetContainersDataRetrievedNoConsentId() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
