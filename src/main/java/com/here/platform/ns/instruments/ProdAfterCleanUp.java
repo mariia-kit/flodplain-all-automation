@@ -42,7 +42,7 @@ public class ProdAfterCleanUp implements AfterAllCallback {
         CleanUpHelper.getContainersList().stream().forEach(id ->
                 {
                     logger.info("Clean Containers with id:" + id);
-                    Container container = Containers.generateNew(Providers.DAIMLER_REFERENCE.getName()).withId(id);
+                    Container container = Containers.generateNew(Providers.REFERENCE_PROVIDER_PROD.getName()).withId(id);
                     var response = new ContainerController()
                             .withToken(PROVIDER)
                             .deleteContainer(container);

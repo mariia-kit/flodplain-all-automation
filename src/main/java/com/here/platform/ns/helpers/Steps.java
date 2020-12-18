@@ -85,6 +85,7 @@ public class Steps {
         var response = new ContainerController()
                 .withToken(PROVIDER)
                 .addContainer(container);
+        CleanUpHelper.getContainersList().add(container.getId());
         if ((response.getStatusCode() != HttpStatus.SC_OK) && (response.getStatusCode() != HttpStatus.SC_CONFLICT)) {
             throw new RuntimeException(
                     "Error creating container:" + response.getStatusCode() + " " + response.asString());

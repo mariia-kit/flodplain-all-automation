@@ -37,9 +37,7 @@ class ProdIntegrationTest extends BaseE2ETest {
                 .withName("payasyoudrive")
                 .withResourceNames("payasyoudrive")
                 .withConsentRequired(false);
-        TestDataGeneration.createBaseProvidersIfNecessaryProd();
-        TestDataGeneration.createBaseContainersIfNecessaryProd();
-        TestDataGeneration.createBaseCMApplicationIfNecessaryProd();
+
         var response = new ContainerDataController()
                 .withToken(MP_CONSUMER)
                 .getContainerForVehicle(provider, Vehicle.validVehicleId, container);

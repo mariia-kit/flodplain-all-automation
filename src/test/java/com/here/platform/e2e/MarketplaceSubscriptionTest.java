@@ -39,7 +39,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -47,7 +47,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)
-                .getContainerForVehicle(provider, Vehicle.validVehicleIdLong, container);
+                .getContainerForVehicle(provider, Vehicle.validVehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -173,7 +173,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListing(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -193,7 +193,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();
@@ -213,7 +213,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleIdLong)
+        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
                 .createConsentRequestWithAppAndVin()
                 .approveConsent()
                 .getConsentRequestId();

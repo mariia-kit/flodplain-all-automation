@@ -146,92 +146,10 @@ public class DashboardTests extends BaseUITests {
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
 
-        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
-
-        new DashBoardPage().isLoaded();
+        new VINEnteringPage().isLoaded();
     }
 
     //todo mark tests with @Feature(or some other) annotation specific user flow that is checked
     // https://confluence.in.here.com/display/OLP/Consent+Management+User+Flows
-
-    @Nested
-    @Dashboard
-    public class DashboardWithConsentRequest {
-
-        private final String targetVin = dataSubjectIm.getVin();
-        private String crid;
-        private ConsentInfo consentRequest;
-        private ConsentRequestContainer targetContainer;
-
-        @BeforeEach
-        void createConsentRequestForUser() {
-            targetContainer = ConsentRequestContainers
-                    .generateNew(providerApplication.provider);
-            consentRequest = ConsentRequestSteps
-                    .createValidConsentRequestWithNSOnboardings(providerApplication, targetVin, targetContainer);
-            crid = consentRequest.getConsentRequestId();
-            cridsToRemove.add(crid);
-        }
-
-        @Step("Open consent request id link, open login form, login HERE account, fill VIN and open Offer Details page")
-        private void openConsentLoginUserAndFillVIN() {
-            open(crid);
-            new LandingPage().isLoaded().clickSignIn();
-            HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
-
-            new VINEnteringPage().isLoaded().fillVINAndContinue(targetVin);
-        }
-
-
-        @Test
-        @DisplayName("Possible to open dashboard page from offer details page")
-        void verifyOpenDashBoardTest() {
-            openConsentLoginUserAndFillVIN();
-
-            OfferDetailsPageSteps.closeCurrentOffer();
-            new DashBoardPage().isLoaded();
-        }
-
-        @Test
-        @DisplayName("Success flow for consent request Revoke action via Offer details page")
-        void verifyRevokeDashboardTest() {
-            openConsentLoginUserAndFillVIN();
-
-            OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
-            ReferenceApprovePage.approveReferenceScopesAndSubmit(targetVin);
-            SuccessConsentPageSteps.verifyFinalPage(consentRequest);
-            SuccessConsentPageSteps.openAllOffersLink();
-
-            new DashBoardPage()
-                    .isLoaded()
-                    .openDashboardProductName()
-                    .openConsentRequestOfferBox(consentRequest);
-            OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
-            OfferDetailsPageSteps.revokeConsent();
-            OfferDetailsPageSteps.revokeConsentPopupYes();
-
-            DashBoardPage.header.openDashboardRevokedTab()
-                    .isLoaded()
-                    .verifyConsentOfferTab(0, consentRequest, targetVin, REVOKED)
-                    .openConsentRequestOfferBox(consentRequest);
-            OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
-        }
-
-        @Test
-        @Purpose
-        @DisplayName("Verify Dashboard open more info page")
-        void verifyOpenDashBoardMoreInfoTest() {
-            openConsentLoginUserAndFillVIN();
-
-            OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequest);
-            OfferDetailsPageSteps.openFullInfo();
-            new PurposePage().verifyPurposeInfoPage(
-                    providerApplication.consumer,
-                    consentRequest,
-                    targetContainer
-            );
-        }
-
-    }
 
 }
