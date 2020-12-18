@@ -2,6 +2,7 @@ package com.here.platform.cm.steps.ui;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -41,6 +42,7 @@ public class OfferDetailsPageSteps {
     @Step("Revoke offer in popup")
     public void revokeConsentPopupYes() {
         $("#modal-notification-negative").$(byText("Revoke")).click();
+        sleep(2000);
     }
 
     @Step("Close current offer to open dashboard")

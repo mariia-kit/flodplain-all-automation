@@ -137,6 +137,14 @@ public enum ConsentRequestContainers {
             List.of("odometer"),
             MPProviders.DAIMLER_REFERENCE
     ),
+    DAIMLER_REFERENCE_PROD(
+            "odometer", "odometer", "Automated Test Container",
+            "mb:vehicle:mbdata:payasyoudrive offline_access",
+            Conf.ns().getReferenceApp().getClientId(),
+            Conf.ns().getReferenceApp().getClientSecret(),
+            List.of("fuel"),
+            MPProviders.REFERENCE_PROD
+    ),
     REFERENCE_NEW(
             "odometer", "odometer", "Automated Test Container",
             "mb:vehicle:mbdata:payasyoudrive offline_access",

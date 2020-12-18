@@ -195,7 +195,7 @@ public class MarketplaceFlowSteps {
         Response listing = new ListingsController()
                 .withBearerToken(Users.MP_PROVIDER.getToken())
                 .getListingByHrn(listingHrn);
-        String subsOptionId = listing.jsonPath().getString("subscriptionOptions[0].id");
+        String subsOptionId = listing.jsonPath().getString("listItems[0].id");
         var mpListings = new MarketplaceManageListingCall();
         mpListings.beginCancellation(subsOptionId);
         mpListings.deleteListing(listingHrn);

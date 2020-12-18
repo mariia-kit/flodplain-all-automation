@@ -30,7 +30,12 @@ public enum MPProviders {
             "exelsior", 17, "test-daimler",
             Conf.ns().getReferenceProviderAuthUrl(),
             Conf.ns().getReferenceProviderTokenUrl()
-    );
+    ),
+    REFERENCE_PROD(
+            "reference_provider", 17, "test-daimler",
+            Conf.ns().getReferenceProviderAuthUrl(),
+            Conf.ns().getReferenceProviderTokenUrl()
+    );;
 
     public final int vinLength;
     private final String

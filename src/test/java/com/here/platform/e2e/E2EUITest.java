@@ -36,6 +36,7 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
+import com.here.platform.ns.instruments.ProdAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
@@ -48,6 +49,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -63,6 +65,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Tag("e2e_ui")
 @Execution(ExecutionMode.SAME_THREAD)
+@ExtendWith(ProdAfterCleanUp.class)
 public class E2EUITest extends BaseE2ETest {
 
     static {
@@ -114,7 +117,7 @@ public class E2EUITest extends BaseE2ETest {
     @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_ODOMETER.getContainer();
+        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_LOCATION.getContainer();
         ConsentInfo consentRequest =
                 new ConsentInfo()
                         .title(faker.company().buzzword())
@@ -171,6 +174,7 @@ public class E2EUITest extends BaseE2ETest {
         DataProvider provider = Providers.BMW_TEST.getProvider();
         Container targetContainer = Containers.generateNew(provider).withResourceNames("fuel");
         var validVIN = Vehicle.validVehicleId;
+        userAccountCleanUpExtension.getAdditionalVINsToRemove().add(validVIN);
         ConsentInfo consentRequest =
                 new ConsentInfo()
                         .title(faker.company().buzzword())
@@ -179,7 +183,8 @@ public class E2EUITest extends BaseE2ETest {
                         .containerName(targetContainer.getName())
                         .containerDescription(targetContainer.getDescription())
                         .resources(List.of(targetContainer.getResourceNames()))
-                        .vinLabel(new VIN(validVIN).label());
+                        .vinLabel(new VIN(validVIN).label())
+                        .privacyPolicy(faker.internet().domainName());;
 
         Steps.createRegularContainer(targetContainer);
         new OnboardingSteps(provider.getName(), targetDataConsumer.getRealm())
@@ -202,9 +207,9 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
         String consentUrl = MarketplaceFlowSteps
-                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
+                .createConsentByConsumer(consentRequest, targetContainer, validVIN);
         var crid = getCridFromUrl(consentUrl);
-        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
+        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(validVIN);
 
         HereLoginSteps.logout(targetDataConsumer);
 
@@ -213,9 +218,9 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         ConsentFlowSteps
-                .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
+                .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, validVIN);
 
-        Steps.getVehicleResourceAndVerify(crid, targetDataSubject.getVin(), targetContainer);
+        Steps.getVehicleResourceAndVerify(crid, validVIN, targetContainer);
     }
 
     @Test
