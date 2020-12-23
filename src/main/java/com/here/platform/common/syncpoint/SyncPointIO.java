@@ -28,7 +28,7 @@ public class SyncPointIO {
         if (getResp.getStatusCode() == HttpStatus.SC_OK) {
             record = getResp.then().extract().as(SyncEntity.class);
         } else if (getResp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-            writeNewTokenValue(key, "", 3599);
+            writeNewTokenValue(key, "new", 3599);
             lock(key);
             return StringUtils.EMPTY;
         } else {
@@ -38,10 +38,11 @@ public class SyncPointIO {
                     .append(getResp.body().print()).build());
         }
 
-        if (record.isLocked()) {
+        if (record.isLocked() || record.getValue().equals("new")) {
             if (record.getValue().isBlank()) {
                 return StringUtils.EMPTY;
             } else {
+                Thread.sleep(1000);
                 record = waitForUnLock(key);
             }
         }
