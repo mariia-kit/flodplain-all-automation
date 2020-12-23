@@ -4,6 +4,7 @@ import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.common.config.Conf;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
@@ -29,6 +30,7 @@ public class HERETokenController {
     }
 
     @SneakyThrows
+    @Step("Generate here user token for {userLogin}")
     public String generateHERECode(String userLogin, String userPass) {
         Response hereLogin = userAccountController.userAccountOauth();
         String authorizeUrl = hereLogin.getHeader("Location");
