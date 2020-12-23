@@ -6,18 +6,23 @@ import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,45 +32,56 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @UserAccount
-@Execution(ExecutionMode.SAME_THREAD)
+@DisplayName("User Account with Consents")
 public class UserAccountWithConsentTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();
     private final List<String> vinsToRemove = new ArrayList<>();
     private String crid;
     private final ProviderApplications targetApplication = ProviderApplications.REFERENCE_CONS_1;
-    private ConsentInfo targetConsentRequest;
+    private ConsentInfo consentInfo;
 
-    protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApplication.provider.vinLength);
+    HereUser hereUser = null;
+    DataSubject dataSubjectIm;
+
     protected ConsentRequestContainer testContainer = ConsentRequestContainers
             .generateNew(targetApplication.provider);
 
     @BeforeEach
     void createConsentRequestAndApproveConsent() {
-        var vin = VIN.generate(targetApplication.provider.vinLength);
-        var addVins = userAccountController.attachVinToUserAccount(vin, dataSubject.getBearerToken());
-        new ResponseAssertion(addVins).statusCodeIsEqualTo(StatusCode.OK);
-        vinsToRemove.add(vin);
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
 
-        targetConsentRequest = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApplication, vin, testContainer);
-        crid = targetConsentRequest.getConsentRequestId();
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, dataSubject.getBearerToken());
-        fuSleep();
+        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
+        dataSubjectIm = new DataSubject(
+                hereUser.getEmail(),
+                hereUser.getPassword(),
+                VIN.generate(targetApp.getProvider().getVinLength())
+        );
+        hereUserManagerController.createHereUser(hereUser);
+        String vin = dataSubjectIm.getVin();
+        vinsToRemove.add(vin);
+        consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(vin)
+                .getId();
+        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vin, AuthController.getDataSubjectToken(dataSubjectIm));
+        userAccountController.attachVinToUserAccount(dataSubjectIm.getVin(), AuthController.getDataSubjectToken(dataSubjectIm));
     }
 
     @AfterEach
     void cleanUp() {
-        vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, dataSubject.getBearerToken()));
-        RemoveEntitiesSteps.forceRemoveConsentRequestWithConsents(
-                crid,
-                new VinsToFile(vinsToRemove.toArray(String[]::new)).json()
-        );
+        vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, AuthController.getDataSubjectToken(dataSubjectIm)));
+        if (hereUser != null) {
+            hereUserManagerController.deleteHereUser(hereUser);
+        }
+        AuthController.deleteToken(dataSubjectIm);
     }
 
     @Test
@@ -100,7 +116,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Forbidden to get consent by empty consentRequestId")
     void isNotPossibleToGetByEmptyConsentId() {
         var userConsentsInState = userAccountController.getConsentsForUser(
-                dataSubject.getBearerToken(),
+                AuthController.getDataSubjectToken(dataSubjectIm),
                 Map.of("consentRequestId", "", "state", "")
         );
 
@@ -114,13 +130,13 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Get consents for user by consentRequestId and state")
     void getConsentRequestForUserByCridAndStateTest() {
         var userConsentsInState = userAccountController.getConsentsForUser(
-                dataSubject.getBearerToken(),
+                AuthController.getDataSubjectToken(dataSubjectIm),
                 Map.of("consentRequestId", crid, "state", "")
         );
 
         new ResponseAssertion(userConsentsInState)
                 .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObjectIgnoringTimeFields(List.of(targetConsentRequest
+                .responseIsEqualToObjectIgnoringTimeFields(List.of(consentInfo
                         .consumerName(targetApplication.consumer.getName())
                         .containerDescription(targetApplication.container.containerDescription)
                         .resources(targetApplication.container.resources)
@@ -132,27 +148,22 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Get consent request with 2 consents for a user")
     void getConsentRequestWith2ConsentsForSingleUserTest() {
         var secondVin = VIN.generate(targetApplication.provider.vinLength);
-        var secondLogin = dataSubject.getBearerToken();
-        userAccountController.attachVinToUserAccount(secondVin, secondLogin);
+        userAccountController
+                .attachVinToUserAccount(secondVin, AuthController.getDataSubjectToken(dataSubjectIm));
         vinsToRemove.add(secondVin);
         ConsentRequestSteps.addVINsToConsentRequest(targetApplication, crid, secondVin);
-        fuSleep();
 
-        var consentInfos = userAccountController.getConsentsForUser(
-                secondLogin, Map.of("consentRequestId", crid, "state", "")).as(ConsentInfo[].class);
+        var consentInfos = userAccountController
+                .getConsentsForUser(
+                        AuthController.getDataSubjectToken(dataSubjectIm),
+                        Map.of("consentRequestId", crid, "state", ""))
+                .as(ConsentInfo[].class);
 
         Assertions.assertThat(consentInfos)
                 .usingElementComparatorIgnoringFields(ResponseAssertion.timeFieldsToIgnore)
-                .contains(targetConsentRequest
-                        .consumerName(targetApplication.consumer.getName())
-                        .consumerId(targetApplication.consumer.getRealm())
-                        .containerId(testContainer.getId())
-                        .containerName(testContainer.getName())
-                        .containerDescription(testContainer.getContainerDescription())
-                        .resources(testContainer.getResources())
-                        .state(StateEnum.APPROVED)
-                )
-                .contains(targetConsentRequest.vinLabel(new VIN(secondVin).label())
+                .contains(consentInfo.vinLabel(new VIN(dataSubjectIm.getVin()).label())
+                        .state(StateEnum.APPROVED))
+                .contains(consentInfo.vinLabel(new VIN(secondVin).label())
                         .state(StateEnum.PENDING));
     }
 
@@ -160,7 +171,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
     @DisplayName("Success flow of sending GET request to return all consent requests per specific User")
     void getListOfConsentRequestForUserTest() {
         var userConsents = userAccountController.getConsentsForUser(
-                dataSubject.getBearerToken(),
+                AuthController.getDataSubjectToken(dataSubjectIm),
                 Map.of("state", "")
         );
 

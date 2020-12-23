@@ -187,7 +187,7 @@ public class MarketplaceManageListingCall {
     public NeutralServerResponseAssertion beginCancellation(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = baseMpUrl + "/subscriptions/" + subsId
-                + "/beginCancellation?duration=0";
+                + "/beginCancellation?duration=1";
         String body = "{}";
         Response response = RestHelper
                 .post("Cancel subscription: " + subsId, url, providerToken, body);

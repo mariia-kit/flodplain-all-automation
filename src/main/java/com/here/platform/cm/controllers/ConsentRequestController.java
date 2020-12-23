@@ -1,7 +1,10 @@
 package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.ConsentRequestData;
+import com.here.platform.cm.steps.remove.ConsentCollector;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
+import com.here.platform.common.VinsToFile;
+import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
@@ -27,7 +30,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .body(consentRequestBody)
                 .post();
         if (response.getStatusCode() == StatusCode.CREATED.code) {
-            CleanUpHelper.getConsentIdsList().add(response.getBody().jsonPath().get("consentRequestId").toString());
+            ConsentCollector.addConsent(response.getBody().jsonPath().get("consentRequestId").toString());
         }
         return response;
     }
@@ -50,9 +53,22 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
                 .put("/{consentRequestId}/addDataSubjects", consentRequestId);
     }
 
+    @Step("Add VINs to Consent Request by ID: {consentRequestId}")
+    public Response addVinsToConsentRequest(String consentRequestId, FILE_TYPE fileType, String... vins) {
+        ConsentCollector.addVin(consentRequestId, vins);
+        return vinMultipartSpec(new VinsToFile(vins).file(fileType))
+                .put("/{consentRequestId}/addDataSubjects", consentRequestId);
+    }
+
     @Step("Remove VINs from Consent Request by ID: {consentRequestId}")
     public Response removeVinsFromConsentRequest(String consentRequestId, File fileWithVINs) {
         return vinMultipartSpec(fileWithVINs)
+                .put("/{consentRequestId}/removeDataSubjectsExceptApproved", consentRequestId);
+    }
+
+    @Step("Remove VINs from Consent Request by ID: {consentRequestId}")
+    public Response removeVinsFromConsentRequest(String consentRequestId, FILE_TYPE fileType, String... vins) {
+        return vinMultipartSpec(new VinsToFile(vins).file(fileType))
                 .put("/{consentRequestId}/removeDataSubjectsExceptApproved", consentRequestId);
     }
 
@@ -82,8 +98,9 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
 
     @Step("ASYNC add VINs to Consent Request by ID: {consentRequestId}")
     @SneakyThrows
-    public Response addVinsToConsentRequestAsync(String consentRequestId, File fileWithVINs) {
-        return vinMultipartSpec(fileWithVINs)
+    public Response addVinsToConsentRequestAsync(String consentRequestId, FILE_TYPE fileType, String... vins) {
+        ConsentCollector.addVin(consentRequestId, vins);
+        return vinMultipartSpec(new VinsToFile(vins).file(fileType))
                 .put("/{consentRequestId}/addDataSubjectsAsync", consentRequestId);
     }
 
@@ -94,8 +111,8 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     }
 
     @Step("ASYNC Force remove VINs from consent request for id: '{consentRequestId}'")
-    public Response forceRemoveVinsFromConsentRequestAsync(String consentRequestId, File fileWithVINs) {
-        return vinMultipartSpec(fileWithVINs)
+    public Response forceRemoveVinsFromConsentRequestAsync(String consentRequestId, FILE_TYPE fileType, String... vins) {
+        return vinMultipartSpec(new VinsToFile(vins).file(fileType))
                 .put("/{consentRequestId}/removeAllDataSubjectsAsync", consentRequestId);
     }
 

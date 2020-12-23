@@ -16,6 +16,7 @@ import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.common.annotations.CMFeatures.ASYNC;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
@@ -157,7 +158,7 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(testVin1);
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
-                .addVinsToConsentRequestAsync(crid, new VinsToFile(testVin2).json());
+                .addVinsToConsentRequestAsync(crid, FILE_TYPE.JSON, testVin2);
         consentRequestRemoveExtension.vinToRemove(testVin2);
         String updateInfoUrl = new ResponseAssertion(addVinsToConsentRequest)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)

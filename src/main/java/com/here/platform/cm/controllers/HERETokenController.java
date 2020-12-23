@@ -3,13 +3,19 @@ package com.here.platform.cm.controllers;
 import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
+import com.here.platform.common.config.Conf;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
 import io.restassured.http.ContentType;
+import io.restassured.http.Cookie;
 import io.restassured.http.Cookies;
 import io.restassured.response.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,6 +28,7 @@ public class HERETokenController {
         return UriComponentsBuilder.fromUriString(uri).build().getQueryParams();
     }
 
+    @SneakyThrows
     public String generateHERECode(String userLogin, String userPass) {
         Response hereLogin = userAccountController.userAccountOauth();
         String authorizeUrl = hereLogin.getHeader("Location");
@@ -91,6 +98,7 @@ public class HERETokenController {
                 .then()
                 .extract().response();
 
+
         Cookies coo2 = withPassResult.getDetailedCookies();
         Response sign2Result = given()
                 .noFilters()
@@ -98,14 +106,40 @@ public class HERETokenController {
                 .redirects().follow(false)
                 .urlEncodingEnabled(false)
                 .cookies(coo2)
-                .get(authorizeUrl)
-                .then()
-                .extract().response();
+                .get(authorizeUrl);
 
+        if (sign2Result.getStatusCode() == 200) {
+            String token = withPassResult.getBody().jsonPath().getString("accessToken");
+            given()
+                    .headers(
+                            "Accept", "application/json",
+                            "Content-Type", "application/json"
+                    )
+                    .header("Authorization", "Bearer " + token)
+                    .body(Map.of(
+                            "clientId", clientId,
+                            "scopes", new String[] {"openid", "email", "profile", "readwrite:ha"}
+                    ))
+                    .post(sbb(Conf.ns().getAuthUrlBase()).append("/consent").bld())
+                    .then()
+                    .log().ifError()
+                    .statusCode(HttpStatus.SC_CREATED);
+            Thread.sleep(4000);
+            sign2Result = given()
+                    .noFilters()
+                    .param("scope", "openid%20email%20phone%20profile%20readwrite%3Aha")
+                    .redirects().follow(false)
+                    .urlEncodingEnabled(false)
+                    .cookies(coo2)
+                    .get(authorizeUrl);
+        }
         String callBackUrl = sign2Result.getHeader("Location");
 
         if (StringUtils.isEmpty(callBackUrl)) {
-            throw new RuntimeException(sbb("Error during generation of here token!").w().append(userLogin).bld());
+            throw new RuntimeException(sbb("Error during generation of here token!").w()
+                    .append(userLogin).n()
+                    .append(sign2Result.getStatusCode()).w()
+                    .append(sign2Result.getBody().prettyPrint()).bld());
         }
 
         return fetchQueryParamsFromUrl(callBackUrl).getFirst("code");

@@ -3,32 +3,28 @@ package com.here.platform.cm.consentStatus;
 
 import static com.here.platform.common.strings.SBB.sbb;
 
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VinsToFile;
 import com.here.platform.common.annotations.CMFeatures.GetConsentRequestStatus;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.dataProviders.daimler.DataSubjects;
-import java.util.Objects;
-import org.junit.jupiter.api.AfterEach;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @GetConsentRequestStatus
+@DisplayName("Get Consent status")
 public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
-
-    private String crid;
-
-    @AfterEach
-    void cleanUp() {
-        if (Objects.nonNull(crid)) {
-            RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-        }
-    }
 
     @Test
     @DisplayName("Verify get Consent request status for absent Consent request")
@@ -58,21 +54,22 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify get Consent request in all statuses")
     void getConsentRequestInAllStatusesTest() {
-        String vinToApprove = testVin,
-                vinToRevoke = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin(),
-                vinToPending = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        String vinToApprove = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength()).getVin(),
+                vinToRevoke = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength()).getVin(),
+                vinToPending = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength()).getVin();
 
-        crid = createValidConsentRequest();
-        consentRequestController.withConsumerToken();
-        testFileWithVINs = new VinsToFile(testVin, vinToRevoke, vinToPending).csv();
-        consentRequestController
-                .addVinsToConsentRequest(crid, new VinsToFile(testVin, vinToRevoke, vinToPending).csv());
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentRequestSteps2 step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(vinToApprove, vinToRevoke, vinToPending);
 
-        fuSleep();
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
+        ConsentFlowSteps.approveConsentForVIN(step.getId(), targetContainer, vinToApprove);
 
-        fuSleep();
-        ConsentFlowSteps.revokeConsentForVIN(crid, vinToRevoke);
+        ConsentFlowSteps.revokeConsentForVIN(step.getId(), vinToRevoke);
 
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .approved(1)
@@ -81,12 +78,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
                 .expired(0)
                 .rejected(0);
 
-        consentRequestController.withConsumerToken();
-        var statusForConsentRequestByIdResponse = consentRequestController
-                .getStatusForConsentRequestById(crid);
-        new ResponseAssertion(statusForConsentRequestByIdResponse)
-                .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(expectedConsentRequestStatuses);
+        step.verifyConsentStatus(expectedConsentRequestStatuses);
     }
 
 }

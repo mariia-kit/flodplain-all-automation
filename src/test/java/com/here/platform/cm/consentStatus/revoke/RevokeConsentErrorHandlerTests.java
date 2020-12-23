@@ -5,12 +5,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +46,8 @@ public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {
     @MethodSource("consentRequestIdAndVins")
     @ErrorHandler
     void revokeConsentErrorHandlerTest(String crid, String vin, String cause) {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
         var privateBearer = dataSubject.getBearerToken();
         var revokedConsentResponse = consentStatusController
                 .revokeConsent(
@@ -55,8 +66,22 @@ public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {
     @Sentry
     @DisplayName("Verify sentry block revoke ConsentRequest")
     void sentryBlockRevokeConsentRequestTest() {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        String testVin = dataSubject.getVin();
+
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin)
+                .getId();
+
         final var consentToRevoke = NewConsent.builder()
-                .consentRequestId(createValidConsentRequest())
+                .consentRequestId(crid)
                 .vinHash(new VIN(testVin).hashed())
                 .build();
 

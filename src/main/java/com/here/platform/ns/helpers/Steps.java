@@ -3,6 +3,7 @@ package com.here.platform.ns.helpers;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.steps.remove.ConsentCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
@@ -86,6 +87,7 @@ public class Steps {
                 .withToken(PROVIDER)
                 .addContainer(container);
         CleanUpHelper.getContainersList().add(container.getId());
+        ConsentCollector.addNSContainer(container);
         if ((response.getStatusCode() != HttpStatus.SC_OK) && (response.getStatusCode() != HttpStatus.SC_CONFLICT)) {
             throw new RuntimeException(
                     "Error creating container:" + response.getStatusCode() + " " + response.asString());

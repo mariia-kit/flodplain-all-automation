@@ -59,10 +59,10 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     void afterEach() {
         var privateBearer = AuthController.getDataSubjectToken(dataSubjectIm);
         userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
-        AuthController.deleteToken(dataSubjectIm);
         if (hereUser != null) {
             hereUserManagerController.deleteHereUser(hereUser);
         }
+        AuthController.deleteToken(dataSubjectIm);
     }
 
 

@@ -6,8 +6,8 @@ class TestCM extends Test {
 
         minHeapSize = '32m'
         maxHeapSize = '256m'
-        maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-        forkEvery = 8
+        maxParallelForks = 20
+        forkEvery = 20
 
         useJUnitPlatform() {
             excludeTags "neutral_server", "e2e", "smoke_cm", "ui", "userAccount"
@@ -60,7 +60,7 @@ task smokeCMTests(type: TestCM) {
         includeTags "smoke_cm"
     }
     
-    dependsOn "testDataGeneration"
+    //dependsOn "testDataGeneration"
 }
 
 task fePreDevTests(type: TestCM) {

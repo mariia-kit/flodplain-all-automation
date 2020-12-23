@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,6 +38,7 @@ public enum DataSubjects {
     _352903401504142980(Conf.cmUsers().getDataSubj16());
 
     private static final AtomicInteger atomicInteger = new AtomicInteger(-1);
+    @Getter
     public final DataSubject dataSubject;
 
     DataSubjects(DataSubject dataSubject) {

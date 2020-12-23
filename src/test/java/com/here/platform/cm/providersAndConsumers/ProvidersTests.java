@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @OnBoardProvider
+@DisplayName("Onboard Provider")
 class ProvidersTests extends BaseCMTest {
 
     private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();

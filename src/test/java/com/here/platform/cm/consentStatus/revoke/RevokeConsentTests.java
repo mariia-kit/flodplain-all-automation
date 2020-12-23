@@ -5,17 +5,26 @@ import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ErrorResponse;
+import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -32,33 +41,31 @@ import org.junit.jupiter.api.Test;
 @RevokeConsent
 class RevokeConsentTests extends BaseConsentStatusTests {
 
-    private String crid;
-
-    @AfterEach
-    void cleanUp() {
-        if (Objects.nonNull(crid)) {
-            RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequestData);
-        }
-    }
-
     @Test
     @Tag("fabric_test")
     @DisplayName("Verify revoke of ConsentRequest")
     void revokeConsentRequestPositiveTest() {
-        new UserAccountController().attachVinToUserAccount(testVin, dataSubject.getBearerToken());
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        String testVin = dataSubject.getVin();
 
-        crid = createValidConsentRequest();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin);
+        var crid = step.getId();
 
         final var consentToRevoke = NewConsent.builder()
                 .consentRequestId(crid)
                 .vinHash(new VIN(testVin).hashed())
                 .build();
 
-        fuSleep();
-        var privateBearer = dataSubject.getBearerToken();
         var revokedConsentResponse = consentStatusController
                 .withConsumerToken()
-                .revokeConsent(consentToRevoke, privateBearer);
+                .revokeConsent(consentToRevoke, dataSubject.getBearerToken());
 
         new ResponseAssertion(revokedConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -70,17 +77,12 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .revoked(1)
                 .expired(0)
                 .rejected(0);
-        consentRequestController.withConsumerToken();
-        final var actualStatusesForConsentResponse = consentRequestController
-                .getStatusForConsentRequestById(consentToRevoke.getConsentRequestId());
-
-        new ResponseAssertion(actualStatusesForConsentResponse)
-                .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(expectedStatusesForConsent);
+        step.verifyConsentStatus(expectedStatusesForConsent);
 
         var revokedConsents = new UserAccountController()
+
                 .getConsentsForUser(
-                        privateBearer,
+                        dataSubject.getBearerToken(),
                         Map.of("consentRequestId", crid, "state", "REVOKED")
                 );
 
@@ -92,23 +94,23 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .usingElementComparatorIgnoringFields("createTime", "revokeTime", "approveTime", "vinHash")
                 .contains(
                         new ConsentInfo()
-                                .additionalLinks(testConsentRequestData.getAdditionalLinks())
+                                .additionalLinks(consentInfo.getAdditionalLinks())
                                 .consentRequestId(crid)
                                 .state(StateEnum.REVOKED)
                                 .consumerName(mpConsumer.getName())
                                 .consumerId(mpConsumer.getRealm())
                                 .vinLabel(new VIN(testVin).label())
-                                .title(testConsentRequestData.getTitle())
-                                .purpose(testConsentRequestData.getPurpose())
-                                .privacyPolicy(testConsentRequestData.getPrivacyPolicy())
-                                .containerName(testContainer.getName())
-                                .containerId(testContainer.getId())
-                                .containerDescription(testContainer.getContainerDescription())
-                                .resources(testContainer.getResources())
+                                .title(consentInfo.getTitle())
+                                .purpose(consentInfo.getPurpose())
+                                .privacyPolicy(consentInfo.getPrivacyPolicy())
+                                .containerName(targetContainer.getName())
+                                .containerId(targetContainer.getId())
+                                .containerDescription(targetContainer.getContainerDescription())
+                                .resources(targetContainer.getResources())
                 );
 
         var targetRevokedConsent = Arrays.stream(consentInfoList)
-                .filter(consentInfo -> consentInfo.getConsentRequestId().equals(crid))
+                .filter(consents -> consents.getConsentRequestId().equals(crid))
                 .findFirst();
 
         Assertions.assertThat(targetRevokedConsent.orElseThrow().getCreateTime())
@@ -119,20 +121,26 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is not possible to revoke consent that does not exist")
     void isNotPossibleToRevokeConsentThatDoesNotExitTest() {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        String testVin = dataSubject.getVin();
+
+
         var randomConsentRequestId = crypto.sha256();
         var consentToRevoke = NewConsent.builder()
                 .consentRequestId(randomConsentRequestId)
                 .vinHash(new VIN(testVin).hashed())
                 .build();
 
-        var privateBearer = dataSubject.getBearerToken();
         var approveResponse = consentStatusController
                 .withConsumerToken()
-                .revokeConsent(consentToRevoke, privateBearer);
+                .revokeConsent(consentToRevoke, dataSubject.getBearerToken());
         new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.NOT_FOUND);
 
-        consentRequestController.withConsumerToken();
         final var actualStatusesForConsent = consentRequestController
+                .withConsumerToken()
                 .getStatusForConsentRequestById(randomConsentRequestId);
 
         final var expectedStatuses = new ConsentRequestStatus()
@@ -144,72 +152,73 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         new ResponseAssertion(actualStatusesForConsent).responseIsEqualToObject(expectedStatuses);
     }
 
-    @Nested
-    @RevokeConsent
-    @DisplayName("Revoke approved consents")
-    public class RevokeApprovedTests {
+    @Test
+    @DisplayName("Verify it is possible to approve similar to revoked consent")
+    void approveSimilarToRevokedConsentsTest() {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        String testVin = dataSubject.getVin();
 
-        private String validDaimlerToken, privateBearer;
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin);
+        var crid = step.getId();
 
-        @BeforeEach
-        void generateDaimlerAuthorisationTokenForTestCar() {
-            privateBearer = dataSubject.getBearerToken();
-            validDaimlerToken = ReferenceTokenController
-                    .produceConsentAuthCode(testVin, testContainer.getId() + ":general");
-        }
 
-        @Test
-        @DisplayName("Verify it is possible to approve similar to revoked consent")
-        void approveSimilarToRevokedConsentsTest() {
-            testConsentRequestData
-                    .containerId(testContainer.getId())
-                    .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
-                    .privacyPolicy(faker.internet().url())
-                    .purpose(faker.commerce().productName());
+        ConsentFlowSteps.approveConsentForVIN(crid, targetContainer, testVin);
+        ConsentFlowSteps.revokeConsentForVIN(crid, testVin);
 
-            var crid = createValidConsentRequest();
+        var targetConsentRequest = Consents
+                .generateNewConsent(targetApp.getProvider().getName(), consentInfo);
+        var consentRequestResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(targetConsentRequest);
+        new ResponseAssertion(consentRequestResponse).statusCodeIsEqualTo(StatusCode.CONFLICT);
+    }
 
-            var consentUnderTest = NewConsent.builder()
-                    .consentRequestId(crid)
-                    .vinHash(new VIN(testVin).hashed())
-                    .build();
+    @Test
+    @DisplayName("Verify it is not possible to approve revoked consent")
+    void isNotPossibleToApproveRevokedConsentTest() {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        String testVin = dataSubject.getVin();
 
-            var revokedConsentResponse = consentStatusController
-                    .withConsumerToken()
-                    .revokeConsent(consentUnderTest, privateBearer);
-            new ResponseAssertion(revokedConsentResponse)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .responseIsEmpty();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin);
+        var crid = step.getId();
 
-            consentRequestController.withConsumerToken();
-            var consentRequestResponse = consentRequestController.createConsentRequest(testConsentRequestData);
-            new ResponseAssertion(consentRequestResponse).statusCodeIsEqualTo(StatusCode.CONFLICT);
-        }
+        ConsentFlowSteps.approveConsentForVIN(crid, targetContainer, testVin);
 
-        @Test
-        @DisplayName("Verify it is not possible to approve revoked consent")
-        void isNotPossibleToApproveRevokedConsentTest() {
-            crid = createValidConsentRequest();
+        var validCode = ReferenceTokenController
+                .produceConsentAuthCode(testVin, targetContainer.getId() + ":general");
 
-            var consentUnderTest = NewConsent.builder()
-                    .consentRequestId(crid)
-                    .vinHash(new VIN(testVin).hashed())
-                    .authorizationCode(validDaimlerToken)
-                    .build();
+        var consentUnderTest = NewConsent.builder()
+                .consentRequestId(crid)
+                .vinHash(new VIN(testVin).hashed())
+                .authorizationCode(validCode)
+                .build();
 
-            fuSleep();
-            consentStatusController.revokeConsent(consentUnderTest, privateBearer);
-            fuSleep();
-            var approveResponse = consentStatusController
-                    .withConsumerToken()
-                    .approveConsent(consentUnderTest, privateBearer);
-            ErrorResponse errorResponse = new ResponseAssertion(approveResponse)
-                    .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
-                    .expectedErrorResponse(CMErrorResponse.CONSENT_ALREADY_REVOKED);
+        consentStatusController
+                .withConsumerToken()
+                .revokeConsent(consentUnderTest, dataSubject.getBearerToken());
 
-            Assertions.assertThat(errorResponse.getCause()).isEqualTo("Consent already revoked");
-        }
+        var approveResponse = consentStatusController
+                .withConsumerToken()
+                .approveConsent(consentUnderTest, dataSubject.getBearerToken());
+        ErrorResponse errorResponse = new ResponseAssertion(approveResponse)
+                .statusCodeIsEqualTo(StatusCode.FORBIDDEN)
+                .expectedErrorResponse(CMErrorResponse.CONSENT_ALREADY_REVOKED);
 
+        Assertions.assertThat(errorResponse.getCause()).isEqualTo("Consent already revoked");
     }
 
 }

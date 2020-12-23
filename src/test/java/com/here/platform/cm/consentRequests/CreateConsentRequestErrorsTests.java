@@ -5,7 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
@@ -14,6 +18,8 @@ import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -26,22 +32,21 @@ import org.junit.jupiter.api.Test;
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {
 
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-    private final ConsentRequestData testConsentRequest = new ConsentRequestData()
-            .consumerId(crypto.sha1())
-            .providerId(crypto.sha1())
-            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
-            .purpose(faker.commerce().productName())
-            .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.id);
-
     @Test
     @ErrorHandler
     @Issue("NS-3048")
     @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Consumer")
     void isNotPossibleToCreateConsentRequestWithOutConsumer() {
-        consentRequestController.withConsumerToken();
-        final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
+        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = testContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+
+        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
+
+        final var actualResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(createConsentRequest);
 
         var actualCause = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
@@ -49,16 +54,22 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .getCause();
         assertThat(actualCause)
                 .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
-                .contains(testConsentRequest.getConsumerId())
-                .contains(testConsentRequest.getProviderId())
-                .contains(testConsentRequest.getContainerId());
+                .contains(createConsentRequest.getConsumerId())
+                .contains(createConsentRequest.getProviderId())
+                .contains(createConsentRequest.getContainerId());
     }
 
     @Test
     @Sentry
     @DisplayName("Verify Sentry Block ConsentRequest Creation")
     void sentryBlockConsentRequestCreationTest() {
-        final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
+        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = testContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+
+        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
+        final var actualResponse = consentRequestController.createConsentRequest(createConsentRequest);
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
     }
@@ -67,9 +78,15 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @Sentry
     @DisplayName("Is  not possible to create consent request with application token")
     void isNotPossibleToCreateConsentRequestWithApplicationToken() {
+        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = testContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+
+        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
         final var actualResponse = consentRequestController
                 .withCMToken()
-                .createConsentRequest(testConsentRequest);
+                .createConsentRequest(createConsentRequest);
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.FORBIDDEN);
     }
@@ -78,8 +95,8 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @ErrorHandler
     @DisplayName("Verify Create Empty ConsentRequest is forbidden")
     void createEmptyConsentRequestTest() {
-        consentRequestController.withConsumerToken();
         final var actualCreateConsentRequestResponse = consentRequestController
+                .withConsumerToken()
                 .createConsentRequest(new ConsentRequestData());
 
         new ResponseAssertion(actualCreateConsentRequestResponse)
@@ -87,36 +104,32 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_VALIDATION);
     }
 
-    @Nested
-    @DisplayName("Create consent request")
-    public class WithConsumer {
+    @Test
+    @ErrorHandler
+    @Issue("NS-3048")
+    @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Provider")
+    void isNotPossibleToCreateConsentRequestWithOutProvider() {
+        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = testContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
 
-        @AfterEach
-        void cleanUp() {
-            RemoveEntitiesSteps.removeConsumer(testConsentRequest.getConsumerId());
-        }
+        new OnboardingSteps(StringUtils.EMPTY, consentInfo.getConsumerId()).onboardValidConsumer();
 
-        @Test
-        @ErrorHandler
-        @Issue("NS-3048")
-        @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Provider")
-        void isNotPossibleToCreateConsentRequestWithOutProvider() {
-            new OnboardingSteps(StringUtils.EMPTY, testConsentRequest.getConsumerId()).onboardValidConsumer();
+        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
+        final var actualResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(createConsentRequest);
 
-            consentRequestController.withConsumerToken();
-            final var actualResponse = consentRequestController.createConsentRequest(testConsentRequest);
-
-            var actualCause = new ResponseAssertion(actualResponse)
-                    .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
-                    .expectedErrorResponse(CMErrorResponse.PROVIDER_APPLICATION_NOT_FOUND)
-                    .getCause();
-            assertThat(actualCause)
-                    .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
-                    .contains(testConsentRequest.getConsumerId())
-                    .contains(testConsentRequest.getProviderId())
-                    .contains(testConsentRequest.getContainerId());
-        }
-
+        var actualCause = new ResponseAssertion(actualResponse)
+                .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
+                .expectedErrorResponse(CMErrorResponse.PROVIDER_APPLICATION_NOT_FOUND)
+                .getCause();
+        assertThat(actualCause)
+                .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
+                .contains(createConsentRequest.getConsumerId())
+                .contains(createConsentRequest.getProviderId())
+                .contains(createConsentRequest.getContainerId());
     }
 
 }
