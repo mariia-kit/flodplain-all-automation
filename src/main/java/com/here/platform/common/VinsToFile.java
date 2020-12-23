@@ -34,6 +34,14 @@ public class VinsToFile implements FileIO {
         return csvFile;
     }
 
+    public File file(FILE_TYPE fileType) {
+        if (FILE_TYPE.JSON.equals(fileType)) {
+            return json();
+        } else {
+            return csv();
+        }
+    }
+
     /**
      * @return basePath/fileName.targetFileType
      */
@@ -53,4 +61,8 @@ public class VinsToFile implements FileIO {
         );
     }
 
+    public enum FILE_TYPE {
+        JSON,
+        CSV
+    }
 }

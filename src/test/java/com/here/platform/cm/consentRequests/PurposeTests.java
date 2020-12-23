@@ -4,10 +4,15 @@ package com.here.platform.cm.consentRequests;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.AdditionalLink;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestPurposeData;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.Purpose;
@@ -16,6 +21,8 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,80 +67,70 @@ public class PurposeTests extends BaseCMTest {
                 );
     }
 
-    @Nested
-    @Purpose
-    @DisplayName("Purpose for consent request")
-    public class ConsentRequestPurpose {
+    @Test
+    @DisplayName("Verify purpose content of consent request")
+    void getPurposeForConsentRequestTest() {
+        ConsentRequestContainers targetContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = targetContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer.getConsentContainer());
 
-        private final String privateBearer = DataSubjects.getNextBy18VINLength().getBearerToken();
-        private final ConsentRequestContainers targetContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        private final ConsentRequestData targetConsentRequest = getBaseConsentRequestData()
-                .providerId(targetContainer.provider.getName())
-                .consumerId(faker.crypto().md5())
-                .containerId(targetContainer.id);
+        var crid = new ConsentRequestSteps2(providerId, consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .getId();
 
-        @RegisterExtension
-        ConsentRequestCascadeRemoveExtension requestRemoveExtension = new ConsentRequestCascadeRemoveExtension();
-        @RegisterExtension
-        OnboardAndRemoveApplicationExtension onboardApplicationExtension =
-                OnboardAndRemoveApplicationExtension.builder()
-                        .cleanUpAfter(false)
-                        .consentRequestData(targetConsentRequest)
-                        .build();
-        private String crid;
+        var purposeResponse = consentRequestController
+                .withConsumerToken()
+                .getConsentRequestPurpose(crid, dataSubject.getBearerToken());
 
-        @BeforeEach
-        void createConsentRequestBeforeTest() {
-            consentRequestController.withConsumerToken();
-            var consentRequest = consentRequestController.createConsentRequest(targetConsentRequest);
-            crid = new ResponseAssertion(consentRequest)
-                    .statusCodeIsEqualTo(StatusCode.CREATED).bindAs(ConsentRequestIdResponse.class)
-                    .getConsentRequestId();
+        new ResponseAssertion(purposeResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(new ConsentRequestPurposeData()
+                        .containerName(consentInfo.getContainerName())
+                        .containerDescription(consentInfo.getContainerDescription())
+                        .resources(consentInfo.getResources())
+                        .purpose(consentInfo.getPurpose())
+                        .privacyPolicy(consentInfo.getPrivacyPolicy())
+                        .consumerName(consentInfo.getConsumerName())
+                        .title(consentInfo.getTitle())
+                );
+    }
 
-            requestRemoveExtension.cridToRemove(crid);
-            requestRemoveExtension.consentRequestToCleanUp(targetConsentRequest);
-        }
+    @Test
+    @DisplayName("Get purpose data by consumerId and containerId")
+    void getPurposeByConsumerAndContainerIdsTest() {
+        ConsentRequestContainers targetContainer = ConsentRequestContainers.getNextDaimlerExperimental();
+        String providerId = targetContainer.getProvider().getName();
+        String mpConsumer = crypto.sha1();
+        DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer.getConsentContainer());
 
-        @Test
-        @DisplayName("Verify purpose content of consent request")
-        void getPurposeForConsentRequestTest() {
-            var purposeResponse = consentRequestController.getConsentRequestPurpose(crid, privateBearer);
+        var crid = new ConsentRequestSteps2(providerId, consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .getId();
 
-            new ResponseAssertion(purposeResponse)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .responseIsEqualToObject(new ConsentRequestPurposeData()
-                            .containerName(targetContainer.name)
-                            .containerDescription(targetContainer.containerDescription)
-                            .resources(targetContainer.resources)
-                            .purpose(targetConsentRequest.getPurpose())
-                            .privacyPolicy(targetConsentRequest.getPrivacyPolicy())
-                            .consumerName(onboardApplicationExtension.getOnboardedConsumer().getConsumerName())
-                            .title(targetConsentRequest.getTitle())
-                    );
-        }
+        var purposeResponse = consentRequestController
+                .withConsumerToken()
+                .getConsentRequestPurpose(
+                        consentInfo.getConsumerId(),
+                        consentInfo.getContainerId(),
+                        dataSubject.getBearerToken()
+                );
 
-        @Test
-        @DisplayName("Get purpose data by consumerId and containerId")
-        void getPurposeByConsumerAndContainerIdsTest() {
-            var purposeResponse = consentRequestController.getConsentRequestPurpose(
-                    targetConsentRequest.getConsumerId(),
-                    targetConsentRequest.getContainerId(),
-                    privateBearer
-            );
-
-            new ResponseAssertion(purposeResponse)
-                    .statusCodeIsEqualTo(StatusCode.OK)
-                    .responseIsEqualToObject(new ConsentRequestPurposeData()
-                            .containerName(targetContainer.name)
-                            .containerDescription(targetContainer.containerDescription)
-                            .resources(targetContainer.resources)
-                            .purpose(targetConsentRequest.getPurpose())
-                            .privacyPolicy(targetConsentRequest.getPrivacyPolicy())
-                            .consumerName(onboardApplicationExtension.getOnboardedConsumer().getConsumerName())
-                            .title(targetConsentRequest.getTitle())
-                    );
-        }
-
+        new ResponseAssertion(purposeResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(new ConsentRequestPurposeData()
+                        .containerName(consentInfo.getContainerName())
+                        .containerDescription(consentInfo.getContainerDescription())
+                        .resources(consentInfo.getResources())
+                        .purpose(consentInfo.getPurpose())
+                        .privacyPolicy(consentInfo.getPrivacyPolicy())
+                        .consumerName(consentInfo.getConsumerName())
+                        .title(consentInfo.getTitle())
+                );
     }
 
 }

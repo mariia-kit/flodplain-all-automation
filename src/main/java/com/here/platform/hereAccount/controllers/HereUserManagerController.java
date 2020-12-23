@@ -72,10 +72,9 @@ public class HereUserManagerController extends BaseHereAccountController {
         StatusCodeExpects.expectNOCONSTENTStatusCode(termsResponse);
     }
 
-    public void acceptCMConsent(Cookies cookie) {
-        Response saveConsentResponse = hereAccountClient("/api/account/save-consent")
+    public void acceptCMConsent() {
+        Response saveConsentResponse = hereAccountClient("/consent")
                 .body(new AcceptConsentRequest())
-                .cookies(cookie)
                 .post();
         StatusCodeExpects.expectCREATEDStatusCode(saveConsentResponse);
     }
@@ -201,6 +200,7 @@ public class HereUserManagerController extends BaseHereAccountController {
             realm = "HERE";
             clientId = "yEx4GXjPeJtfJKmKOFU5";
             scope = List.of("openid", "email", "profile", "readwrite:ha");
+
         }
 
     }

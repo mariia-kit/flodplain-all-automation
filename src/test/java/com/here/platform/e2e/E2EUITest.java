@@ -36,7 +36,6 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ProdAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
@@ -49,7 +48,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -65,7 +63,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Tag("e2e_ui")
 @Execution(ExecutionMode.SAME_THREAD)
-@ExtendWith(ProdAfterCleanUp.class)
 public class E2EUITest extends BaseE2ETest {
 
     static {

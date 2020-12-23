@@ -26,6 +26,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 @UserAccount
 @Execution(ExecutionMode.SAME_THREAD)
+@DisplayName("User Account Vin management")
 public class UserAccountVINTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();

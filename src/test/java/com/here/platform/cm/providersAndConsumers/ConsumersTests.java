@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 
 @OnBoardConsumer
+@DisplayName("Onboard Consumer")
 class ConsumersTests extends BaseCMTest {
 
     private final ConsumerController consumerController = new ConsumerController();

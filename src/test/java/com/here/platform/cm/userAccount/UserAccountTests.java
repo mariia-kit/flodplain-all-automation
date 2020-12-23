@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
+@DisplayName("User Account")
 public class UserAccountTests extends BaseCMTest {
 
     private final UserAccountController userAccountController = new UserAccountController();

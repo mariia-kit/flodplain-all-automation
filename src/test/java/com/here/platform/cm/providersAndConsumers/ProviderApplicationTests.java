@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 
 @Feature("On-boarding")
+@DisplayName("Onboard Application")
 public class ProviderApplicationTests extends BaseCMTest {
 
     private String

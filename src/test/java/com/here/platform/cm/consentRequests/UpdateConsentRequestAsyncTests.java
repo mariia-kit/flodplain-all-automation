@@ -1,43 +1,37 @@
-package com.here.platform.cm.consentRequests.dataSubjects;
+package com.here.platform.cm.consentRequests;
 
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.controllers.ConsentStatusController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
-import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.VinUpdateError;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps;
-import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
+import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.common.annotations.CMFeatures.ASYNC;
 import com.here.platform.common.annotations.CMFeatures.UpdateConsentRequest;
-import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.helpers.Steps;
-import java.io.File;
+import com.here.platform.ns.dto.Users;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -46,49 +40,7 @@ import org.junit.jupiter.api.Test;
 @UpdateConsentRequest
 public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
     private final String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
-    private final User mpConsumer = targetApp.consumer;
-
-    private final int vinLength = targetApp.provider.vinLength;
-    private final String
-            vin1 = VIN.generate(vinLength),
-            vin2 = VIN.generate(vinLength),
-            vin3 = VIN.generate(vinLength);
-
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider);
-    private final ConsentRequestData testConsentRequest = new ConsentRequestData()
-            .consumerId(mpConsumer.getRealm())
-            .providerId(targetApp.provider.getName())
-            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
-            .purpose(faker.commerce().productName())
-            .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.getId());
-    private String crid;
-    private File testFileWithVINs = null;
-
-    @BeforeEach
-    void onboardApplicationForProviderAndConsumer() {
-        Steps.createRegularContainer(testContainer);
-        OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
-        onboard.onboardTestProvider();
-        onboard.onboardTestProviderApplication(
-                testContainer.getId(),
-                targetApp.container.clientId,
-                targetApp.container.clientSecret);
-        crid = ConsentRequestSteps.createConsentRequestFor(
-                targetApp.provider.getName(),
-                targetApp.consumer.getName(),
-                targetApp.consumer.getRealm(),
-                testContainer.getId())
-                .getConsentRequestId();
-    }
-
-    @AfterEach
-    void cleanUp() {
-        fuSleep();
-        RemoveEntitiesSteps.cascadeForceRemoveConsentRequest(crid, testFileWithVINs, testConsentRequest);
-    }
 
     //todo add test for 2mb file
 
@@ -96,10 +48,19 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
     @ASYNC
     @DisplayName("Verify Adding Vins To ConsentRequest Async")
     void addVinsToConsentRequestTestAsync() {
-        testFileWithVINs = new VinsToFile(vin1).json();
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        String vin1 = VIN.generate(targetProvider.getVinLength());
+
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest();
+;
         var addVinsToConsentRequest = consentRequestController
                 .withConsumerToken(mpConsumer)
-                .addVinsToConsentRequestAsync(crid, testFileWithVINs);
+                .addVinsToConsentRequestAsync(steps.getId(), FILE_TYPE.JSON, vin1);
 
         String updateInfoUrl = new ResponseAssertion(addVinsToConsentRequest)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
@@ -119,37 +80,38 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
                         .status(ConsentRequestAsyncUpdateInfo.StatusEnum.FINISHED)
                         .action(ConsentRequestAsyncUpdateInfo.ActionEnum.ADD_DATA_SUBJECTS)
-                        .consentRequestId(crid)
+                        .consentRequestId(steps.getId())
                         .id(Long.parseLong(asyncId))
                         .vinUpdateErrors(new ArrayList<>())
                 );
-
-        new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
-                .responseIsEqualToObject(new ConsentRequestStatus()
-                        .approved(0)
-                        .pending(1)
-                        .revoked(0)
-                        .expired(0)
-                        .rejected(0)
-                );
+        steps.verifyConsentStatus(new ConsentRequestStatus()
+                .approved(0)
+                .pending(1)
+                .revoked(0)
+                .expired(0)
+                .rejected(0));
     }
 
     @Test
     @ASYNC
     @DisplayName("Force remove approved consents from consent request Async")
     void forceRemoveApprovedDataSubjectsTestAsync() {
-        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
-        testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
-        consentRequestController
-                .withConsumerToken(mpConsumer)
-                .addVinsToConsentRequest(crid, testFileWithVINs);
-        fuSleep();
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var vinToApprove = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
+        String vin1 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
-        fuSleep();
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(vinToApprove, vin1);
+        ConsentFlowSteps.approveConsentForVIN(steps.getId(), targetContainer, vinToApprove);
 
-        var removeVinsAsync = consentRequestController.
-                forceRemoveVinsFromConsentRequestAsync(crid, new VinsToFile(vinToApprove, vin2).csv());
+        var removeVinsAsync = consentRequestController
+                .withConsumerToken()
+                .forceRemoveVinsFromConsentRequestAsync(steps.getId(), FILE_TYPE.CSV, vinToApprove);
 
         String updateInfoUrl = new ResponseAssertion(removeVinsAsync)
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
@@ -168,37 +130,40 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
                         .status(ConsentRequestAsyncUpdateInfo.StatusEnum.FINISHED)
                         .action(ConsentRequestAsyncUpdateInfo.ActionEnum.REMOVE_ALL_VINS)
-                        .consentRequestId(crid)
+                        .consentRequestId(steps.getId())
                         .id(Long.parseLong(asyncId))
                         .vinUpdateErrors(new ArrayList<>())
                 );
-
-        new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
-                .responseIsEqualToObject(new ConsentRequestStatus()
-                        .approved(0)
-                        .pending(1)
-                        .revoked(0)
-                        .expired(0)
-                        .rejected(0)
-                );
+        steps.verifyConsentStatus(new ConsentRequestStatus()
+                .approved(0)
+                .pending(1)
+                .revoked(0)
+                .expired(0)
+                .rejected(0));
     }
 
     @Test
     @ASYNC
     @DisplayName("Verify removing VINs from the consent request Asynchronously")
     void removeVinsFromConsentRequestTestAsync() {
-        var vinToApprove = DataSubjects.getNextVinLength(targetApp.provider.vinLength).getVin();
-        testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).json();
-        consentRequestController
-                .withConsumerToken(mpConsumer)
-                .addVinsToConsentRequest(crid, testFileWithVINs);
-        fuSleep();
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var vinToApprove = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
+        String vin1 = VIN.generate(targetProvider.getVinLength());
+        String vin2 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentFlowSteps.approveConsentForVIN(crid, testContainer, vinToApprove);
-        fuSleep();
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(vinToApprove, vin1);
+
+        ConsentFlowSteps.approveConsentForVIN(steps.getId(), targetContainer, vinToApprove);
 
         var removeVinsAsync = new ResponseAssertion(consentRequestController
-                .removeVinsFromConsentRequestAsync(crid, new VinsToFile(vinToApprove, vin1, vin2).json()))
+                .withConsumerToken()
+                .removeVinsFromConsentRequestAsync(steps.getId(), new VinsToFile(vinToApprove, vin1, vin2).json()))
                 .statusCodeIsEqualTo(StatusCode.ACCEPTED)
                 .bindAs(AsyncUpdateResponse.class);
         Assertions.assertThat(removeVinsAsync.getApprovedVINs()).isEqualTo(List.of(vinToApprove));
@@ -215,46 +180,34 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
                 .responseIsEqualToObjectIgnoringTimeFields(new ConsentRequestAsyncUpdateInfo()
                         .status(ConsentRequestAsyncUpdateInfo.StatusEnum.FINISHED)
                         .action(ConsentRequestAsyncUpdateInfo.ActionEnum.REMOVE_NON_APPROVED_VINS)
-                        .consentRequestId(crid)
+                        .consentRequestId(steps.getId())
                         .id(Long.parseLong(asyncId))
                         .vinUpdateErrors(List.of(
                                 new VinUpdateError()
                                         .reason("does not exist")
-                                        .vinLabel(new VIN(vin1).label()),
+                                        .vinLabel(new VIN(vin2).label()),
                                 new VinUpdateError()
                                         .reason("has APPROVED status")
                                         .vinLabel(new VIN(vinToApprove).label())
                         ).stream().sorted(Comparator.comparing(VinUpdateError::getVinLabel))
                                 .collect(Collectors.toList()))
                 );
-        consentRequestController.withConsumerToken();
-        new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
-                .responseIsEqualToObject(new ConsentRequestStatus()
-                        .approved(1)
-                        .pending(1)
-                        .revoked(0)
-                        .expired(0)
-                        .rejected(0)
-                );
 
-        var consentStatusByIdAndVinResponse = new ConsentStatusController()
-                .withConsumerToken(mpConsumer)
-                .getConsentStatusByIdAndVin(crid, vinToApprove);
-        new ResponseAssertion(consentStatusByIdAndVinResponse).statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(new ConsentStatus()
-                        .consentRequestId(crid)
-                        .vin(vinToApprove)
-                        .state(APPROVED.getValue())
-                );
+        steps.verifyConsentStatus(new ConsentRequestStatus()
+                .approved(1)
+                .pending(0)
+                .revoked(0)
+                .expired(0)
+                .rejected(0))
+        .verifyConsentStatusByVin(vinToApprove, APPROVED.getValue());
     }
 
     @Test
     @ASYNC
     @DisplayName("Verify error of getConsentRequestAsyncUpdateInfo not exist")
     void getConsentRequestAsyncUpdateInfoNotFound() {
-        crid = null;
         var getConsentAsync = consentRequestController
-                .withConsumerToken(mpConsumer)
+                .withConsumerToken()
                 .getConsentRequestAsyncUpdateInfo(String.valueOf(Long.MAX_VALUE - 1));
         new ResponseAssertion(getConsentAsync)
                 .expectedErrorResponse(CMErrorResponse.CONSENT_UPDATE_INFO_NOT_FOUND);

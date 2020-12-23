@@ -18,38 +18,6 @@ import java.io.File;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
-@ExtendWith(MarketAfterCleanUp.class)
 public class BaseConsentStatusTests extends BaseCMTest {
-
-    protected final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-    protected final User mpConsumer = targetApp.consumer;
-    protected DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.provider.vinLength);
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers
-            .generateNew(targetApp.provider);
-    protected String
-            testConsumerId = mpConsumer.getRealm(),
-            testProviderId = targetApp.provider.getName(),
-            testVin = dataSubject.getVin();
-
-    protected File testFileWithVINs = null;
-
-
     protected ConsentStatusController consentStatusController = new ConsentStatusController();
-    protected ConsentRequestData testConsentRequestData = new ConsentRequestData()
-            .consumerId(testConsumerId)
-            .providerId(testProviderId)
-            .containerId(testContainer.getId())
-            .privacyPolicy(faker.internet().url())
-            .purpose(faker.commerce().productName())
-            .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote());
-
-    protected String createValidConsentRequest() {
-        testFileWithVINs = new VinsToFile(testVin).json();
-        ConsentInfo consent = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(targetApp, testVin, testContainer);
-        testConsentRequestData = new ConsentInfoToConsentRequestData(consent, targetApp.provider.getName(),
-                targetApp.consumer.getRealm()).consentRequestData();
-        return consent.getConsentRequestId();
-    }
-
 }

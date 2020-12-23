@@ -4,6 +4,7 @@ import com.here.platform.cm.controllers.ConsentRequestController;
 import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.common.VinsToFile;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Step;
 import java.io.File;
@@ -38,6 +39,27 @@ public class RemoveEntitiesSteps {
             consentRequestController
                     .withAuthorizationValue(Users.MP_CONSUMER.getToken())
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
+        }
+        var deleteConsentRequestResponse = privateController
+                .withConsumerToken()
+                .hardDeleteConsentRequest(crid);
+        StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
+    }
+
+    @Step("Remove consent for {vin} from consent request {crid}")
+    public void forceRemoveConsentsFromConsentRequest(String crid, String vin) {
+        if (crid == null) {
+            return;
+        }
+        consentRequestController
+                .withAuthorizationValue(Users.MP_CONSUMER.getToken())
+                .forceRemoveVinsFromConsentRequest(crid, new VinsToFile(vin).json());
+    }
+
+    @Step("Clean empty consent request {crid}")
+    public void forceRemoveEmptyConsentRequest(String crid) {
+        if (crid == null) {
+            return;
         }
         var deleteConsentRequestResponse = privateController
                 .withConsumerToken()

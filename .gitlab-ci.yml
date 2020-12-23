@@ -1,4 +1,4 @@
-image: gradle:6.7-jdk11
+image: gradle:6.7.1-jdk11
 services:
    - docker:19.03.0-dind
 
@@ -36,6 +36,7 @@ stages:
   #   REPORT_URL: "build/reports_ns"
   #   HISTORY_URL: "history_ns"
   script:
+    - set GROOVY_TURN_OFF_JAVA_WARNINGS=true
     - if [ ! -z ${CM_TEST_BRANCH} ] && git branch -a | egrep "remotes/origin/${CM_TEST_BRANCH}"; then git checkout origin/${CM_TEST_BRANCH}; res=$?; fi
     - if [[ ! -z ${CM_TEST_BRANCH} && $res == 0 ]]; then echo "Running tests from ${CM_TEST_BRANCH} brach"; fi
     - mkdir -p "${REPORT_URL}"

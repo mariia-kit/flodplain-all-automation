@@ -9,6 +9,7 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.cm.steps.remove.ConsentCollector;
 import io.qameta.allure.Step;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -88,18 +89,25 @@ public class OnboardingSteps {
         var providerResponse = this.providersController
                 .withConsumerToken()
                 .onboardDataProvider(testDataProvider);
+        ConsentCollector.addProvider(providerId);
         StatusCodeExpects.expectCREATEDStatusCode(providerResponse);
     }
 
     @Step("Onboard valid Consumer")
     public void onboardValidConsumer() {
+        onboardConsumer(faker.commerce().department());
+    }
+
+    @Step("Onboard valid Consumer")
+    public void onboardConsumer(String consumerName) {
         var testConsumer = new Consumer()
                 .consumerId(this.consumerId)
-                .consumerName(this.faker.commerce().department());
+                .consumerName(consumerName);
 
         var consumerResponse = this.consumerController
                 .withConsumerToken()
                 .onboardDataConsumer(testConsumer);
+        ConsentCollector.addConsumer(consumerId);
         StatusCodeExpects.expectOKStatusCode(consumerResponse);
     }
 

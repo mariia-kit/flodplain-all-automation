@@ -8,6 +8,7 @@ import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
 import com.here.platform.common.annotations.ErrorHandler;
+import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 @DisplayName("Getting of access tokens for consents")
 @GetAccessToken
 public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
-
-    private final ConsentStatusController consentStatusController = new ConsentStatusController()
-            .withAuthorizationValue(Users.MP_CONSUMER.getToken());
 
     static Stream<Arguments> consentRequestIdAndVins() {
         return Stream.of(
@@ -35,9 +33,10 @@ public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
     @ErrorHandler
     @MethodSource("consentRequestIdAndVins")
     void accessTokenErrorHandlerTest(String crid, String vin, String cause) {
-        var accessTokenController = new AccessTokenController();
-        accessTokenController.withConsumerToken();
-        final var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, testConsumerId);
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        final var accessTokenResponse = new AccessTokenController()
+                .withConsumerToken()
+                .getAccessToken(crid, vin, mpConsumer.getRealm());
 
         new ResponseAssertion(accessTokenResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND) //TODO should be StatusCode.BAD_REQUEST
@@ -49,7 +48,9 @@ public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
     @ErrorHandler
     @MethodSource("consentRequestIdAndVins")
     void getConsentStatusByCridAndVinErrorHandlerTest(String crid, String vin, String cause) {
-        final var consentStatusResponse = consentStatusController.getConsentStatusByIdAndVin(crid, vin);
+        var consentStatusResponse = new ConsentStatusController()
+                .withConsumerToken()
+                .getConsentStatusByIdAndVin(crid, vin);
 
         new ResponseAssertion(consentStatusResponse)
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
