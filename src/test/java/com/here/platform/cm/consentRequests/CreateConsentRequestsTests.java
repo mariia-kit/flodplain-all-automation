@@ -1,10 +1,10 @@
 package com.here.platform.cm.consentRequests;
 
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequest;
@@ -89,7 +89,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
 
     @Issue("NS-3043")
     @Test
-    @DisplayName("Is possible to create consent request without privacy policy and additional links")
+    @DisplayName("Is not possible to create consent request without privacy policy and additional links")
     void isPossibleToCreateConsentReqeustWithoutPrivacyPolicyAndAdditionalLinks() {
         ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
         User mpConsumer = Users.MP_CONSUMER.getUser();
@@ -99,20 +99,22 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .generateNewConsentInfo(mpConsumer, targetContainer)
                 .privacyPolicy(null)
                 .additionalLinks(null);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
-                .onboardAllForConsentRequest()
-                .createConsentRequest()
-                .getId();
+        new ConsentRequestSteps2(targetContainer, consentInfo)
+                .onboardAllForConsentRequest();
 
-        var expectedConsentRequestResponse = Consents
-                .generateResponse(targetApp.getProvider().getName(), consentInfo);
+        var targetConsentRequest = Consents.generateNewConsent(
+                targetContainer.getProvider().getName(),
+                consentInfo);
 
-        var getConsentRequestData = consentRequestController
+        var consentRequestResponse = consentRequestController
                 .withConsumerToken()
-                .getConsentRequestById(crid);
-        new ResponseAssertion(getConsentRequestData)
-                .statusCodeIsEqualTo(StatusCode.OK)
-                .responseIsEqualToObject(expectedConsentRequestResponse);
+                .createConsentRequest(targetConsentRequest);
+
+        new ResponseAssertion(consentRequestResponse)
+                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_VALIDATION);
+        new ResponseAssertion(consentRequestResponse)
+                .expectedErrorCause("Consent request parameter 'privacyPolicy' must be provided");
     }
 
 }
