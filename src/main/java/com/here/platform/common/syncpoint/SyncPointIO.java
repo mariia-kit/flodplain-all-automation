@@ -3,6 +3,7 @@ package com.here.platform.common.syncpoint;
 import static com.here.platform.common.strings.SBB.sbb;
 
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
+import com.here.platform.ns.helpers.UniqueId;
 import io.restassured.response.Response;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ public class SyncPointIO {
     public String readSyncToken(String key) {
         SyncEntity record;
         Response getResp = referenceProviderController.readSyncEntity(key);
+        String mySignature = sbb("new-").append(UniqueId.getUniqueKey()).bld();
 
         if (getResp.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
             getResp = referenceProviderController.readSyncEntity(key);
@@ -28,7 +30,7 @@ public class SyncPointIO {
         if (getResp.getStatusCode() == HttpStatus.SC_OK) {
             record = getResp.then().extract().as(SyncEntity.class);
         } else if (getResp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-            writeNewTokenValue(key, "new", 3599);
+            writeNewTokenValue(key, mySignature, 3599);
             lock(key);
             return StringUtils.EMPTY;
         } else {
@@ -38,17 +40,28 @@ public class SyncPointIO {
                     .append(getResp.body().print()).build());
         }
 
-        if (record.isLocked() || record.getValue().equals("new")) {
+        if (record.isLocked() || record.getValue().contains("new")) {
             if (record.getValue().isBlank()) {
-                writeNewTokenValue(key, "new", 3599);
+                writeNewTokenValue(key, mySignature, 3599);
                 lock(key);
-                return StringUtils.EMPTY;
+                return waitIsItMine(key, mySignature);
             } else {
                 Thread.sleep(1000);
                 record = waitForUnLock(key);
             }
         }
         return record.getValue();
+    }
+
+    @SneakyThrows
+    public String waitIsItMine(String key, String mySignature) {
+        Thread.sleep(1000);
+        SyncEntity record = referenceProviderController.readSyncEntity(key).then().extract().as(SyncEntity.class);
+        if (record.getValue().equals(mySignature)) {
+            return StringUtils.EMPTY;
+        } else {
+            return waitForUnLock(key).getValue();
+        }
     }
 
     public void writeNewTokenValue(String key, String value, long expirationTime) {
