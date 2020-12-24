@@ -3,7 +3,6 @@ package com.here.platform.cm.consentStatus.approve;
 
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
-import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -14,25 +13,20 @@ import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.SuccessApproveData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps2;
-import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @DisplayName("Approve consent")
@@ -51,7 +45,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         String vinToApprove = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)
@@ -172,7 +166,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         String vinToApprove = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)

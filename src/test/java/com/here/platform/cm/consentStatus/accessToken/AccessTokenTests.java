@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
-import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -15,26 +14,19 @@ import com.here.platform.cm.rest.model.AccessTokenResponse;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.helpers.Steps;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @GetAccessToken
@@ -54,7 +46,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -85,7 +77,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -115,7 +107,7 @@ class AccessTokenTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -147,13 +139,13 @@ class AccessTokenTests extends BaseConsentStatusTests {
 
         ConsentInfo consentInfo1 = Consents.generateNewConsentInfo(mpConsumer, targetContainer1);
         ConsentInfo consentInfo2 = Consents.generateNewConsentInfo(mpConsumer, targetContainer2);
-        var crid1 = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo1)
+        var crid1 = new ConsentRequestSteps2(targetContainer1, consentInfo1)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
                 .getId();
 
-        var crid2 = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo2)
+        var crid2 = new ConsentRequestSteps2(targetContainer2, consentInfo2)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)

@@ -5,10 +5,15 @@ import static com.here.platform.common.strings.SBB.sbb;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.Provider;
+import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -16,6 +21,8 @@ import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.OnboardAndRemoveApplicationExtension;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,15 +34,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @OnBoardProvider
 @DisplayName("Onboard Provider")
 class ProvidersTests extends BaseCMTest {
-
-    private final ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-    private final ConsentRequestData testConsentRequest = new ConsentRequestData()
-            .consumerId(crypto.sha1())
-            .providerId(testContainer.provider.getName())
-            .title(sbb(Conf.cm().getQaTestDataMarker()).append(faker.gameOfThrones().quote()).bld())
-            .purpose(faker.commerce().productName())
-            .privacyPolicy(faker.internet().url())
-            .containerId(testContainer.id);
 
     @Test
     @Tag("smoke_cm")
@@ -71,39 +69,46 @@ class ProvidersTests extends BaseCMTest {
                 .expectedErrorResponse(CMErrorResponse.PROVIDER_NOT_FOUND);
     }
 
-    @Nested
-    @DisplayName("Redirect to data provider OAUTH")
-    public class RedirectDataProvider {
+    @Test
+    @DisplayName("Verify redirect to the Data Provider OAUTH")
+    void dataProviderRedirectTest() {
+        ProviderApplications targetApp = ProviderApplications.DAIMLER_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
 
-        @RegisterExtension
-        OnboardAndRemoveApplicationExtension onboardApplicationExtension = OnboardAndRemoveApplicationExtension
-                .builder().consentRequestData(testConsentRequest).build();
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .getId();
 
-        @RegisterExtension
-        ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
+        var redirectToDataProviderResponse = providerController
+                .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());
 
-        @Test
-        @DisplayName("Verify redirect to the Data Provider OAUTH")
-        void dataProviderRedirectTest() {
-            var consentRequestResponse = consentRequestController
-                    .withConsumerToken()
-                    .createConsentRequest(testConsentRequest);
-            var crid = new ResponseAssertion(consentRequestResponse)
-                    .statusCodeIsEqualTo(StatusCode.CREATED)
-                    .bindAs(ConsentRequestIdResponse.class)
-                    .getConsentRequestId();
-            consentRequestRemoveExtension.cridToRemove(crid);
-
-            var redirectToDataProviderResponse = providerController
-                    .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());
-
-            new ResponseAssertion(redirectToDataProviderResponse)
-                    .statusCodeIsEqualTo(StatusCode.REDIRECT)
-                    .responseIsEmpty();
-        }
-
+        new ResponseAssertion(redirectToDataProviderResponse)
+                .statusCodeIsEqualTo(StatusCode.REDIRECT)
+                .responseIsEmpty();
     }
 
-    //todo add tests for DAIMLER redirect and excelsior
+    @Test
+    @DisplayName("Verify redirect to the Data Provider OAUTH Reference")
+    void dataProviderRedirectTestReference() {
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+
+        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .getId();
+
+        var redirectToDataProviderResponse = providerController
+                .redirectToDataProviderByRequestId(crid, ConsentManagementServiceUrl.getEnvUrl());
+
+        new ResponseAssertion(redirectToDataProviderResponse)
+                .statusCodeIsEqualTo(StatusCode.REDIRECT)
+                .responseIsEmpty();
+    }
 
 }

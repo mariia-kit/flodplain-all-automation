@@ -54,7 +54,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
         String vin1 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest();
 ;
@@ -103,7 +103,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         var vinToApprove = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
         String vin1 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove, vin1);
@@ -154,7 +154,7 @@ public class UpdateConsentRequestAsyncTests extends BaseCMTest {
         String vin1 = VIN.generate(targetProvider.getVinLength());
         String vin2 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove, vin1);

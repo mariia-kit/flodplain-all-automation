@@ -40,6 +40,8 @@ public class SyncPointIO {
 
         if (record.isLocked() || record.getValue().equals("new")) {
             if (record.getValue().isBlank()) {
+                writeNewTokenValue(key, "new", 3599);
+                lock(key);
                 return StringUtils.EMPTY;
             } else {
                 Thread.sleep(1000);

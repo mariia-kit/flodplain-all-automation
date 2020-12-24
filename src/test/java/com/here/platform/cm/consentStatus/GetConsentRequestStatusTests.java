@@ -62,7 +62,7 @@ public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
                 vinToPending = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength()).getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        ConsentRequestSteps2 step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        ConsentRequestSteps2 step = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove, vinToRevoke, vinToPending);
