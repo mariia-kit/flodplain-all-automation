@@ -23,7 +23,8 @@ public class ReferenceProviderController {
     protected RequestSpecification referenceProviderClient(final String targetPath) {
         var baseService = given()
                 .baseUri(Conf.ns().getRefProviderUrl())
-                .basePath(targetPath);
+                .basePath(targetPath)
+                .filters(new AllureRestAssured());
 
         return baseService;
     }
@@ -100,6 +101,7 @@ public class ReferenceProviderController {
                 .post("/containers");
     }
 
+    @Step("Read sync entity {key}")
     public Response readSyncEntity(String key) {
         return referenceProviderClient("/sync")
                 .get("/entity/" + key);
@@ -111,6 +113,7 @@ public class ReferenceProviderController {
                 .get("/now");
     }
 
+    @Step("Write sync entity {key} value {value} exp {expirationTime}")
     public Response writeSyncEntity(String key, String value, long expirationTime) {
         return referenceProviderClient("/sync")
                 .param("key", key)
@@ -119,11 +122,13 @@ public class ReferenceProviderController {
                 .post("/entity");
     }
 
+    @Step("Sync entity un-lock {key}")
     public Response unlockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/unlock/{key}", key);
     }
 
+    @Step("Sync entity lock {key}")
     public Response lockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/lock/{key}", key);

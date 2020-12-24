@@ -49,12 +49,12 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
         ConsentInfo consentInfo1 = Consents.generateNewConsentInfo(mpConsumer, targetContainer1);
         ConsentInfo consentInfo2 = Consents.generateNewConsentInfo(mpConsumer, targetContainer2);
-        var crid1 = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo1)
+        var crid1 = new ConsentRequestSteps2(targetContainer1, consentInfo1)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)
                 .getId();
-        var crid2 = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo2)
+        var crid2 = new ConsentRequestSteps2(targetContainer2, consentInfo2)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)

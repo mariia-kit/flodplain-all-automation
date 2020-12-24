@@ -74,7 +74,7 @@ public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)

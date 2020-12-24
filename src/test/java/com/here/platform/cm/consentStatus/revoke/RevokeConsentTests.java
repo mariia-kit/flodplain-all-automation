@@ -52,7 +52,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);
@@ -162,7 +162,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);
@@ -190,7 +190,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);

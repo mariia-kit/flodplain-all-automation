@@ -1,5 +1,7 @@
 package com.here.platform.ns.helpers.authentication;
 
+import static com.here.platform.common.strings.SBB.sbb;
+
 import com.here.platform.aaa.ApplicationTokenController;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.cm.controllers.HERETokenController;
@@ -104,12 +106,13 @@ public class AuthController {
             try {
                 String token = supplier.get();
                 if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
-                    //no valid token generated, no sync to server, unlock record...
                     SyncPointIO.unlock(key);
+                    throw new RuntimeException(sbb("Error during generation of new token for sync:")
+                            .append(key).append(" token is ").sQuoted(token).bld());
                 } else {
                     writeKeyValue(key, token);
                 }
-                return SyncPointIO.readSyncToken(key);
+                return token;
             } catch (Error er){
                 SyncPointIO.unlock(key);
                 throw new RuntimeException("Error Writing sync entity fro server:", er);

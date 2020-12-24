@@ -50,7 +50,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(MPProviders.DAIMLER_REFERENCE);
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .getId();
@@ -79,7 +79,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
         var expectedConsentRequestStatuses = new ConsentRequestStatus()
                 .pending(2).approved(0).revoked(0).expired(0).rejected(0);
 
-        new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(validVINs)
@@ -102,7 +102,7 @@ public class AddingVinsToConsentRequestTests extends BaseCMTest {
                 .pending(targetVINsWithDuplication.length - 1)
                 .approved(0).revoked(0).expired(0).rejected(0);
 
-        new ConsentRequestSteps2(targetContainer.getProvider().getName(), consentInfo)
+        new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(targetVINsWithDuplication)

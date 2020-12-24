@@ -39,7 +39,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .getId();
@@ -61,11 +61,11 @@ public class CreateConsentRequestsTests extends BaseCMTest {
         ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
         User mpConsumer = Users.MP_CONSUMER.getUser();
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        var testVin = VIN.generate(17);
-        var testVin1 = VIN.generate(17);
+        var testVin = VIN.generate(targetApp.getProvider().getVinLength());
+        var testVin1 = VIN.generate(targetApp.getProvider().getVinLength());
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .getId();
@@ -99,7 +99,7 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .generateNewConsentInfo(mpConsumer, targetContainer)
                 .privacyPolicy(null)
                 .additionalLinks(null);
-        var crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .getId();

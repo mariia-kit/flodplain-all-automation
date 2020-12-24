@@ -66,7 +66,7 @@ public class UserAccountWithConsentTests extends BaseCMTest {
         String vin = dataSubjectIm.getVin();
         vinsToRemove.add(vin);
         consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        crid = new ConsentRequestSteps2(targetApp.getProvider().getName(), consentInfo)
+        crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vin)

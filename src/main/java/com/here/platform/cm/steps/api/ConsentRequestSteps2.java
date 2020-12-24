@@ -24,21 +24,24 @@ import io.qameta.allure.Step;
 public class ConsentRequestSteps2 {
 
     private final ConsentInfo consentInfo;
-    private final String providerId;
+    private final ConsentRequestContainer consentRequestContainer;
 
     private final ConsentRequestController consentRequestController = new ConsentRequestController();
 
-    public ConsentRequestSteps2(String providerId, ConsentInfo consentInfo) {
+    public ConsentRequestSteps2(ConsentRequestContainer consentRequestContainer, ConsentInfo consentInfo) {
         this.consentInfo = consentInfo;
-        this.providerId = providerId;
+        this.consentRequestContainer = consentRequestContainer;
     }
 
     @Step("Create regular consent request.")
     public ConsentRequestSteps2 createConsentRequest() {
-        var targetConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
+        var targetConsentRequest = Consents.generateNewConsent(
+                consentRequestContainer.getProvider().getName(),
+                consentInfo);
 
-        consentRequestController.withConsumerToken();
-        var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
+        var consentRequestResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(targetConsentRequest);
         StatusCodeExpects.expectCREATEDStatusCode(consentRequestResponse);
 
         var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
@@ -48,22 +51,14 @@ public class ConsentRequestSteps2 {
 
     @Step("Onboard provider with containers on NS and CM.")
     public ConsentRequestSteps2 onboardAllForConsentRequest() {
-        ConsentRequestContainer consentRequestContainer = ConsentRequestContainer.builder()
-                .id(consentInfo.getContainerId())
-                .name(consentInfo.getContainerName())
-                .scopeValue("mb:user:pool:reader mb:vehicle:status:general offline_access")
-                .resources(consentInfo.getResources())
-                .containerDescription(consentInfo.getContainerDescription())
-                .provider(MPProviders.findByProviderId(providerId))
-                .clientId(Conf.ns().getReferenceApp().getClientId())
-                .clientSecret(Conf.ns().getReferenceApp().getClientSecret())
-                .build();
         Steps.createRegularContainer(consentRequestContainer);
-        OnboardingSteps onboard = new OnboardingSteps(MPProviders.findByProviderId(providerId), consentInfo.getConsumerId());
+        OnboardingSteps onboard = new OnboardingSteps(
+                MPProviders.findByProviderId(consentRequestContainer.getProvider().getName()),
+                consentInfo.getConsumerId());
         ConsentCollector.addApp(new ProviderApplication()
-                .providerId(providerId)
+                .providerId(consentRequestContainer.getProvider().getName())
                 .consumerId(consentInfo.getConsumerId())
-                .containerId(consentInfo.getContainerId()));
+                .containerId(consentRequestContainer.getId()));
         onboard.onboardTestProvider();
         onboard.onboardConsumer(consentInfo.getConsumerName());
         onboard.onboardTestProviderApplication(
