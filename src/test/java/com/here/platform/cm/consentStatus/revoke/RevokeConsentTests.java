@@ -16,6 +16,7 @@ import com.here.platform.cm.rest.model.ErrorResponse;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
@@ -49,6 +50,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
         DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubject);
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);

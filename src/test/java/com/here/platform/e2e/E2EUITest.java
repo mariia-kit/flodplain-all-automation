@@ -114,7 +114,7 @@ public class E2EUITest extends BaseE2ETest {
     @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_LOCATION.getContainer();
+        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_CHARGE.getContainer();
         ConsentInfo consentRequest =
                 new ConsentInfo()
                         .title(faker.company().buzzword())

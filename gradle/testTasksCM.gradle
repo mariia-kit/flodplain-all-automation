@@ -60,7 +60,7 @@ task smokeCMTests(type: TestCM) {
         includeTags "smoke_cm"
     }
     
-    //dependsOn "testDataGeneration"
+    dependsOn "cleanUpCM"
 }
 
 task fePreDevTests(type: TestCM) {
@@ -171,6 +171,14 @@ task zephyrCMSync(type: JavaExec) {
             "--reportPath=$resultsPath",
             "--autoCreateTestCycle=true"
     ]
+}
+
+task cleanUpCM(type: JavaExec) {
+    logging.captureStandardOutput(LogLevel.QUIET)
+
+    systemProperty "env", finalEnv
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.CMDataCleanUp"
 }
 
 task copyHistoryCM(type: Copy) {
