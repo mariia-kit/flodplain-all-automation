@@ -29,6 +29,12 @@ public abstract class BaseCMPage {
             return new DashBoardPage();
         }
 
+        @Step("Click on 'Avatar' tab in header")
+        public DashBoardPage openDashboardUserAvatarTab(){
+            $("lui-avatar[class='tabtrigger ng-star-inserted']").click();
+            return new DashBoardPage();
+        }
+
     }
 
 }

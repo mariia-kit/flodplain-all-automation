@@ -9,9 +9,11 @@ import static io.qameta.allure.Allure.step;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.pages.BaseCMPage.Header;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.PurposePage;
+import com.here.platform.cm.pages.UserProfilePage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
@@ -28,6 +30,7 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.helpers.authentication.AuthController;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +106,8 @@ public class DashboardTests extends BaseUITests {
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         String token = getUICmToken();
+        new DashBoardPage().isLoaded();
+
 
         step("Verify offers on dashboard in PENDING status", () -> {
                     DashBoardPage.header.openDashboardNewTab()
@@ -151,5 +156,23 @@ public class DashboardTests extends BaseUITests {
 
     //todo mark tests with @Feature(or some other) annotation specific user flow that is checked
     // https://confluence.in.here.com/display/OLP/Consent+Management+User+Flows
+
+    @Feature("Sign Out from CM web")
+    @Test
+    @DisplayName("Sign out and redirect to the 'Landing page'")
+    void clickSignOutAndRedirectToLandingPage() {
+        open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+
+        new DashBoardPage().isLoaded();
+
+        new Header().openDashboardUserAvatarTab();
+        new UserProfilePage().isLoaded().clickOnSignOut();
+
+        new LandingPage().isLoaded();
+    }
 
 }
