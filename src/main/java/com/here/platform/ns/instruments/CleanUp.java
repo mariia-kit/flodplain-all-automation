@@ -36,13 +36,13 @@ public class CleanUp {
                     .contains(Providers.getDataProviderNamePrefix().toLowerCase())) {
                 Response delete = new ProviderController().withToken(PROVIDER).deleteProvider(providerName);
                 if (delete.getStatusCode() == HttpStatus.SC_CONFLICT) {
-                    logger.info("Conflict detected during deletion of data provider:"
+                    logger.warn("Conflict detected during deletion of data provider:"
                             + providerName);
                     cleanContainers(providerName);
                     cleanResources(providerName);
                     Response finalDelete = new ProviderController().withToken(PROVIDER).deleteProvider(providerName);
                     if (finalDelete.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-                        logger.info(
+                        logger.warn(
                                 "Error deleting " + providerName + " after resolving conflict!");
                     }
                 }

@@ -13,6 +13,7 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Random;
 import java.util.function.Supplier;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
@@ -309,12 +310,13 @@ public class MarketplaceManageListingCall {
         Response resp = RestHelper
                 .get("Get list of all async tasks on mp.", url, token);
         if (resp.getStatusCode() == HttpStatus.SC_OK) {
-            return resp.jsonPath().getInt(
-                    "items.find {it.data.consumerSubscriptionResponse.listingHrn == '" + listingHrn + "'}.id");
-        } else {
-            throw new RuntimeException(String.format("Error getting list of async tasks. %s %s", resp.getStatusCode(),
-                    resp.body().print()));
+            Object idObj = resp.jsonPath().get("items.find {it.data.consumerSubscriptionResponse.listingHrn == '" + listingHrn + "'}.id");
+            if (idObj != null && !StringUtils.isEmpty(idObj.toString())) {
+                return Integer.parseInt(idObj.toString());
+            }
+
         }
+        throw new RuntimeException(String.format("Error getting list of async tasks. %s %s", listingHrn, resp.getStatusCode()));
     }
 
     public String getIdOfSubsFromAsyncTask(int taskId, String token) {
