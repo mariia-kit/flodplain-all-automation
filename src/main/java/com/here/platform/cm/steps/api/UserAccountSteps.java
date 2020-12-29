@@ -1,7 +1,9 @@
 package com.here.platform.cm.steps.api;
 
 import com.here.platform.cm.controllers.UserAccountController;
+import com.here.platform.common.DataSubject;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import lombok.experimental.UtilityClass;
 
 
@@ -10,14 +12,14 @@ public class UserAccountSteps {
 
     private final UserAccountController accountController = new UserAccountController();
 
-    public void attachVINToUserAccount(DataSubjects targetDataSubject, String targetVIN) {
+    public void attachVINToUserAccount(DataSubject targetDataSubject, String targetVIN) {
         var attachVinToUserAccount = accountController.attachVinToUserAccount(
-                targetVIN, targetDataSubject.getBearerToken()
+                targetVIN, AuthController.getDataSubjectToken(targetDataSubject)
         );
         StatusCodeExpects.expectOKStatusCode(attachVinToUserAccount);
     }
 
-    public void attachDataSubjectVINToUserAccount(DataSubjects targetDataSubject) {
+    public void attachDataSubjectVINToUserAccount(DataSubject targetDataSubject) {
         attachVINToUserAccount(targetDataSubject, targetDataSubject.getVin());
     }
 

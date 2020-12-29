@@ -1,98 +1,111 @@
 package com.here.platform.ns.instruments;
 
-import static java.lang.String.format;
-import static lv.ctco.zephyr.enums.ConfigProperty.PROJECT_KEY;
-import static lv.ctco.zephyr.enums.ConfigProperty.RELEASE_VERSION;
-import static lv.ctco.zephyr.enums.ConfigProperty.TEST_CYCLE;
-import static lv.ctco.zephyr.util.HttpUtils.getAndReturnBody;
-import static lv.ctco.zephyr.util.Utils.log;
+import static com.here.platform.common.strings.SBB.sbb;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lv.ctco.zephyr.Config;
 import lv.ctco.zephyr.Runner.CliConfigLoader;
 import lv.ctco.zephyr.beans.TestCase;
+import lv.ctco.zephyr.beans.TestStep;
 import lv.ctco.zephyr.beans.jira.Issue;
-import lv.ctco.zephyr.beans.zapi.ExecutionResponse;
 import lv.ctco.zephyr.service.AuthService;
-import lv.ctco.zephyr.service.JiraService;
 import lv.ctco.zephyr.service.MetaInfo;
 import lv.ctco.zephyr.service.MetaInfoRetrievalService;
 import lv.ctco.zephyr.service.TestCaseResolutionService;
 import lv.ctco.zephyr.service.ZephyrService;
-import lv.ctco.zephyr.transformer.ReportTransformerFactory;
-import lv.ctco.zephyr.util.CustomPropertyNamingStrategy;
-import lv.ctco.zephyr.util.ObjectTransformer;
-import lv.ctco.zephyr.util.Utils;
 
 
 public class Zephyroth {
 
     public static void main(String[] args) throws Exception {
-        Utils.log("Supported report types: " + ReportTransformerFactory.getInstance()
-                .getSupportedReportTransformers());
-
         Config config = new Config(new CliConfigLoader(args));
         execute(config);
     }
 
 
     public static void execute(Config config) throws IOException, InterruptedException {
-
         AuthService authService = new AuthService(config);
         MetaInfoRetrievalService metaInfoRetrievalService = new MetaInfoRetrievalService(config);
         TestCaseResolutionService testCaseResolutionService = new TestCaseResolutionService(config);
-        JiraService jiraService = new JiraService(config);
+        HEREJiraService hereJiraService = new HEREJiraService(config);
         ZephyrService zephyrService = new ZephyrService(config);
-
-        ObjectTransformer.setPropertyNamingStrategy(new CustomPropertyNamingStrategy(config));
 
         authService.authenticateInJira();
 
+        List<TestCase> testCasesFromTestRun = testCaseResolutionService.resolveTestCases();
+        List<Issue> actualTestCasesInZephyr = hereJiraService.getTestIssues();
+
+        //prepare test cases to creation
+        Map<String, String> targetTestCasesToCompare = getIssuesMapKeyToSummary(actualTestCasesInZephyr);
+        Set<TestCase> testCasesToCreate = filterTestCasesThatAlreadyCreated(
+                testCasesFromTestRun,
+                targetTestCasesToCompare
+        );
+
+        //create new test cases
+        for (TestCase testCase : testCasesToCreate) {
+            convertTestCaseStepsToDescription(testCase);
+            hereJiraService.createTestIssue(testCase);
+        }
+
+        //todo implement description and summary updating of the test cases
+
+        Map<String, String> issuesMapKeyToSummary = getIssuesMapKeyToSummary(actualTestCasesInZephyr);
+
+        //instead of zephyrService.mapTestCasesToIssues(testCasesFromTestRun, actualTestCasesInZephyr);
+        for (TestCase testCase : testCasesFromTestRun) {
+            var issueId = issuesMapKeyToSummary.entrySet().stream()
+                    .filter(entry -> testCase.getName().equals(entry.getValue()))
+                    .map(Entry::getKey)
+                    .findFirst().get();
+
+            testCase.setKey(issueId);
+            System.out.println(testCase.getKey());
+        }
+
         MetaInfo metaInfo = metaInfoRetrievalService.retrieve();
 
-        List<TestCase> testCases = testCaseResolutionService.resolveTestCases();
-        List<Issue> issues = jiraService.getTestIssues();
-        zephyrService.mapTestCasesToIssues(testCases, issues);
-
-        log(format("Link %s Test cases to cycle\n", testCases.size()));
-        zephyrService.linkExecutionsToTestCycle(metaInfo, testCases);
-
-        int max = 20;
-        long uniqKeys = testCases.stream().map(TestCase::getId).distinct().count();
-        while (max > 0) {
-            max--;
-            int currentIssues = getAllExecutionsCount(config);
-            log(format("Test cases linked to Cycle %s\n", currentIssues));
-            if (currentIssues >= uniqKeys) {
-                break;
-            }
-            Thread.sleep(60000);
-        }
-
-        zephyrService.updateExecutionStatuses(testCases);
+        zephyrService.linkExecutionsToTestCycle(metaInfo, testCasesFromTestRun);
+        zephyrService.updateExecutionStatuses(testCasesFromTestRun);
     }
 
-    public static int getAllExecutionsCount(Config config) throws IOException {
-        log("Fetching JIRA Test Executions for the project");
-        int skip = 0;
-        String search = "project='" + config.getValue(PROJECT_KEY) + "'%20and%20fixVersion='"
-                + URLEncoder.encode(config.getValue(RELEASE_VERSION), StandardCharsets.UTF_8) + "'%20and%20cycleName='"
-                + config.getValue(TEST_CYCLE) + "'";
+    private static void convertTestCaseStepsToDescription(TestCase testCase) {
+        var listOfStepsFromTestCase = testCase.getSteps().stream()
+                .map(TestStep::getDescription)
+                .collect(Collectors.toList());
 
-        ExecutionResponse executionResponse = searchInZQL(config, search);
-        if (executionResponse == null || executionResponse.getExecutions().isEmpty()) {
-            return 0;
+        String testCaseDescriptionWithUpdatedSteps = "";
+
+        //Add step as new bullet item
+        for (String testCaseStep : listOfStepsFromTestCase) {
+            testCaseDescriptionWithUpdatedSteps = sbb(testCaseDescriptionWithUpdatedSteps)
+                    .append("*").w().append(testCaseStep).n().bld();
         }
-        log(format("Retrieved %s Test executions\n", executionResponse.getTotalCount()));
-        return executionResponse.getTotalCount();
+
+        testCase.setDescription(testCaseDescriptionWithUpdatedSteps);
     }
 
-    private static ExecutionResponse searchInZQL(Config config, String search) throws IOException {
-        String response = getAndReturnBody(config, "zapi/latest/zql/executeSearch?zqlQuery=" + search);
-        return ObjectTransformer.deserialize(response, ExecutionResponse.class);
+    private static Set<TestCase> filterTestCasesThatAlreadyCreated(
+            List<TestCase> testCases,
+            Map<String, String> issuesSet)
+    {
+        return testCases.stream()
+                .filter(testCase -> !issuesSet.containsValue(testCase.getName()))
+                .collect(Collectors.toSet());
+    }
+
+    private static Map<String, String> getIssuesMapKeyToSummary(List<Issue> issues) {
+        Map<String, String> issuesSet = new HashMap<>(issues.size());
+        for (Issue issue : issues) {
+            issuesSet.put(issue.getKey(), issue.getFields().getSummary());
+        }
+        return issuesSet;
     }
 
 }

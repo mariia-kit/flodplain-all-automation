@@ -43,7 +43,7 @@ public class PurposePageTests extends BaseUITests {
         registeredDataSubject = DataSubjects.getNextBy18VINLength();
 
         UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
-        UserAccountSteps.attachDataSubjectVINToUserAccount(registeredDataSubject);
+        UserAccountSteps.attachDataSubjectVINToUserAccount(registeredDataSubject.getDataSubject());
 
         testConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(
                 providerApplicationForPurpose,
