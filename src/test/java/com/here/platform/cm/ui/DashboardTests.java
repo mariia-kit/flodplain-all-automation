@@ -19,6 +19,7 @@ import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
@@ -31,6 +32,7 @@ import com.here.platform.hereAccount.controllers.HereUserManagerController.HereU
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,13 +103,11 @@ public class DashboardTests extends BaseUITests {
         var consentRequestId1 = firstConsentRequest.get().getConsentRequestId();
         var consentRequestId2 = secondConsentRequest.get().getConsentRequestId();
 
-        open(ConsentPageUrl.getEnvUrlRoot());
+        open(consentRequestId1);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
         String token = getUICmToken();
-        new DashBoardPage().isLoaded();
-
 
         step("Verify offers on dashboard in PENDING status", () -> {
                     DashBoardPage.header.openDashboardNewTab()
@@ -157,20 +157,22 @@ public class DashboardTests extends BaseUITests {
     //todo mark tests with @Feature(or some other) annotation specific user flow that is checked
     // https://confluence.in.here.com/display/OLP/Consent+Management+User+Flows
 
-    @Feature("Sign Out from CM web")
     @Test
+    @Issue("NS-2464")
+    @Feature("Sign Out from CM web")
     @DisplayName("Sign out and redirect to the 'Landing page'")
     void clickSignOutAndRedirectToLandingPage() {
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubjectIm);
         open(ConsentPageUrl.getEnvUrlRoot());
         new LandingPage().isLoaded().clickSignIn();
-        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
-
-        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
 
         new DashBoardPage().isLoaded();
 
         new Header().openDashboardUserAvatarTab();
-        new UserProfilePage().isLoaded().clickOnSignOut();
+        new UserProfilePage()
+                .isLoaded()
+                .clickOnSignOut();
 
         new LandingPage().isLoaded();
     }

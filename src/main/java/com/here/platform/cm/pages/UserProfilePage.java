@@ -2,6 +2,7 @@ package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
@@ -10,7 +11,8 @@ import io.qameta.allure.Step;
     public class UserProfilePage  extends BaseCMPage{
 
         public UserProfilePage isLoaded() {
-            $("ng-tns-c9-0").waitUntil(Condition.visible, 5000);
+            $("app-sidebar").
+                    waitUntil(Condition.visible.because("User Profile side bar not detected!"), 5000);
             return this;
         }
 

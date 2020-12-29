@@ -50,7 +50,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
         DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
-        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubject);
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubject.getDataSubject());
         String testVin = dataSubject.getVin();
 
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);

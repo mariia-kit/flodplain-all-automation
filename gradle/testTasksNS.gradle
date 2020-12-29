@@ -150,11 +150,6 @@ task allureAggregatedReportNS {
 task zephyrSyncTaskNS(type: JavaExec) {
     main = "com.here.platform.ns.instruments.Zephyroth"
     description = "Run NS Sync test results into Zephyr test cycle"
-    classpath sourceSets.main.runtimeClasspath
-
-    def login = System.getProperty("jira_login") ?: jira_login_default
-    def pass = System.getProperty("jira_pass") ?: jira_pass_default
-    def cycle = System.getProperty("test_cycle") ?: test_cycle_default
 
     def serviceName = System.getProperty("SERVICE") ?: 'null'
     def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
@@ -162,12 +157,12 @@ task zephyrSyncTaskNS(type: JavaExec) {
     def cycleValue = "$serviceName:$serviceVersion"
 
     if (cycleValue == "null:null") {
-        cycleValue = cycle
+        cycleValue = "CM:latest"
     }
 
-    println "Current user and service: $login $cycle"
+    println "Current user and service: $jira_login $cycleValue"
     args = [
-            "--username=${login}", "--password=${pass}", "--reportType=allure", "--projectKey=NS",
+            "--username=${jira_login}", "--password=${jira_pass}", "--reportType=allure", "--projectKey=NS",
             "--releaseVersion=NSPOSTMVP",
             "--testCycle=${cycleValue}",
             "--jiraUrl=https://saeljira.it.here.com/rest/",

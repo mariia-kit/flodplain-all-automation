@@ -21,6 +21,7 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.helpers.authentication.AuthController;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class UserAccountUITests extends BaseUITests {
     @Test
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent request link for registered user")
+    @Feature("Actual offers page")
     @Disabled("Disable until vin page in not optional for second try")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         consentRequestInfo = ConsentRequestSteps
