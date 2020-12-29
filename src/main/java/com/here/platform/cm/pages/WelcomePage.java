@@ -23,12 +23,10 @@ public class WelcomePage extends BaseCMPage {
     }
 
     @Step("Verify Page data is correct")
-    public WelcomePage verifyPage(String consumerName, String providerName) {
+    public WelcomePage verifyPage() {
         String expected = sbb()
-                .append("As a trusted partner of ").append(consumerName).append(" and ").append(providerName)
-                .append(" HERE Technologies makes sure ")
-                .append("your data is transferred and handled securely. You can decide how your data")
-                .append(" and the offer are managed any time you wish.")
+                .append("HERE Technologies makes sure your data is transferred and handled securely.").w()
+                .append("You can decide how your data and the offer are managed any time you wish.")
                 .build();
         $(".subtitle p")
                 .waitUntil(Condition.visible.because("Sub title expected on page!"), 5000)

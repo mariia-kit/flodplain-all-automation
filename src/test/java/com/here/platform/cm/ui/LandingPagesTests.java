@@ -40,7 +40,7 @@ public class LandingPagesTests extends BaseUITests {
         landingPage.isLoaded().clickOnSignUp();
         new WelcomePage()
                 .isLoaded()
-                .verifyPage("Ensure", "Daimler")
+                .verifyPage()
                 .pressNext()
                 .verifyHERESignInOpened();
     }
