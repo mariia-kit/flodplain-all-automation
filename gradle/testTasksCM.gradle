@@ -157,8 +157,6 @@ task zephyrCMSync(type: JavaExec) {
         cycleValue = "CM:latest"
     }
 
-    def resultsPath = System.getProperty("results_path")
-
     println "Current user and service: $jira_login $cycleValue"
     args = [
             "--username=${jira_login}", "--password=${jira_pass}",

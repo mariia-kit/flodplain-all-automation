@@ -6,6 +6,7 @@ import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.Consents;
+import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
@@ -18,6 +19,8 @@ import com.here.platform.common.annotations.CMFeatures.Purpose;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.daimler.DataSubjects;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -62,11 +65,11 @@ public class PurposeTests extends BaseCMTest {
     @Test
     @DisplayName("Verify purpose content of consent request")
     void getPurposeForConsentRequestTest() {
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.getNextDaimlerExperimental().getConsentContainer();
-        String mpConsumer = crypto.sha1();
-        DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-
         var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
@@ -92,13 +95,11 @@ public class PurposeTests extends BaseCMTest {
     @Test
     @DisplayName("Get purpose data by consumerId and containerId")
     void getPurposeByConsumerAndContainerIdsTest() {
-        ConsentRequestContainer targetContainer = ConsentRequestContainers
-                .getNextDaimlerExperimental()
-                .getConsentContainer();
-        String mpConsumer = crypto.sha1();
-        DataSubjects dataSubject = DataSubjects.getNextBy18VINLength();
+        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
         ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-
         var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()

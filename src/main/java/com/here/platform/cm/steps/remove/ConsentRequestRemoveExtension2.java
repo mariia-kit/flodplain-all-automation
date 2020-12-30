@@ -1,6 +1,7 @@
 package com.here.platform.cm.steps.remove;
 
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.ns.helpers.Steps;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
