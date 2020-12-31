@@ -39,6 +39,7 @@ import io.qameta.allure.selenide.LogType;
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +71,7 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     private final DataSubject targetDataSubject = DataSubjects.getNextBy18VINLength().dataSubject;
-    private final DataSubject targetDataSubject17 = DataSubjects.getNextBy17VINLength().dataSubject;
+    private final DataSubject targetDataSubject17 = DataSubjects._2AD190A6AD057824E.getDataSubject();
     private final User
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();
@@ -103,7 +104,7 @@ public class E2EUITest extends BaseE2ETest {
 
     @AfterEach
     void afterEach() {
-        MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn);
+        MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn, MarketplaceFlowSteps.getSubscriptionId());
     }
 
     @Test
@@ -200,14 +201,15 @@ public class E2EUITest extends BaseE2ETest {
     }
 
     @Test
-    //@Disabled("Used for flow verification using reference provider")
+    @Disabled("Used for flow verification using reference provider")
     @DisplayName("Simple happy path E2E UI level Reference")
+    @SneakyThrows
     void simpleHappyPathTestReference() {
-        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        MPProviders provider = MPProviders.REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
         ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
-
+        String validVIN = Vehicle.validVehicleId;
         new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest();
 
@@ -234,7 +236,6 @@ public class E2EUITest extends BaseE2ETest {
         ConsentManagementFlowSteps.openConsentLink(consentUrl);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject17);
-
         new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject17.getVin());
         OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
         ReferenceApprovePage.approveReferenceScopesAndSubmit(targetDataSubject17.getVin());

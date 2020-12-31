@@ -37,6 +37,7 @@ public class ConsentManagementCall {
                 + "  \"providerId\": \"" + providerId + "\",\n"
                 + "  \"purpose\": \"" + Conf.cm().getQaTestDataMarker() + "test_consent\",\n"
                 + "  \"containerId\": \"" + container.getId() + "\",\n"
+                + "  \"privacyPolicy\": \"http://" + container.getId() + ".com\",\n"
                 + "  \"title\": \"" + Conf.cm().getQaTestDataMarker() + container.getId() + "\"\n"
                 + "}";
         Response resp = RestHelper.post("Init Consent Campaign Id", url, token, body,
