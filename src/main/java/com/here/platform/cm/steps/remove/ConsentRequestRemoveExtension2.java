@@ -26,5 +26,8 @@ public class ConsentRequestRemoveExtension2 implements AfterAllCallback {
         ConsentCollector
                 .getContainers()
                 .forEach(Steps::removeRegularContainer);
+        ConsentCollector
+                .getHereAccounts()
+                .forEach(UserAccountSteps::removeHereAccount);
     }
 }

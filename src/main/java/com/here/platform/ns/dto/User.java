@@ -52,6 +52,11 @@ public class User {
         return this;
     }
 
+    public User withRealm(String realm) {
+        this.setRealm(realm);
+        return this;
+    }
+
     public String getToken() {
         this.token = AuthController.getUserToken(this);
         return this.token;

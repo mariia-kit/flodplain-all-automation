@@ -23,7 +23,6 @@ public class BaseCMTest {
 
     protected ConsentRequestController consentRequestController = new ConsentRequestController();
     protected ProvidersController providerController = new ProvidersController();
-    protected final HereUserManagerController hereUserManagerController = new HereUserManagerController();
 
     @SneakyThrows
     protected static void fuSleep() {

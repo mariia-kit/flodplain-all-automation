@@ -1,6 +1,7 @@
 package com.here.platform.cm.steps.remove;
 
 import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.ns.dto.Container;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class ConsentCollector {
     private static List<ProviderApplication> applications = new ArrayList<>();
     private static List<String> consumer = new ArrayList<>();
     private static List<String> provider = new ArrayList<>();
+    private static List<HereUser> hereAccounts = new ArrayList<>();
 
     private static List<Container> containers = new ArrayList<>();
 
@@ -43,6 +45,10 @@ public class ConsentCollector {
         containers.add(container);
     }
 
+    public void addHereUser(HereUser hereUser) {
+        hereAccounts.add(hereUser);
+    }
+
     public List<String> getAllConsents() {
         return cridsToRemove;
     }
@@ -65,5 +71,9 @@ public class ConsentCollector {
 
     public static List<Container> getContainers() {
         return containers;
+    }
+
+    public static List<HereUser> getHereAccounts() {
+        return hereAccounts;
     }
 }

@@ -3,6 +3,7 @@ package com.here.platform.e2e;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.mp.controllers.MarketplaceTunnelController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
@@ -38,6 +39,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
 public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
+    private MarketplaceTunnelController marketplaceTunnelController = new MarketplaceTunnelController();
+
     @Test
     @Tag("external")
     @Tag("e2e_contract")
@@ -46,9 +49,10 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         DataProvider provider = Providers.generateNew();
         Steps.createRegularProvider(provider);
 
-        new MarketplaceNSGetProvidersCall()
-                .withHeader(new Header("X-Correlation-ID", "X-corr-1"))
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getProvidersList();
+        new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
@@ -67,8 +71,10 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new MarketplaceNSGetContainerCall(provider.getName())
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getProviderContainers(provider.getName());
+        new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
                 .expectedJsonContains("[0].name", container.getName(),
@@ -100,13 +106,16 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
-
-        String hrn = new MarketplaceNSGetContainerCall(provider.getName())
-                .call().getResponse().jsonPath().get("hrn").toString()
+        var hrn = marketplaceTunnelController
+                .withConsumerToken()
+                .getProviderContainers(provider.getName()).getBody().jsonPath().get("hrn").toString()
                 .replace("[", "").replace("]", "");
 
-        new MarketplaceNSGetContainerInfoCall(hrn)
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getGetContainerInfo(hrn);
+
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("hrn", container.generateHrn(),
                         "Field HRN not as expected!");
@@ -122,11 +131,12 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new MarketplaceNSGetContainerCall(provider.getName())
-                .withToken(CONSUMER)
-                .call()
-                .expectedCode(HttpStatus.SC_FORBIDDEN);
+        var verify = marketplaceTunnelController
+                .withBearerToken(CONSUMER.getToken())
+                .getProviderContainers(provider.getName());
 
+        new NeutralServerResponseAssertion(verify)
+                .expectedCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -135,9 +145,11 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
     void verifyNSContainerCallNoProvider() {
         DataProvider provider = Providers.generateNew();
 
-        new MarketplaceNSGetContainerCall(provider.getName())
-                .withHeader(new Header("X-Correlation-ID", "X-corr-1"))
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getProviderContainers(provider.getName());
+
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedJsonContains("errorCode", "error_external_service",
                         "Field not as expected!")
@@ -155,8 +167,11 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         DataProvider provider = Providers.generateNew();
         Steps.createRegularProvider(provider);
 
-        new MarketplaceNSGetContainerCall(provider.getName())
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getProviderContainers(provider.getName());
+
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedJsonContains("errorCode", "error_external_service",
                         "Field not as expected!")
@@ -180,11 +195,11 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        new MarketplaceNSGetContainerCall(provider.getName())
-                .call();
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getGetContainerInfo(container.generateHrn());
 
-        new MarketplaceNSGetContainerInfoCall(container.generateHrn())
-                .call()
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("hrn", container.generateHrn(),
                         "Field HRN not as expected!")
@@ -234,11 +249,14 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
+
+
         String listing = new MarketplaceManageListingCall()
                 .createNewListing(container);
         String subs = new MarketplaceManageListingCall()
                 .subscribeListing(listing);
         new ConsentManagementCall().addCMApplication(container, provider.getName());
+
 
         String consentRequestId = new MarketplaceCMCreateConsentCall(subs, container)
                 .call()

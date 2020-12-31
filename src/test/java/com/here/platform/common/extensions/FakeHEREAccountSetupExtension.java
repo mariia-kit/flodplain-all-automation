@@ -44,7 +44,7 @@ public class FakeHEREAccountSetupExtension implements BeforeEachCallback, AfterE
      * DataSubject
      */
     public DataSubject getFakeDataSubjectPerProvider(MPProviders targetProvider) {
-        return getFakeDataSubjectWithVINLength(targetProvider.vinLength);
+        return getFakeDataSubjectWithVINLength(targetProvider.getVinLength());
     }
 
     private void registerHEREUserAccount() {

@@ -5,35 +5,31 @@ import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ErrorResponse;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.RevokeConsent;
-import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -46,15 +42,16 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     @Tag("fabric_test")
     @DisplayName("Verify revoke of ConsentRequest")
     void revokeConsentRequestPositiveTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
-        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubject.getDataSubject());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubject dataSubject = DataSubjects.getNextVinLength(provider.getVinLength()).getDataSubject();
+        UserAccountSteps.attachVINToUserAccount(dataSubject, dataSubject.getVin());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var step = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);
@@ -67,7 +64,7 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
         var revokedConsentResponse = consentStatusController
                 .withConsumerToken()
-                .revokeConsent(consentToRevoke, dataSubject.getBearerToken());
+                .revokeConsent(consentToRevoke, AuthController.getDataSubjectToken(dataSubject));
 
         new ResponseAssertion(revokedConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -82,9 +79,8 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         step.verifyConsentStatus(expectedStatusesForConsent);
 
         var revokedConsents = new UserAccountController()
-
                 .getConsentsForUser(
-                        dataSubject.getBearerToken(),
+                        AuthController.getDataSubjectToken(dataSubject),
                         Map.of("consentRequestId", crid, "state", "REVOKED")
                 );
 
@@ -96,15 +92,15 @@ class RevokeConsentTests extends BaseConsentStatusTests {
                 .usingElementComparatorIgnoringFields("createTime", "revokeTime", "approveTime", "vinHash")
                 .contains(
                         new ConsentInfo()
-                                .additionalLinks(consentInfo.getAdditionalLinks())
+                                .additionalLinks(consentObj.getConsent().getAdditionalLinks())
                                 .consentRequestId(crid)
                                 .state(StateEnum.REVOKED)
                                 .consumerName(mpConsumer.getName())
                                 .consumerId(mpConsumer.getRealm())
                                 .vinLabel(new VIN(testVin).label())
-                                .title(consentInfo.getTitle())
-                                .purpose(consentInfo.getPurpose())
-                                .privacyPolicy(consentInfo.getPrivacyPolicy())
+                                .title(consentObj.getConsent().getTitle())
+                                .purpose(consentObj.getConsent().getPurpose())
+                                .privacyPolicy(consentObj.getConsent().getPrivacyPolicy())
                                 .containerName(targetContainer.getName())
                                 .containerId(targetContainer.getId())
                                 .containerDescription(targetContainer.getContainerDescription())
@@ -123,10 +119,8 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is not possible to revoke consent that does not exist")
     void isNotPossibleToRevokeConsentThatDoesNotExitTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-        User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
 
@@ -157,14 +151,15 @@ class RevokeConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is possible to approve similar to revoked consent")
     void approveSimilarToRevokedConsentsTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var step = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);
@@ -174,25 +169,25 @@ class RevokeConsentTests extends BaseConsentStatusTests {
         ConsentFlowSteps.approveConsentForVIN(crid, targetContainer, testVin);
         ConsentFlowSteps.revokeConsentForVIN(crid, testVin);
 
-        var targetConsentRequest = Consents
-                .generateNewConsent(targetApp.getProvider().getName(), consentInfo);
+        ConsentObject consentObjNext = new ConsentObject(mpConsumer, provider, targetContainer);
         var consentRequestResponse = consentRequestController
                 .withConsumerToken()
-                .createConsentRequest(targetConsentRequest);
+                .createConsentRequest(consentObjNext.getConsentRequestData());
         new ResponseAssertion(consentRequestResponse).statusCodeIsEqualTo(StatusCode.CONFLICT);
     }
 
     @Test
     @DisplayName("Verify it is not possible to approve revoked consent")
     void isNotPossibleToApproveRevokedConsentTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var step = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var step = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin);

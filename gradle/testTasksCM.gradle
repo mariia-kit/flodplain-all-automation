@@ -101,7 +101,7 @@ task uiTests(type: TestCM) {
 
     maxParallelForks = 1
     forkEvery = 0
-
+    
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "ui"

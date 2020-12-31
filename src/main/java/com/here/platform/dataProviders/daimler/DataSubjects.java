@@ -1,20 +1,13 @@
 package com.here.platform.dataProviders.daimler;
 
 import static com.here.platform.common.strings.SBB.sbb;
-
-import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.common.DataSubject;
-import com.here.platform.common.FileIO;
 import com.here.platform.common.config.Conf;
-import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.ns.helpers.authentication.AuthController;
-import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 
 
 public enum DataSubjects {

@@ -214,7 +214,7 @@ public enum ConsentRequestContainers {
     public static ConsentRequestContainer generateNew(MPProviders targetProvider) {
         Container container = Containers.generateNew(targetProvider.getName())
                 .withDescription(sbb(Conf.cm().getQaTestDataMarker()).append("cm_automated_container").bld());
-        return ConsentRequestContainer.builder()
+        ConsentRequestContainer consentRequestContainer = ConsentRequestContainer.builder()
                 .id(container.getId())
                 .name(container.getName())
                 .scopeValue(container.getScope())
@@ -224,6 +224,15 @@ public enum ConsentRequestContainers {
                 .clientId(Conf.ns().getReferenceApp().getClientId())
                 .clientSecret(Conf.ns().getReferenceApp().getClientSecret())
                 .build();
+        if (targetProvider.equals(MPProviders.DAIMLER_EXPERIMENTAL) || targetProvider.equals(MPProviders.DAIMLER)) {
+            consentRequestContainer.setClientId(Conf.ns().getDaimlerApp().getClientId());
+            consentRequestContainer.setClientSecret(Conf.ns().getDaimlerApp().getClientSecret());
+        }
+        if (targetProvider.equals(MPProviders.BMW) || targetProvider.equals(MPProviders.BMW_TEST)) {
+            consentRequestContainer.setClientId(Conf.ns().getBmwApp().getClientId());
+            consentRequestContainer.setClientSecret(Conf.ns().getBmwApp().getClientSecret());
+        }
+        return consentRequestContainer;
     }
 
     public ConsentRequestContainer getConsentContainer() {

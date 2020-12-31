@@ -6,12 +6,14 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.OnboardingSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.ui.ConsentManagementFlowSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
@@ -20,7 +22,6 @@ import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.UserAccountCleanUpExtension;
-import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
@@ -28,10 +29,6 @@ import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.mp.models.CreatedInvite;
 import com.here.platform.mp.steps.ui.MarketplaceFlowSteps;
 import com.here.platform.ns.controllers.access.ContainerDataController;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
-import com.here.platform.ns.dto.DataProvider;
-import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
@@ -44,7 +41,6 @@ import java.util.List;
 import java.util.logging.Level;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -114,22 +110,18 @@ public class E2EUITest extends BaseE2ETest {
     @Tag("e2e_prod")
     @DisplayName("Simple happy path E2E UI level")
     void simpleHappyPathTest() {
-        Container targetContainer = Containers.DAIMLER_EXPERIMENTAL_CHARGE.getContainer();
-        ConsentInfo consentRequest =
-                new ConsentInfo()
-                        .title(faker.company().buzzword())
-                        .purpose(faker.backToTheFuture().quote())
-                        .consumerName(Users.MP_CONSUMER.getUser().getName())
-                        .containerName(targetContainer.getName())
-                        .containerDescription(targetContainer.getDescription())
-                        .resources(List.of(targetContainer.getResourceNames()))
-                        .vinLabel(new VIN(targetDataSubject.getVin()).label())
-                        .privacyPolicy(faker.internet().domainName());
+        MPProviders provider = MPProviders.DAIMLER_EXPERIMENTAL;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE.getConsentContainer();
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+
+        new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
 
         var listingName = "[E2E test] " + faker.company().buzzword();
 
         MarketplaceFlowSteps.loginDataProvider(targetDataProvider);
-        MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
+        MarketplaceFlowSteps.createAndSubmitListing(listingName, consentObj.getNSContainer(), targetDataConsumer.getEmail());
         CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
         listingHrn = MarketplaceFlowSteps.getListingHrn();
         HereLoginSteps.logout(targetDataProvider);
@@ -139,7 +131,7 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
         String consentUrl = MarketplaceFlowSteps
-                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject.getVin());
+                .createConsentByConsumer(consentObj, targetDataSubject.getVin());
 
         var crid = getCridFromUrl(consentUrl);
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
@@ -151,15 +143,15 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject.getVin());
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
         DaimlerLoginPage.loginDataSubjectOnDaimlerSite(targetDataSubject);
         if (!SuccessConsentPageSteps.isLoaded()) {
             DaimlerLoginPage.approveDaimlerLegalAndSubmit();
             DaimlerLoginPage.approveDaimlerScopesAndSubmit();
         }
-        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
-        Steps.getVehicleResourceAndVerify(crid, targetDataSubject.getVin(), targetContainer);
+        Steps.getVehicleResourceAndVerify(crid, targetDataSubject.getVin(), consentObj.getNSContainer());
     }
 
     @Test
@@ -168,33 +160,20 @@ public class E2EUITest extends BaseE2ETest {
     @Tag("bmw_e2e")
     @DisplayName("Positive BMW E2E flow of creating consent request via UI")
     void simpleHappyPathTestBMW() {
-        DataProvider provider = Providers.BMW_TEST.getProvider();
-        Container targetContainer = Containers.generateNew(provider).withResourceNames("fuel");
-        var validVIN = Vehicle.validVehicleId;
-        userAccountCleanUpExtension.getAdditionalVINsToRemove().add(validVIN);
-        ConsentInfo consentRequest =
-                new ConsentInfo()
-                        .title(faker.company().buzzword())
-                        .purpose(faker.backToTheFuture().quote())
-                        .consumerName(Users.MP_CONSUMER.getUser().getName())
-                        .containerName(targetContainer.getName())
-                        .containerDescription(targetContainer.getDescription())
-                        .resources(List.of(targetContainer.getResourceNames()))
-                        .vinLabel(new VIN(validVIN).label())
-                        .privacyPolicy(faker.internet().domainName());;
+        MPProviders provider = MPProviders.BMW_TEST;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider)
+                .withResources(List.of("fuel"));
+        String validVIN = Vehicle.validVehicleId;
 
-        Steps.createRegularContainer(targetContainer);
-        new OnboardingSteps(provider.getName(), targetDataConsumer.getRealm())
-                .onboardTestProviderApplication(
-                        targetContainer.getId(),
-                        Conf.ns().getBmwApp().getClientId(),
-                        Conf.ns().getBmwApp().getClientSecret()
-                );
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
+        var step= new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
 
         var listingName = "[E2E BMW test] " + faker.company().buzzword();
 
         MarketplaceFlowSteps.loginDataProvider(targetDataProvider);
-        MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
+        MarketplaceFlowSteps.createAndSubmitListing(listingName, consentObj.getNSContainer(), targetDataConsumer.getEmail());
         CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
         listingHrn = MarketplaceFlowSteps.getListingHrn();
         HereLoginSteps.logout(targetDataProvider);
@@ -204,7 +183,7 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
         String consentUrl = MarketplaceFlowSteps
-                .createConsentByConsumer(consentRequest, targetContainer, validVIN);
+                .createConsentByConsumer(consentObj, validVIN);
         var crid = getCridFromUrl(consentUrl);
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(validVIN);
 
@@ -215,38 +194,27 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject);
 
         ConsentFlowSteps
-                .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, validVIN);
+                .approveConsentForVinBMW(testContainer.getClientId(), validVIN);
 
-        Steps.getVehicleResourceAndVerify(crid, validVIN, targetContainer);
+        Steps.getVehicleResourceAndVerify(crid, validVIN, consentObj.getNSContainer());
     }
 
     @Test
-    @Disabled("Used for flow verification using reference provider")
+    //@Disabled("Used for flow verification using reference provider")
     @DisplayName("Simple happy path E2E UI level Reference")
     void simpleHappyPathTestReference() {
-        ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
-        Container targetContainer = Containers.generateNew(providerApplication.provider.getName());
-        Steps.createRegularContainer(targetContainer);
-        OnboardingSteps onboard = new OnboardingSteps(providerApplication.provider, providerApplication.consumer.getRealm());
-        onboard.onboardTestProviderApplication(
-                targetContainer.getId(),
-                Conf.ns().getReferenceApp().getClientId(),
-                Conf.ns().getReferenceApp().getClientSecret());
-        ConsentInfo consentRequest =
-                new ConsentInfo()
-                        .title(faker.company().buzzword())
-                        .purpose(faker.backToTheFuture().quote())
-                        .consumerName(Users.MP_CONSUMER.getUser().getName())
-                        .containerName(targetContainer.getName())
-                        .containerDescription(targetContainer.getDescription())
-                        .resources(List.of(targetContainer.getResourceNames()))
-                        .vinLabel(new VIN(targetDataSubject17.getVin()).label())
-                        .privacyPolicy(faker.internet().domainName());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+
+        new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
 
         var listingName = "[E2E test] " + faker.company().buzzword();
 
         MarketplaceFlowSteps.loginDataProvider(targetDataProvider);
-        MarketplaceFlowSteps.createAndSubmitListing(listingName, targetContainer, targetDataConsumer.getEmail());
+        MarketplaceFlowSteps.createAndSubmitListing(listingName, consentObj.getNSContainer(), targetDataConsumer.getEmail());
         CreatedInvite createdInvite = MarketplaceFlowSteps.inviteConsumerToListing(targetDataConsumer);
         listingHrn = MarketplaceFlowSteps.getListingHrn();
         HereLoginSteps.logout(targetDataProvider);
@@ -256,7 +224,7 @@ public class E2EUITest extends BaseE2ETest {
         MarketplaceFlowSteps.acceptInviteByConsumer(createdInvite.getId());
         MarketplaceFlowSteps.subscribeToListing(listingName);
         String consentUrl = MarketplaceFlowSteps
-                .createConsentByConsumer(consentRequest, targetContainer, targetDataSubject17.getVin());
+                .createConsentByConsumer(consentObj, targetDataSubject17.getVin());
 
         var crid = getCridFromUrl(consentUrl);
         consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject17.getVin());
@@ -268,17 +236,17 @@ public class E2EUITest extends BaseE2ETest {
         HereLoginSteps.loginRegisteredDataSubject(targetDataSubject17);
 
         new VINEnteringPage().isLoaded().fillVINAndContinue(targetDataSubject17.getVin());
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
         ReferenceApprovePage.approveReferenceScopesAndSubmit(targetDataSubject17.getVin());
-        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
         var response = new ContainerDataController()
                 .withBearerToken(Users.MP_CONSUMER.getToken())
                 .withConsentId(crid)
                 .getContainerForVehicle(
-                        targetContainer.getDataProviderByName(),
+                        targetContainer.getProvider().getName(),
                         targetDataSubject17.getVin(),
-                        targetContainer
+                        consentObj.getContainer().getId()
                 );
         new NeutralServerResponseAssertion(response).expectedCode(404);
     }

@@ -1,9 +1,11 @@
 package com.here.platform.mp.controllers;
 
+import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.HeaderConfig.headerConfig;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -31,8 +33,13 @@ public abstract class BaseMPController<T> {
         return baseService;
     }
 
-    public T withBearerToken(final String token) {
-        authorizationToken = String.format("Bearer %s", token);
+    public T withBearerToken(String token) {
+        this.authorizationToken = sbb("Bearer").w().append(token).bld();
+        return (T) this;
+    }
+
+    public T withConsumerToken() {
+        withBearerToken(Users.MP_CONSUMER.getToken());
         return (T) this;
     }
 

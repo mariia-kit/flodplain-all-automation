@@ -2,33 +2,24 @@ package com.here.platform.cm.consentStatus.approve;
 
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.SuccessApproveData;
-import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
 import com.here.platform.common.strings.VIN;
-import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
-import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.authentication.AuthController;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -39,47 +30,27 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @DisplayName("Approve consent Pending Consent list")
 @Execution(ExecutionMode.SAME_THREAD)
 public class ApproveConsentBodyTests extends BaseConsentStatusTests {
-    ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-    HereUser hereUser = null;
-    DataSubject dataSubjectIm;
-
-    @BeforeEach
-    void createConsentRequestAndApproveConsent() {
-
-        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
-        dataSubjectIm = new DataSubject(
-                hereUser.getEmail(),
-                hereUser.getPassword(),
-                VIN.generate(targetApp.getProvider().getVinLength())
-        );
-        hereUserManagerController.createHereUser(hereUser);
-    }
-
-    @AfterEach
-    void cleanUp() {
-        if (hereUser != null) {
-            hereUserManagerController.deleteHereUser(hereUser);
-        }
-        AuthController.deleteToken(dataSubjectIm);
-    }
 
     @Test
     @DisplayName("Approve consent with single pending consent")
     void approveConsentWithSinglePendingConsentTest() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer1 = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        ConsentRequestContainer targetContainer2 = ConsentRequestContainers.generateNew(targetApp.getProvider());
 
-        String vinToApprove = dataSubjectIm.getVin();
+        ConsentRequestContainer targetContainer1 = ConsentRequestContainers.generateNew(provider);
+        ConsentRequestContainer targetContainer2 = ConsentRequestContainers.generateNew(provider);
 
-        ConsentInfo consentInfo1 = Consents.generateNewConsentInfo(mpConsumer, targetContainer1);
-        ConsentInfo consentInfo2 = Consents.generateNewConsentInfo(mpConsumer, targetContainer2);
-        var crid1 = new ConsentRequestSteps2(targetContainer1, consentInfo1)
+        DataSubject dataSubject = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        String vinToApprove = dataSubject.getVin();
+
+        ConsentObject consentObj1 = new ConsentObject(mpConsumer, provider, targetContainer1);
+        ConsentObject consentObj2 = new ConsentObject(mpConsumer, provider, targetContainer2);
+        var crid1 = new ConsentRequestSteps(consentObj1)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)
                 .getId();
-        var crid2 = new ConsentRequestSteps2(targetContainer2, consentInfo2)
+        var crid2 = new ConsentRequestSteps(consentObj2)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)
@@ -96,7 +67,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
         var approveConsentResponse = consentStatusController
                 .withConsumerToken()
-                .approveConsent(consentToApprove, AuthController.getDataSubjectToken(dataSubjectIm));
+                .approveConsent(consentToApprove, AuthController.getDataSubjectToken(dataSubject));
 
         var successApproveData = new ResponseAssertion(approveConsentResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -104,7 +75,7 @@ public class ApproveConsentBodyTests extends BaseConsentStatusTests {
 
         Assertions.assertThat(successApproveData.getRecentPendingConsentsInfo())
                 .usingElementComparatorIgnoringFields("createTime", "vinHash")
-                .contains(consentInfo1
+                .contains(consentObj1.getConsent()
                         .vinLabel(new VIN(vinToApprove).label())
                         .state(StateEnum.PENDING)
                 );
