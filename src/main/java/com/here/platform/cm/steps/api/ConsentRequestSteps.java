@@ -1,141 +1,134 @@
 package com.here.platform.cm.steps.api;
 
-import static com.here.platform.common.strings.SBB.sbb;
+import static io.qameta.allure.Allure.step;
 
-import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.ConsentRequestController;
-import com.here.platform.cm.dataAdapters.ConsentRequestToConsentInfo;
+import com.here.platform.cm.controllers.ConsentStatusController;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.Consents;
 import com.here.platform.cm.enums.MPProviders;
-import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.rest.model.AdditionalLink;
-import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
-import com.here.platform.common.VinsToFile;
+import com.here.platform.cm.rest.model.ConsentRequestStatus;
+import com.here.platform.cm.rest.model.ConsentStatus;
+import com.here.platform.cm.rest.model.ProviderApplication;
+import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.common.ResponseAssertion;
+import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile.FILE_TYPE;
-import com.here.platform.common.config.Conf;
-import com.here.platform.common.strings.VIN;
-import com.here.platform.ns.dto.Container;
-import com.here.platform.ns.dto.Containers;
+import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.Steps;
 import io.qameta.allure.Step;
-import java.util.List;
-import lombok.experimental.UtilityClass;
+import java.util.Arrays;
 
 
-@UtilityClass
 public class ConsentRequestSteps {
 
-    private final Faker faker = new Faker();
+    private final ConsentObject consentObject;
+
     private final ConsentRequestController consentRequestController = new ConsentRequestController();
 
-    @Step("Create valid consent request for VIN: '{vin}'")
-    public ConsentInfo createConsentRequestWithVINFor(String providerId, String consumerName, String consumerRealm,
-            String containerId, String vin) {
-        ConsentInfo consentInfo = createConsentRequestFor(providerId, consumerName, consumerRealm, containerId);
-        addVINsToConsentRequestAsConsumer(consentInfo.getConsentRequestId(), vin);
-        return consentInfo.vinLabel(new VIN(vin).label());
+    public ConsentRequestSteps(ConsentObject consentObject) {
+        this.consentObject = consentObject;
     }
 
-    @Step("Onboard provider with containers on NS and CM, and create consent request")
-    public ConsentInfo createValidConsentRequestWithNSOnboardings(ProviderApplications targetApp, String testVin,
-            ConsentRequestContainer container) {
-        Steps.createRegularContainer(container);
-        OnboardingSteps onboard = new OnboardingSteps(targetApp.provider, targetApp.consumer.getRealm());
-        onboard.onboardTestProvider();
-        onboard.onboardValidConsumer();
-        onboard.onboardTestProviderApplication(
-                container.getId(),
-                container.getClientId(),
-                container.getClientSecret()
+    public ConsentRequestSteps(User consumer, MPProviders provider, ConsentRequestContainer container) {
+        this.consentObject = new ConsentObject(consumer, provider, container);
+    }
+
+    public ConsentRequestSteps createConsentRequest() {
+        step(String.format("Create regular consent request for provider:%s consumer:%s and container:%s",
+                consentObject.getProvider().getName(),
+                consentObject.getConsumer().getRealm(),
+                consentObject.getContainer().getId()), () -> {
+                    var consentRequestResponse = consentRequestController
+                            .withConsumerToken()
+                            .createConsentRequest(consentObject.getConsentRequestData());
+                    StatusCodeExpects.expectCREATEDStatusCode(consentRequestResponse);
+
+                    var consentRequestId = consentRequestResponse
+                            .as(ConsentRequestIdResponse.class)
+                            .getConsentRequestId();
+                    consentObject.setCrid(consentRequestId);
+                }
         );
-        return ConsentRequestSteps.createConsentRequestWithVINFor(
-                targetApp.provider.getName(),
-                targetApp.consumer.getName(),
-                targetApp.consumer.getRealm(),
-                container.getId(),
-                testVin);
+        return this;
     }
 
-    @Step("Add VINs: '{vins}', to consent request: '{crid}'")
-    public void addVINsToConsentRequest(ProviderApplications providerApplication, String crid, String... vins) {
-        consentRequestController.withAuthorizationValue(providerApplication.consumer.getToken());
-        var addVINsResponse = consentRequestController.addVinsToConsentRequest(
-                crid, FILE_TYPE.JSON, vins);
-        StatusCodeExpects.expectOKStatusCode(addVINsResponse);
-    }
+    public ConsentRequestSteps onboardAllForConsentRequest() {
+        step(String.format("Onboard provider:%s consumer:%s with container:%s on NS and CM.",
+                consentObject.getProvider().getName(),
+                consentObject.getConsumer().getRealm(),
+                consentObject.getContainer().getId()), () -> {
 
-    @Step("Add VINs: '{vins}', to consent request: '{crid}'")
-    public void addVINsToConsentRequestAsConsumer(String crid, String... vins) {
-        consentRequestController.withAuthorizationValue(Users.MP_CONSUMER.getToken());
-        var addVINsResponse = consentRequestController.addVinsToConsentRequest(
-                crid, FILE_TYPE.JSON, vins);
-        StatusCodeExpects.expectOKStatusCode(addVINsResponse);
-    }
-
-    @Step("Create consent request for provider: '{providerId}', consumer: '{consumerRealm}', container: '{containerId}'")
-    public ConsentInfo createConsentRequestFor(String providerId, String consumerName, String consumerRealm,
-            String containerId) {
-        var targetConsentRequest = Consents.generateNewConsent(consumerRealm, providerId, containerId);
-
-        consentRequestController.withConsumerToken();
-        var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
-        StatusCodeExpects.expectCREATEDStatusCode(consentRequestResponse);
-
-        var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
-        return new ConsentRequestToConsentInfo(consentRequestId, targetConsentRequest)
-                .consentInfo()
-                .consumerName(consumerName)
-                .privacyPolicy(targetConsentRequest.getPrivacyPolicy())
-                .additionalLinks(targetConsentRequest.getAdditionalLinks());
-    }
-
-    @Step("Create consent request for provider: '{providerId}', consumer: '{consentInfo.consumerId}', container: '{consentInfo.containerId}'")
-    public ConsentInfo createConsentRequest(String providerId, ConsentInfo consentInfo) {
-        var targetConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
-
-        consentRequestController.withConsumerToken();
-        var consentRequestResponse = consentRequestController.createConsentRequest(targetConsentRequest);
-        StatusCodeExpects.expectCREATEDStatusCode(consentRequestResponse);
-
-        var consentRequestId = consentRequestResponse.as(ConsentRequestIdResponse.class).getConsentRequestId();
-        consentInfo.setConsentRequestId(consentRequestId);
-        return consentInfo;
-    }
-
-    @Step("Onboard provider {providerId} with containers on NS and CM {consentInfo.containerId} for {consentInfo.consumerId}")
-    public ConsentInfo onboardAllForConsentRequest(String providerId, ConsentInfo consentInfo) {
-        ConsentRequestContainer consentRequestContainer = ConsentRequestContainer.builder()
-                .id(consentInfo.getContainerId())
-                .name(consentInfo.getContainerName())
-                .scopeValue("mb:user:pool:reader mb:vehicle:status:general offline_access")
-                .resources(consentInfo.getResources())
-                .containerDescription(consentInfo.getContainerDescription())
-                .provider(MPProviders.findByProviderId(providerId))
-                .clientId(Conf.ns().getReferenceApp().getClientId())
-                .clientSecret(Conf.ns().getReferenceApp().getClientSecret())
-                .build();
-        Steps.createRegularContainer(consentRequestContainer);
-        OnboardingSteps onboard = new OnboardingSteps(providerId, consentInfo.getConsumerId());
-        onboard.onboardTestProvider();
-        onboard.onboardValidConsumer();
-        onboard.onboardTestProviderApplication(
-                consentRequestContainer.getId(),
-                consentRequestContainer.getClientId(),
-                consentRequestContainer.getClientSecret()
+                    Steps.createRegularContainer(consentObject.getContainer());
+                    OnboardingSteps onboard = new OnboardingSteps(
+                            consentObject.getProvider(),
+                            consentObject.getConsumer().getRealm());
+                    ConsentCollector.addApp(new ProviderApplication()
+                            .providerId(consentObject.getProvider().getName())
+                            .consumerId(consentObject.getConsumer().getRealm())
+                            .containerId(consentObject.getContainer().getId()));
+                    onboard.onboardTestProvider();
+                    onboard.onboardConsumer(consentObject.getConsumer().getName());
+                    onboard.onboardTestProviderApplication(
+                            consentObject.getContainer().getId(),
+                            consentObject.getContainer().getClientId(),
+                            consentObject.getContainer().getClientSecret()
+                    );
+                }
         );
-        return consentInfo;
+        return this;
     }
 
-    @Step("Add VINs: '{vins}', to consent request: '{crid}'")
-    public void addVINsToConsentRequest(String crid, String... vins) {
-        consentRequestController.withAuthorizationValue(Users.MP_CONSUMER.getToken());
-        var addVINsResponse = consentRequestController.addVinsToConsentRequest(
-                crid, new VinsToFile(vins).csv()
-        );
+    @Step("Add VINs: '{vins}' to consent request.")
+    public ConsentRequestSteps addVINsToConsentRequest(String... vins) {
+        var addVINsResponse = consentRequestController
+                .withAuthorizationValue(Users.MP_CONSUMER.getToken())
+                .addVinsToConsentRequest(consentObject.getCrid(), FILE_TYPE.JSON, vins);
         StatusCodeExpects.expectOKStatusCode(addVINsResponse);
+        Arrays.stream(vins).filter(vin -> consentObject.getConsent(vin) == null).forEach(consentObject::addVin);
+        consentObject.getConsent();
+        return this;
     }
+    @Step("Remove VINs: '{vins}' from consent request.")
+    public ConsentRequestSteps removeVINsFromConsentRequest(String... vins) {
+        var addVINsResponse = consentRequestController
+                .withConsumerToken()
+                .removeVinsFromConsentRequest(consentObject.getCrid(), FILE_TYPE.JSON, vins);
+        StatusCodeExpects.expectOKStatusCode(addVINsResponse);
+        return this;
+    }
+
+    @Step("Verify current consent status {expectedConsentRequestStatuses}")
+    public ConsentRequestSteps verifyConsentStatus(ConsentRequestStatus expectedConsentRequestStatuses) {
+        var statusForConsentRequestByIdResponse = consentRequestController
+                .withConsumerToken()
+                .getStatusForConsentRequestById(consentObject.getCrid());
+        new ResponseAssertion(statusForConsentRequestByIdResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(expectedConsentRequestStatuses);
+        return this;
+    }
+
+    @Step("Verify current consent status for {vin} is {status}")
+    public ConsentRequestSteps verifyConsentStatusByVin(String vin, String status) {
+        ConsentStatus consentStatus = new ConsentStatus()
+                .consentRequestId(consentObject.getCrid())
+                .vin(vin)
+                .state(status);
+        var statusForConsentRequestByVinResponse = new ConsentStatusController()
+                .withConsumerToken()
+                .getConsentStatusByIdAndVin(consentObject.getCrid(), vin);
+        new ResponseAssertion(statusForConsentRequestByVinResponse)
+                .statusCodeIsEqualTo(StatusCode.OK)
+                .responseIsEqualToObject(consentStatus);
+        return this;
+    }
+
+
+    public String getId() {
+        return consentObject.getCrid();
+    }
+
 }

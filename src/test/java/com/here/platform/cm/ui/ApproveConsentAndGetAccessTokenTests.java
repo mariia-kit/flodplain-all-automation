@@ -3,12 +3,13 @@ package com.here.platform.cm.ui;
 import static com.codeborne.selenide.Selenide.open;
 
 import com.here.platform.cm.controllers.AccessTokenController;
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
@@ -16,19 +17,12 @@ import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.config.Conf;
-import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
-import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.helpers.authentication.AuthController;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,59 +31,36 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Approve and get access token E2E")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
-    private final User mpConsumer = providerApplication.consumer;
-    private final List<String> cridsToRemove = new ArrayList<>();
-    HereUser hereUser = null;
-    DataSubject dataSubjectIm;
-    private String crid;
-
-    //todo refactor as extension https://www.baeldung.com/junit-5-extensions
-    @BeforeEach
-    void beforeEach() {
-        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
-        dataSubjectIm = new DataSubject(
-                hereUser.getEmail(),
-                hereUser.getPassword(),
-                VIN.generate(providerApplication.provider.vinLength)
-        );
-        hereUserManagerController.createHereUser(hereUser);
-    }
-
-    @AfterEach
-    void afterEach() {
-        var privateBearer = AuthController.getDataSubjectToken(dataSubjectIm);
-        userAccountController.deleteVINForUser(dataSubjectIm.getVin(), privateBearer);
-        if (hereUser != null) {
-            hereUserManagerController.deleteHereUser(hereUser);
-        }
-        AuthController.deleteToken(dataSubjectIm);
-    }
-
-
     @Test
     @DisplayName("E2E success flow to approve consent request and get access token for one. Reference(ISO) provider")
     @Tag("dynamic_ui")
     void e2eTest() {
-        var vin = dataSubjectIm.getVin();
-        ConsentInfo consentRequest = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
-        crid = consentRequest.getConsentRequestId();
+        MPProviders provider = MPProviders.REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
-        new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-        cridsToRemove.add(crid);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
 
-        ReferenceApprovePage.approveReferenceScopesAndSubmit(vin);
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
 
-        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
         var accessTokenController = new AccessTokenController();
         accessTokenController.withConsumerToken();
-        var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, mpConsumer.getRealm());
+        var accessTokenResponse = accessTokenController.getAccessToken(crid, dataSubjectIm.getVin(), mpConsumer.getRealm());
 
         new ResponseAssertion(accessTokenResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
@@ -100,38 +71,38 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
     @DisplayName("E2E success flow to approve consent request and get access token for one. Daimler(ISO) experimental provider")
     @Tag("dynamic_ui")
     void e2eTestDaimler() {
-        var targetDaimlerDataSubject = DataSubjects.getNextBy18VINLength();
-        dataSubjectIm = targetDaimlerDataSubject.dataSubject;
-        UserAccountSteps.removeVINFromDataSubject(targetDaimlerDataSubject);
+        MPProviders provider = MPProviders.DAIMLER_EXPERIMENTAL;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = DataSubjects.getNextBy18VINLength().getDataSubject();
+        UserAccountSteps.removeVINFromDataSubject(dataSubjectIm);
 
-        providerApplication = ProviderApplications.DAIMLER_CONS_1;
-        testContainer = ConsentRequestContainers.generateNew(providerApplication.provider);
-        testContainer.setClientId(Conf.cmUsers().getDaimlerApp().getClientId());
-        testContainer.setClientSecret(Conf.cmUsers().getDaimlerApp().getClientSecret());
-        var vin = dataSubjectIm.getVin();
-        ConsentInfo consentRequest = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(providerApplication, vin, testContainer);
-        crid = consentRequest.getConsentRequestId();
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
-        new VINEnteringPage().isLoaded().fillVINAndContinue(vin);
-        cridsToRemove.add(vin);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequest);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
 
-        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(targetDaimlerDataSubject.dataSubject);
+        DaimlerLoginPage.loginDataSubjectOnDaimlerSite(dataSubjectIm);
         if (!SuccessConsentPageSteps.isLoaded()) {
             DaimlerLoginPage.approveDaimlerLegalAndSubmit();
             DaimlerLoginPage.approveDaimlerScopesAndSubmit();
         }
 
-        SuccessConsentPageSteps.verifyFinalPage(consentRequest);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
         var accessTokenController = new AccessTokenController();
         accessTokenController.withConsumerToken();
-        var accessTokenResponse = accessTokenController.getAccessToken(crid, vin, mpConsumer.getRealm());
+        var accessTokenResponse = accessTokenController
+                .getAccessToken(crid, dataSubjectIm.getVin(), mpConsumer.getRealm());
 
         new ResponseAssertion(accessTokenResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)

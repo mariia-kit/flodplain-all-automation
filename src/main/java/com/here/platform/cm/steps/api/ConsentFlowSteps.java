@@ -18,13 +18,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ConsentFlowSteps {
 
-    @Step
+    @Step("Approve consent {crid} for vin {targetVIN}")
     public void approveConsentForVIN(String crid, ConsentRequestContainer container, String targetVIN) {
         String token = DataSubjects.getByVin(targetVIN).getBearerToken();
         approveConsentForVIN(crid, container, targetVIN, token);
     }
 
-    @Step
+    @Step("Approve consent {crid} for vin {targetVIN}")
     public void approveConsentForVIN(String crid, ConsentRequestContainer container, String targetVIN, String token) {
         String validCode;
 
@@ -44,7 +44,7 @@ public class ConsentFlowSteps {
         StatusCodeExpects.expectOKStatusCode(approveResponse);
     }
 
-    @Step
+    @Step("Approve consent for BMW container {bmwContainer} for vin {targetVIN}")
     public void approveConsentForVinBMW(String bmwContainer, String targetVIN) {
         var clearanceId = new ReferenceProviderController().getClearanceByVinAndContainerId(targetVIN, bmwContainer).jsonPath()
                 .get("clearanceId").toString();
@@ -52,13 +52,13 @@ public class ConsentFlowSteps {
         StatusCodeExpects.expectOKStatusCode(response);
     }
 
-    @Step
+    @Step("Revoke consent {crid} for vin {targetVIN}")
     public void revokeConsentForVIN(String crid, String targetVIN) {
         var privateBearer = DataSubjects.getByVin(targetVIN).getBearerToken();
         revokeConsentForVIN(crid, targetVIN, privateBearer);
     }
 
-    @Step
+    @Step("Revoke consent {crid} for vin {targetVIN}")
     public void revokeConsentForVIN(String crid, String targetVIN, String token) {
         var consentToRevoke = ConsentStatusController.NewConsent.builder()
                 .consentRequestId(crid)

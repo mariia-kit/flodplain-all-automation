@@ -6,64 +6,34 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.WebDriverRunner;
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
-import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
-import com.here.platform.ns.helpers.authentication.AuthController;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testcontainers.containers.BrowserWebDriverContainer;
 
 
 @UserAccount
+@DisplayName("User account UI")
 public class UserAccountUITests extends BaseUITests {
-
-    private final List<String> vinsToRemove = new ArrayList<>();
-    HereUser hereUser = null;
-    DataSubject dataSubjectIm;
-    private ConsentInfo consentRequestInfo;
-    private String crid;
-
-    @BeforeEach
-    void beforeEach() {
-        hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
-        dataSubjectIm = new DataSubject(
-                hereUser.getEmail(),
-                hereUser.getPassword(),
-                VIN.generate(providerApplication.provider.vinLength)
-        );
-        hereUserManagerController.createHereUser(hereUser);
-    }
-
-    @AfterEach
-    void afterEach() {
-        var privateBearer = AuthController.getDataSubjectToken(dataSubjectIm);
-        vinsToRemove.forEach(vin -> userAccountController.deleteVINForUser(vin, privateBearer));
-        AuthController.deleteToken(dataSubjectIm);
-        if (hereUser != null) {
-            hereUserManagerController.deleteHereUser(hereUser);
-        }
-    }
 
     @Test
     @Issue("NS-1475")
@@ -71,10 +41,17 @@ public class UserAccountUITests extends BaseUITests {
     @Feature("Actual offers page")
     @Disabled("Disable until vin page in not optional for second try")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
-        consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
-        crid = consentRequestInfo.getConsentRequestId();
-        vinsToRemove.add(dataSubjectIm.getVin());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
 
         open(crid);
         System.out.println(Configuration.baseUrl + crid);
@@ -82,15 +59,15 @@ public class UserAccountUITests extends BaseUITests {
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequestInfo);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
 
         ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
 
-        SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
-        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent());
 
     }
 
@@ -98,20 +75,25 @@ public class UserAccountUITests extends BaseUITests {
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent and proceed with new vehicle")
     void openSecondTimeApprovedConsentAndProceedWithNewVehicleTest() {
-        consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
-        crid = consentRequestInfo.getConsentRequestId();
-        vinsToRemove.add(dataSubjectIm.getVin());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
 
-        open(Configuration.baseUrl + crid);
+        var step = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin());
+        var crid= step.getId();
+
+        open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
-        String token = getUICmToken();
 
-        var secondVIN = VIN.generate(providerApplication.provider.vinLength);
-        ConsentRequestSteps.addVINsToConsentRequest(providerApplication, crid, secondVIN);
-        vinsToRemove.add(secondVIN);
+        var secondVIN = VIN.generate(provider.getVinLength());
+        step.addVINsToConsentRequest(secondVIN);
 
         restartBrowser();
 
@@ -119,29 +101,36 @@ public class UserAccountUITests extends BaseUITests {
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(secondVIN);
-        consentRequestInfo.setVinLabel(new VIN(secondVIN).label());
-        OfferDetailsPageSteps.verifyConsentDetailsPage(consentRequestInfo);
+        consentObj.getConsent().setVinLabel(new VIN(secondVIN).label());
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent());
         DashBoardPage.header.openDashboardNewTab()
-                .verifyConsentOfferTab(1, consentRequestInfo, dataSubjectIm.getVin(), PENDING)
-                .verifyConsentOfferTab(0, consentRequestInfo, secondVIN, PENDING);
+                .verifyConsentOfferTab(1, consentObj.getConsent(), dataSubjectIm.getVin(), PENDING)
+                .verifyConsentOfferTab(0, consentObj.getConsent(), secondVIN, PENDING);
     }
 
     @Test
     @DisplayName("Open Consent Manager as registered user with vehicle already attached to user")
     void openSecondTimeWithVehicleTest() {
-        consentRequestInfo = ConsentRequestSteps
-                .createValidConsentRequestWithNSOnboardings(providerApplication, dataSubjectIm.getVin(), testContainer);
-        crid = consentRequestInfo.getConsentRequestId();
-        vinsToRemove.add(dataSubjectIm.getVin());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
         new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
 
-        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentRequestInfo);
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
         ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
-        SuccessConsentPageSteps.verifyFinalPage(consentRequestInfo);
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
         restartBrowser();
 
@@ -149,17 +138,6 @@ public class UserAccountUITests extends BaseUITests {
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
-    }
-
-
-    public void restartBrowser() {
-        WebDriverRunner.closeWindow();
-        chrome.stop();
-        chrome = new BrowserWebDriverContainer()
-                .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
-        chrome.start();
-        WebDriverRunner.setWebDriver(chrome.getWebDriver());
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
     }
 
 }

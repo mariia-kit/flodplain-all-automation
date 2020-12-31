@@ -8,11 +8,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.junit5.TextReportExtension;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
-import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.ConsentPageUrl;
-import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.util.logging.Level;
@@ -51,18 +47,7 @@ public class BaseUITests extends BaseCMTest {
     public BrowserWebDriverContainer chrome =
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
-    protected ProviderApplications providerApplication = ProviderApplications.REFERENCE_CONS_1;
-    protected ConsentRequestContainer testContainer = ConsentRequestContainers
-            .generateNew(providerApplication.provider);
-    protected UserAccountController userAccountController = new UserAccountController();
 
-    public static String getUICmToken() {
-        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
-        LocalStorage storage = webStorage.getLocalStorage();
-        var tokenValue = storage.getItem("cmToken") == null ? storage.getItem("CM_TOKEN") : storage.getItem("cmToken");
-        //todo temp hot fix to pass UI tests for both implementations
-        return sbb("Bearer").w().append(tokenValue).bld();
-    }
 
     @BeforeEach
     void setUpBrowserContainer() {
@@ -76,4 +61,21 @@ public class BaseUITests extends BaseCMTest {
         WebDriverRunner.closeWebDriver();
     }
 
+    public static String getUICmToken() {
+        var webStorage = new RemoteWebStorage(new RemoteExecuteMethod((RemoteWebDriver) getWebDriver()));
+        LocalStorage storage = webStorage.getLocalStorage();
+        var tokenValue = storage.getItem("cmToken") == null ? storage.getItem("CM_TOKEN") : storage.getItem("cmToken");
+        //todo temp hot fix to pass UI tests for both implementations
+        return sbb("Bearer").w().append(tokenValue).bld();
+    }
+
+    public void restartBrowser() {
+        WebDriverRunner.closeWindow();
+        chrome.stop();
+        chrome = new BrowserWebDriverContainer()
+                .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"));
+        chrome.start();
+        WebDriverRunner.setWebDriver(chrome.getWebDriver());
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+    }
 }

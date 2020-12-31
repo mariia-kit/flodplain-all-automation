@@ -28,6 +28,7 @@ public class HereLoginSteps {
     }
 
     private HereLoginPage signInHEREAccountUser(DataSubject dataSubject) {
+        AuthController.deleteToken(dataSubject);
         return loginPage
                 .isLoaded()
                 .fillUserEmail(dataSubject.getEmail())

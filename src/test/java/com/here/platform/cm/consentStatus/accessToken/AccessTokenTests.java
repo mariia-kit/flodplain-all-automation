@@ -6,15 +6,14 @@ import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.AccessTokenController;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.GetAccessToken;
@@ -38,15 +37,14 @@ class AccessTokenTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify Getting Access Token For Revoked Consent")
     void getAccessTokenForRevokedConsentTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+        var crid = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -69,15 +67,14 @@ class AccessTokenTests extends BaseConsentStatusTests {
     @DisplayName("Verify Getting Access Token For Approved Consent")
     @Tag("cm_prod")
     void getAccessTokenForApprovedConsentTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+        var crid = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -99,15 +96,14 @@ class AccessTokenTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is not possible to get Access Token with invalid ConsumerId")
     void isNotPossibleToGetAccessTokenWithInvalidConsumerIdTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+        var crid = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
@@ -129,23 +125,26 @@ class AccessTokenTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is possible to approve two consents for single VIN")
     void approveTwoConsentsForSingleVinTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer1 = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        ConsentRequestContainer targetContainer2 = ConsentRequestContainers.generateNew(targetApp.getProvider());
 
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer1 = ConsentRequestContainers.generateNew(provider);
+        ConsentRequestContainer targetContainer2 = ConsentRequestContainers.generateNew(provider);
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String testVin = dataSubject.getVin();
 
-        ConsentInfo consentInfo1 = Consents.generateNewConsentInfo(mpConsumer, targetContainer1);
-        ConsentInfo consentInfo2 = Consents.generateNewConsentInfo(mpConsumer, targetContainer2);
-        var crid1 = new ConsentRequestSteps2(targetContainer1, consentInfo1)
+        ConsentObject consentObj1 = new ConsentObject(mpConsumer, provider, targetContainer1);
+        ConsentObject consentObj2 = new ConsentObject(mpConsumer, provider, targetContainer2);
+
+
+        var crid1 = new ConsentRequestSteps(consentObj1)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)
                 .getId();
 
-        var crid2 = new ConsentRequestSteps2(targetContainer2, consentInfo2)
+        var crid2 = new ConsentRequestSteps(consentObj2)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin)

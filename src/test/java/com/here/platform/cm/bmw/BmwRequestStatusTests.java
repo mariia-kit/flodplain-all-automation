@@ -2,30 +2,23 @@ package com.here.platform.cm.bmw;
 
 
 import com.here.platform.cm.controllers.BMWController;
-import com.here.platform.cm.dataAdapters.ConsentContainerToNsContainer;
 import com.here.platform.cm.enums.BMWStatus;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.AsyncUpdateResponse;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestAsyncUpdateInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
-import com.here.platform.cm.rest.model.ConsentStatus;
 import com.here.platform.cm.rest.model.Health;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
-import com.here.platform.common.VinsToFile;
 import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.common.annotations.CMFeatures.ASYNC;
 import com.here.platform.common.config.Conf;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
-import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
@@ -38,7 +31,6 @@ import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,15 +63,15 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @Issue("NS-2427")
     @EnumSource(BMWStatus.class)
     void setClearanceStatusByBMW(BMWStatus bmwStatus) {
-        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+        MPProviders provider = MPProviders.BMW_TEST;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider)
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider)
                 .withResources(List.of("fuel"))
                 .withClientIdSecret(Conf.cmUsers().getBmwApp());
         testContainer.setClientId(testContainer.getId());
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer);
-        var step= new ConsentRequestSteps2(testContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
+        var step= new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin1)
@@ -102,15 +94,15 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @Test
     @DisplayName("Positive BMW flow of updating consent statuses for consent request with multiple VINs")
     void setClearanceStatusByBMWMultiple() {
-        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+        MPProviders provider = MPProviders.BMW_TEST;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider)
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider)
                 .withResources(List.of("fuel"))
                 .withClientIdSecret(Conf.cmUsers().getBmwApp());
         testContainer.setClientId(testContainer.getId());
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer);
-        var step= new ConsentRequestSteps2(testContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
+        var step= new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin1)
@@ -147,16 +139,16 @@ public class BmwRequestStatusTests extends BaseBmwConsentTests {
     @ASYNC
     @DisplayName("Async Verify adding vins to Consent request for BMW")
     void addVinsToConsentRequestTestAsyncBMW() {
-        ProviderApplications targetApp = ProviderApplications.BMW_CONS_1;
+        MPProviders provider = MPProviders.BMW_TEST;
         String consentRequestAsyncUpdateInfo = "consentRequestAsyncUpdateInfo/";
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(targetApp.provider)
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider)
                 .withResources(List.of("fuel"))
                 .withClientIdSecret(Conf.cmUsers().getBmwApp());
         testContainer.setClientId(testContainer.getId());
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer);
-        var step= new ConsentRequestSteps2(testContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
+        var step= new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(testVin1);

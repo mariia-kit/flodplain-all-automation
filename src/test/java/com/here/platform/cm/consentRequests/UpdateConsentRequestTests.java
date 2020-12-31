@@ -3,15 +3,13 @@ package com.here.platform.cm.consentRequests;
 import static com.here.platform.common.strings.SBB.sbb;
 
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
 import com.here.platform.cm.enums.MPProviders;
-import com.here.platform.cm.enums.ProviderApplications;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
@@ -32,8 +30,6 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Update consent request")
 public class UpdateConsentRequestTests extends BaseCMTest {
 
-    private final ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-
     private final String messageForbiddenToRemoveApproved =
             sbb("All non-approved VINs have been deleted.").w()
                     .append("Please use RemoveAllDataSubjects endpoint if you wish to delete all approved VINs")
@@ -46,10 +42,10 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         String vin1 = VIN.generate(targetProvider.getVinLength());
 
-        new ConsentRequestSteps2(targetContainer, consentInfo)
+        new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vin1)
@@ -70,12 +66,12 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         String vin1 = VIN.generate(targetProvider.getVinLength());
         String vin2 = VIN.generate(targetProvider.getVinLength());
         String vin3 = VIN.generate(targetProvider.getVinLength());
 
-        new ConsentRequestSteps2(targetContainer, consentInfo)
+        var steps = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vin1, vin2, vin3)
@@ -87,34 +83,14 @@ public class UpdateConsentRequestTests extends BaseCMTest {
                         .expired(0)
                         .rejected(0))
                 .removeVINsFromConsentRequest(vin1, vin2)
-                .verifyConsentStatusByVin(vin3, "PENDING");
-//        consentRequestController.withConsumerToken(mpConsumer);
-//        consentRequestController.addVinsToConsentRequest(crid, new VinsToFile(vin1, vin2, vin3).csv());
-//        fuSleep();
-//        var expectedConsentRequestStatuses = new ConsentRequestStatus()
-//                .approved(0)
-//                .pending(3)
-//                .revoked(0)
-//                .expired(0)
-//                .rejected(0);
-//
-//        consentRequestController.withConsumerToken();
-//        new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
-//                .responseIsEqualToObject(expectedConsentRequestStatuses);
-//
-//        fuSleep();
-//        consentRequestController.removeVinsFromConsentRequest(crid, new VinsToFile(vin1, vin2).json());
-//
-//        expectedConsentRequestStatuses.pending(1);
-//        new ResponseAssertion(consentRequestController.getStatusForConsentRequestById(crid))
-//                .responseIsEqualToObject(expectedConsentRequestStatuses);
-//
-//        var consentStatusByIdAndVinResponse = new ConsentStatusController()
-//                .withConsumerToken(mpConsumer)
-//                .getConsentStatusByIdAndVin(crid, vin3);
-//        new ResponseAssertion(consentStatusByIdAndVinResponse).statusCodeIsEqualTo(StatusCode.OK)
-//                .responseIsEqualToObject(
-//                );
+                .verifyConsentStatusByVin(vin3, "PENDING")
+                .verifyConsentStatus(
+                        new ConsentRequestStatus()
+                                .approved(0)
+                                .pending(1)
+                                .revoked(0)
+                                .expired(0)
+                                .rejected(0));
     }
 
     @Test
@@ -124,12 +100,12 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         var vinToApprove = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
         String vin2 = VIN.generate(targetProvider.getVinLength());
         String vin3 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentRequestSteps steps = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove, vin2, vin3);
@@ -158,12 +134,12 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         var vinToRevoke  = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
         String vin2 = VIN.generate(targetProvider.getVinLength());
         String vin3 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentRequestSteps steps = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToRevoke, vin2, vin3);
@@ -194,12 +170,12 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         var vinToRevoke  = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
         String vin2 = VIN.generate(targetProvider.getVinLength());
         String vin3 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentRequestSteps steps = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToRevoke, vin2, vin3);
@@ -225,19 +201,15 @@ public class UpdateConsentRequestTests extends BaseCMTest {
         User mpConsumer = Users.MP_CONSUMER.getUser();
         MPProviders targetProvider = MPProviders.DAIMLER_REFERENCE;
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetProvider);
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, targetProvider, targetContainer);
         var vinToApprove = DataSubjects.getNextVinLength(targetProvider.getVinLength()).getVin();
         String vin2 = VIN.generate(targetProvider.getVinLength());
         String vin3 = VIN.generate(targetProvider.getVinLength());
 
-        ConsentRequestSteps2 steps = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentRequestSteps steps = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove, vin2, vin3);
-//        var vinToApprove = DataSubjects.getNextVinLength(vinLength).getVin();
-//        consentRequestController.withConsumerToken(mpConsumer);
-//        testFileWithVINs = new VinsToFile(vinToApprove, vin2, vin3).csv();
-//        consentRequestController.addVinsToConsentRequest(crid, testFileWithVINs);
 
         ConsentFlowSteps.approveConsentForVIN(steps.getId(), targetContainer, vinToApprove);
 

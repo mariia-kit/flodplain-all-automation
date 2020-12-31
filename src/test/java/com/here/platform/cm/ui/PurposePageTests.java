@@ -2,88 +2,59 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.open;
 
-import com.here.platform.cm.dataAdapters.ConsentInfoToConsentRequestData;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.PurposePage;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.annotations.CMFeatures.Purpose;
-import com.here.platform.common.extensions.ConsentRequestCascadeRemoveExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
-import com.here.platform.ns.helpers.authentication.AuthController;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 
 @Purpose
 @DisplayName("Purpose for consent request")
 public class PurposePageTests extends BaseUITests {
 
-    private final ProviderApplications providerApplicationForPurpose = ProviderApplications.DAIMLER_CONS_1;
-    private final ConsentRequestContainer generatedContainerForPurpose =
-            ConsentRequestContainers.generateNew(providerApplicationForPurpose.provider);
     private final PurposePage purposePage = new PurposePage();
-
-    @RegisterExtension
-    ConsentRequestCascadeRemoveExtension cascadeRemoveExtension = new ConsentRequestCascadeRemoveExtension();
-
-    private DataSubjects registeredDataSubject;
-    private ConsentInfo testConsentRequest;
-
-    @BeforeEach
-    void createConsentRequestAndPrepareUser() {
-        registeredDataSubject = DataSubjects.getNextBy18VINLength();
-
-        UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
-        UserAccountSteps.attachDataSubjectVINToUserAccount(registeredDataSubject.getDataSubject());
-
-        testConsentRequest = ConsentRequestSteps.createValidConsentRequestWithNSOnboardings(
-                providerApplicationForPurpose,
-                registeredDataSubject.getVin(),
-                generatedContainerForPurpose
-        );
-
-        var consentReqToRemove = new ConsentInfoToConsentRequestData(
-                testConsentRequest,
-                providerApplicationForPurpose.provider.getName(),
-                providerApplication.consumer.getRealm()
-        ).consentRequestData();
-
-        cascadeRemoveExtension.consentRequestToCleanUp(consentReqToRemove);
-        cascadeRemoveExtension.vinToRemove(registeredDataSubject.getVin());
-
-    }
-
-    @AfterEach
-    void cleanUpUser() {
-        AuthController.deleteToken(registeredDataSubject.dataSubject);
-        UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
-    }
-
 
     @Test
     @DisplayName("Verify Purpose page for registered account")
     void verifyPurposePageTest() {
+        MPProviders provider = MPProviders.DAIMLER_EXPERIMENTAL;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+
+        DataSubjects registeredDataSubject = DataSubjects.getNextBy18VINLength();
+        UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
+        UserAccountSteps.attachDataSubjectVINToUserAccount(registeredDataSubject.getDataSubject());
+
+        new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(registeredDataSubject.getVin())
+                .getId();
+
         open(ConsentPageUrl.getStaticPurposePageLinkFor(
-                providerApplicationForPurpose.consumer.getRealm(),
-                generatedContainerForPurpose.getId())
+                mpConsumer.getRealm(),
+                targetContainer.getId())
         );
 
         purposePage.verifyStaticPurposeInfoPage();
         purposePage.openConsentRequestLink();
         HereLoginSteps.loginRegisteredDataSubject(registeredDataSubject.dataSubject);
         purposePage.verifyPurposeInfoPage(
-                providerApplicationForPurpose.consumer,
-                testConsentRequest,
-                generatedContainerForPurpose
+                mpConsumer,
+                consentObj.getConsent(),
+                targetContainer
         );
     }
 

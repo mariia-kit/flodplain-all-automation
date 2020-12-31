@@ -6,6 +6,8 @@ import com.github.javafaker.Faker;
 import com.here.platform.common.strings.JConvert;
 import io.qameta.allure.Allure;
 import java.io.File;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 
 public class VinsToFile implements FileIO {
@@ -61,8 +63,12 @@ public class VinsToFile implements FileIO {
         );
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum FILE_TYPE {
-        JSON,
-        CSV
+        JSON("application/json"),
+        CSV("text/csv");
+
+        private String contentType;
     }
 }

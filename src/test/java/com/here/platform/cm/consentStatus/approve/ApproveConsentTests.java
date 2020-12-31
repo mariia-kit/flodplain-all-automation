@@ -4,15 +4,15 @@ package com.here.platform.cm.consentStatus.approve;
 import com.here.platform.cm.consentStatus.BaseConsentStatusTests;
 import com.here.platform.cm.controllers.ConsentStatusController.NewConsent;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
-import com.here.platform.cm.enums.ProviderApplications;
+import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.SuccessApproveData;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.ApproveConsent;
@@ -38,14 +38,15 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Tag("cm_prod")
     @Tag("fabric_test")
     void createApproveGetConsentStatusTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String vinToApprove = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var crid = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)
@@ -70,8 +71,8 @@ class ApproveConsentTests extends BaseConsentStatusTests {
 
         var expectedApprovedConsentInfo = new ConsentInfo()
                 .consentRequestId(crid)
-                .purpose(consentInfo.getPurpose())
-                .title(consentInfo.getTitle())
+                .purpose(consentObj.getConsent().getPurpose())
+                .title(consentObj.getConsent().getTitle())
                 .consumerName(mpConsumer.getName())
                 .consumerId(mpConsumer.getRealm())
                 .state(StateEnum.APPROVED)
@@ -80,8 +81,8 @@ class ApproveConsentTests extends BaseConsentStatusTests {
                 .containerId(targetContainer.getId())
                 .containerDescription(targetContainer.getContainerDescription())
                 .resources(targetContainer.getResources())
-                .additionalLinks(consentInfo.getAdditionalLinks())
-                .privacyPolicy(consentInfo.getPrivacyPolicy())
+                .additionalLinks(consentObj.getConsent().getAdditionalLinks())
+                .privacyPolicy(consentObj.getConsent().getPrivacyPolicy())
                 .vinLabel(new VIN(vinToApprove).label());
 
         Assertions.assertThat(successApproveData.getApprovedConsentInfo())
@@ -105,8 +106,8 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Test
     @DisplayName("Verify it is not possible to approve absent consent")
     void isNotPossibleToApproveConsentThatDoesNotExistTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String vinToApprove = dataSubject.getVin();
 
         var randomConsentRequestId = crypto.sha256();
@@ -143,8 +144,8 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @ErrorHandler
     @DisplayName("Verify approve consent with empty Consent body")
     void approveConsentErrorHandlerTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
 
         var approveResponse = consentStatusController
                 .withConsumerToken()
@@ -159,14 +160,15 @@ class ApproveConsentTests extends BaseConsentStatusTests {
     @Sentry
     @DisplayName("Verify sentry is blocking consent approval with empty CM application token")
     void sentryBlockApproveConsentRequestTest() {
-        ProviderApplications targetApp = ProviderApplications.REFERENCE_CONS_1;
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(targetApp.getProvider());
-        DataSubjects dataSubject = DataSubjects.getNextVinLength(targetApp.getProvider().getVinLength());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubjects dataSubject = DataSubjects.getNextVinLength(provider.getVinLength());
         String vinToApprove = dataSubject.getVin();
 
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, targetContainer);
-        var crid = new ConsentRequestSteps2(targetContainer, consentInfo)
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var crid = new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(vinToApprove)

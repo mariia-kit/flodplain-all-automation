@@ -4,27 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.CMErrorResponse;
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
-import com.here.platform.cm.enums.Consents;
 import com.here.platform.cm.enums.MPProviders;
-import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentRequestData;
-import com.here.platform.cm.steps.api.ConsentRequestSteps2;
 import com.here.platform.cm.steps.api.OnboardingSteps;
-import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.CreateConsentRequest;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
-import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 
@@ -37,16 +31,14 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @Issue("NS-3048")
     @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Consumer")
     void isNotPossibleToCreateConsentRequestWithOutConsumer() {
-        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        String providerId = testContainer.getProvider().getName();
-        String mpConsumer = crypto.sha1();
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
-
-        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider);
+        User mpConsumer = new User().withRealm(crypto.sha1());
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
 
         final var actualResponse = consentRequestController
                 .withConsumerToken()
-                .createConsentRequest(createConsentRequest);
+                .createConsentRequest(consentObj.getConsentRequestData());
 
         var actualCause = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
@@ -54,22 +46,22 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .getCause();
         assertThat(actualCause)
                 .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
-                .contains(createConsentRequest.getConsumerId())
-                .contains(createConsentRequest.getProviderId())
-                .contains(createConsentRequest.getContainerId());
+                .contains(mpConsumer.getRealm())
+                .contains(provider.getName())
+                .contains(testContainer.getId());
     }
 
     @Test
     @Sentry
     @DisplayName("Verify Sentry Block ConsentRequest Creation")
     void sentryBlockConsentRequestCreationTest() {
-        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        String providerId = testContainer.getProvider().getName();
-        String mpConsumer = crypto.sha1();
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider);
+        User mpConsumer = new User().withRealm(crypto.sha1());
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
 
-        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
-        final var actualResponse = consentRequestController.createConsentRequest(createConsentRequest);
+        final var actualResponse = consentRequestController
+                .createConsentRequest(consentObj.getConsentRequestData());
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
     }
@@ -78,15 +70,14 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @Sentry
     @DisplayName("Is  not possible to create consent request with application token")
     void isNotPossibleToCreateConsentRequestWithApplicationToken() {
-        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        String providerId = testContainer.getProvider().getName();
-        String mpConsumer = crypto.sha1();
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider);
+        User mpConsumer = new User().withRealm(crypto.sha1());
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
 
-        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
         final var actualResponse = consentRequestController
                 .withCMToken()
-                .createConsentRequest(createConsentRequest);
+                .createConsentRequest(consentObj.getConsentRequestData());
 
         new ResponseAssertion(actualResponse).statusCodeIsEqualTo(StatusCode.FORBIDDEN);
     }
@@ -109,17 +100,16 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
     @Issue("NS-3048")
     @DisplayName("Verify It Is Not Possible To Create ConsentRequest With Out Provider")
     void isNotPossibleToCreateConsentRequestWithOutProvider() {
-        ConsentRequestContainers testContainer = ConsentRequestContainers.getNextDaimlerExperimental();
-        String providerId = testContainer.getProvider().getName();
-        String mpConsumer = crypto.sha1();
-        ConsentInfo consentInfo = Consents.generateNewConsentInfo(mpConsumer, testContainer.getConsentContainer());
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        ConsentRequestContainer testContainer = ConsentRequestContainers.generateNew(provider);
+        User mpConsumer = new User().withRealm(crypto.sha1());
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, testContainer);
 
-        new OnboardingSteps(StringUtils.EMPTY, consentInfo.getConsumerId()).onboardValidConsumer();
+        new OnboardingSteps(StringUtils.EMPTY, mpConsumer.getRealm()).onboardValidConsumer();
 
-        ConsentRequestData createConsentRequest = Consents.generateNewConsent(providerId, consentInfo);
         final var actualResponse = consentRequestController
                 .withConsumerToken()
-                .createConsentRequest(createConsentRequest);
+                .createConsentRequest(consentObj.getConsentRequestData());
 
         var actualCause = new ResponseAssertion(actualResponse)
                 .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
@@ -127,9 +117,9 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
                 .getCause();
         assertThat(actualCause)
                 .startsWith("Couldn't find provider application by id: ProviderApplicationPK")
-                .contains(createConsentRequest.getConsumerId())
-                .contains(createConsentRequest.getProviderId())
-                .contains(createConsentRequest.getContainerId());
+                .contains(mpConsumer.getRealm())
+                .contains(provider.getName())
+                .contains(testContainer.getId());
     }
 
 }

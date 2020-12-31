@@ -37,7 +37,7 @@ public enum MPProviders {
             Conf.ns().getReferenceProviderTokenUrl()
     );;
 
-    public final int vinLength;
+    private final int vinLength;
     private final String
             name,
             type,
