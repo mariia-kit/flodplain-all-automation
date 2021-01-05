@@ -2,7 +2,9 @@ package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selenide.$;
 
+import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
+import java.util.NoSuchElementException;
 
 
 public abstract class BaseCMPage {
@@ -30,11 +32,21 @@ public abstract class BaseCMPage {
         }
 
         @Step("Click on 'Avatar' tab in header")
-        public DashBoardPage openDashboardUserAvatarTab(){
+        public DashBoardPage openDashboardUserAvatarTab() {
             $("lui-avatar[class='tabtrigger ng-star-inserted']").click();
             return new DashBoardPage();
         }
 
+        @Step("Verify if Headers are displayed")
+        public DashBoardPage verifyHeadersDislayed() {
+            $("lui-tab[data-cy='new']").shouldBe(Condition.visible);
+            $("lui-tab[data-cy='revoked']").shouldBe(Condition.visible);
+            $("lui-tab[data-cy='accepted']").shouldBe(Condition.visible);
+            return new DashBoardPage();
+        }
     }
-
 }
+
+
+
+
