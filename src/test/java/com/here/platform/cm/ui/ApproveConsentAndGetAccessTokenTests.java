@@ -69,7 +69,6 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     @Test
     @DisplayName("E2E success flow to approve consent request and get access token for one. Daimler(ISO) experimental provider")
-    @Tag("dynamic_ui")
     void e2eTestDaimler() {
         MPProviders provider = MPProviders.DAIMLER_EXPERIMENTAL;
         User mpConsumer = Users.MP_CONSUMER.getUser();
