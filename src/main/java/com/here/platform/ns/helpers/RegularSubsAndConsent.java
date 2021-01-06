@@ -1,9 +1,16 @@
 package com.here.platform.ns.helpers;
 
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
+import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import io.qameta.allure.Step;
 import java.util.Objects;
@@ -42,10 +49,17 @@ public class RegularSubsAndConsent {
     private static String prepareFlowData(Container container, String vehicleId) {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
-        return new ConsentManagerHelper(container, vehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        MPProviders cmProvider = MPProviders.findByProviderId(container.getDataProviderName());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(cmProvider, container);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, cmProvider, targetContainer);
+
+        return new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(vehicleId)
+                .approveConsent(vehicleId)
+                .getId();
     }
 
     @AllArgsConstructor

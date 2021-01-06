@@ -3,6 +3,8 @@ package com.here.platform.e2e;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.dto.Container;
@@ -11,13 +13,11 @@ import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Vehicle;
-import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'Subscription'")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 @Tag("ignored-dev")
 public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
@@ -39,10 +39,15 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String testVin = Vehicle.validVehicleId;
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin)
+                .approveConsent(testVin)
+                .getId();
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -59,7 +64,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
         Container container = Containers.generateNew(provider);
 
-        new MarketplaceManageListingCall()
+        new MarketplaceSteps()
                 .createListing(container, "here-dev")
                 .expectedCode(HttpStatus.SC_BAD_REQUEST);
     }
@@ -78,7 +83,7 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
         new NeutralServerResponseAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
 
-        new MarketplaceManageListingCall()
+        new MarketplaceSteps()
                 .createListing(container, "here-dev")
                 .expectedCode(HttpStatus.SC_BAD_REQUEST);
     }
@@ -173,10 +178,16 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListing(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String testVin = Vehicle.validVehicleId;
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin)
+                .approveConsent(testVin)
+                .getId();
+
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)
@@ -193,10 +204,17 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionRemoved(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String testVin = Vehicle.validVehicleId;
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin)
+                .approveConsent(testVin)
+                .getId();
+
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)
@@ -213,10 +231,17 @@ public class MarketplaceSubscriptionTest extends BaseE2ETest {
 
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscriptionInProgress(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String testVin = Vehicle.validVehicleId;
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(testVin)
+                .approveConsent(testVin)
+                .getId();
+
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)

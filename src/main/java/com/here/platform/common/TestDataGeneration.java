@@ -6,6 +6,7 @@ import static io.restassured.RestAssured.given;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.steps.api.OnboardingSteps;
 import com.here.platform.common.config.Conf;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
@@ -13,8 +14,8 @@ import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -130,9 +131,9 @@ public class TestDataGeneration {
                     .extract().response();
         }
 
-        ReferenceProviderCall.regNewToken(Vehicle.validVehicleId, token);
-        ReferenceProviderCall.regNewToken(Vehicle.validRefVehicleId, token);
-        ReferenceProviderCall.regNewToken(Vehicle.validVehicleIdLong, token);
+        new ReferenceProviderController().addToken(Vehicle.validVehicleId, token, UUID.randomUUID().toString(), "general");
+        new ReferenceProviderController().addToken(Vehicle.validRefVehicleId, token, UUID.randomUUID().toString(), "general");
+        new ReferenceProviderController().addToken(Vehicle.validVehicleIdLong, token, UUID.randomUUID().toString(), "general");
     }
 
 }

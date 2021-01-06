@@ -79,7 +79,7 @@ task fePreDevTests(type: TestCM) {
         includeTags "dynamic_ui"
     }
 
-    dependsOn "testDataGeneration"
+    dependsOn "cleanUpCM", "testDataGeneration"
     finalizedBy "allureAggregatedReportCM"
 }
 

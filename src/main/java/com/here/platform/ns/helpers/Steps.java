@@ -5,6 +5,7 @@ import static com.here.platform.ns.dto.Users.PROVIDER;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.steps.remove.ConsentCollector;
 import com.here.platform.common.config.Conf;
+import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
 import com.here.platform.ns.controllers.provider.ProviderController;
@@ -16,8 +17,7 @@ import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-import com.here.platform.ns.restEndPoints.external.ReferenceProviderCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import io.qameta.allure.Step;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -81,7 +81,7 @@ public class Steps {
         if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD,
                 Providers.BMW_TEST)
                 .anyMatch(prov -> prov.getProvider().getName().equals(container.getDataProviderName()))) {
-            ReferenceProviderCall.createContainer(container);
+            new ReferenceProviderController().addContainer(container);
         }
         var response = new ContainerController()
                 .withToken(PROVIDER)
@@ -120,16 +120,16 @@ public class Steps {
 
     @Step("Create regular Listing for {container.name}")
     public static void createListing(Container container) {
-        new MarketplaceManageListingCall()
+        new MarketplaceSteps()
                 .createNewListing(container);
     }
 
     @Step("Create regular Listing and Subscription for {container.name}")
     public static void createListingAndSubscription(Container container) {
         if (!Conf.ns().isMarketplaceMock()) {
-            String listing = new MarketplaceManageListingCall()
+            String listing = new MarketplaceSteps()
                     .createNewListing(container);
-            new MarketplaceManageListingCall()
+            new MarketplaceSteps()
                     .subscribeListing(listing);
             //new AaaCall().waitForContainerPolicyIntegrationInSentry(container.getDataProviderName(), container.getName());
         } else {
@@ -137,33 +137,45 @@ public class Steps {
         }
     }
 
+    public static void createListingAndSubscription(ConsentRequestContainer container) {
+        Container cont = new Container(
+                container.getId(),
+                container.getName(),
+                container.getProvider().getName(),
+                container.getContainerDescription(),
+                String.join(",", container.getResources()),
+                true,
+                container.getScopeValue());
+        createListingAndSubscription(cont);
+    }
+
     @Step("Create regular Listing and Canceled Subscription for {container.name}")
     public static void createListingAndCanceledSubscription(Container container) {
-        String listing = new MarketplaceManageListingCall()
+        String listing = new MarketplaceSteps()
                 .createNewListing(container);
-        String subscription = new MarketplaceManageListingCall()
+        String subscription = new MarketplaceSteps()
                 .subscribeListing(listing);
-        new MarketplaceManageListingCall().beginCancellation(subscription);
+        new MarketplaceSteps().beginCancellation(subscription);
     }
 
     @Step("Create regular Listing and Subscription in progress for {container.name}")
     public static void createListingAndSubscriptionInProgress(Container container) {
-        String listing = new MarketplaceManageListingCall()
+        String listing = new MarketplaceSteps()
                 .createNewListing(container);
-        String subscription = new MarketplaceManageListingCall()
+        String subscription = new MarketplaceSteps()
                 .subscribeListing(listing);
-        new MarketplaceManageListingCall().beginCancellation(subscription);
+        new MarketplaceSteps().beginCancellation(subscription);
     }
 
     @Step("Create and Remove regular Listing and Subscription for {container.name}")
     public static void createListingAndSubscriptionRemoved(Container container) {
-        String listing = new MarketplaceManageListingCall()
+        String listing = new MarketplaceSteps()
                 .createNewListing(container);
-        String subsId = new MarketplaceManageListingCall()
+        String subsId = new MarketplaceSteps()
                 .subscribeListing(listing);
-        new MarketplaceManageListingCall()
+        new MarketplaceSteps()
                 .beginCancellation(subsId);
-        new MarketplaceManageListingCall()
+        new MarketplaceSteps()
                 .deleteListing(listing)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
     }

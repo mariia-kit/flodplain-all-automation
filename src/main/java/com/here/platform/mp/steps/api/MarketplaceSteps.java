@@ -1,4 +1,4 @@
-package com.here.platform.ns.restEndPoints.external;
+package com.here.platform.mp.steps.api;
 
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
@@ -13,12 +13,13 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Random;
 import java.util.function.Supplier;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 
 
-public class MarketplaceManageListingCall {
+public class MarketplaceSteps {
 
     private static final String baseMpUrl = Conf.mp().getMarketplaceUrl();
 
@@ -42,6 +43,7 @@ public class MarketplaceManageListingCall {
         ack_prov(subsId);
         int taskId = ack_cons(subsId);
         waitForAsyncTask(taskId, () -> "Bearer " + MP_CONSUMER.getToken());
+        mpDelay();
         return subsId;
     }
 
@@ -54,7 +56,7 @@ public class MarketplaceManageListingCall {
         return listingHrn;
     }
 
-    @Step("Create marketplace listing for container {container.name}")
+    @Step("Create new listing for container {container.id} of provider {container.dataProviderName}")
     public NeutralServerResponseAssertion createListing(Container container, String resRealm) {
         Random r = new Random();
         String containerTitle = String.format("[NS] Container Listing %s %s", container.getName(), r.nextInt(10000));
@@ -184,6 +186,13 @@ public class MarketplaceManageListingCall {
         return resp.jsonPath().getInt("taskId");
     }
 
+    @Step("Get State of subscription {subsId}")
+    public Response getSubsState(String subsId) {
+        String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
+        String url = baseMpUrl + "/subscriptions/" + subsId + "/asProvider";
+        return RestHelper.get("Get subs state: " + subsId, url, providerToken);
+    }
+
     @Step("Begin cancellation of subscription {subsId}")
     public NeutralServerResponseAssertion beginCancellation(String subsId) {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
@@ -195,7 +204,7 @@ public class MarketplaceManageListingCall {
         if (response.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED) {
             return rejectSubscribtion(subsId);
         }
-        mpDelayStep();
+        waitForSubsStateCanceled(subsId);
         return new NeutralServerResponseAssertion(response);
     }
 
@@ -217,7 +226,9 @@ public class MarketplaceManageListingCall {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = baseMpUrl + "/listings/" + listingHrn;
         Response response = RestHelper.delete("Delete listing: " + listingHrn, url, providerToken);
-        CleanUpHelper.getListingList().remove(listingHrn);
+        if (response.getStatusCode() == HttpStatus.SC_NO_CONTENT) {
+            CleanUpHelper.getListingList().remove(listingHrn);
+        }
         return new NeutralServerResponseAssertion(response);
     }
 
@@ -303,6 +314,27 @@ public class MarketplaceManageListingCall {
         } while (maxCount > 1);
         throw new RuntimeException("Error waiting for MP async task " + taskId
                 + " to complete! Status not success after wait for 30 min.");
+    }
+
+    @SneakyThrows
+    public void waitForSubsStateCanceled(String subsId) {
+        int maxCount = 30;
+        do {
+            maxCount--;
+            Response resp = getSubsState(subsId);
+            if (resp.getStatusCode() == HttpStatus.SC_OK) {
+                if (resp.jsonPath().getString("subscription.state").equals("CANCELLED_BY_PROVIDER")) {
+                    return;
+                }
+                Thread.sleep(10 * 1000);
+            } else {
+                throw new RuntimeException(SBB.sbb("Error waiting for MP cancel subs task!").n()
+                        .append(resp.getStatusCode()).n()
+                        .append(resp.getBody().prettyPrint()).bld());
+            }
+        } while (maxCount > 1);
+        throw new RuntimeException("Error waiting for MP cancel subs task " + subsId
+                + " to complete! Status not success after wait for 5 min.");
     }
 
     public int getIdOfAsyncTaskForList(String listingHrn, String token) {

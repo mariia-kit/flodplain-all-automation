@@ -1,7 +1,7 @@
 package com.here.platform.ns.instruments;
 
 import com.here.platform.ns.helpers.CleanUpHelper;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class MarketAfterCleanUp implements AfterAllCallback {
         CleanUpHelper.getSubsList().forEach(id ->
                 {
                     logger.info("Clean Subs with id:" + id);
-                    new MarketplaceManageListingCall().beginCancellation(id);
+                    new MarketplaceSteps().beginCancellation(id);
                 }
         );
         Map<String, String> allListings = new HashMap<>(CleanUpHelper.getListingList());
         allListings.forEach((key, value) -> {
             logger.info("Clean Listing with hrn:" + key);
-            new MarketplaceManageListingCall().deleteListing(key);
+            new MarketplaceSteps().deleteListing(key);
         });
 
         CleanUpHelper.getListingList().clear();

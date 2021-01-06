@@ -43,4 +43,8 @@ public abstract class BaseMPController<T> {
         return (T) this;
     }
 
+    public T withProviderToken() {
+        withBearerToken(Users.MP_PROVIDER.getToken());
+        return (T) this;
+    }
 }

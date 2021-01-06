@@ -6,6 +6,7 @@ import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.rest.model.ProviderApplication;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.ns.dto.Users;
+import com.here.platform.ns.helpers.LoggerHelper;
 import io.qameta.allure.Step;
 import java.io.File;
 import lombok.experimental.UtilityClass;
@@ -64,6 +65,7 @@ public class RemoveEntitiesSteps {
         var deleteConsentRequestResponse = privateController
                 .withConsumerToken()
                 .hardDeleteConsentRequest(crid);
+        LoggerHelper.logStep("del consent " + deleteConsentRequestResponse.getBody().print());
         StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
 

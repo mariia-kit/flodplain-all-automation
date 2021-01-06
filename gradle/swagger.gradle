@@ -38,9 +38,9 @@ swaggerSources {
 
     mkdir("build")
 
-    def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+    def targetEnv = hasProperty('env') ? env : System.getenv("CI_ENVIRONMENT_SLUG")
     def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
-    
+
     def cmHostByEnv
     if (!dynamicEnvUrl) {
         cmHostByEnv = getEnvUrl(mainResources, targetEnv)
