@@ -12,6 +12,7 @@ import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.dataProviders.reference.controllers.ReferenceTokenController;
 import io.qameta.allure.Step;
+import java.util.List;
 import lombok.experimental.UtilityClass;
 
 
@@ -28,7 +29,8 @@ public class ConsentFlowSteps {
     public void approveConsentForVIN(String crid, ConsentRequestContainer container, String targetVIN, String token) {
         String validCode;
 
-        if (container.getProvider().equals(MPProviders.DAIMLER_REFERENCE)) {
+        if (List.of(MPProviders.DAIMLER_REFERENCE, MPProviders.REFERENCE, MPProviders.REFERENCE_PROD)
+                .contains(container.getProvider())) {
             validCode = ReferenceTokenController.produceConsentAuthCode(targetVIN, container.getId() + ":general");
         } else {
             validCode = new DaimlerTokenController(targetVIN, container).generateAuthorizationCode();

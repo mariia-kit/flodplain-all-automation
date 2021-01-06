@@ -1,6 +1,5 @@
 package com.here.platform.cm.enums;
 
-import com.github.javafaker.Crypto;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.rest.model.AdditionalLink;
 import com.here.platform.cm.rest.model.ConsentInfo;
@@ -11,6 +10,7 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -73,6 +73,26 @@ public class ConsentObject {
         this.consumer = consumer;
         this.provider = provider;
         this.container = container;
+        consentRequestData = new ConsentRequestData()
+                .consumerId(consumer.getRealm())
+                .providerId(provider.getName())
+                .title(Conf.cm().getQaTestDataMarker() + faker.gameOfThrones().quote())
+                .purpose(faker.commerce().productName())
+                .privacyPolicy(faker.internet().url())
+                .addAdditionalLinksItem(
+                        new AdditionalLink().title(faker.commerce().department()).url(faker.internet().url()))
+                .containerId(container.getId());
+        this.consents = new ArrayList<>();
+        crid = StringUtils.EMPTY;
+    }
+
+    public ConsentObject(Container nsContainer) {
+        MPProviders cmProvider = MPProviders.findByProviderId(nsContainer.getDataProviderName());
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(cmProvider, nsContainer);
+        this.consumer = Users.MP_CONSUMER.getUser();
+        this.provider = MPProviders.findByProviderId(nsContainer.getDataProviderName());
+        this.container = targetContainer;
+
         consentRequestData = new ConsentRequestData()
                 .consumerId(consumer.getRealm())
                 .providerId(provider.getName())

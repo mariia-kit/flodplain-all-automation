@@ -214,12 +214,16 @@ public enum ConsentRequestContainers {
     public static ConsentRequestContainer generateNew(MPProviders targetProvider) {
         Container container = Containers.generateNew(targetProvider.getName())
                 .withDescription(sbb(Conf.cm().getQaTestDataMarker()).append("cm_automated_container").bld());
+        return generateNew(targetProvider, container);
+    }
+
+    public static ConsentRequestContainer generateNew(MPProviders targetProvider, Container nsContainer) {
         ConsentRequestContainer consentRequestContainer = ConsentRequestContainer.builder()
-                .id(container.getId())
-                .name(container.getName())
-                .scopeValue(container.getScope())
-                .resources(List.of(container.getResourceNames()))
-                .containerDescription(container.getDescription())
+                .id(nsContainer.getId())
+                .name(nsContainer.getName())
+                .scopeValue(nsContainer.getScope())
+                .resources(List.of(nsContainer.getResourceNames()))
+                .containerDescription(nsContainer.getDescription())
                 .provider(targetProvider)
                 .clientId(Conf.ns().getReferenceApp().getClientId())
                 .clientSecret(Conf.ns().getReferenceApp().getClientSecret())

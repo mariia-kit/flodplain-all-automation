@@ -6,8 +6,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.enums.ConsentObject;
-import com.here.platform.cm.rest.model.ConsentInfo;
-import com.here.platform.cm.rest.model.ConsentRequestData;
 import com.here.platform.cm.steps.remove.ConsentCollector;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
@@ -24,10 +22,8 @@ import com.here.platform.mp.pages.CreateListingPage.ListingType;
 import com.here.platform.mp.pages.ListingsListPage;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.User;
-import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -141,10 +137,10 @@ public class MarketplaceFlowSteps {
                 .confirmSubscriptionActivation();
         Selenide.sleep(5000);
         String bearerToken = "Bearer " + new ListingsListPage().fetchHereAccessToken();
-        MarketplaceManageListingCall marketplaceManageListingCall = new MarketplaceManageListingCall();
-        int taskId = marketplaceManageListingCall.getIdOfAsyncTaskForList(listingHrn, bearerToken);
-        subscriptionId = marketplaceManageListingCall.getIdOfSubsFromAsyncTask(taskId, bearerToken);
-        marketplaceManageListingCall.waitForAsyncTask(taskId, () -> bearerToken);
+        MarketplaceSteps marketplaceSteps = new MarketplaceSteps();
+        int taskId = marketplaceSteps.getIdOfAsyncTaskForList(listingHrn, bearerToken);
+        subscriptionId = marketplaceSteps.getIdOfSubsFromAsyncTask(taskId, bearerToken);
+        marketplaceSteps.waitForAsyncTask(taskId, () -> bearerToken);
     }
 
     @Step("Create consent request by Data Consumer for {targetContainer.id} {vin}")
@@ -197,7 +193,7 @@ public class MarketplaceFlowSteps {
     }
 
     public void removeSubscriptionAndListingForListings(String listingHrn, String subscriptionId) {
-        var mpListings = new MarketplaceManageListingCall();
+        var mpListings = new MarketplaceSteps();
         mpListings.beginCancellation(subscriptionId);
         mpListings.deleteListing(listingHrn);
     }

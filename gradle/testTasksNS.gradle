@@ -150,6 +150,7 @@ task allureAggregatedReportNS {
 task zephyrSyncTaskNS(type: JavaExec) {
     main = "com.here.platform.ns.instruments.Zephyroth"
     description = "Run NS Sync test results into Zephyr test cycle"
+    classpath sourceSets.main.runtimeClasspath
 
     def serviceName = System.getProperty("SERVICE") ?: 'null'
     def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'

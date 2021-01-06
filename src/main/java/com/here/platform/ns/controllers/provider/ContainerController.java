@@ -18,7 +18,7 @@ public class ContainerController extends BaseNeutralService<ContainerController>
 
     }
 
-    @Step
+    @Step("Add neutral server container {container.id} for {container.dataProviderName}")
     public Response addContainer(Container container) {
         return neutralServerClient(containersBasePath)
                 .body(container.generateContainerBody())

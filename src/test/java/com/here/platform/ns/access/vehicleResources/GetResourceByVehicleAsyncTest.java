@@ -12,7 +12,6 @@ import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
@@ -23,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Get vehicle resources by Vehicle ID Async")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 public class GetResourceByVehicleAsyncTest extends BaseNSTest {
 
     @Test

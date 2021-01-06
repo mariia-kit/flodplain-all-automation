@@ -2,7 +2,7 @@ package com.here.platform.ns.common;
 
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.instruments.CleanUp;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import java.io.File;
 
 
@@ -11,7 +11,7 @@ public class DataCleanUpNS {
     public static void main(String[] args) {
         String env = System.getProperty("env");
         if (!"prod".equalsIgnoreCase(env)) {
-            new MarketplaceManageListingCall().providerCleanUp();
+            new MarketplaceSteps().providerCleanUp();
             new CleanUp().deleteAllArtificialPoliciesBrute();
         }
 

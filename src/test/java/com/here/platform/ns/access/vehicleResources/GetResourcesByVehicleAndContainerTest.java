@@ -5,8 +5,10 @@ import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.EXTERNAL_USER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ProviderApplications;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
@@ -18,12 +20,10 @@ import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Vehicle;
-import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.RegularSubsAndConsent;
 import com.here.platform.ns.helpers.RegularSubsAndConsent.RegularFlowData;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import io.qameta.allure.Issue;
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Get resources by vehicle Id and container Id")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
 
     @Test
@@ -68,9 +68,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
+
         ConsentFlowSteps
                 .approveConsentForVinBMW(ProviderApplications.BMW_CONS_1.container.clientId, Vehicle.validVehicleId);
 
@@ -103,10 +107,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
         Container container = Containers.generateNew(provider);
 
         Steps.createRegularContainer(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
         var response = new ContainerDataController()
                 .withToken(PROVIDER)
                 .withConsentId(crid)
@@ -126,10 +133,13 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .addContainer(container);
         Steps.createListingAndSubscription(container);
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
                 .withConsentId(crid)

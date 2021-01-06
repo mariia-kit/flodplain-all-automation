@@ -81,6 +81,31 @@ public class ConsentRequestSteps {
         return this;
     }
 
+    public ConsentRequestSteps onboardApplicationForConsentRequest() {
+        step(String.format("Onboard provider:%s consumer:%s with container:%s on CM.",
+                consentObject.getProvider().getName(),
+                consentObject.getConsumer().getRealm(),
+                consentObject.getContainer().getId()), () -> {
+
+                    OnboardingSteps onboard = new OnboardingSteps(
+                            consentObject.getProvider(),
+                            consentObject.getConsumer().getRealm());
+                    ConsentCollector.addApp(new ProviderApplication()
+                            .providerId(consentObject.getProvider().getName())
+                            .consumerId(consentObject.getConsumer().getRealm())
+                            .containerId(consentObject.getContainer().getId()));
+                    onboard.onboardTestProvider();
+                    onboard.onboardConsumer(consentObject.getConsumer().getName());
+                    onboard.onboardTestProviderApplication(
+                            consentObject.getContainer().getId(),
+                            consentObject.getContainer().getClientId(),
+                            consentObject.getContainer().getClientSecret()
+                    );
+                }
+        );
+        return this;
+    }
+
     @Step("Add VINs: '{vins}' to consent request.")
     public ConsentRequestSteps addVINsToConsentRequest(String... vins) {
         var addVINsResponse = consentRequestController
@@ -88,7 +113,6 @@ public class ConsentRequestSteps {
                 .addVinsToConsentRequest(consentObject.getCrid(), FILE_TYPE.JSON, vins);
         StatusCodeExpects.expectOKStatusCode(addVINsResponse);
         Arrays.stream(vins).filter(vin -> consentObject.getConsent(vin) == null).forEach(consentObject::addVin);
-        consentObject.getConsent();
         return this;
     }
     @Step("Remove VINs: '{vins}' from consent request.")
@@ -123,6 +147,11 @@ public class ConsentRequestSteps {
         new ResponseAssertion(statusForConsentRequestByVinResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .responseIsEqualToObject(consentStatus);
+        return this;
+    }
+
+    public ConsentRequestSteps approveConsent(String vin) {
+        ConsentFlowSteps.approveConsentForVIN(consentObject.getCrid(), consentObject.getContainer(), vin);
         return this;
     }
 

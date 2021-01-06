@@ -8,7 +8,7 @@ import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +29,14 @@ public class ProdAfterCleanUp implements AfterAllCallback {
         CleanUpHelper.getSubsList().stream().forEach(id ->
                 {
                     logger.info("Clean Subs with id:" + id);
-                    new MarketplaceManageListingCall().beginCancellation(id);
+                    new MarketplaceSteps().beginCancellation(id);
                 }
         );
         Map<String, String> allListings = new HashMap<>(CleanUpHelper.getListingList());
         allListings.entrySet().stream().forEach(lst ->
                 {
                     logger.info("Clean Listing with hrn:" + lst.getKey());
-                    new MarketplaceManageListingCall().deleteListing(lst.getKey());
+                    new MarketplaceSteps().deleteListing(lst.getKey());
                 }
         );
         CleanUpHelper.getContainersList().stream().forEach(id ->

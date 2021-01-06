@@ -23,8 +23,7 @@ public class ReferenceProviderController {
     protected RequestSpecification referenceProviderClient(final String targetPath) {
         var baseService = given()
                 .baseUri(Conf.ns().getRefProviderUrl())
-                .basePath(targetPath)
-                .filters(new AllureRestAssured());
+                .basePath(targetPath);
 
         return baseService;
     }
@@ -89,19 +88,18 @@ public class ReferenceProviderController {
                 .post("/apps");
     }
 
-    @Step
+    @Step("Add Reference Provider container {container.id} for {container.dataProviderName}")
     public Response addContainer(Container container) {
         return referenceProviderClient("/admin")
                 .header("Content-Type", "application/json")
                 .body(new ReferenceContainer(
                         container.getId(),
                         container.getConsentRequired(),
-                        Arrays.stream(container.getResourceNames().split(","))
-                                .map(item -> "\"" + item + "\"").collect(Collectors.joining(",\n"))))
+                        container.getResourceNames().split(",")))
                 .post("/containers");
     }
 
-    @Step("Read sync entity {key}")
+    //@Step("Read sync entity {key}")
     public Response readSyncEntity(String key) {
         return referenceProviderClient("/sync")
                 .get("/entity/" + key);
@@ -122,13 +120,13 @@ public class ReferenceProviderController {
                 .post("/entity");
     }
 
-    @Step("Sync entity un-lock {key}")
+    //@Step("Sync entity un-lock {key}")
     public Response unlockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/unlock/{key}", key);
     }
 
-    @Step("Sync entity lock {key}")
+    //@Step("Sync entity lock {key}")
     public Response lockSyncEtity(String key) {
         return referenceProviderClient("/sync")
                 .post("/lock/{key}", key);
@@ -187,7 +185,7 @@ public class ReferenceProviderController {
         private boolean consentRequired;
 
         @JsonProperty("resourceNames")
-        private String resourceNames;
+        private String[] resourceNames;
 
     }
 

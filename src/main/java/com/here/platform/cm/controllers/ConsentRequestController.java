@@ -48,12 +48,6 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
     }
 
     @Step("Add VINs to Consent Request by ID: {consentRequestId}")
-    public Response addVinsToConsentRequest(String consentRequestId, File fileWithVINs) {
-        return vinMultipartSpec(fileWithVINs)
-                .put("/{consentRequestId}/addDataSubjects", consentRequestId);
-    }
-
-    @Step("Add VINs to Consent Request by ID: {consentRequestId}")
     public Response addVinsToConsentRequest(String consentRequestId, FILE_TYPE fileType, String... vins) {
         ConsentCollector.addVin(consentRequestId, vins);
         return vinMultipartSpec(new VinsToFile(vins).file(fileType))

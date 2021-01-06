@@ -3,32 +3,22 @@ package com.here.platform.e2e;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
+import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.mp.controllers.MarketplaceTunnelController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
-import com.here.platform.ns.restEndPoints.external.ConsentManagementCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceCMAddVinsCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceCMCreateConsentCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceCMGetConsentCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceCMGetConsentStatusCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceManageListingCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetContainerCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetContainerInfoCall;
-import com.here.platform.ns.restEndPoints.external.MarketplaceNSGetProvidersCall;
-import io.restassured.http.Header;
-import io.restassured.response.Response;
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'API Tunnelling'")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     private MarketplaceTunnelController marketplaceTunnelController = new MarketplaceTunnelController();
@@ -50,7 +40,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularProvider(provider);
 
         var verify = marketplaceTunnelController
-                .withConsumerToken()
+                .withProviderToken()
                 .getProvidersList();
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
@@ -72,7 +62,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
 
         var verify = marketplaceTunnelController
-                .withConsumerToken()
+                .withProviderToken()
                 .getProviderContainers(provider.getName());
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
@@ -146,7 +136,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         DataProvider provider = Providers.generateNew();
 
         var verify = marketplaceTunnelController
-                .withConsumerToken()
+                .withProviderToken()
                 .getProviderContainers(provider.getName());
 
         new NeutralServerResponseAssertion(verify)
@@ -168,7 +158,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularProvider(provider);
 
         var verify = marketplaceTunnelController
-                .withConsumerToken()
+                .withProviderToken()
                 .getProviderContainers(provider.getName());
 
         new NeutralServerResponseAssertion(verify)
@@ -217,24 +207,35 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
-        String listing = new MarketplaceManageListingCall()
+        String listing = new MarketplaceSteps()
                 .createNewListing(container);
-        String subs = new MarketplaceManageListingCall()
+        String subs = new MarketplaceSteps()
                 .subscribeListing(listing);
-        new ConsentManagementCall().addCMApplication(container, provider.getName());
 
-        String consentRequestId = new MarketplaceCMCreateConsentCall(subs, container)
-                .call()
+
+        ConsentObject consentObj = new ConsentObject(container);
+        new ConsentRequestSteps(consentObj).onboardAllForConsentRequest();
+
+        var createConsent = marketplaceTunnelController
+                .withConsumerToken()
+                .createConsent(subs, container);
+
+        String consentRequestId = new NeutralServerResponseAssertion(createConsent)
                 .expectedCode(HttpStatus.SC_CREATED)
                 .getResponse().jsonPath().get("consentRequestId");
 
-        new MarketplaceCMGetConsentCall(subs)
-                .call()
+        var verify = marketplaceTunnelController
+                .withConsumerToken()
+                .getConsent(subs);
+        new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("consentRequestId", consentRequestId, "Consent id in response not as expected");
 
-        new MarketplaceCMGetConsentStatusCall(subs)
-                .call().expectedCode(HttpStatus.SC_OK)
+        var verifyStatus = marketplaceTunnelController
+                .withConsumerToken()
+                .getConsentStatus(subs);
+        new NeutralServerResponseAssertion(verifyStatus)
+                .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("pending", "0", "Consent status value not as expected");
 
     }
@@ -251,30 +252,33 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
 
 
-        String listing = new MarketplaceManageListingCall()
-                .createNewListing(container);
-        String subs = new MarketplaceManageListingCall()
-                .subscribeListing(listing);
-        new ConsentManagementCall().addCMApplication(container, provider.getName());
+        String listing = new MarketplaceSteps().createNewListing(container);
+        String subs = new MarketplaceSteps().subscribeListing(listing);
 
+        ConsentObject consentObj = new ConsentObject(container);
+        var consentSteps = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
 
-        String consentRequestId = new MarketplaceCMCreateConsentCall(subs, container)
-                .call()
+        var createConsent = marketplaceTunnelController
+                .withConsumerToken()
+                .createConsent(subs, container);
+
+        String consentRequestId = new NeutralServerResponseAssertion(createConsent)
                 .expectedCode(HttpStatus.SC_CREATED)
                 .getResponse().jsonPath().get("consentRequestId");
 
-        new ConsentManagementCall().addVinNumbers(consentRequestId, Vehicle.validVehicleId);
+        var addVins = marketplaceTunnelController
+                .withConsumerToken()
+                .addVinNumbers(consentRequestId, subs, FILE_TYPE.JSON, Vehicle.validVehicleId);
 
-        //todo refactor authorisation to reuse HereUserManagerController
-        Response res = new ConsentManagementCall()
-                .approveConsentRequestNew(consentRequestId, Vehicle.validVehicleId, Users.HERE_USER.getToken(),
-                        container);
+        consentSteps.approveConsent(Vehicle.validVehicleId);
 
-        Assertions.assertEquals(HttpStatus.SC_OK, res.getStatusCode(),
-                "Error during approve of consent " + consentRequestId + " for vin " + Vehicle.validVehicleId);
 
-        new MarketplaceCMGetConsentStatusCall(subs)
-                .call().expectedCode(HttpStatus.SC_OK)
+        var verifyStatus = marketplaceTunnelController
+                .withConsumerToken()
+                .getConsentStatus(subs);
+        new NeutralServerResponseAssertion(verifyStatus)
+                .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("approved", "1", "Consent status value not as expected");
 
         var response = new ContainerDataController()
@@ -296,20 +300,27 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
-        String listing = new MarketplaceManageListingCall()
-                .createNewListing(container);
-        String subs = new MarketplaceManageListingCall()
-                .subscribeListing(listing);
-        new ConsentManagementCall().addCMApplication(container, provider.getName());
+        String listing = new MarketplaceSteps().createNewListing(container);
+        String subs = new MarketplaceSteps().subscribeListing(listing);
 
-        String consentRequestId = new MarketplaceCMCreateConsentCall(subs, container)
-                .call()
+        ConsentObject consentObj = new ConsentObject(container);
+        var consentSteps = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
+
+        var createConsent = marketplaceTunnelController
+                .withConsumerToken()
+                .createConsent(subs, container);
+
+        String consentRequestId = new NeutralServerResponseAssertion(createConsent)
                 .expectedCode(HttpStatus.SC_CREATED)
                 .getResponse().jsonPath().get("consentRequestId");
+        var addVins = marketplaceTunnelController
+                .withConsumerToken()
+                .addVinNumbers(consentRequestId, subs, FILE_TYPE.JSON, Vehicle.validVehicleId);
 
-        new ConsentManagementCall().addVinNumbers(consentRequestId, Vehicle.validVehicleId);
-
-        new ConsentManagementCall().getConsentInfo(Vehicle.validVehicleId);
+        var getConsent = marketplaceTunnelController
+                .withConsumerToken()
+                .getConsent(subs);
     }
 
     @Test
@@ -322,23 +333,29 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
-        String listing = new MarketplaceManageListingCall()
-                .createNewListing(container);
-        String subs = new MarketplaceManageListingCall()
-                .subscribeListing(listing);
-        new ConsentManagementCall().addCMApplication(container, provider.getName());
 
-        new MarketplaceCMCreateConsentCall(subs, container)
-                .call()
+        String listing = new MarketplaceSteps().createNewListing(container);
+        String subs = new MarketplaceSteps().subscribeListing(listing);
+
+        ConsentObject consentObj = new ConsentObject(container);
+        var consentSteps = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
+
+        var createConsent = marketplaceTunnelController
+                .withConsumerToken()
+                .createConsent(subs, container);
+
+        String consentRequestId = new NeutralServerResponseAssertion(createConsent)
                 .expectedCode(HttpStatus.SC_CREATED)
                 .getResponse().jsonPath().get("consentRequestId");
+        var addVins = marketplaceTunnelController
+                .withConsumerToken()
+                .addVinNumbers(consentRequestId, subs, FILE_TYPE.CSV, Vehicle.validVehicleId);
 
-        new MarketplaceCMAddVinsCall(subs, Vehicle.validVehicleId)
-                .call()
-                .expectedCode(HttpStatus.SC_OK);
-
-        new MarketplaceCMGetConsentStatusCall(subs)
-                .call()
+        var verifyStatus = marketplaceTunnelController
+                .withConsumerToken()
+                .getConsentStatus(subs);
+        new NeutralServerResponseAssertion(verifyStatus)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedJsonContains("pending", "1", "Consent status value not as expected");
 

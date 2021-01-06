@@ -158,9 +158,9 @@ public class NSErrors {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_CONFLICT,
                 "E502109",
-                sbb("You can't delete container").w().sQuoted(container.getName()).w()
+                sbb("You can't delete container").w().sQuoted(container.getId()).w()
                         .append("for provider").w()
-                        .sQuoted(container.getDataProviderName()).w().append(", because it has subscriptions").bld(),
+                        .sQuoted(container.getDataProviderName()).append(", because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
 
@@ -168,9 +168,9 @@ public class NSErrors {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_CONFLICT,
                 "E502109",
-                sbb("You can't update container").w().sQuoted(container.getName()).w()
-                        .append("for provider").w().sQuoted(container.getDataProviderName()).w()
-                        .append(" because it has subscriptions").bld(),
+                sbb("You can't update container").w().sQuoted(container.getId()).w()
+                        .append("for provider").w().sQuoted(container.getDataProviderName())
+                        .append(", because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
 

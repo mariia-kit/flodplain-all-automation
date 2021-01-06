@@ -3,6 +3,8 @@ package com.here.platform.ns.access.vehicleResources;
 
 import static com.here.platform.ns.dto.Users.CONSUMER;
 
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.access.VehicleResourceAsyncController;
@@ -14,9 +16,7 @@ import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
-import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Get resources by vehicle Id Pagination, Filtering...")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 public class GetResourcesNonDaimlerFunc extends BaseNSTest {
 
     @Test
@@ -41,10 +41,12 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
 
         var response1 = new ContainerDataController()
                 .withToken(CONSUMER)

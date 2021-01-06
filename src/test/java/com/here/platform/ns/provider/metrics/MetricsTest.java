@@ -4,6 +4,8 @@ import static com.here.platform.ns.dto.Users.APPLICATION;
 import static com.here.platform.ns.dto.Users.CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
+import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ContainerController;
@@ -13,9 +15,7 @@ import com.here.platform.ns.dto.Containers;
 import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
-import com.here.platform.ns.helpers.ConsentManagerHelper;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ConsentAfterCleanUp;
 import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import java.text.SimpleDateFormat;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Verify Provider Technical Accounting Service")
-@ExtendWith({MarketAfterCleanUp.class, ConsentAfterCleanUp.class})
+@ExtendWith({MarketAfterCleanUp.class})
 public class MetricsTest extends BaseNSTest {
 
     @Test
@@ -72,10 +72,12 @@ public class MetricsTest extends BaseNSTest {
                                 + "'}.apiCallCount",
                         StringUtils.EMPTY, "Metric Statistic field value not as expected!");
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -123,10 +125,12 @@ public class MetricsTest extends BaseNSTest {
                 .expectedCode(HttpStatus.SC_OK);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -153,10 +157,12 @@ public class MetricsTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -183,10 +189,12 @@ public class MetricsTest extends BaseNSTest {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
 
-        String crid = new ConsentManagerHelper(container, Vehicle.validVehicleId)
-                .createConsentRequestWithAppAndVin()
-                .approveConsent()
-                .getConsentRequestId();
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .getId();
 
         var getContainer = new ContainerDataController()
                 .withToken(CONSUMER)
