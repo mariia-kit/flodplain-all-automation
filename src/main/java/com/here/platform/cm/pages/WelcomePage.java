@@ -34,7 +34,7 @@ public class WelcomePage extends BaseCMPage {
         return this;
     }
 
-    @Step("Press Next button")
+    @Step("Verify HERE Sign In Page is opened")
     public WelcomePage verifyHERESignInOpened() {
         $("#form-sign-up")
                 .shouldBe(Condition.visible.because("HERE sign-up form expected after Welcome page!"));
