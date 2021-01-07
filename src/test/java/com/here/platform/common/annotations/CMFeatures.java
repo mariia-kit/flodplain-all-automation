@@ -17,6 +17,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("On-boarding")
     @DisplayName("On-board data consumer")
+    @Tag("CM-Consumer")
     public @interface OnBoardConsumer {
 
     }
@@ -25,6 +26,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("On-boarding")
     @DisplayName("On-board data provider")
+    @Tag("CM-Provider")
     public @interface OnBoardProvider {
 
     }
@@ -32,6 +34,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Create consent request")
+    @Tag("CM-Consent")
     public @interface CreateConsentRequest {
 
     }
@@ -39,6 +42,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Approve consent")
+    @Tag("CM-Consent Request")
     public @interface ApproveConsent {
 
     }
@@ -46,6 +50,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Revoke consent")
+    @Tag("CM-Consent Request")
     public @interface RevokeConsent {
 
     }
@@ -54,6 +59,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Get consent request status")
     @DisplayName("Get consent request status")
+    @Tag("CM-Consent Request")
     public @interface GetConsentRequestStatus {
 
     }
@@ -62,6 +68,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Update consent request")
     @DisplayName("Update consent request")
+    @Tag("CM-Consent")
     public @interface UpdateConsentRequest {
 
     }
@@ -70,6 +77,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Get access token")
     @DisplayName("Getting of access tokens for consents")
+    @Tag("CM-Access Token")
     public @interface GetAccessToken {
 
     }
@@ -85,7 +93,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("User Account")
     @DisplayName("User Account")
-    @Tag("userAccount")
+    @Tag("CM-User Account")
     @Issue("OLPPORT-2678")
     public @interface UserAccount {
 
@@ -94,6 +102,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("BMW")
+    @Tag("CM-BMW Event Service")
     public @interface BMW {
 
     }
@@ -123,4 +132,10 @@ public class CMFeatures {
 
     }
 
+
+    @Target({ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface ZephyrComponent {
+        public String value() default "";
+    }
 }

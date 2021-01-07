@@ -87,7 +87,8 @@ public class SyncPointIO {
                 return record;
             }
         }
-        throw new RuntimeException(sbb("Failed to wait for Sync to unlock:").append(key).bld());
+        return new SyncEntity();
+        //throw new RuntimeException(sbb("Failed to wait for Sync to unlock:").append(key).bld());
     }
 
     public void unlock(String key) {

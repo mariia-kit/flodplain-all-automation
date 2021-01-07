@@ -3,6 +3,7 @@ package com.here.platform.mp.steps.api;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.SBB;
 import com.here.platform.ns.dto.Container;
@@ -13,6 +14,8 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.zip.DataFormatException;
+import javax.xml.crypto.Data;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -23,6 +26,7 @@ public class MarketplaceSteps {
 
     private static final String baseMpUrl = Conf.mp().getMarketplaceUrl();
 
+    @Step("Create new Listing {container.name}")
     public String createNewListing(Container container) {
         String RES_REALM = Conf.ns().getRealm();
         NeutralServerResponseAssertion listing = createListing(container, RES_REALM)
@@ -37,6 +41,7 @@ public class MarketplaceSteps {
         return hrn;
     }
 
+    @Step("Create Subscription for listing:{listingHrn}")
     public String subscribeListing(String listingHrn) {
         String subsId = subscribeStart(listingHrn);
         negotiate(subsId);
@@ -111,7 +116,7 @@ public class MarketplaceSteps {
                 .post("Create new Listing " + containerTitle, url, providerToken, body);
         if (resp.getStatusCode() == HttpStatus.SC_OK) {
             String hrn = resp.getBody().jsonPath().get("resourceId").toString();
-            CleanUpHelper.getListingList().put(hrn, container.getName());
+            DataForRemoveCollector.addMpListing(hrn);
         }
         return new NeutralServerResponseAssertion(resp);
     }
@@ -144,13 +149,9 @@ public class MarketplaceSteps {
         String body = "{\"message\":\"asd\",\"subscriptionOptionId\":" + subsOptionId + "}";
         Response resp = RestHelper
                 .post("Request subscription for hrn: " + listingHrn, url, providerToken, body);
-        if (resp.getStatusCode() == 400) {
-            resp = RestHelper
-                    .post("Request subscription for hrn try 2: " + listingHrn, url, providerToken, body);
-        }
         Assertions.assertEquals(200, resp.getStatusCode(), "Subscription to listing failed!");
         String subsId = resp.getBody().jsonPath().get("resourceId").toString();
-        CleanUpHelper.getSubsList().add(subsId);
+        DataForRemoveCollector.addMpSubs(subsId);
         return subsId;
     }
 
@@ -226,9 +227,6 @@ public class MarketplaceSteps {
         String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
         String url = baseMpUrl + "/listings/" + listingHrn;
         Response response = RestHelper.delete("Delete listing: " + listingHrn, url, providerToken);
-        if (response.getStatusCode() == HttpStatus.SC_NO_CONTENT) {
-            CleanUpHelper.getListingList().remove(listingHrn);
-        }
         return new NeutralServerResponseAssertion(response);
     }
 

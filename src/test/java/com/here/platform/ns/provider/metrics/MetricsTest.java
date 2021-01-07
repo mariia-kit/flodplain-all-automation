@@ -23,10 +23,12 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
+@Tag("NS-Technical Accounting Service")
 @DisplayName("Verify Provider Technical Accounting Service")
 @ExtendWith({MarketAfterCleanUp.class})
 public class MetricsTest extends BaseNSTest {

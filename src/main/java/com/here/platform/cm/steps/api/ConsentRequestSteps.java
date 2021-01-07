@@ -10,8 +10,6 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ConsentStatus;
-import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.cm.steps.remove.ConsentCollector;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile.FILE_TYPE;
@@ -65,10 +63,6 @@ public class ConsentRequestSteps {
                     OnboardingSteps onboard = new OnboardingSteps(
                             consentObject.getProvider(),
                             consentObject.getConsumer().getRealm());
-                    ConsentCollector.addApp(new ProviderApplication()
-                            .providerId(consentObject.getProvider().getName())
-                            .consumerId(consentObject.getConsumer().getRealm())
-                            .containerId(consentObject.getContainer().getId()));
                     onboard.onboardTestProvider();
                     onboard.onboardConsumer(consentObject.getConsumer().getName());
                     onboard.onboardTestProviderApplication(
@@ -90,10 +84,6 @@ public class ConsentRequestSteps {
                     OnboardingSteps onboard = new OnboardingSteps(
                             consentObject.getProvider(),
                             consentObject.getConsumer().getRealm());
-                    ConsentCollector.addApp(new ProviderApplication()
-                            .providerId(consentObject.getProvider().getName())
-                            .consumerId(consentObject.getConsumer().getRealm())
-                            .containerId(consentObject.getContainer().getId()));
                     onboard.onboardTestProvider();
                     onboard.onboardConsumer(consentObject.getConsumer().getName());
                     onboard.onboardTestProviderApplication(

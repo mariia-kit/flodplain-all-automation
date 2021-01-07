@@ -9,7 +9,7 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.Consumer;
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import io.qameta.allure.Step;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +66,6 @@ public class OnboardingSteps {
                 .clientSecret(secret)
                 .containerId(containerId)
                 .redirectUri(ConsentPageUrl.getDaimlerCallbackUrl());
-
         var applicationResponse = this.providersController
                 .withConsumerToken()
                 .onboardApplication(testApplication);
@@ -89,7 +88,7 @@ public class OnboardingSteps {
         var providerResponse = this.providersController
                 .withConsumerToken()
                 .onboardDataProvider(testDataProvider);
-        ConsentCollector.addProvider(providerId);
+        DataForRemoveCollector.addProvider(providerId);
         StatusCodeExpects.expectCREATEDStatusCode(providerResponse);
     }
 
@@ -107,7 +106,7 @@ public class OnboardingSteps {
         var consumerResponse = this.consumerController
                 .withConsumerToken()
                 .onboardDataConsumer(testConsumer);
-        ConsentCollector.addConsumer(consumerId);
+        DataForRemoveCollector.addConsumer(consumerId);
         StatusCodeExpects.expectOKStatusCode(consumerResponse);
     }
 

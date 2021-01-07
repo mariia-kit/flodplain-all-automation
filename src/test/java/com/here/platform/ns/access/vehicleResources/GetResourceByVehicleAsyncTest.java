@@ -17,10 +17,11 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-
+@Tag("NS-Data provider")
 @DisplayName("Get vehicle resources by Vehicle ID Async")
 @ExtendWith({MarketAfterCleanUp.class})
 public class GetResourceByVehicleAsyncTest extends BaseNSTest {

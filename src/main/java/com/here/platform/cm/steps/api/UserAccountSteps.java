@@ -2,7 +2,7 @@ package com.here.platform.cm.steps.api;
 
 import com.github.javafaker.Faker;
 import com.here.platform.cm.controllers.UserAccountController;
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.dataProviders.daimler.DataSubjects;
@@ -46,7 +46,7 @@ public class UserAccountSteps {
                 VIN.generate(vinLength)
         );
         new HereUserManagerController().createHereUser(hereUser);
-        ConsentCollector.addHereUser(hereUser);
+        DataForRemoveCollector.addHereUser(hereUser);
         return dataSubjectIm;
     }
 

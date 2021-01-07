@@ -48,6 +48,10 @@ public class DataProvider {
         resources.add(resource.getResource());
     }
 
+    public DataProvider clone() {
+        return new DataProvider(name, url);
+    }
+
     public DataProvider withName(String name) {
         this.name = name;
         return this;

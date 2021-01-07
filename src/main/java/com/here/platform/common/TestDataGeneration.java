@@ -25,10 +25,10 @@ public class TestDataGeneration {
     public static void main(String[] args) {
         if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
             createPoliciesForProviderGroup();
-            createBaseProvidersIfNecessary();
-            createBaseContainersIfNecessary();
-            createBaseCMProvidersIfNecessary();
-            createBaseCMApplicationIfNecessary();
+//            createBaseProvidersIfNecessary();
+//            createBaseContainersIfNecessary();
+//            createBaseCMProvidersIfNecessary();
+//            createBaseCMApplicationIfNecessary();
         } else {
             //TODO: enable provider onboard after new provider logic deploy to prod.
             //createBaseProvidersIfNecessaryProd();

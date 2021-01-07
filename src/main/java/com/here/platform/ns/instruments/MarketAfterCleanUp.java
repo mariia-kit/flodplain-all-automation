@@ -16,22 +16,22 @@ public class MarketAfterCleanUp implements AfterAllCallback {
     private final static Logger logger = Logger.getLogger(MarketAfterCleanUp.class);
 
     public void afterAll(ExtensionContext context) {
-        logger.info("Clean up after mp test start!");
-
-        CleanUpHelper.getSubsList().forEach(id ->
-                {
-                    logger.info("Clean Subs with id:" + id);
-                    new MarketplaceSteps().beginCancellation(id);
-                }
-        );
-        Map<String, String> allListings = new HashMap<>(CleanUpHelper.getListingList());
-        allListings.forEach((key, value) -> {
-            logger.info("Clean Listing with hrn:" + key);
-            new MarketplaceSteps().deleteListing(key);
-        });
-
-        CleanUpHelper.getListingList().clear();
-        CleanUpHelper.getSubsList().clear();
+//        logger.info("Clean up after mp test start!");
+//
+//        CleanUpHelper.getSubsList().forEach(id ->
+//                {
+//                    logger.info("Clean Subs with id:" + id);
+//                    new MarketplaceSteps().beginCancellation(id);
+//                }
+//        );
+//        Map<String, String> allListings = new HashMap<>(CleanUpHelper.getListingList());
+//        allListings.forEach((key, value) -> {
+//            logger.info("Clean Listing with hrn:" + key);
+//            new MarketplaceSteps().deleteListing(key);
+//        });
+//
+//        CleanUpHelper.getListingList().clear();
+//        CleanUpHelper.getSubsList().clear();
     }
 
 }

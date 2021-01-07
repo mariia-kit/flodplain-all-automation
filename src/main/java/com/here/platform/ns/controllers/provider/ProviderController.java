@@ -1,5 +1,6 @@
 package com.here.platform.ns.controllers.provider;
 
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.BaseNeutralService;
 import com.here.platform.ns.dto.DataProvider;
@@ -13,6 +14,7 @@ public class ProviderController extends BaseNeutralService<ProviderController> {
 
     @Step
     public Response addProvider(DataProvider provider) {
+        DataForRemoveCollector.addNSProvider(provider);
         return neutralServerClient(providersBasePath)
                 .body(provider.generateBody())
                 .put("/{providerId}", provider.getName());

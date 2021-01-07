@@ -6,6 +6,7 @@ import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.ProviderResource;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class ResourceController extends BaseNeutralService<ResourceController> {
@@ -21,6 +22,9 @@ public class ResourceController extends BaseNeutralService<ResourceController> {
 
     @Step
     public Response addResource(DataProvider dataProvider, ProviderResource resource) {
+        if (!StringUtils.isEmpty(resource.getName())) {
+            dataProvider.addResource(resource);
+        }
         return neutralServerClient(providersBasePath)
                 .body(resource.generateBody())
                 .put("/{providerId}/resources/{resourceId}", dataProvider.getName(), resource.getName());

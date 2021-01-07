@@ -1,8 +1,7 @@
 package com.here.platform.ns;
 
-import com.here.platform.cm.steps.remove.ConsentRequestRemoveExtension2;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import com.here.platform.cm.steps.remove.AllRemoveExtension;
+import com.here.platform.common.annotations.CMFeatures.ZephyrComponent;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
@@ -11,10 +10,11 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 @Tag("ignored-prod")
 @Tag("neutral_server")
+@ZephyrComponent("NS-Service")
 @Execution(ExecutionMode.CONCURRENT)
 public class BaseNSTest {
     @RegisterExtension
-    ConsentRequestRemoveExtension2 consentRequestRemoveExtension = new ConsentRequestRemoveExtension2();
+    AllRemoveExtension consentRequestRemoveExtension = new AllRemoveExtension();
 
     public static void delay(Long millis) {
         try {

@@ -5,10 +5,12 @@ import static lv.ctco.zephyr.enums.ConfigProperty.PROJECT_KEY;
 import static lv.ctco.zephyr.util.HttpUtils.ensureResponse;
 import static lv.ctco.zephyr.util.HttpUtils.getAndReturnBody;
 import static lv.ctco.zephyr.util.HttpUtils.post;
+import static lv.ctco.zephyr.util.HttpUtils.put;
 import static lv.ctco.zephyr.util.Utils.log;
 import static lv.ctco.zephyr.util.Utils.readInputStream;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import lv.ctco.zephyr.Config;
 import lv.ctco.zephyr.beans.Metafield;
@@ -52,6 +54,7 @@ public class HEREJiraService {
         //clean up broken fields for updated ZAPTi and Jira
         issue.getFields().setPriority(null);
         issue.getFields().setVersions(null);
+        issue.getFields().setLabels(testCase.getLabels().toArray(new String[testCase.getLabels().size()]));
 
         HttpResponse response = post(config, "api/2/issue", issue);
         ensureResponse(response, 201, "ERROR: Could not create JIRA Test item");
@@ -63,6 +66,26 @@ public class HEREJiraService {
             testCase.setKey(result.getKey());
         }
         log(sbb("INFO: Created. JIRA Test item Id is:").w().append("https://saeljira.it.here.com/browse/")
+                .append(testCase.getKey()).bld());
+    }
+
+    public void updateTestIssue(TestCase testCase) throws IOException {
+        log(sbb("INFO: Updating JIRA Test:").w().sQuoted(testCase.getName()).bld());
+        Issue issue = TestCaseToIssueTransformer.transform(config, testCase);
+
+        //clean up broken fields for updated ZAPTi and Jira
+        issue.getFields().setPriority(null);
+        issue.getFields().setVersions(null);
+
+        issue.getFields().setLabels(testCase.getLabels().toArray(new String[testCase.getLabels().size()]));
+
+        HttpResponse response = put(config, "api/2/issue", issue);
+        ensureResponse(response, 200, "ERROR: Could not update JIRA Test item");
+
+        String responseBody = readInputStream(response.getEntity().getContent());
+        Metafield result = ObjectTransformer.deserialize(responseBody, Metafield.class);
+
+        log(sbb("INFO: Updated. JIRA Test item Id is:").w().append("https://saeljira.it.here.com/browse/")
                 .append(testCase.getKey()).bld());
     }
 

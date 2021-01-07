@@ -17,11 +17,13 @@ import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @Purpose
 @DisplayName("Purpose for consent request")
+@Tag("CM-Consent")
 public class PurposeTests extends BaseCMTest {
 
     @Test

@@ -53,9 +53,11 @@ public class Zephyroth {
             convertTestCaseStepsToDescription(testCase);
             hereJiraService.createTestIssue(testCase);
         }
-
-        Thread.sleep(30000);
-
+        Thread.sleep(60000);
+//        for (TestCase testCase : testCasesFromTestRun) {
+//            hereJiraService.updateTestIssue(testCase);
+//        }
+        
         //todo implement description and summary updating of the test cases
 
         Map<String, String> issuesMapKeyToSummary = getIssuesMapKeyToSummary(actualTestCasesInZephyr);
