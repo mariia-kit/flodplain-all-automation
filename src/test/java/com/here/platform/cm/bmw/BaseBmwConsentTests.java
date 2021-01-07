@@ -7,6 +7,7 @@ import com.here.platform.common.annotations.CMFeatures.BMW;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Issues;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Tag;
 
 
 @BMW

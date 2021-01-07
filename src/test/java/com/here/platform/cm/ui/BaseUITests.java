@@ -9,6 +9,7 @@ import com.codeborne.selenide.junit5.TextReportExtension;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.common.annotations.CMFeatures.ZephyrComponent;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
 import java.util.logging.Level;
@@ -33,6 +34,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Execution(ExecutionMode.SAME_THREAD)
 @Tag("ui")
+@ZephyrComponent("CM-UI")
 public class BaseUITests extends BaseCMTest {
 
     static {

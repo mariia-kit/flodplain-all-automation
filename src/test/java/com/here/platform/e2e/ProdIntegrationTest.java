@@ -3,7 +3,6 @@ package com.here.platform.e2e;
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
-import com.here.platform.common.TestDataGeneration;
 import com.here.platform.ns.controllers.access.ContainerDataController;
 import com.here.platform.ns.controllers.provider.ProviderController;
 import com.here.platform.ns.dto.Container;
@@ -12,17 +11,14 @@ import com.here.platform.ns.dto.DataProvider;
 import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.ProdAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Prod Integration Tests")
-@ExtendWith(ProdAfterCleanUp.class)
 class ProdIntegrationTest extends BaseE2ETest {
 
     @Test

@@ -2,7 +2,7 @@ package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.Provider;
 import com.here.platform.cm.rest.model.ProviderApplication;
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class ProvidersController extends BaseConsentService<ProvidersController>
 
     @Step("Onboard Provider Application {providerApplication}")
     public Response onboardApplication(ProviderApplication providerApplication) {
-        ConsentCollector.addApp(providerApplication);
+        DataForRemoveCollector.addApp(providerApplication);
         return consentServiceClient(providersBasePath).body(providerApplication).post("/applications");
     }
 

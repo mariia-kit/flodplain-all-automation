@@ -39,7 +39,6 @@ ext {
 }
 
 task e2eTests(type: TestE2E, dependsOn: "initTokensNS") {
-    dependsOn "testDataGeneration"
     group "e2e tests"
     systemProperty "env", finalEnv
     useJUnitPlatform {

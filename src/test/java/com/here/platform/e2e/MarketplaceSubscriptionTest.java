@@ -26,7 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'Subscription'")
-@ExtendWith({MarketAfterCleanUp.class})
 @Tag("ignored-dev")
 public class MarketplaceSubscriptionTest extends BaseE2ETest {
 

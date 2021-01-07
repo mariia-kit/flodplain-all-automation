@@ -60,7 +60,7 @@ task smokeCMTests(type: TestCM) {
         includeTags "smoke_cm"
     }
     
-    dependsOn "cleanUpCM"
+    dependsOn "cleanUpCM", "testDataGeneration"
 }
 
 task fePreDevTests(type: TestCM) {

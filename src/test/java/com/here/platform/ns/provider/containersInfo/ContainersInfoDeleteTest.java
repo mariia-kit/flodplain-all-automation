@@ -17,9 +17,10 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
+@Tag("NS-Container Info")
 @DisplayName("Verify deletion of Container")
 class ContainersInfoDeleteTest extends BaseNSTest {
 
@@ -87,13 +88,13 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        container.setDataProviderName("no_such_provider");
+        Container container2 = container.clone().withDataProviderName("no_such_provider");
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .deleteContainer(container);
+                .deleteContainer(container2);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getContainersNotFoundError(container));
+                .expectedError(NSErrors.getContainersNotFoundError(container2));
     }
 
     @Test
@@ -105,13 +106,13 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        container.setId("no_such_container");
+        Container container2 = container.clone().withId("no_such_container");
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .deleteContainer(container);
+                .deleteContainer(container2);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getContainersNotFoundError(container));
+                .expectedError(NSErrors.getContainersNotFoundError(container2));
     }
 
     @Test
@@ -125,13 +126,13 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider2);
         Steps.createRegularContainer(container);
 
-        container.setDataProviderName(provider2.getName());
+        Container container2 = container.clone().withDataProviderName(provider2.getName());
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .deleteContainer(container);
+                .deleteContainer(container2);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getContainersNotFoundError(container));
+                .expectedError(NSErrors.getContainersNotFoundError(container2));
     }
 
     @Test

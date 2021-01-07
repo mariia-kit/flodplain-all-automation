@@ -1,6 +1,6 @@
 package com.here.platform.mp.controllers;
 
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.VinsToFile.FILE_TYPE;
@@ -61,7 +61,7 @@ public class MarketplaceTunnelController extends BaseMPController<MarketplaceTun
                 .post("/subscriptions/{subsId}/request", subsId);
 
         if (response.getStatusCode() == StatusCode.CREATED.code) {
-            ConsentCollector.addConsent(response.getBody().jsonPath().get("consentRequestId").toString());
+            DataForRemoveCollector.addConsent(response.getBody().jsonPath().get("consentRequestId").toString());
         }
         return response;
     }
@@ -81,7 +81,7 @@ public class MarketplaceTunnelController extends BaseMPController<MarketplaceTun
     @Step("Perform MP call to add vin numbers {vins} to ConsentRequest {crid}")
     public Response addVinNumbers(String crid, String subsId, FILE_TYPE fileType, String... vins) {
         File fileWithVins = new VinsToFile(vins).file(fileType);
-        ConsentCollector.addVin(crid, vins);
+        DataForRemoveCollector.addVin(crid, vins);
         return mpClient(consentManager)
                 .contentType("multipart/form-data")
                 .multiPart("vins", fileWithVins, fileType.getContentType())

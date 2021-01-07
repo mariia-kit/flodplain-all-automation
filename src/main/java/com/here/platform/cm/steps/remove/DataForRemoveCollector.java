@@ -13,9 +13,9 @@ import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
-public class ConsentCollector {
+public class DataForRemoveCollector {
     private static Map<String, List<String>> cridsToRemove = new HashMap<>();
-    private static Map<String, List<ConsentVin>> cridsVinsToRemove = new HashMap<>();
+    private static Map<String, List<PairValue>> cridsVinsToRemove = new HashMap<>();
     private static Map<String, List<ProviderApplication>> applications = new HashMap<>();
     private static Map<String, List<String>> consumer = new HashMap<>();
     private static Map<String, List<String>> provider = new HashMap<>();
@@ -23,6 +23,11 @@ public class ConsentCollector {
 
     private static Map<String, List<Container>> nsContainers = new HashMap<>();
     private static Map<String, List<DataProvider>> nsProviders = new HashMap<>();
+
+    private static Map<String, List<String>> mpListings = new HashMap<>();
+    private static Map<String, List<String>> mpSubs = new HashMap<>();
+
+    private static Map<String, List<PairValue>> artificialPolicy = new HashMap<>();
 
     public void addConsent(String crid) {
         String testId = Allure.getLifecycle().getCurrentTestCase().get();
@@ -38,7 +43,7 @@ public class ConsentCollector {
             if (!cridsVinsToRemove.containsKey(testId)) {
                 cridsVinsToRemove.put(testId, new ArrayList<>());
             }
-            cridsVinsToRemove.get(testId).add(new ConsentVin(crid, vin));
+            cridsVinsToRemove.get(testId).add(new PairValue(crid, vin));
         };
     }
 
@@ -82,6 +87,30 @@ public class ConsentCollector {
         nsProviders.get(testId).add(provider);
     }
 
+    public void addMpListing(String listing) {
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        if (!mpListings.containsKey(testId)) {
+            mpListings.put(testId, new ArrayList<>());
+        }
+        mpListings.get(testId).add(listing);
+    }
+
+    public void addMpSubs(String subsId) {
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        if (!mpSubs.containsKey(testId)) {
+            mpSubs.put(testId, new ArrayList<>());
+        }
+        mpSubs.get(testId).add(subsId);
+    }
+
+    public void addPolicy(String policyId, String policyLink) {
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        if (!artificialPolicy.containsKey(testId)) {
+            artificialPolicy.put(testId, new ArrayList<>());
+            artificialPolicy.get(testId).add(new PairValue(policyId, policyLink));
+        };
+    }
+
     public void addHereUser(HereUser hereUser) {
         String testId = Allure.getLifecycle().getCurrentTestCase().get();
         if (!hereAccounts.containsKey(testId)) {
@@ -94,7 +123,7 @@ public class ConsentCollector {
         return cridsToRemove.getOrDefault(testId, new ArrayList<>());
     }
 
-    public List<ConsentVin> getAllConsentsWithVin(String testId) {
+    public List<PairValue> getAllConsentsWithVin(String testId) {
         return cridsVinsToRemove.getOrDefault(testId, new ArrayList<>());
     }
 
@@ -118,6 +147,17 @@ public class ConsentCollector {
         return nsProviders.getOrDefault(testId, new ArrayList<>());
     }
 
+    public List<String> getAllMpListings(String testId) {
+        return mpListings.getOrDefault(testId, new ArrayList<>());
+    }
+
+    public List<PairValue> getAllArtificialPolicy(String testId) {
+        return artificialPolicy.getOrDefault(testId, new ArrayList<>());
+    }
+
+    public List<String> getAllMpSubs(String testId) {
+        return mpSubs.getOrDefault(testId, new ArrayList<>());
+    }
     public static List<HereUser> getHereAccounts(String testId) {
         return hereAccounts.getOrDefault(testId, new ArrayList<>());
     }

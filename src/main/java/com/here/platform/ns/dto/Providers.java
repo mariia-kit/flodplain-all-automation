@@ -101,7 +101,6 @@ public enum Providers {
         );
 
         dataProvider.addResource(ContainerResources.ODOMETER);
-        LoggerHelper.logStep("Generate new DataProvider:" + dataProvider.toString());
         return dataProvider;
     }
 

@@ -25,10 +25,11 @@ import com.here.platform.ns.restEndPoints.external.AaaCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-
+@Tag("NS-Resources")
 @DisplayName("Verify deletion of ContainerResources of Data Provider")
 @ExtendWith({MarketAfterCleanUp.class})
 public class DeleteResourceTest extends BaseNSTest {
@@ -162,13 +163,12 @@ public class DeleteResourceTest extends BaseNSTest {
         new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
-        res.setName("no_such_container");
+        ProviderResource res2 = new ProviderResource("no_such_container");
         var delete = new ResourceController()
                 .withToken(PROVIDER)
-                .deleteResource(provider, res);
+                .deleteResource(provider, res2);
         new NeutralServerResponseAssertion(delete)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
-                        res.getName()));
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(), res2.getName()));
     }
 
     @Test

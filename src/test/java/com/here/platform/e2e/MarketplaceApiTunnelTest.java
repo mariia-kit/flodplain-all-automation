@@ -26,7 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'API Tunnelling'")
-@ExtendWith({MarketAfterCleanUp.class})
 public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     private MarketplaceTunnelController marketplaceTunnelController = new MarketplaceTunnelController();

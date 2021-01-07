@@ -1,5 +1,6 @@
 package com.here.platform.ns.controllers.provider;
 
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.controllers.BaseNeutralService;
 import com.here.platform.ns.dto.Container;
@@ -20,6 +21,7 @@ public class ContainerController extends BaseNeutralService<ContainerController>
 
     @Step("Add neutral server container {container.id} for {container.dataProviderName}")
     public Response addContainer(Container container) {
+        DataForRemoveCollector.addNSContainer(container);
         return neutralServerClient(containersBasePath)
                 .body(container.generateContainerBody())
                 .put("/{providerId}/containers_info/{containerId}", container.getDataProviderName(), container.getId());

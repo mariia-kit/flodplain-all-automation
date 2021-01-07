@@ -20,7 +20,6 @@ import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
-import com.here.platform.common.extensions.ConsentRequestRemoveExtension;
 import com.here.platform.common.extensions.UserAccountCleanUpExtension;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.dataProviders.daimler.steps.DaimlerLoginPage;
@@ -83,8 +82,7 @@ public class E2EUITest extends BaseE2ETest {
             new BrowserWebDriverContainer()
                     .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
                     .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-    @RegisterExtension
-    ConsentRequestRemoveExtension consentRequestRemoveExtension = new ConsentRequestRemoveExtension();
+
     @RegisterExtension
     UserAccountCleanUpExtension userAccountCleanUpExtension = UserAccountCleanUpExtension.builder()
             .targetDataSubject(targetDataSubject)
@@ -136,7 +134,6 @@ public class E2EUITest extends BaseE2ETest {
                 .createConsentByConsumer(consentObj, targetDataSubject.getVin());
 
         var crid = getCridFromUrl(consentUrl);
-        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject.getVin());
 
         HereLoginSteps.logout(targetDataConsumer);
 
@@ -187,7 +184,6 @@ public class E2EUITest extends BaseE2ETest {
         String consentUrl = MarketplaceFlowSteps
                 .createConsentByConsumer(consentObj, validVIN);
         var crid = getCridFromUrl(consentUrl);
-        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(validVIN);
 
         HereLoginSteps.logout(targetDataConsumer);
 
@@ -230,7 +226,6 @@ public class E2EUITest extends BaseE2ETest {
                 .createConsentByConsumer(consentObj, targetDataSubject17.getVin());
 
         var crid = getCridFromUrl(consentUrl);
-        consentRequestRemoveExtension.cridToRemove(crid).vinToRemove(targetDataSubject17.getVin());
 
         HereLoginSteps.logout(targetDataConsumer);
 

@@ -3,7 +3,7 @@ package com.here.platform.ns.helpers;
 import static com.here.platform.ns.dto.Users.PROVIDER;
 
 import com.here.platform.cm.enums.ConsentRequestContainer;
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.dataProviders.reference.controllers.ReferenceProviderController;
 import com.here.platform.ns.controllers.access.ContainerDataController;
@@ -61,7 +61,9 @@ public class Steps {
                             .withToken(PROVIDER)
                             .deleteResource(provider.getName(), res.getName());
                     new NeutralServerResponseAssertion(response)
-                            .expectedCode(HttpStatus.SC_NO_CONTENT);
+                            .expected(result -> result.getStatusCode() == HttpStatus.SC_NO_CONTENT ||
+                                            result.getStatusCode() == HttpStatus.SC_NOT_FOUND,
+                                    "Resource deletion result not as expected!" + response.getBody().print());
                 }
         );
     }
@@ -73,7 +75,9 @@ public class Steps {
                 .withToken(PROVIDER)
                 .deleteProvider(provider);
         new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expected(result -> result.getStatusCode() == HttpStatus.SC_NO_CONTENT ||
+                                result.getStatusCode() == HttpStatus.SC_NOT_FOUND,
+                        "DataProvider deletion result not as expected!" + response.getBody().print());
     }
 
     @Step("Create regular Container {container.name} of provider {container.dataProviderName}")
@@ -86,8 +90,6 @@ public class Steps {
         var response = new ContainerController()
                 .withToken(PROVIDER)
                 .addContainer(container);
-        CleanUpHelper.getContainersList().add(container.getId());
-        ConsentCollector.addNSContainer(container);
         if ((response.getStatusCode() != HttpStatus.SC_OK) && (response.getStatusCode() != HttpStatus.SC_CONFLICT)) {
             throw new RuntimeException(
                     "Error creating container:" + response.getStatusCode() + " " + response.asString());
@@ -115,7 +117,7 @@ public class Steps {
         new NeutralServerResponseAssertion(response)
                 .expected(resp -> resp.getStatusCode() == HttpStatus.SC_NO_CONTENT
                                 || resp.getStatusCode() == HttpStatus.SC_NOT_FOUND,
-                        "Container deletion result not as expected");
+                        "Container deletion result not as expected:" + response.getBody().print());
     }
 
     @Step("Create regular Listing for {container.name}")
@@ -131,7 +133,6 @@ public class Steps {
                     .createNewListing(container);
             new MarketplaceSteps()
                     .subscribeListing(listing);
-            //new AaaCall().waitForContainerPolicyIntegrationInSentry(container.getDataProviderName(), container.getName());
         } else {
             new AaaCall().createResourcePermission(container);
         }

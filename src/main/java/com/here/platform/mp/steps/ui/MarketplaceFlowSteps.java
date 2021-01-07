@@ -6,7 +6,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import com.here.platform.cm.enums.ConsentObject;
-import com.here.platform.cm.steps.remove.ConsentCollector;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.VinsToFile;
 import com.here.platform.common.config.Conf;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
@@ -150,7 +150,7 @@ public class MarketplaceFlowSteps {
                 .openSubscriptionWithName(consentObj.getContainer().getName());
         var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();
         subscriptionId = getSubscriptionIdFromUrl();
-        ConsentCollector.addConsent(subscriptionId);
+        DataForRemoveCollector.addConsent(subscriptionId);
         consumerSubscriptionPage
                 .createConsentRequest()
                 .fillConsentRequestTitle(consentObj.getConsentRequestData().getTitle())
@@ -158,7 +158,7 @@ public class MarketplaceFlowSteps {
                 .fillPolicyLinks(consentObj.getConsentRequestData().getPrivacyPolicy())
                 .attachFileWithVINs(new VinsToFile(vin).csv())
                 .saveConsentRequest();
-        ConsentCollector.addVin(subscriptionId, vin);
+        DataForRemoveCollector.addVin(subscriptionId, vin);
         consentObj.setCrid(subscriptionId);
         consentObj.addVin(vin);
         return new ConsumerConsentRequestPage().isLoaded().copyConsentRequestURLViaClipboard();

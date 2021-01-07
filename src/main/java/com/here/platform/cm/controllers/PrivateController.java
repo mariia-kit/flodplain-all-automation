@@ -33,6 +33,11 @@ public class PrivateController extends BaseConsentService<PrivateController> {
         if (isForbiddenToRemoveProviderApplication(providerApplication)) {
             return null;
         }
+        if (providerApplication.getProviderId() == null ||
+                providerApplication.getConsumerId() == null ||
+                providerApplication.getContainerId() == null) {
+            return null;
+        }
         return basePrivateController()
                 .params(
                         "providerId", providerApplication.getProviderId(),

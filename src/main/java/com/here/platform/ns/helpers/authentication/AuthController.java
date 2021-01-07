@@ -105,6 +105,9 @@ public class AuthController {
         if (StringUtils.isEmpty(currentT)) {
             try {
                 String token = supplier.get();
+                if (token.equals("Bearer null")) {
+                    token = supplier.get();
+                }
                 if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
                     SyncPointIO.unlock(key);
                     throw new RuntimeException(sbb("Error during generation of new token for sync:")

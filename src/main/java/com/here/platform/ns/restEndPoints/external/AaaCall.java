@@ -4,6 +4,7 @@ import static com.here.platform.ns.dto.Users.MP_PROVIDER;
 import static io.restassured.RestAssured.given;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.ProviderResource;
@@ -148,6 +149,7 @@ public class AaaCall {
                 .extract().response();
     }
 
+    @Step("Create subs like policy for {container.id}")
     public void createResourcePermission(Container container) {
         createResourcePermission(container.generateHrn(Conf.ns().getRealm(), MP_PROVIDER.getUser().getRealm()));
     }
@@ -166,7 +168,7 @@ public class AaaCall {
         CleanUpHelper.getArtificialPolicy().put(policyId, StringUtils.EMPTY);
         String groupId = Conf.nsUsers().getConsumerGroupId();
         String policyLink = addGroupToPolicy(groupId, policyId);
-        CleanUpHelper.getArtificialPolicy().put(policyId, policyLink);
+        DataForRemoveCollector.addPolicy(policyId, policyLink);
         try {
             Thread.sleep(60000);
         } catch (InterruptedException e) {

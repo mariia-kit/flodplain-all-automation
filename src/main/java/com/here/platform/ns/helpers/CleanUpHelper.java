@@ -20,6 +20,7 @@ public class CleanUpHelper {
     private static final List<ConsentVin> consentVinsList = new CopyOnWriteArrayList<>();
     private static final List<ConsentApp> consentAppsList = new CopyOnWriteArrayList<>();
 
+
     private CleanUpHelper() {
 
     }
