@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Tag("NS-Data provider")
+@Tag("NS-DataProvider")
 @DisplayName("Get all provider's resources by vehicle Id")
 @ExtendWith({MarketAfterCleanUp.class})
 @Tag("ignored")

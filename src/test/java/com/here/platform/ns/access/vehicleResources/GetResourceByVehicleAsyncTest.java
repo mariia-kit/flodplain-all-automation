@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Tag("NS-Data provider")
+@Tag("NS-DataProvider")
 @DisplayName("Get vehicle resources by Vehicle ID Async")
 @ExtendWith({MarketAfterCleanUp.class})
 public class GetResourceByVehicleAsyncTest extends BaseNSTest {

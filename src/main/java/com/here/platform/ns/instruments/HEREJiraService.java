@@ -9,9 +9,12 @@ import static lv.ctco.zephyr.util.HttpUtils.put;
 import static lv.ctco.zephyr.util.Utils.log;
 import static lv.ctco.zephyr.util.Utils.readInputStream;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import lv.ctco.zephyr.Config;
 import lv.ctco.zephyr.beans.Metafield;
 import lv.ctco.zephyr.beans.TestCase;
@@ -71,22 +74,17 @@ public class HEREJiraService {
 
     public void updateTestIssue(TestCase testCase) throws IOException {
         log(sbb("INFO: Updating JIRA Test:").w().sQuoted(testCase.getName()).bld());
-        Issue issue = TestCaseToIssueTransformer.transform(config, testCase);
 
-        //clean up broken fields for updated ZAPTi and Jira
-        issue.getFields().setPriority(null);
-        issue.getFields().setVersions(null);
+        ObjectMapper  mapper = new ObjectMapper();
+        JsonNode actualObj = mapper.readTree("{ \"update\": { \"labels\": [" + testCase.getLabels().stream()
+                .map(t -> "{\"add\": \"" + t + "\" }").collect(Collectors.joining(", ")) + "] } }");
 
-        issue.getFields().setLabels(testCase.getLabels().toArray(new String[testCase.getLabels().size()]));
-
-        HttpResponse response = put(config, "api/2/issue", issue);
-        ensureResponse(response, 200, "ERROR: Could not update JIRA Test item");
-
-        String responseBody = readInputStream(response.getEntity().getContent());
-        Metafield result = ObjectTransformer.deserialize(responseBody, Metafield.class);
+        HttpResponse response = put(config, "api/2/issue/" + testCase.getKey(), actualObj);
+        ensureResponse(response, 204, "ERROR: Could not update JIRA Test item");
 
         log(sbb("INFO: Updated. JIRA Test item Id is:").w().append("https://saeljira.it.here.com/browse/")
                 .append(testCase.getKey()).bld());
     }
+
 
 }

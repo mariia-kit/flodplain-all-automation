@@ -12,7 +12,7 @@ public class ConsentStatusController extends BaseConsentService<ConsentStatusCon
 
     private final String consentsBasePath = "/consents";
 
-    @Step("Approve consent: '{consent}'")
+    @Step("Approve consent: '{consent.authorizationCode}'")
     public Response approveConsent(NewConsent consent, String privateBearerToken) {
         return consentServiceClient(consentsBasePath)
                 .header("Authorization", privateBearerToken)

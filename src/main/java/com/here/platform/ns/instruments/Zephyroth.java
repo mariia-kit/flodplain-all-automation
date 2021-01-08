@@ -54,9 +54,6 @@ public class Zephyroth {
             hereJiraService.createTestIssue(testCase);
         }
         Thread.sleep(60000);
-//        for (TestCase testCase : testCasesFromTestRun) {
-//            hereJiraService.updateTestIssue(testCase);
-//        }
         
         //todo implement description and summary updating of the test cases
 
@@ -71,6 +68,7 @@ public class Zephyroth {
 
             testCase.setKey(issueId);
             System.out.println(testCase.getKey());
+            //hereJiraService.updateTestIssue(testCase);
         }
 
         MetaInfo metaInfo = metaInfoRetrievalService.retrieve();

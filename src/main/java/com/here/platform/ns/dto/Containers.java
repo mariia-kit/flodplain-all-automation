@@ -180,7 +180,6 @@ public enum Containers {
                 true,
                 null);
         container.setScope(container.generateScope());
-        LoggerHelper.logStep("Generate new Container:" + container.toString());
         return container;
     }
 

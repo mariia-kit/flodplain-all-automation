@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Tag("NS-Data provider")
+@Tag("NS-DataProvider")
 @DisplayName("Get date for single resources for vehicle")
 @ExtendWith({MarketAfterCleanUp.class})
 public class GetSingleResourceByVehicleTest extends BaseNSTest {
