@@ -42,7 +42,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Approve consent")
-    @Tag("CM-Consent Request")
+    @Tag("CM-ConsentRequest")
     public @interface ApproveConsent {
 
     }
@@ -50,7 +50,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Revoke consent")
-    @Tag("CM-Consent Request")
+    @Tag("CM-ConsentRequest")
     public @interface RevokeConsent {
 
     }
@@ -59,7 +59,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Get consent request status")
     @DisplayName("Get consent request status")
-    @Tag("CM-Consent Request")
+    @Tag("CM-ConsentRequest")
     public @interface GetConsentRequestStatus {
 
     }
@@ -77,7 +77,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Get access token")
     @DisplayName("Getting of access tokens for consents")
-    @Tag("CM-Access Token")
+    @Tag("CM-AccessToken")
     public @interface GetAccessToken {
 
     }
@@ -93,7 +93,7 @@ public class CMFeatures {
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("User Account")
     @DisplayName("User Account")
-    @Tag("CM-User Account")
+    @Tag("CM-UserAccount")
     @Issue("OLPPORT-2678")
     public @interface UserAccount {
 
@@ -102,7 +102,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("BMW")
-    @Tag("CM-BMW Event Service")
+    @Tag("CM-BMWEventService")
     public @interface BMW {
 
     }
@@ -120,6 +120,7 @@ public class CMFeatures {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Feature("Purpose")
+    @Tag("CM-Purpose")
     public @interface Purpose {
 
     }

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
-@Tag("NS-Technical Accounting Service")
+@Tag("NS-TechnicalAccountingService")
 @DisplayName("Verify Provider Technical Accounting Service")
 @ExtendWith({MarketAfterCleanUp.class})
 public class MetricsTest extends BaseNSTest {

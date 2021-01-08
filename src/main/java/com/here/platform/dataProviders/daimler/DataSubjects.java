@@ -1,6 +1,8 @@
 package com.here.platform.dataProviders.daimler;
 
 import static com.here.platform.common.strings.SBB.sbb;
+import static io.qameta.allure.Allure.step;
+
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.authentication.AuthController;
@@ -53,7 +55,9 @@ public enum DataSubjects {
         if (atomicInteger.getAcquire() >= dataSubjectsArray.size() - 1) {
             atomicInteger.set(-1);
         }
-        return dataSubjectsArray.get(atomicInteger.incrementAndGet());
+        DataSubjects ds = dataSubjectsArray.get(atomicInteger.incrementAndGet());
+        step(sbb("Use data subject:").append(ds.getUserName()).w().append("vin:").append(ds.getVin()).bld());
+        return ds;
     }
 
     public static DataSubjects getByVin(String vin) {
