@@ -7,6 +7,8 @@ import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.pages.BaseCMPage.Header;
+import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.rest.model.AccessTokenResponse;
@@ -23,6 +25,7 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import java.io.Console;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -107,6 +110,7 @@ class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
                 .statusCodeIsEqualTo(StatusCode.OK)
                 .bindAs(AccessTokenResponse.class);
     }
+
 
     //todo automate test when the user has 1 consent request for his 2 cars
 
