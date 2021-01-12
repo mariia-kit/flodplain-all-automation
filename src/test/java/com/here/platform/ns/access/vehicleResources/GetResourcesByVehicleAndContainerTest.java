@@ -42,13 +42,26 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @Test
     @DisplayName("Verify get resources by vehicle Id and container Id Successful")
     void verifyGetContainersDataRetrieved() {
-        RegularFlowData regularFlowData = RegularSubsAndConsent.useRegularDaimlerFlow();
+        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
+        Container container = Containers.generateNew(provider);
+        String vehicleId = Vehicle.validVehicleId;
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
+                .getId();
 
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withConsentId(regularFlowData.getConsentId())
-                .withXCorrelationId(sbb("X-corr-1-").append(regularFlowData.getConsentId()).bld())
-                .getContainerForVehicle(regularFlowData.getProvider(), regularFlowData.getVehicleId(), regularFlowData.getContainer());
+                .withConsentId(crid)
+                .withXCorrelationId(sbb("X-corr-1-").append(crid).bld())
+                .getContainerForVehicle(provider, vehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedEqualsISOContainerData(
                         Vehicle.odometerResource,
@@ -91,11 +104,25 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @Test
     @DisplayName("Verify get resources by vehicle Id and container Id bad token Expected")
     void verifyGetContainersDataRetrievedBadToken() {
-        RegularFlowData regularFlowData = RegularSubsAndConsent.useRegularDaimlerFlow();
+        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
+        Container container = Containers.generateNew(provider);
+        String vehicleId = Vehicle.validVehicleId;
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
+                .getId();
+
         var response = new ContainerDataController()
                 .withToken(EXTERNAL_USER)
-                .withConsentId(regularFlowData.getConsentId())
-                .getContainerForVehicle(regularFlowData.getProvider(), regularFlowData.getVehicleId(), regularFlowData.getContainer());
+                .withConsentId(crid)
+                .getContainerForVehicle(provider, vehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }
@@ -139,6 +166,7 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
@@ -151,11 +179,25 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     @Test
     @DisplayName("Verify get resources by vehicle Id and container Id: Capital")
     void verifyGetContainersDataRetrievedResourceCapital() {
-        RegularFlowData regularFlowData = RegularSubsAndConsent.useRegularDaimlerFlow();
+        DataProvider provider = Providers.DAIMLER_REFERENCE.getProvider();
+        Container container = Containers.generateNew(provider);
+        String vehicleId = Vehicle.validVehicleId;
+
+        Steps.createRegularContainer(container);
+        Steps.createListingAndSubscription(container);
+
+        ConsentObject consentObj = new ConsentObject(container);
+        String crid = new ConsentRequestSteps(consentObj)
+                .onboardApplicationForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
+                .getId();
+
         var response = new ContainerDataController()
                 .withToken(CONSUMER)
-                .withConsentId(regularFlowData.getConsentId())
-                .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), regularFlowData.getVehicleId(), regularFlowData.getContainer());
+                .withConsentId(crid)
+                .getContainerForVehicle(Providers.DAIMLER_CAPITAL.getProvider(), vehicleId, container);
         new NeutralServerResponseAssertion(response)
                 .expectedSentryError(SentryErrorsList.FORBIDDEN);
     }

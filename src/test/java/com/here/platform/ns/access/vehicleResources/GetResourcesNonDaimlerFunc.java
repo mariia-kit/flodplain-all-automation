@@ -47,6 +47,7 @@ public class GetResourcesNonDaimlerFunc extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
 
         var response1 = new ContainerDataController()

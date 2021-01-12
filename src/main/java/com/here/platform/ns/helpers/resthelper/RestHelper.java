@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 import com.here.platform.ns.helpers.AllureRestAssuredCustom;
 import com.here.platform.ns.restEndPoints.BaseRestControllerNS;
 import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.Header;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import org.apache.http.HttpStatus;
 
 
@@ -40,7 +42,7 @@ public class RestHelper {
                 .setUrlEncodingEnabled(false)
                 .addHeaders(headers.asList().stream().collect(Collectors.toMap(
                         Header::getName, Header::getValue)))
-                .addFilter(new AllureRestAssuredCustom(requestName))
+                .addFilter(new AllureRestAssured())
                 .build();
     }
 
@@ -181,16 +183,12 @@ public class RestHelper {
                 .extract().response();
     }
 
-
+    @SneakyThrows
     public static Response gatewayWrapper(Supplier<Response> apiCall) {
         Response result = apiCall.get();
         if ((result.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT) ||
                 result.getStatusCode() == HttpStatus.SC_BAD_GATEWAY) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Thread.sleep(3000);
             return apiCall.get();
         }
         return result;

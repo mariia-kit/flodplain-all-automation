@@ -11,6 +11,7 @@ import com.here.platform.ns.dto.ProviderResource;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import java.util.ArrayList;
@@ -66,12 +67,15 @@ public class AaaCall {
         });
     }
 
+    @Step("Delete policy {id}")
     public void deletePolicy(String id) {
         String url = Conf.ns().getAuthUrlBase() + "/policy/" + id;
         given()
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
-                .when().delete(url)
+                .when()
+                .filters(new AllureRestAssured())
+                .delete(url)
                 .then()
                 .extract().response();
     }
@@ -104,7 +108,7 @@ public class AaaCall {
     public void deletePolicyForContainer(Container container) {
         List<MutablePair<String, String>> policy = getAllContainersPolicy();
         policy.stream()
-                .filter(e -> e.getRight().contains(container.getName()))
+                .filter(e -> e.getRight().contains(container.getId()))
                 .findFirst()
                 .ifPresent(id -> new AaaCall().deletePolicy(id.getLeft()));
     }

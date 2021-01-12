@@ -51,7 +51,7 @@ public class AuthController {
     }
 
     public synchronized static void writeKeyValue(String key, String value) {
-        SyncPointIO.writeNewTokenValue(key, value, 3599);
+        SyncPointIO.writeNewTokenValue(key, value, 3500);
     }
 
     public synchronized static String getUserToken(User user) {
