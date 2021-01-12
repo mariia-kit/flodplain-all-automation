@@ -79,6 +79,7 @@ public class MetricsTest extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
 
         var getContainer = new ContainerDataController()
@@ -132,6 +133,7 @@ public class MetricsTest extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
 
         var getContainer = new ContainerDataController()
@@ -164,6 +166,7 @@ public class MetricsTest extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
 
         var getContainer = new ContainerDataController()
@@ -196,6 +199,7 @@ public class MetricsTest extends BaseNSTest {
                 .onboardApplicationForConsentRequest()
                 .createConsentRequest()
                 .addVINsToConsentRequest(Vehicle.validVehicleId)
+                .approveConsent(Vehicle.validVehicleId)
                 .getId();
 
         var getContainer = new ContainerDataController()

@@ -2,6 +2,7 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
 import com.codeborne.selenide.Condition;
@@ -26,7 +27,6 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +39,6 @@ public class UserAccountUITests extends BaseUITests {
     @Issue("NS-1475")
     @DisplayName("Second time opened the approved consent request link for registered user")
     @Feature("Actual offers page")
-    @Disabled("Disable until vin page in not optional for second try")
     void secondTimeOpenTheApprovedConsentLinkForRegisteredUserTest() {
         MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         User mpConsumer = Users.MP_CONSUMER.getUser();
@@ -65,8 +64,13 @@ public class UserAccountUITests extends BaseUITests {
 
         SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
 
+        restartBrowser();
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
+        new DashBoardPage()
+                .verifyConsentOfferTab(0, consentObj.getConsent(), dataSubjectIm.getVin(), APPROVED)
+                .openConsentRequestOfferBox(consentObj.getConsent());
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent());
 
     }
@@ -94,15 +98,13 @@ public class UserAccountUITests extends BaseUITests {
 
         var secondVIN = VIN.generate(provider.getVinLength());
         step.addVINsToConsentRequest(secondVIN);
-
+        UserAccountSteps.attachVINToUserAccount(dataSubjectIm, secondVIN);
         restartBrowser();
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
-        new VINEnteringPage().isLoaded().fillVINAndContinue(secondVIN);
-        consentObj.getConsent().setVinLabel(new VIN(secondVIN).label());
-        OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent());
+
         DashBoardPage.header.openDashboardNewTab()
                 .verifyConsentOfferTab(1, consentObj.getConsent(), dataSubjectIm.getVin(), PENDING)
                 .verifyConsentOfferTab(0, consentObj.getConsent(), secondVIN, PENDING);

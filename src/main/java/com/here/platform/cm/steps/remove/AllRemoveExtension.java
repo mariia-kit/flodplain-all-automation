@@ -45,6 +45,10 @@ public class AllRemoveExtension implements AfterEachCallback {
         DataForRemoveCollector
                 .getAllArtificialPolicy(testId)
                 .forEach(policy -> new AaaCall().removeResourcePermission(policy.getKey(), policy.getValue()));
+        //TODO: remove after bam remove policy fix
+        DataForRemoveCollector
+                .getNsContainers(testId)
+                .forEach(container -> new AaaCall().deletePolicyForContainer(container));
 
         DataForRemoveCollector
                 .getNsContainers(testId)
