@@ -2,7 +2,9 @@ package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.HereAccountRequestTokenData;
 import com.here.platform.common.strings.VIN;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import io.qameta.allure.Step;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -60,4 +62,11 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
                 .delete("/vin/{vinHash}", vinHash);
     }
 
+    @Step("HERE callback on user account delete.")
+    public Response userAccountDeleteCallback(String actionWithSignature) {
+        return consentServiceClient(userBasePath)
+                .contentType(ContentType.TEXT)
+                .body(actionWithSignature)
+                .post("/ha/event/callback");
+    }
 }
