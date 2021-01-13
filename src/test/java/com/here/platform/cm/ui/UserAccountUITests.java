@@ -3,7 +3,6 @@ package com.here.platform.cm.ui;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
-import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
@@ -11,8 +10,10 @@ import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.pages.ActualOffersPage;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
+import com.here.platform.cm.pages.OopsPage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
@@ -77,6 +78,7 @@ public class UserAccountUITests extends BaseUITests {
 
     @Test
     @Issue("NS-1475")
+    @Issue("NS-2657")
     @DisplayName("Second time opened the approved consent and proceed with new vehicle")
     void openSecondTimeApprovedConsentAndProceedWithNewVehicleTest() {
         MPProviders provider = MPProviders.DAIMLER_REFERENCE;
@@ -98,16 +100,15 @@ public class UserAccountUITests extends BaseUITests {
 
         var secondVIN = VIN.generate(provider.getVinLength());
         step.addVINsToConsentRequest(secondVIN);
-        UserAccountSteps.attachVINToUserAccount(dataSubjectIm, secondVIN);
         restartBrowser();
 
         open(crid);
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
 
-        DashBoardPage.header.openDashboardNewTab()
-                .verifyConsentOfferTab(1, consentObj.getConsent(), dataSubjectIm.getVin(), PENDING)
-                .verifyConsentOfferTab(0, consentObj.getConsent(), secondVIN, PENDING);
+        new ActualOffersPage().isLoaded().clickAddNewVin();
+        new VINEnteringPage().fillVINAndContinue(secondVIN);
+        OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent(secondVIN));
     }
 
     @Test
@@ -140,6 +141,24 @@ public class UserAccountUITests extends BaseUITests {
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
+    }
+
+    @Test
+    @Issue("NS-3067")
+    @DisplayName("Verification of not valid consent.")
+    @Feature("Actual offers page")
+    @Feature("Error page")
+    void openNotValidConsentLInk() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        String crid = "1234567890";
+        open(crid);
+
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        new OopsPage().isLoaded();
+
     }
 
 }

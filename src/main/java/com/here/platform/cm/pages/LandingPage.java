@@ -10,7 +10,11 @@ import io.qameta.allure.Step;
 public class LandingPage extends BaseCMPage {
 
     public LandingPage isLoaded() {
-        $(".subtitle").waitUntil(Condition.visible, 5000);
+        $(".subtitle")
+                .waitUntil(Condition.visible
+                        .because("Landing page should be visible!"),5000)
+                .shouldHave(Condition.text("Get benefits in exchange for your vehicle's data")
+                        .because("Landing page should be present!"));
         return this;
     }
 
