@@ -48,6 +48,12 @@ public class HereUserManagerController extends BaseHereAccountController {
         StatusCodeExpects.expectNOCONSTENTStatusCode(authorization);
     }
 
+    public Response getHereAccountData(String bearerToken) {
+        return hereAccountClient("/user/me")
+                .header("Authorization", bearerToken)
+                .get();
+    }
+
     public String getHereCurrentToken(HereUser hereUser) {
         Response tokenResponse = hereAccountClient(Conf.ns().getAuthUrlGetToken())
                 .header("x-ha-realm", hereUser.getRealm())

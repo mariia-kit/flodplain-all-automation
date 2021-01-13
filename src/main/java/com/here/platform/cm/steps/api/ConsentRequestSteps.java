@@ -10,12 +10,14 @@ import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.rest.model.ConsentRequestIdResponse;
 import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.ConsentStatus;
+import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.VinsToFile.FILE_TYPE;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.Steps;
+import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.Step;
 import java.util.Arrays;
 
@@ -145,6 +147,11 @@ public class ConsentRequestSteps {
         return this;
     }
 
+    public ConsentRequestSteps approveConsent(String vin, DataSubject dataSubject) {
+        String token = AuthController.getDataSubjectToken(dataSubject);
+        ConsentFlowSteps.approveConsentForVIN(consentObject.getCrid(), consentObject.getContainer(), vin, token);
+        return this;
+    }
 
     public String getId() {
         return consentObject.getCrid();

@@ -41,6 +41,7 @@ public enum CMErrorResponse {
     PROVIDER_APPLICATION_NOT_FOUND("E503130", "Provider application not found", CORRECT_DATA),
     CONSENT_REQUEST_NOT_FOUND("E503113", "Consent request not found", CORRECT_DATA),
     CREDENTIALS_EXCEPTION("E503114", "Invalid credentials", CORRECT_DATA),
+    SIGNATURE_INVALID("E503114", "HERE Account event processing issue", CORRECT_DATA),
     CONSUMER_OAUTH_SERVICE_NOT_SUPPORTED("E503115", "No implementation found for consumer",
             "Please contact Consent Management team"),
     SESSION_ATTRIBUTE_NOT_PRESENT("E503116", "Session attribute not present",
