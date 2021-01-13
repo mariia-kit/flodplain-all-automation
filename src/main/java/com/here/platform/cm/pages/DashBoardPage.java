@@ -19,7 +19,6 @@ public class DashBoardPage extends BaseCMPage {
     @Step("Dash Board Page is loaded")
     public DashBoardPage isLoaded() {
         $(".offers-list").waitUntil(Condition.visible.because("Dashboard page should be present"), 10000);
-        refresh(); //todo temp hotfix for visibility of dashboard tabs
         return this;
     }
 
