@@ -6,6 +6,7 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.PENDING;
 import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.REVOKED;
 import static io.qameta.allure.Allure.step;
 
+import com.here.account.oauth2.HereAccount;
 import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
@@ -16,11 +17,15 @@ import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.UserProfilePage;
 import com.here.platform.cm.pages.VINEnteringPage;
+import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.cm.steps.api.ConsentFlowSteps;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.Dashboard;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
+import com.here.platform.hereAccount.ui.HereLoginPage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
@@ -117,6 +122,73 @@ public class DashboardTests extends BaseUITests {
 
     //todo mark tests with @Feature(or some other) annotation specific user flow that is checked
     // https://confluence.in.here.com/display/OLP/Consent+Management+User+Flows
+
+    @Test
+    @Issue("NS-2744")
+    @Feature("Profile info page")
+    @DisplayName("Open Manage Account page on Profile info and verify Here Account page ")
+    void clickManageAccountAndVerifyHereAccountPage(){
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubjectIm);
+        open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
+
+        new DashBoardPage().isLoaded();
+        new Header().openDashboardUserAvatarTab();
+
+        new UserProfilePage()
+                .clickProfileInfo();
+
+        new UserProfilePage()
+                .clickManageAccount()
+                .verifyHEREAccountLink();
+    }
+
+    @Test
+    @Issue("NS-2744")
+    @Feature("Profile info page")
+    @DisplayName("Open Profile info page and verify user data'")
+    void clickProfileInfoAndVerifyUserData() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubjectIm);
+        open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
+
+        new DashBoardPage().isLoaded();
+        new Header().openDashboardUserAvatarTab();
+
+        new UserProfilePage()
+                .clickProfileInfo();
+
+        new UserProfilePage()
+                .verifyUserProfileData(dataSubjectIm);
+    }
+
+    @Test
+    @Issue("NS-2744")
+    @Feature("Profile info page")
+    @DisplayName("Open Profile info page and verify user vin details'")
+    void clickProfileInfoAndVerifyVinData() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubjectIm);
+        open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
+
+        new DashBoardPage().isLoaded();
+        new Header().openDashboardUserAvatarTab();
+
+        new UserProfilePage()
+                .clickProfileInfo();
+
+        new UserProfilePage()
+                .verifyUserProfileVinDetails(dataSubjectIm.getVin());
+    }
 
     @Test
     @Issue("NS-2464")
