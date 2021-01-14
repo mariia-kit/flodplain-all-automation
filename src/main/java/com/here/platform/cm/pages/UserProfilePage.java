@@ -10,6 +10,7 @@ import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.rest.model.ConsentInfo;
 import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
 import com.here.platform.common.DataSubject;
+import com.here.platform.common.config.Conf;
 import com.here.platform.common.strings.VIN;
 import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import com.here.platform.hereAccount.ui.HereLoginPage;
@@ -49,14 +50,14 @@ public class UserProfilePage  extends BaseCMPage{
 
         @Step("Verify HERE Account page")
         public void verifyHEREAccountLink(){
-            String userAcc = "https://st.p.account.here.com";
+            String userAcc = Conf.ns().getPortalUrl() + "/";
             $("body  app-root  lui-default-theme  div  app-account-component  div  iframe")
                     .shouldHave(Condition.attribute("src", userAcc));
         }
 
         @Step("Verify user profile data")
         public void verifyUserProfileData(DataSubject dataSubject){
-            $(".lui-body")
+            $(".info-block dd:nth-of-type(2)")
                     .shouldHave(Condition.exactText(dataSubject.getEmail()));
         }
 
