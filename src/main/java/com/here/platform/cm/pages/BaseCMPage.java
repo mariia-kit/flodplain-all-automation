@@ -1,6 +1,7 @@
 package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
@@ -34,6 +35,7 @@ public abstract class BaseCMPage {
         @Step("Click on 'Avatar' tab in header")
         public DashBoardPage openDashboardUserAvatarTab() {
             $("lui-avatar[class='tabtrigger ng-star-inserted']").click();
+            sleep(3000);
             return new DashBoardPage();
         }
 

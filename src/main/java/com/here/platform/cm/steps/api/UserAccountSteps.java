@@ -40,7 +40,7 @@ public class UserAccountSteps {
     }
 
     public DataSubject generateNewHereAccount(int vinLength) {
-        HereUser hereUser = new HereUser(faker.internet().emailAddress(), faker.internet().password(), "here");
+        HereUser hereUser = new HereUser(faker.bothify("?????????##@here.com"), faker.internet().password(), "here");
         DataSubject dataSubjectIm = new DataSubject(
                 hereUser.getEmail(),
                 hereUser.getPassword(),
