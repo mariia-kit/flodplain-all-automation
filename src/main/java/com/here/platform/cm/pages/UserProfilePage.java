@@ -5,10 +5,23 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
+import com.here.account.oauth2.HereAccount;
+import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.rest.model.ConsentInfo;
+import com.here.platform.cm.rest.model.ConsentInfo.StateEnum;
+import com.here.platform.common.DataSubject;
+import com.here.platform.common.strings.VIN;
+import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
+import com.here.platform.hereAccount.ui.HereLoginPage;
+import com.here.platform.hereAccount.ui.HereLoginSteps;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.UserType_NS;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 
 
-    public class UserProfilePage  extends BaseCMPage{
+public class UserProfilePage  extends BaseCMPage{
 
         public UserProfilePage isLoaded() {
             $("app-sidebar").
@@ -22,4 +35,34 @@ import io.qameta.allure.Step;
             return new DashBoardPage();
         }
 
+        @Step("Click on the 'Profile info' button on the Avatar tab")
+        public DashBoardPage clickProfileInfo() {
+            $(".lui-h3-subdued").click();
+            return new DashBoardPage();
+        }
+
+        @Step("Click on the 'Manage Account' button on the User Profile tab")
+        public UserProfilePage clickManageAccount() {
+            $(byText("Manage account")).click();
+            return new UserProfilePage();
+        }
+
+        @Step("Verify HERE Account page")
+        public void verifyHEREAccountLink(){
+            String userAcc = "https://st.p.account.here.com";
+            $("body  app-root  lui-default-theme  div  app-account-component  div  iframe")
+                    .shouldHave(Condition.attribute("src", userAcc));
+        }
+
+        @Step("Verify user profile data")
+        public void verifyUserProfileData(DataSubject dataSubject){
+            $(".lui-body")
+                    .shouldHave(Condition.exactText(dataSubject.getEmail()));
+        }
+
+        @Step("Verify user profile vehicles details")
+        public void verifyUserProfileVinDetails(String vinNumber){
+            $(".vin-code")
+                    .shouldHave(Condition.text(new VIN(vinNumber).label()));
+        }
 }
