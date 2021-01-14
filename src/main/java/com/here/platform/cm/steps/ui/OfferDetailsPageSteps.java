@@ -42,7 +42,7 @@ public class OfferDetailsPageSteps {
     @Step("Revoke offer in popup")
     public void revokeConsentPopupYes() {
         $("#modal-notification-negative").$(byText("Revoke")).click();
-        sleep(2000);
+        sleep(5000);
     }
 
     @Step("Close current offer to open dashboard")
