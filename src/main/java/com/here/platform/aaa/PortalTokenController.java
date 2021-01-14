@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class PortalTokenController {
@@ -31,13 +32,10 @@ public class PortalTokenController {
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
         String authorizeUrl = portalUrl + "/authorize?"
                 + "client_id=" + clientId + "&"
-                + "response_type=code&"
-                + "scope=openid%20email%20phone%20profile%20readwrite%3Aha&"
                 + "prompt=login&"
-                + "no-sign-up=true&"
-                + "realm-input=true&"
-                + "sign-in-template=olp&"
-                + "sign-in-screen-config=password";
+                + "scope=openid%20email%20phone%20profile%20readwrite%3Aha&"
+                + "redirect_uri=https%3A%2F%2Fportal.platform.in.here.com%2FauthHandler&"
+                + "state=%7B%22redirectUri%22%3A%22https%3A%2F%2Fportal.platform.in.here.com%2FauthHandler%22%2C%22redirect%22%3A%22https%253A%252F%252Fportal.platform.in.here.com%252Fmarketplace%252F%22%7D";
 
         Response authorizeResp = given()
                 .when()
@@ -46,6 +44,10 @@ public class PortalTokenController {
                 .get(authorizeUrl);
         Cookies coo = authorizeResp.getDetailedCookies();
         String location = authorizeResp.getHeader("Location");
+
+        if (StringUtils.isEmpty(location)) {
+            throw new RuntimeException("Error during authorization on Here portal." + authorizeResp.getBody().print());
+        }
 
         Response signInResp = given()
                 .when()
