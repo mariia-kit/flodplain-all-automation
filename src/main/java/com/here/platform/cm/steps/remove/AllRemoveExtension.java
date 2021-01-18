@@ -1,5 +1,6 @@
 package com.here.platform.cm.steps.remove;
 
+import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
@@ -27,10 +28,11 @@ public class AllRemoveExtension implements AfterEachCallback {
         DataForRemoveCollector
                 .getAllConsents(testId)
                 .forEach(RemoveEntitiesSteps::forceRemoveEmptyConsentRequest);
+        String cmUserToken = BearerAuthorization.init().getCmUserToken();
         DataForRemoveCollector
                 .getAllApplications(testId)
                 .forEach(app -> new PrivateController()
-                        .withCMToken()
+                        .withAuthorizationValue(cmUserToken)
                         .deleteProviderApplication(app));
         DataForRemoveCollector.getConsumer(testId).forEach(RemoveEntitiesSteps::removeConsumer);
         DataForRemoveCollector.getProvider(testId).forEach(RemoveEntitiesSteps::removeProvider);
