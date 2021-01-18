@@ -5,6 +5,7 @@ import com.here.platform.cm.BaseCMTest;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.rest.model.UserAccountData;
+import com.here.platform.cm.rest.model.VinData;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
@@ -15,6 +16,7 @@ import io.qameta.allure.Issue;
 import io.qameta.allure.Issues;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,10 +62,9 @@ public class UserAccountVINTests extends BaseCMTest {
 
         var actualVinsData = new ResponseAssertion(addVinsResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
-                .bindAs(UserAccountData.class).getVinsData();
+                .bindAs(UserAccountData.class).getVinsData().stream().map(VinData::getVinLabel).collect(Collectors.toList());
 
-        Assertions.assertThat(actualVinsData).isEqualTo(
-                (new VIN(dataSubject.getVin()).label()));
+        Assertions.assertThat(actualVinsData).contains(new VIN(dataSubject.getVin()).label());
     }
 
     @Test
@@ -78,11 +79,10 @@ public class UserAccountVINTests extends BaseCMTest {
         var secondAddVINsResponse = userAccountController.attachVinToUserAccount(secondVIN, privateBearer);
         userVINsToRemove.add(secondVIN);
 
-        var vinLabels = new ResponseAssertion(secondAddVINsResponse).statusCodeIsEqualTo(StatusCode.OK)
-                .bindAs(UserAccountData.class).getVinsData();
+        List<String> vinLabels = new ResponseAssertion(secondAddVINsResponse).statusCodeIsEqualTo(StatusCode.OK)
+                .bindAs(UserAccountData.class).getVinsData().stream().map(VinData::getVinLabel).collect(Collectors.toList());
 
-        Assertions.assertThat(vinLabels).isEqualTo(
-                new VIN(dataSubject.getVin()).label());
+        Assertions.assertThat(vinLabels).contains(new VIN(dataSubject.getVin()).label());
     }
 
     @Test
@@ -125,8 +125,8 @@ public class UserAccountVINTests extends BaseCMTest {
     void forbiddenToAddVINWithoutBearerTokenTest() {
         var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), "");
         new ResponseAssertion(addVINResponse)
-                .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
-                .expectedErrorResponse(CMErrorResponse.TOKEN_VALIDATION);
+                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
     }
 
     @Test

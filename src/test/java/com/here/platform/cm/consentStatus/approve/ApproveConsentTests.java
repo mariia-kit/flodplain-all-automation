@@ -183,7 +183,7 @@ class ApproveConsentTests extends BaseConsentStatusTests {
         var approveResponse = consentStatusController
                 .withConsumerToken()
                 .approveConsent(consentToApprove, "");
-        new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
+        new ResponseAssertion(approveResponse).statusCodeIsEqualTo(StatusCode.BAD_REQUEST);
     }
 
 }
