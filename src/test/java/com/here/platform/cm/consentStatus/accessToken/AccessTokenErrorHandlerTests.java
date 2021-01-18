@@ -15,6 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.util.StringUtils;
+
 
 @GetAccessToken
 @DisplayName("Getting of access tokens for consents")
@@ -37,10 +39,16 @@ public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
                 .withConsumerToken()
                 .getAccessToken(crid, vin, mpConsumer.getRealm());
 
-        new ResponseAssertion(accessTokenResponse)
-                .statusCodeIsEqualTo(StatusCode.NOT_FOUND) //TODO should be StatusCode.BAD_REQUEST
-                .expectedErrorResponse(
-                        CMErrorResponse.CONSENT_REQUEST_NOT_FOUND); //TODO should be CMErrorResponse.PARAMETER_VALIDATION
+        if (StringUtils.isEmpty(crid)) {
+            new ResponseAssertion(accessTokenResponse)
+                    .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
+                    .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+        } else {
+            new ResponseAssertion(accessTokenResponse)
+                    .statusCodeIsEqualTo(StatusCode.NOT_FOUND)
+                    .expectedErrorResponse(
+                            CMErrorResponse.CONSENT_REQUEST_NOT_FOUND);
+        }
     }
 
     @ParameterizedTest(name = "Is not possible to get consent status by crid: {0}, vin: {1}, should cause: {2}")

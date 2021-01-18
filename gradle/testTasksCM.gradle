@@ -113,7 +113,7 @@ task devTests(type: TestCM, dependsOn: "smokeCMTests") {
 
     systemProperty "env", "dev"
 
-    finalizedBy "userAccount", "uiTests"
+    finalizedBy "userAccount"//, "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
