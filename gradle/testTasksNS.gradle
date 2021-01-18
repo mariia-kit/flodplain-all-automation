@@ -40,6 +40,13 @@ class TestNS extends Test {
             systemProperty "test_cycle", cycle
         }
 
+        systemProperties = [
+                "stg.access.key.id"     : System.getenv("ACCESS_KEY_ID_STG"),
+                "stg.access.key.secret" : System.getenv("ACCESS_KEY_SECRET_STG"),
+                "prod.access.key.id"    : System.getenv("ACCESS_KEY_ID_PROD"),
+                "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD"),
+        ]
+
         finalizedBy "allureAggregatedReportNS", "cleanUpNS"
     }
 }

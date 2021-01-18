@@ -28,11 +28,10 @@ public class AllRemoveExtension implements AfterEachCallback {
         DataForRemoveCollector
                 .getAllConsents(testId)
                 .forEach(RemoveEntitiesSteps::forceRemoveEmptyConsentRequest);
-        String cmUserToken = BearerAuthorization.init().getCmUserToken();
         DataForRemoveCollector
                 .getAllApplications(testId)
                 .forEach(app -> new PrivateController()
-                        .withAuthorizationValue(cmUserToken)
+                        .withCMToken()
                         .deleteProviderApplication(app));
         DataForRemoveCollector.getConsumer(testId).forEach(RemoveEntitiesSteps::removeConsumer);
         DataForRemoveCollector.getProvider(testId).forEach(RemoveEntitiesSteps::removeProvider);
