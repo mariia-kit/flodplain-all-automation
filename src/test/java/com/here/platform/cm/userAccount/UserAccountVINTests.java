@@ -58,11 +58,12 @@ public class UserAccountVINTests extends BaseCMTest {
     void addVinToUserTest() {
         var addVinsResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), privateBearer);
 
-        var actualVinLabels = new ResponseAssertion(addVinsResponse)
+        var actualVinsData = new ResponseAssertion(addVinsResponse)
                 .statusCodeIsEqualTo(StatusCode.OK)
-                .bindAs(UserAccountData.class).getVinLabels();
+                .bindAs(UserAccountData.class).getVinsData();
 
-        Assertions.assertThat(actualVinLabels).contains(new VIN(dataSubject.getVin()).label());
+        Assertions.assertThat(actualVinsData).isEqualTo(
+                (new VIN(dataSubject.getVin()).label()));
     }
 
     @Test
@@ -78,11 +79,10 @@ public class UserAccountVINTests extends BaseCMTest {
         userVINsToRemove.add(secondVIN);
 
         var vinLabels = new ResponseAssertion(secondAddVINsResponse).statusCodeIsEqualTo(StatusCode.OK)
-                .bindAs(UserAccountData.class).getVinLabels();
+                .bindAs(UserAccountData.class).getVinsData();
 
-        Assertions.assertThat(vinLabels).contains(
-                new VIN(dataSubject.getVin()).label(), new VIN(secondVIN).label()
-        );
+        Assertions.assertThat(vinLabels).isEqualTo(
+                new VIN(dataSubject.getVin()).label());
     }
 
     @Test

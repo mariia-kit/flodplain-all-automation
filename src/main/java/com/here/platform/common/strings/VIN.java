@@ -29,6 +29,7 @@ public class VIN {
 
     /**
      * Get the last 8 symbols from the VIN
+     * @return
      */
     public String label() {
         return vinValue.substring(vinValue.length() - 8);
