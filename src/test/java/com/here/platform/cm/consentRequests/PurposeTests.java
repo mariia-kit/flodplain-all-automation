@@ -45,8 +45,8 @@ public class PurposeTests extends BaseCMTest {
         var purposeResponse = consentRequestController.getConsentRequestPurpose(crypto.sha1(), "");
 
         new ResponseAssertion(purposeResponse)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+                .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
+                .expectedErrorResponse(CMErrorResponse.AUTHORIZATION_FAILED);
     }
 
     @Test

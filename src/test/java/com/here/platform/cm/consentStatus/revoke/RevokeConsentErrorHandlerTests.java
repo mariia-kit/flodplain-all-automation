@@ -87,7 +87,7 @@ public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {
         consentRequestController.clearBearerToken();
         var revokedConsentResponse = consentStatusController.revokeConsent(consentToRevoke, "");
 
-        new ResponseAssertion(revokedConsentResponse).statusCodeIsEqualTo(StatusCode.BAD_REQUEST);
+        new ResponseAssertion(revokedConsentResponse).statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
     }
 
 }

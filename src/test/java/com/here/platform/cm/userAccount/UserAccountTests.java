@@ -48,8 +48,8 @@ public class UserAccountTests extends BaseCMTest {
         var userAccountResponse = userAccountController.userAccountGetInfo("");
 
         new ResponseAssertion(userAccountResponse)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+                .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
+                .expectedErrorResponse(CMErrorResponse.AUTHORIZATION_FAILED);
     }
 
     @Test

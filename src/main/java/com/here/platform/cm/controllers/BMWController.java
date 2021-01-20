@@ -19,7 +19,6 @@ public class BMWController extends BaseConsentService<BMWController> {
     @Step("Ping consent service status by BMW")
     public Response pingConsentServiceStatusByBMW() {
         return consentServiceClient(bmwBasePath)
-                .header("Authorization", bmwToken)
                 .get("/status/ping");
     }
 
