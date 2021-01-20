@@ -66,8 +66,8 @@ public class UserAccountWithConsentTests extends BaseCMTest {
                 "null", Map.of("consentRequestId", consentObject.getCrid(), "state", StateEnum.APPROVED)
         );
         new ResponseAssertion(userConsentsInState)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+                .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
+                .expectedErrorResponse(CMErrorResponse.AUTHORIZATION_FAILED);
     }
 
     @Test

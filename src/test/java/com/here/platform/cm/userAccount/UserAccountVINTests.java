@@ -125,8 +125,8 @@ public class UserAccountVINTests extends BaseCMTest {
     void forbiddenToAddVINWithoutBearerTokenTest() {
         var addVINResponse = userAccountController.attachVinToUserAccount(dataSubject.getVin(), "");
         new ResponseAssertion(addVINResponse)
-                .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+                .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED)
+                .expectedErrorResponse(CMErrorResponse.AUTHORIZATION_FAILED);
     }
 
     @Test

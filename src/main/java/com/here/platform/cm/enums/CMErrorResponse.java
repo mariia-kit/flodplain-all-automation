@@ -34,6 +34,7 @@ public enum CMErrorResponse {
     DATA_MANIPULATION("E503108", "Data manipulation failed", CORRECT_DATA),
     PROVIDER_TOKEN_REFRESH("E503109", "Token refresh exception", CORRECT_DATA),
     TOKEN_VALIDATION("E503110", "Token validation failed", "Provide correct token"),
+    AUTHORIZATION_FAILED("E503116", "Authorization failed", "Provide correct authorization data"),
     METRIC_EXCEPTION("E503111", "Metrics exception", TRY_AGAIN_ACTION),
     CONSUMER_NOT_FOUND("E503112", "Consumer not found", CORRECT_DATA),
     PROVIDER_NOT_FOUND("E503129", "Provider not found", CORRECT_DATA),

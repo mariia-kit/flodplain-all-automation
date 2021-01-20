@@ -157,9 +157,17 @@ public class ProviderApplicationTests extends BaseCMTest {
     @Sentry
     @DisplayName("Is not possible to onboard Provider Application with empty Authorization")
     void isNotPossibleToOnboardProviderApplicationWithInvalidAuthorizationTokenValue() {
+        var testProviderApplication = new ProviderApplication()
+                .providerId(crypto.md5())
+                .clientId(crypto.md5())
+                .clientSecret(crypto.md5())
+                .containerId(crypto.sha256())
+                .consumerId(testDataConsumerId)
+                .redirectUri(faker.internet().url());
+
         var onboardApplication = providerController
                 .withAuthorizationValue("")
-                .onboardApplication(new ProviderApplication());
+                .onboardApplication(testProviderApplication);
 
         new ResponseAssertion(onboardApplication)
                 .statusCodeIsEqualTo(StatusCode.UNAUTHORIZED);
