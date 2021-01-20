@@ -93,9 +93,9 @@ public class CreateConsentRequestsTests extends BaseCMTest {
 
         new ResponseAssertion(consentRequestResponse)
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_VALIDATION);
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
         new ResponseAssertion(consentRequestResponse)
-                .expectedErrorCause("Consent request parameter 'privacyPolicy' must be provided");
+                .expectedErrorCause("Property 'consentRequestData.privacyPolicy' must not be blank");
     }
 
 }

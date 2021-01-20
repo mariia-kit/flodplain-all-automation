@@ -92,7 +92,7 @@ class CreateConsentRequestErrorsTests extends BaseCMTest {
 
         new ResponseAssertion(actualCreateConsentRequestResponse)
                 .statusCodeIsEqualTo(StatusCode.BAD_REQUEST)
-                .expectedErrorResponse(CMErrorResponse.CONSENT_REQUEST_VALIDATION);
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
     }
 
     @Test
