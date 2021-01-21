@@ -1,6 +1,6 @@
 image: gradle:6.7.1-jdk11
-services:
-   - docker:19.03.0-dind
+
+include: '.gitlab-ci-service.yml'
 
 
 variables:
@@ -30,6 +30,7 @@ stages:
   - pages
 
 .test_run:
+  extends: .servisable
   stage: test
   # variables:
   #   TASK: "smoke"

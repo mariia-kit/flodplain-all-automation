@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("Approve and get access token E2E")
+@DisplayName("[UI] Approve and get access token E2E")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 
     @Test

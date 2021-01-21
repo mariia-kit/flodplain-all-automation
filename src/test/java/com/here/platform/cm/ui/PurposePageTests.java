@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 
 @Purpose
-@DisplayName("Purpose for consent request")
+@DisplayName("[UI] Purpose for consent request")
 public class PurposePageTests extends BaseUITests {
 
     private final PurposePage purposePage = new PurposePage();
@@ -33,7 +33,7 @@ public class PurposePageTests extends BaseUITests {
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
         ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
 
-        DataSubjects registeredDataSubject = DataSubjects.getNextBy18VINLength();
+        DataSubjects registeredDataSubject = DataSubjects.getNextBy18VINLength().getNextBy18VINLength();
         UserAccountSteps.removeVINFromDataSubject(registeredDataSubject);
         UserAccountSteps.attachDataSubjectVINToUserAccount(registeredDataSubject.getDataSubject());
 

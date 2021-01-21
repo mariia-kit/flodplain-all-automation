@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("dynamic_ui")
 @Dashboard
-@DisplayName("Dashboard with consents")
+@DisplayName("[UI] Dashboard with consents")
 public class DashboardWithConsentRequest extends BaseUITests {
 
     @Step("Open consent request id link, open login form, login HERE account, fill VIN and open Offer Details page")
