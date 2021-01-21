@@ -20,9 +20,8 @@ public class WelcomePage extends BaseCMPage {
 
     @Step("Press Next button")
     public WelcomePage pressNext() {
-        sleep(4000);
+        sleep(8000);
         $(byText("Next")).click();
-        sleep(2000);
         return this;
     }
 
