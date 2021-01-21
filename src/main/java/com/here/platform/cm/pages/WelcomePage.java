@@ -1,5 +1,6 @@
 package com.here.platform.cm.pages;
 
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.here.platform.common.strings.SBB.sbb;
@@ -19,7 +20,8 @@ public class WelcomePage extends BaseCMPage {
 
     @Step("Press Next button")
     public WelcomePage pressNext() {
-        $(".buttons").click();
+        sleep(4000);
+        $(byText("Next")).click();
         sleep(2000);
         return this;
     }
