@@ -10,7 +10,7 @@ class TestCM extends Test {
         forkEvery = 20
 
         useJUnitPlatform() {
-            excludeTags "neutral_server", "e2e", "smoke_cm", "ui", "userAccount"
+            excludeTags "neutral_server", "e2e", "smoke_cm", "ui"
         }
 
         systemProperties = [
@@ -69,9 +69,6 @@ task fePreDevTests(type: TestCM) {
     println "Will be used dynamic url: $dynamicEnvUrl"
     println "Will be used dynamic ui url: $dynamicUIUrl"
     
-    maxParallelForks = 1
-    forkEvery = 0
-    
     systemProperty "dynamicUrl", dynamicEnvUrl
     systemProperty "env", "dev"
     
@@ -86,9 +83,6 @@ task fePreDevTests(type: TestCM) {
 task userAccount(type: TestCM) {
     onlyIf { !isHotDeploy }
 
-    maxParallelForks = 1
-    forkEvery = 0
-
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "userAccount"
@@ -99,9 +93,8 @@ task userAccount(type: TestCM) {
 task uiTests(type: TestCM) {
     onlyIf { !isHotDeploy }
 
-    maxParallelForks = 1
-    forkEvery = 0
-    
+    maxParallelForks = 20
+    forkEvery = 20
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "ui"
@@ -113,7 +106,7 @@ task devTests(type: TestCM, dependsOn: "smokeCMTests") {
 
     systemProperty "env", "dev"
 
-    finalizedBy "userAccount"//, "uiTests"
+    finalizedBy "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
@@ -122,7 +115,7 @@ task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     systemProperty "env", "sit"
     systemProperty "jira_sync", "true"
 
-    finalizedBy "userAccount"//, "uiTests"
+    finalizedBy "uiTests"
 }
 
 task prodTests(type: TestCM) {

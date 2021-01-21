@@ -39,6 +39,7 @@ public class UserProfilePage  extends BaseCMPage{
         @Step("Click on the 'Profile info' button on the Avatar tab")
         public DashBoardPage clickProfileInfo() {
             $(".lui-h3-subdued").click();
+            sleep(2000);
             return new DashBoardPage();
         }
 
@@ -64,6 +65,6 @@ public class UserProfilePage  extends BaseCMPage{
         @Step("Verify user profile vehicles details")
         public void verifyUserProfileVinDetails(String vinNumber){
             $(".vin-code")
-                    .shouldHave(Condition.text(new VIN(vinNumber).label()));
+                    .shouldHave(Condition.text(new VIN(vinNumber).label()).because("Vin label is not as expected!"));
         }
 }

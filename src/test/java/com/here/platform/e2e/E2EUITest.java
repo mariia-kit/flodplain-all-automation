@@ -2,6 +2,7 @@ package com.here.platform.e2e;
 
 import static com.here.platform.ns.dto.Users.MP_CONSUMER;
 import static com.here.platform.ns.dto.Users.MP_PROVIDER;
+import static io.qameta.allure.Allure.step;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
@@ -18,6 +19,7 @@ import com.here.platform.cm.steps.ui.ConsentManagementFlowSteps;
 import com.here.platform.cm.steps.ui.OfferDetailsPageSteps;
 import com.here.platform.cm.steps.ui.SuccessConsentPageSteps;
 import com.here.platform.common.DataSubject;
+import com.here.platform.common.SeleniumContainerHandler;
 import com.here.platform.common.annotations.CMFeatures.BMW;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.extensions.UserAccountCleanUpExtension;
@@ -33,9 +35,10 @@ import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
+import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
 import io.qameta.allure.selenide.LogType;
-import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import lombok.SneakyThrows;
@@ -49,11 +52,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
@@ -76,13 +77,6 @@ public class E2EUITest extends BaseE2ETest {
             targetDataProvider = MP_PROVIDER.getUser(),
             targetDataConsumer = MP_CONSUMER.getUser();
 
-
-    @org.testcontainers.junit.jupiter.Container
-    public BrowserWebDriverContainer chrome =
-            new BrowserWebDriverContainer()
-                    .withCapabilities(new ChromeOptions().addArguments("--no-sandbox"))
-                    .withRecordingMode(VncRecordingMode.RECORD_FAILING, new File("build/video"));
-
     @RegisterExtension
     UserAccountCleanUpExtension userAccountCleanUpExtension = UserAccountCleanUpExtension.builder()
             .targetDataSubject(targetDataSubject)
@@ -95,14 +89,21 @@ public class E2EUITest extends BaseE2ETest {
     private String listingHrn;
 
     @BeforeEach
+    @SneakyThrows
     void setUpBrowserContainer() {
-        RemoteWebDriver driver = chrome.getWebDriver();
+        DesiredCapabilities capability = DesiredCapabilities.chrome();
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        String seleniumHost = SeleniumContainerHandler.get(testId);
+        step("Start selenium host" + seleniumHost);
+        RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + seleniumHost + ":4444/wd/hub/"),
+                capability);
         WebDriverRunner.setWebDriver(driver);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
     }
 
     @AfterEach
     void afterEach() {
+        WebDriverRunner.closeWebDriver();
         MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn, MarketplaceFlowSteps.getSubscriptionId());
     }
 

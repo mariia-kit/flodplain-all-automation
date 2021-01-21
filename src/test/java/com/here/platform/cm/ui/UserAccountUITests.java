@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@DisplayName("User account UI")
+@DisplayName("[UI] User account UI")
 public class UserAccountUITests extends BaseUITests {
 
     @Test
