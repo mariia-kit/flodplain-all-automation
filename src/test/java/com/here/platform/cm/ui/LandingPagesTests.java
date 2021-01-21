@@ -10,6 +10,7 @@ import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.WelcomePage;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ public class LandingPagesTests extends BaseUITests {
 
     @Test
     @Issue("NS-2760")
+    @Disabled("need to resolve flaky test")
     @DisplayName("Verify Welcome page access though link")
     public void verifyWelcomePage() {
         String crid = "1234567890";
