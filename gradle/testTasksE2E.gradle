@@ -40,7 +40,10 @@ ext {
 
 task e2eTests(type: TestE2E, dependsOn: "initTokensNS") {
     group "e2e tests"
-    systemProperty "env", finalEnv
+    doFirst {
+        systemProperty "env", finalEnv
+        allure_project = "e2e"
+    }
     useJUnitPlatform {
         includeTags "e2e"
         excludeTags "e2e_ui", "ignored", "ignored-$finalEnv", "consent_management"
@@ -50,7 +53,10 @@ task e2eTests(type: TestE2E, dependsOn: "initTokensNS") {
 task e2eTestsUI(type: TestE2E, dependsOn: "initTokensNS") {
     dependsOn "testDataGeneration"
     group "e2e tests"
-    systemProperty "env", finalEnv
+    doFirst {
+        systemProperty "env", finalEnv
+        allure_project = "e2e_ui"
+    }
     useJUnitPlatform {
         includeTags "e2e_ui"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
