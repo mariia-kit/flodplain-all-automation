@@ -22,6 +22,7 @@ class TestCM extends Test {
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
         if (!dynamicEnvUrl) finalizedBy "allureAggregatedReportCM"
+        //finalizedBy "allurePushReport"
     }
 }
 
@@ -31,7 +32,7 @@ ext {
 }
 
 boolean isHotDeploy = System.getenv("hot_deploy")
-
+def allure_project = null
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
 def finalEnv = "dev"
@@ -47,15 +48,17 @@ println "Run script for CM env >>>>> ${finalEnv}"
 
 task smokeCMTests(type: TestCM) {
     failFast true
-    //todo add execution for all tests except Sentry checkers
-
-    if (!dynamicEnvUrl) {
-        systemProperty "env", finalEnv
-    } else {
-        println "Will be used dynamic url: $finalEnv"
-        systemProperty "dynamicUrl", dynamicEnvUrl
-        systemProperty "env", "dev"
+    doFirst {
+        if (!dynamicEnvUrl) {
+            systemProperty "env", finalEnv
+        } else {
+            println "Will be used dynamic url: $finalEnv"
+            systemProperty "dynamicUrl", dynamicEnvUrl
+            allure_project = "consent-management-dynamic"
+            systemProperty "env", "dev"
+        }
     }
+
     useJUnitPlatform {
         includeTags "smoke_cm"
     }
@@ -64,20 +67,22 @@ task smokeCMTests(type: TestCM) {
 }
 
 task fePreDevTests(type: TestCM) {
-    def dynamicUIUrl = System.getenv("DYNAMIC_ENV_URL")
-    
-    println "Will be used dynamic url: $dynamicEnvUrl"
-    println "Will be used dynamic ui url: $dynamicUIUrl"
-    
-    systemProperty "dynamicUrl", dynamicEnvUrl
-    systemProperty "env", "dev"
-    
+    doFirst {
+        def dynamicUIUrl = System.getenv("DYNAMIC_ENV_URL")
+
+        println "Will be used dynamic url: $dynamicEnvUrl"
+        println "Will be used dynamic ui url: $dynamicUIUrl"
+
+        systemProperty "dynamicUrl", dynamicEnvUrl
+        systemProperty "env", "dev"
+        allure_project = "consent-management-fe"
+    }
     useJUnitPlatform {
         includeTags "dynamic_ui"
     }
 
-    dependsOn "cleanUpCM", "testDataGeneration"
-    finalizedBy "allureAggregatedReportCM"
+    dependsOn "cleanUpCM"
+    //finalizedBy "allureAggregatedReportCM"
 }
 
 task userAccount(type: TestCM) {
@@ -104,7 +109,10 @@ task uiTests(type: TestCM) {
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     onlyIf { !isHotDeploy }
 
-    systemProperty "env", "dev"
+    doFirst {
+        systemProperty "env", "dev"
+        allure_project = "consent-management-dev"
+    }
 
     finalizedBy "uiTests"
 }
@@ -112,28 +120,37 @@ task devTests(type: TestCM, dependsOn: "smokeCMTests") {
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     onlyIf { !isHotDeploy }
 
-    systemProperty "env", "sit"
-    systemProperty "jira_sync", "true"
+    doFirst {
+        systemProperty "env", "sit"
+        systemProperty "jira_sync", "true"
+        allure_project = "consent-management-sit"
+    }
 
     finalizedBy "uiTests"
 }
 
 task prodTests(type: TestCM) {
     group "cm tests"
-
-    systemProperty "env", "prod"
-
+    doFirst {
+        systemProperty "env", "prod"
+        allure_project = "consent-management-prod"
+    }
     useJUnitPlatform {
         includeTags "cm_prod"
     }
+
 }
 
 task fabricTests(type: TestCM) {
     group "cm tests"
-    systemProperty "env", finalEnv
+    doFirst {
+        systemProperty "env", finalEnv
+        allure_project = "consent-management-fabric"
+    }
     useJUnitPlatform {
         includeTags "fabric_test"
     }
+
 }
 
 task zephyrCMSync(type: JavaExec) {
@@ -170,24 +187,16 @@ task cleanUpCM(type: JavaExec) {
     main = "com.here.platform.common.CMDataCleanUp"
 }
 
-task copyHistoryCM(type: Copy) {
-    description 'Copies the new CM history directory to folder to store.'
-    println "Copy local history_ns to $rootDir/history_cm"
-    from "${allure.reportDir.absolutePath}/history"
-    into "$rootDir/history_cm"
-
-    shouldRunAfter 'allureReport'
+task allurePushReport(type: JavaExec) {
+    doFirst {
+        systemProperty "env", finalEnv
+        systemProperty "allure_project", allure_project
+    }
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.allureSync.AllureReportExport"
 }
 
 task allureAggregatedReportCM {
-    doFirst {
-        copy {
-            description 'Copies the old history directory to the current test run data.'
-            println "Copy global history to ${allure.resultsDir.absolutePath}/history"
-            mkdir "${allure.resultsDir.absolutePath}/history"
-            from "$rootDir/history_cm"
-            into "${allure.resultsDir.absolutePath}/history"
-        }
-    }
-    finalizedBy 'allureReport', 'copyHistoryCM'
+    finalizedBy 'allureReport'
 }
+

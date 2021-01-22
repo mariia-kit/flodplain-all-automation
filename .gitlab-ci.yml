@@ -14,13 +14,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
 
-
-cache:
-  key: one-key-to-rule-them-all
-  paths:
-    - history_cm/
-    - history_ns/
-
 stages:
   - test
   - test_dev
@@ -35,17 +28,14 @@ stages:
   # variables:
   #   TASK: "smoke"
   #   REPORT_URL: "build/reports_ns"
-  #   HISTORY_URL: "history_ns"
   script:
     - set GROOVY_TURN_OFF_JAVA_WARNINGS=true
     - if [ ! -z ${CM_TEST_BRANCH} ] && git branch -a | egrep "remotes/origin/${CM_TEST_BRANCH}"; then git checkout origin/${CM_TEST_BRANCH}; res=$?; fi
     - if [[ ! -z ${CM_TEST_BRANCH} && $res == 0 ]]; then echo "Running tests from ${CM_TEST_BRANCH} brach"; fi
     - mkdir -p "${REPORT_URL}"
-    - mkdir -p "${HISTORY_URL}"
     - chown gradle:gradle ./ -R
     - echo "gradle $TASK -Penv=$ENV"
-    - gradle $TASK -Penv=$ENV
-    - gradle --stop
+    - gradle $TASK -Penv=$ENV -Dci=true
   after_script:
     - mkdir -p "${REPORT_URL}"
     - cp -TRv build/reports/allure-report/ "${REPORT_URL}/" > /dev/null
@@ -53,7 +43,6 @@ stages:
     name: "Report"
     paths:
       - index.html
-      - "${HISTORY_URL}/"
       - "${REPORT_URL}/"
       - build/allure-results/
     when: always
@@ -61,19 +50,6 @@ stages:
       junit: build/test-results/**/TEST-*.xml
     expire_in: 1 week
   allow_failure: false
-
-
-.push_allure_reports:
-  variables:
-    FILE1: "build/reports_cm/data/suites.csv"
-    FILE1_ID: "942546865"
-    FILE2: "build/reports_cm/widgets/summary.json"
-    FILE2_ID: "942546866"
-    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
-  script:
-    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE1" -F "comment=Latest Report" -F "minorEdit=true" $TO/$FILE1_ID/data'
-    - 'curl -D- -u svc-ns-bot:HtSUxXwdb2aoVfkLfvAoMbPV  -X POST -H "X-Atlassian-Token: no-check" -F "file=@$FILE2" -F "comment=Latest Report" -F "minorEdit=true" $TO/$FILE2_ID/data'
-  allow_failure: true
 
 test_ns_auto:
   extends: .test_run
@@ -352,61 +328,15 @@ zephyr_sync_ns:
   stage: instrumental
   dependencies:
     - test_ns_auto
-    - test_ns_smoke_dev
     - test_ns_regression_dev
-    - test_ns_smoke_sit
     - test_ns_regression_sit
-  script:
-    - chown gradle:gradle ./ -R
-    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE
-    - gradle --stop
-  when: manual
-  allow_failure: true
-
-zephyr_sync_cm:
-  stage: instrumental
-  dependencies:
     - test_cm_auto
   script:
     - chown gradle:gradle ./ -R
-    - gradle zephyrCMSync -Penv=$ENV -Dtest_cycle=$CYCLE
+    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Dci=true
     - gradle --stop
   when: manual
   allow_failure: true
-
-push_allure_reports_cm:
-  extends: .push_allure_reports
-  stage: instrumental
-  dependencies:
-    - test_cm_auto
-    - test_cm_smoke_dev
-    - test_cm_regression_dev
-    - test_cm_smoke_sit
-    - test_cm_regression_sit
-  variables:
-    FILE1: "build/reports_cm/data/suites.json"
-    FILE1_ID: "942546865"
-    FILE2: "build/reports_cm/widgets/summary.json"
-    FILE2_ID: "942546866"
-    TO: "https://confluence.in.here.com/rest/api/content/790072147/child/attachment"
-  when: manual
-
-push_allure_reports_ns:
-  extends: .push_allure_reports
-  stage: instrumental
-  dependencies:
-    - test_ns_auto
-    - test_ns_smoke_dev
-    - test_ns_regression_dev
-    - test_ns_smoke_sit
-    - test_ns_regression_sit
-  variables:
-    FILE1: "build/reports_ns/data/suites.json"
-    FILE1_ID: "942025448"
-    FILE2: "build/reports_ns/widgets/summary.json"
-    FILE2_ID: "942025449"
-    TO: "https://confluence.in.here.com/rest/api/content/795780540/child/attachment"
-  when: manual
 
 
 pages:

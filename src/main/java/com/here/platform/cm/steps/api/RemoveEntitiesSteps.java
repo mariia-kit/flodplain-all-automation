@@ -41,7 +41,7 @@ public class RemoveEntitiesSteps {
                     .forceRemoveVinsFromConsentRequest(crid, fileWithVINs);
         }
         var deleteConsentRequestResponse = privateController
-                .withConsumerToken()
+                .withCMToken()
                 .hardDeleteConsentRequest(crid);
         StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }
@@ -62,7 +62,7 @@ public class RemoveEntitiesSteps {
             return;
         }
         var deleteConsentRequestResponse = privateController
-                .withConsumerToken()
+                .withCMToken()
                 .hardDeleteConsentRequest(crid);
         StatusCodeExpects.expectNOCONSTENTStatusCode(deleteConsentRequestResponse);
     }

@@ -73,14 +73,16 @@ public class BaseUITests extends BaseCMTest {
 
     @SneakyThrows
     public void initDriver() {
-        DesiredCapabilities capability = DesiredCapabilities.chrome();
-        String testId = Allure.getLifecycle().getCurrentTestCase().get();
-        String seleniumHost = SeleniumContainerHandler.get(testId);
-        step("Start selenium host" + seleniumHost);
-        RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + seleniumHost + ":4444/wd/hub/"),
-                capability);
-        WebDriverRunner.setWebDriver(driver);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+        if ("true".equals(System.getProperty("ci"))) {
+            DesiredCapabilities capability = DesiredCapabilities.chrome();
+            String testId = Allure.getLifecycle().getCurrentTestCase().get();
+            String seleniumHost = SeleniumContainerHandler.get(testId);
+            step("Start selenium host" + seleniumHost);
+            RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + seleniumHost + ":4444/wd/hub/"),
+                    capability);
+            WebDriverRunner.setWebDriver(driver);
+            WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+        }
     }
 
     public void restartBrowser() {

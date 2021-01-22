@@ -1,72 +1,72 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.yaml:snakeyaml:1.26"
-    }
-}
-
-def mainResources = "src/main/resources"
-
-ext {
-    cmApiDir = file("$buildDir/cm-api")
-    cmSpecFile = file("$buildDir/cmSpec.json")
-}
-
-
-
-tasks.withType(GenerateSwaggerCode) {
-    wipeOutputDir = true
-    language = 'java'
-    components = ["models"]
-}
-
-static String getEnvUrl(String resourcesUrl, String env) {
-    def finalEnv = Objects.isNull(env) ? "dev" : env
-    if( finalEnv == "stg" ) {
-        finalEnv = "sit"
-    }
-    
-    def cfg = new org.yaml.snakeyaml.Yaml().load( new File("${resourcesUrl}/" + finalEnv + "/cm.yaml").newInputStream() )
-    return "${cfg.serviceUrl}"
-    
-}
-
-swaggerSources {
-    logging.captureStandardOutput LogLevel.QUIET
-
-    mkdir("build")
-
-    def targetEnv = hasProperty('env') ? env : System.getenv("CI_ENVIRONMENT_SLUG")
-    def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
-
-    def cmHostByEnv
-    if (!dynamicEnvUrl) {
-        cmHostByEnv = getEnvUrl(mainResources, targetEnv)
-    } else {
-        cmHostByEnv = "https://$dynamicEnvUrl"
-    }
-    def cmUrl = "$cmHostByEnv/consent-service/api-docs?group=v1"
-    println "Generation CM models from: $cmUrl"
-    cmSpecFile.write(new URL(cmUrl).text)
-
-    cmApi {
-        inputFile = cmSpecFile
-
-        code {
-            configFile = file("$mainResources/swagger/cm-config.json")
-
-            outputDir = cmApiDir
-        }
-    }
-}
-
-generateSwaggerCode.doFirst { this.removeOutputDir }
-
-compileJava.dependsOn 'generateSwaggerCode'
-
-sourceSets.main {
-    java.srcDirs "${cmApiDir.path}/src/main/java"
-    resources.srcDirs "$cmApiDir/src/main/resources"
-}
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath "org.yaml:snakeyaml:1.26"
+//    }
+//}
+//
+//def mainResources = "src/main/resources"
+//
+//ext {
+//    cmApiDir = file("$buildDir/cm-api")
+//    cmSpecFile = file("$buildDir/cmSpec.json")
+//}
+//
+//
+//
+//tasks.withType(GenerateSwaggerCode) {
+//    wipeOutputDir = true
+//    language = 'java'
+//    components = ["models"]
+//}
+//
+//static String getEnvUrl(String resourcesUrl, String env) {
+//    def finalEnv = Objects.isNull(env) ? "dev" : env
+//    if( finalEnv == "stg" ) {
+//        finalEnv = "sit"
+//    }
+//
+//    def cfg = new org.yaml.snakeyaml.Yaml().load( new File("${resourcesUrl}/" + finalEnv + "/cm.yaml").newInputStream() )
+//    return "${cfg.serviceUrl}"
+//
+//}
+//
+//swaggerSources {
+//    logging.captureStandardOutput LogLevel.QUIET
+//
+//    mkdir("build")
+//
+//    def targetEnv = hasProperty('env') ? env : System.getenv("CI_ENVIRONMENT_SLUG")
+//    def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+//
+//    def cmHostByEnv
+//    if (!dynamicEnvUrl) {
+//        cmHostByEnv = getEnvUrl(mainResources, targetEnv)
+//    } else {
+//        cmHostByEnv = "https://$dynamicEnvUrl"
+//    }
+//    def cmUrl = "$cmHostByEnv/consent-service/api-docs?group=v1"
+//    println "Generation CM models from: $cmUrl"
+//    cmSpecFile.write(new URL(cmUrl).text)
+//
+//    cmApi {
+//        inputFile = cmSpecFile
+//
+//        code {
+//            configFile = file("$mainResources/swagger/cm-config.json")
+//
+//            outputDir = cmApiDir
+//        }
+//    }
+//}
+//
+//generateSwaggerCode.doFirst { this.removeOutputDir }
+//
+////compileJava.dependsOn 'generateSwaggerCode'
+//
+//sourceSets.main {
+//    java.srcDirs "${cmApiDir.path}/src/main/java"
+//    resources.srcDirs "$cmApiDir/src/main/resources"
+//}

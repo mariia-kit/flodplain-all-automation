@@ -47,7 +47,7 @@ class TestNS extends Test {
                 "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD"),
         ]
 
-        finalizedBy "allureAggregatedReportNS", "cleanUpNS"
+        finalizedBy "allureAggregatedReportNS", "cleanUpNS"//, "allurePushReport"
     }
 }
 
@@ -67,7 +67,6 @@ task initTokensNS(type: JavaExec) {
 
 task testDataGeneration(type: JavaExec) {
     onlyIf { !System.getenv("hot_deploy") }
-
     logging.captureStandardOutput(LogLevel.QUIET)
     systemProperties = [
             "stg.access.key.id"     : System.getenv("ACCESS_KEY_ID_STG"),
@@ -75,14 +74,16 @@ task testDataGeneration(type: JavaExec) {
             "prod.access.key.id"    : System.getenv("ACCESS_KEY_ID_PROD"),
             "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD")
     ]
-    if (!dynamicEnvUrl) {
-        systemProperty "env", finalEnv
-    } else {
-        println "Will be used dynamic url: $finalEnv"
-        systemProperty "dynamicUrl", dynamicEnvUrl
-        systemProperty "env", "dev"
+    doFirst {
+        if (!dynamicEnvUrl) {
+            println "Use regular env url: $finalEnv"
+            systemProperty "env", finalEnv
+        } else {
+            println "Will be used dynamic url: $finalEnv"
+            systemProperty "dynamicUrl", dynamicEnvUrl
+            systemProperty "env", "dev"
+        }
     }
-    systemProperty "env", finalEnv
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.TestDataGeneration"
 }
@@ -98,7 +99,7 @@ task cleanUpNS(type: JavaExec) {
 task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
     dependsOn "testDataGeneration"
     group "ns tests"
-    
+
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "neutral_server"
@@ -109,7 +110,9 @@ task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
 
 task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
-    systemProperty "env", finalEnv
+    doFirst {
+        systemProperty "env", finalEnv
+    }
     useJUnitPlatform {
         includeTags "smoke_ns"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
@@ -118,63 +121,41 @@ task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
 
 task nsTestProd(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
-    systemProperty "env", finalEnv
+    doFirst {
+        systemProperty "env", finalEnv
+    }
     useJUnitPlatform {
         includeTags "prod"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
     }
 }
 
-task copyHistory(type: Copy) {
-    description 'Copies the new NS history directory to folder to store.'
-    println "Copy local history_ns to $rootDir/history_ns"
-    from "${allure.reportDir.absolutePath}/history"
-    into "$rootDir/history_ns"
-
-    shouldRunAfter 'allureReport'
-}
-
 task allureAggregatedReportNS {
-    doFirst {
-        copy {
-            description 'Copies the old NS history directory to the current test run data.'
-            println "Copy global history_ns to ${allure.resultsDir.absolutePath}/history"
-            mkdir "${allure.resultsDir.absolutePath}/history"
-            from "$rootDir/history_ns"
-            into "${allure.resultsDir.absolutePath}/history"
-        }
-        copy {
-            description 'Copies env variables to report'
-            println "Copy env prop from $rootDir/build/tmp/environment.properties to ${allure.resultsDir.absolutePath}/environment.properties"
-            from "$rootDir/build/tmp/environment.properties"
-            into "${allure.resultsDir.absolutePath}"
-        }
-    }
-
-    finalizedBy 'allureReport', 'copyHistory'
+    finalizedBy 'allureReport'
 }
 
 task zephyrSyncTaskNS(type: JavaExec) {
+    doFirst {
+        def serviceName = System.getProperty("SERVICE") ?: 'null'
+        def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
+
+        def cycleValue = "$serviceName:$serviceVersion"
+
+        if (cycleValue == "null:null") {
+            cycleValue = "CM:latest"
+        }
+
+        println "Current user and service: $jira_login $cycleValue"
+        args = [
+                "--username=${jira_login}", "--password=${jira_pass}", "--reportType=allure", "--projectKey=NS",
+                "--releaseVersion=NSPOSTMVP",
+                "--testCycle=${cycleValue}",
+                "--jiraUrl=https://saeljira.it.here.com/rest/",
+                "--reportPath=build/allure-results/",
+                "--autoCreateTestCycle=true"
+        ]
+    }
     main = "com.here.platform.ns.instruments.Zephyroth"
     description = "Run NS Sync test results into Zephyr test cycle"
     classpath sourceSets.main.runtimeClasspath
-
-    def serviceName = System.getProperty("SERVICE") ?: 'null'
-    def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
-
-    def cycleValue = "$serviceName:$serviceVersion"
-
-    if (cycleValue == "null:null") {
-        cycleValue = "CM:latest"
-    }
-
-    println "Current user and service: $jira_login $cycleValue"
-    args = [
-            "--username=${jira_login}", "--password=${jira_pass}", "--reportType=allure", "--projectKey=NS",
-            "--releaseVersion=NSPOSTMVP",
-            "--testCycle=${cycleValue}",
-            "--jiraUrl=https://saeljira.it.here.com/rest/",
-            "--reportPath=build/allure-results/",
-            "--autoCreateTestCycle=true"
-    ]
 }
