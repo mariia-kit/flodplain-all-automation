@@ -34,8 +34,8 @@ stages:
     - if [[ ! -z ${CM_TEST_BRANCH} && $res == 0 ]]; then echo "Running tests from ${CM_TEST_BRANCH} brach"; fi
     - mkdir -p "${REPORT_URL}"
     - chown gradle:gradle ./ -R
-    - echo "gradle $TASK -Penv=$ENV"
-    - gradle $TASK -Penv=$ENV -Dci=true
+    - echo "gradle $TASK -Penv=$ENV -Pci=true"
+    - gradle $TASK -Penv=$ENV -Pci=true
   after_script:
     - mkdir -p "${REPORT_URL}"
     - cp -TRv build/reports/allure-report/ "${REPORT_URL}/" > /dev/null
@@ -333,7 +333,7 @@ zephyr_sync_ns:
     - test_cm_auto
   script:
     - chown gradle:gradle ./ -R
-    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Dci=true
+    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Ptest_cycle=$CYCLE
     - gradle --stop
   when: manual
   allow_failure: true

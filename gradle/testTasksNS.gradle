@@ -131,6 +131,14 @@ task nsTestProd(type: TestNS, dependsOn: "initTokensNS") {
 }
 
 task allureAggregatedReportNS {
+    doFirst {
+        copy {
+            description 'Copies env variables to report'
+            println "Copy env prop from $rootDir/build/tmp/environment.properties to ${allure.resultsDir.absolutePath}/environment.properties"
+            from "$rootDir/build/tmp/environment.properties"
+            into "${allure.resultsDir.absolutePath}"
+        }
+    }
     finalizedBy 'allureReport'
 }
 
