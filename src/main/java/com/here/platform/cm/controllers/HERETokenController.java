@@ -126,7 +126,7 @@ public class HERETokenController {
                     .then()
                     .log().ifError()
                     .statusCode(HttpStatus.SC_CREATED);
-            Thread.sleep(4000);
+            Thread.sleep(10000);
             sign2Result = given()
                     .noFilters()
                     .param("scope", "openid%20email%20phone%20profile%20readwrite%3Aha")
