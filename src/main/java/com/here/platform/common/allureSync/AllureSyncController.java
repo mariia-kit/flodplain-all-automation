@@ -34,5 +34,11 @@ public class AllureSyncController {
                 .queryParam("execution_type", "regression")
                 .get("generate-report");
     }
+
+    public Response clearReportData(String project_id) {
+        return allureServiceClient()
+                .queryParam("project_id", project_id)
+                .get("clean-results");
+    }
 }
 

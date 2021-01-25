@@ -47,7 +47,7 @@ class TestNS extends Test {
                 "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD"),
         ]
 
-        finalizedBy "allureAggregatedReportNS", "cleanUpNS"//, "allurePushReport"
+        finalizedBy "cleanUpNS", "allurePushReport"
     }
 }
 
