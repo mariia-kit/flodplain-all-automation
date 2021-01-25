@@ -24,8 +24,12 @@ public class AllureReportExport {
         System.out.println("Current env: " + env);
         System.out.println("Current ci: " + System.getProperty("ci"));
         String project_id = System.getProperty("allure_project");
+        String executionName = System.getenv("CI_PIPELINE_ID");
         System.out.println("Current allure proj: " + project_id);
         System.out.println("Current CI: " + System.getenv("CI"));
+        System.out.println("Current CI_PIPELINE_URL: " + System.getenv("CI_PIPELINE_URL"));
+        System.out.println("Current CI_PIPELINE_ID: " + executionName);
+        System.out.println("Current CI_PIPELINE_SOURCE: " + System.getenv("CI_PIPELINE_SOURCE"));
         boolean isCi = !StringUtils.isEmpty(System.getenv("CI"));
 
         if (!StringUtils.isEmpty(project_id) && isCi) {
@@ -48,7 +52,7 @@ public class AllureReportExport {
             while(caret <= report.size()) {
                 int nextStep =  caret + 100 > report.size() ? report.size() : caret + 100;
                 String body = new JConvert(new ReportFileContainer(report.subList(caret, nextStep))).toJson();
-                Response resp = allureSyncController.uploadReportData(project_id, body);
+                Response resp = allureSyncController.uploadReportData(project_id, body, executionName);
                 if (resp.getStatusCode() != HttpStatus.SC_OK) {
                     System.out.println("Error uploading report:" + resp.getStatusCode());
                     System.exit(resp.getStatusCode());
@@ -60,7 +64,7 @@ public class AllureReportExport {
                 Thread.sleep(500);
             }
             System.out.println("Init report render for:" + report.size() + " files.");
-            int res = allureSyncController.initReportGeneration(project_id).getStatusCode();
+            int res = allureSyncController.initReportGeneration(project_id, executionName).getStatusCode();
             System.out.println("Report render complete with code:" + res);
             Response remove = allureSyncController.clearReportData(project_id);
             System.out.println("Remove old data:" + remove.getStatusCode());

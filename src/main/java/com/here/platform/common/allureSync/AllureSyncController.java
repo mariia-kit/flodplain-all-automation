@@ -16,20 +16,20 @@ public class AllureSyncController {
                 .accept(ContentType.JSON);
     }
 
-    public Response uploadReportData(String project_id, String jsonPayload) {
+    public Response uploadReportData(String project_id, String jsonPayload, String executionName) {
         return allureServiceClient()
                 .body(jsonPayload)
                 .queryParam("project_id", project_id)
-                .queryParam("execution_name", "regression")
+                .queryParam("execution_name", executionName)
                 .queryParam("execution_from", "local")
                 .queryParam("execution_type", "regression")
                 .post("send-results");
     }
 
-    public Response initReportGeneration(String project_id) {
+    public Response initReportGeneration(String project_id, String executionName) {
         return allureServiceClient()
                 .queryParam("project_id", project_id)
-                .queryParam("execution_name", "regression")
+                .queryParam("execution_name", executionName)
                 .queryParam("execution_from", "local")
                 .queryParam("execution_type", "regression")
                 .get("generate-report");
