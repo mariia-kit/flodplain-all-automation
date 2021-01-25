@@ -34,6 +34,8 @@ public class AllureReportExport {
 
         if (!StringUtils.isEmpty(project_id) && isCi) {
             AllureSyncController allureSyncController = new AllureSyncController();
+            Response removeFirst = allureSyncController.clearReportData(project_id);
+            System.out.println("Remove old data:" + removeFirst.getStatusCode());
 
             File files = new File(pattern_allure_results_directory);
 
@@ -66,6 +68,7 @@ public class AllureReportExport {
             System.out.println("Init report render for:" + report.size() + " files.");
             int res = allureSyncController.initReportGeneration(project_id, executionName).getStatusCode();
             System.out.println("Report render complete with code:" + res);
+            Thread.sleep(5000);
             Response remove = allureSyncController.clearReportData(project_id);
             System.out.println("Remove old data:" + remove.getStatusCode());
         }
