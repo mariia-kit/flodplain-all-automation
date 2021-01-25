@@ -216,9 +216,13 @@ public class UserProfileTests extends BaseUITests{
                 .verifyNoVehiclesText();
 
         new Header().openDashboardUserAvatarTab();
+
         new UserProfilePage().clickOnSignOut();
 
-        //token is valid login page is skipped;
+        new LandingPage().clickSignIn();
+
+        new Header().openDashboardUserAvatarTab();
+
         new UserProfilePage().clickProfileInfo();
 
         new UserProfilePage().verifyNoVehiclesText();
