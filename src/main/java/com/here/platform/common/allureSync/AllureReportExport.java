@@ -59,8 +59,11 @@ public class AllureReportExport {
                 }
                 Thread.sleep(500);
             }
-
-            allureSyncController.initReportGeneration(project_id);
+            System.out.println("Init report render for:" + report.size() + " files.");
+            int res = allureSyncController.initReportGeneration(project_id).getStatusCode();
+            System.out.println("Report render complete with code:" + res);
+            Response remove = allureSyncController.clearReportData(project_id);
+            System.out.println("Remove old data:" + remove.getStatusCode());
         }
     }
 }

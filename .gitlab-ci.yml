@@ -343,33 +343,33 @@ zephyr_sync:
   allow_failure: true
 
 
-pages:
-  stage: pages
-  rules:
-    - if: $TASK_NS || $TASK_CM
-      when: always
-    - when: never
-  script:
-    - echo "Generate page with url ${CI_PAGES_URL}"
-    - mkdir .public
-    - cp -v index.html .public
-    - if [ -d "build/reports_ns" ]; then
-    - echo "copy NS report to pages"
-    - mkdir -p .public/nsDeployReport
-    - cp -TRv build/reports_ns/ .public/nsDeployReport/ > /dev/null
-    - fi
-    - if [ -d "build/reports_cm" ]; then
-    - echo "copy CM report to pages"
-    - mkdir -p .public/cmDeployReport
-    - cp -TRv build/reports_cm/ .public/cmDeployReport/ > /dev/null
-    - fi
-    - if [ -d "build/reports_e2e" ]; then
-    - echo "copy e2e report to pages"
-    - mkdir -p .public/e2eDeployReport
-    - cp -TRv build/reports_e2e/ .public/e2eDeployReport/ > /dev/null
-    - fi
-    - mv .public public
-  artifacts:
-    paths:
-      - public
-    expire_in: 5 days
+#pages:
+#  stage: pages
+#  rules:
+#    - if: $TASK_NS || $TASK_CM
+#      when: always
+#    - when: never
+#  script:
+#    - echo "Generate page with url ${CI_PAGES_URL}"
+#    - mkdir .public
+#    - cp -v index.html .public
+#    - if [ -d "build/reports_ns" ]; then
+#    - echo "copy NS report to pages"
+#    - mkdir -p .public/nsDeployReport
+#    - cp -TRv build/reports_ns/ .public/nsDeployReport/ > /dev/null
+#    - fi
+#    - if [ -d "build/reports_cm" ]; then
+#    - echo "copy CM report to pages"
+#    - mkdir -p .public/cmDeployReport
+#    - cp -TRv build/reports_cm/ .public/cmDeployReport/ > /dev/null
+#    - fi
+#    - if [ -d "build/reports_e2e" ]; then
+#    - echo "copy e2e report to pages"
+#    - mkdir -p .public/e2eDeployReport
+#    - cp -TRv build/reports_e2e/ .public/e2eDeployReport/ > /dev/null
+#    - fi
+#    - mv .public public
+#  artifacts:
+#    paths:
+#      - public
+#    expire_in: 5 days

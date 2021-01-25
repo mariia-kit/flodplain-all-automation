@@ -28,7 +28,7 @@ class TestE2E extends Test {
             systemProperty "test_cycle", cycle
         }
 
-        finalizedBy "allureAggregatedReportE2E"
+        //finalizedBy "allureAggregatedReportE2E"
     }
 }
 

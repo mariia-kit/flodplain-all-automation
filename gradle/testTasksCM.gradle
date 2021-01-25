@@ -20,8 +20,8 @@ class TestCM extends Test {
         ]
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
-        if (!dynamicEnvUrl) finalizedBy "allureAggregatedReportCM"
-        //finalizedBy "allurePushReport"
+        //if (!dynamicEnvUrl) finalizedBy "allureAggregatedReportCM"
+        finalizedBy "allurePushReport"
     }
 }
 
