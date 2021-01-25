@@ -42,3 +42,21 @@
       alias: selenium19
     - name: selenium/standalone-chrome:latest
       alias: selenium20
+    - name: selenium/standalone-chrome:latest
+      alias: selenium21
+    - name: selenium/standalone-chrome:latest
+      alias: selenium22
+    - name: selenium/standalone-chrome:latest
+      alias: selenium23
+    - name: selenium/standalone-chrome:latest
+      alias: selenium24
+    - name: selenium/standalone-chrome:latest
+      alias: selenium25
+    - name: selenium/standalone-chrome:latest
+      alias: selenium26
+    - name: selenium/standalone-chrome:latest
+      alias: selenium27
+    - name: selenium/standalone-chrome:latest
+      alias: selenium28
+    - name: selenium/standalone-chrome:latest
+      alias: selenium29
