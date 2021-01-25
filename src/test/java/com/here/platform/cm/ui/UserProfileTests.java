@@ -11,13 +11,18 @@ import com.here.platform.cm.pages.UserProfilePage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.DataSubject;
+import com.here.platform.common.annotations.CMFeatures.UserAccount;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
+@Tag("CM-UserAccount")
+@Feature("Profile info page")
+@DisplayName("[UI] User Profile Tests")
 public class UserProfileTests extends BaseUITests{
 
     @Test
@@ -112,7 +117,7 @@ public class UserProfileTests extends BaseUITests{
 
         new VINEnteringPage()
                 .isLoaded()
-                .fillVINAndContinue(dataSubjectIm.vin);
+                .fillVINAndContinue(dataSubjectIm.getVin());
 
         new UserProfilePage()
                 .verifyUserProfileVinDetails(dataSubjectIm.getVin());
@@ -142,7 +147,7 @@ public class UserProfileTests extends BaseUITests{
 
         new VINEnteringPage()
                 .isLoaded()
-                .fillVINAndContinue(dataSubjectIm.vin);
+                .fillVINAndContinue(dataSubjectIm.getVin());
 
         new UserProfilePage()
                 .verifyUserProfileVinDetails(dataSubjectIm.getVin());
@@ -172,7 +177,7 @@ public class UserProfileTests extends BaseUITests{
 
         new VINEnteringPage()
                 .isLoaded()
-                .fillVINAndContinue(dataSubjectIm.vin);
+                .fillVINAndContinue(dataSubjectIm.getVin());
 
         new UserProfilePage()
                 .verifyUserProfileVinDetails(dataSubjectIm.getVin());
@@ -215,12 +220,10 @@ public class UserProfileTests extends BaseUITests{
                 .clickConfirmDelete()
                 .verifyNoVehiclesText();
 
-        new UserProfilePage().clickProfileInfo();
+        new Header().openDashboardUserAvatarTab();
         new UserProfilePage().clickOnSignOut();
 
-        new LandingPage().isLoaded().clickSignIn();
-        HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
-
+        //token is valid login page is skipped;
         new UserProfilePage().clickProfileInfo();
 
         new UserProfilePage().verifyNoVehiclesText();
