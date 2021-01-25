@@ -332,8 +332,7 @@ zephyr_link:
     - gradle --stop
   when: manual
   allow_failure: true
-  
-#Instruments
+
 zephyr_sync:
   stage: instrumental
   script:
