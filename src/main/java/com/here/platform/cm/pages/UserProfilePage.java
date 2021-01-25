@@ -99,13 +99,13 @@ public class UserProfilePage  extends BaseCMPage {
 
     @Step("Click on the 'Delete' button on the 'Delete vehicle' window")
     public UserProfilePage clickConfirmDelete() {
-        $("#modal-notification-negative lui-button:nth-child(4)").click();
+        $("#modal-notification-negative").find(byText("Delete")) .click();
         return new UserProfilePage();
     }
 
     @Step("Click on the 'Cancel' button on the 'Delete vehicle' window")
     public UserProfilePage clickCancelOnDeleteVehicle() {
-        $("#modal-notification-negative lui-button.-secondary").click();
+        $("#modal-notification-negative").find(byText("Cancel")).click();
         return new UserProfilePage();
     }
 
