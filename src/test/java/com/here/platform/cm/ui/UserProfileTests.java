@@ -127,8 +127,8 @@ public class UserProfileTests extends BaseUITests{
     @Test
     @Issue("NS-2745")
     @Feature("Profile info page")
-    @DisplayName("Add the second vin on Profile info page")
-    void addTheSecondVinTest() {
+    @DisplayName("Add the second the same vin on Profile info page")
+    void addSecondTheSameVinTest() {
         MPProviders provider = MPProviders.DAIMLER_REFERENCE;
         DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
         UserAccountSteps.attachDataSubjectVINToUserAccount(dataSubjectIm);
@@ -145,12 +145,7 @@ public class UserProfileTests extends BaseUITests{
         new UserProfilePage()
                 .clickAddNewVehicle();
 
-        new VINEnteringPage()
-                .isLoaded()
-                .fillVINAndContinue(dataSubjectIm.getVin());
-
-        new UserProfilePage()
-                .verifyUserProfileVinDetails(dataSubjectIm.getVin());
+        new VINEnteringPage().verifyUsedVinError(dataSubjectIm.vin);
 
     }
 
