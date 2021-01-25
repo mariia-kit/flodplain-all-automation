@@ -104,6 +104,8 @@ public class E2EUITest extends BaseE2ETest {
     @AfterEach
     void afterEach() {
         WebDriverRunner.closeWebDriver();
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        SeleniumContainerHandler.close(testId);
         MarketplaceFlowSteps.removeSubscriptionAndListingForListings(listingHrn, MarketplaceFlowSteps.getSubscriptionId());
     }
 

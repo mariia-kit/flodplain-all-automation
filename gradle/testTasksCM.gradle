@@ -152,32 +152,6 @@ task fabricTests(type: TestCM) {
 
 }
 
-task zephyrCMSync(type: JavaExec) {
-    main = "com.here.platform.ns.instruments.Zephyroth"
-    description = "Run Sync test results into Zephyr test cycle"
-    classpath sourceSets.main.runtimeClasspath
-
-    def serviceName = System.getProperty('SERVICE') ?: 'null'
-    def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
-
-    def cycleValue = "$serviceName:$serviceVersion"
-
-    if (cycleValue == "null:null") {
-        cycleValue = "CM:latest"
-    }
-
-    println "Current user and service: $jira_login $cycleValue"
-    args = [
-            "--username=${jira_login}", "--password=${jira_pass}",
-            "--reportType=allure", "--projectKey=NS",
-            "--releaseVersion=NSPOSTMVP",
-            "--testCycle=${cycleValue}",
-            "--jiraUrl=https://saeljira.it.here.com/rest/",
-            "--reportPath=build/allure-results/",
-            "--autoCreateTestCycle=true"
-    ]
-}
-
 task cleanUpCM(type: JavaExec) {
     logging.captureStandardOutput(LogLevel.QUIET)
 

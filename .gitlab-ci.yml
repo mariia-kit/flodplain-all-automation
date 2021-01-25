@@ -34,8 +34,8 @@ stages:
     - if [[ ! -z ${CM_TEST_BRANCH} && $res == 0 ]]; then echo "Running tests from ${CM_TEST_BRANCH} brach"; fi
     - mkdir -p "${REPORT_URL}"
     - chown gradle:gradle ./ -R
-    - echo "gradle $TASK -Penv=$ENV -Pci=true"
-    - gradle $TASK -Penv=$ENV -Pci=true
+    - echo "gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER"
+    - gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER
   after_script:
     - mkdir -p "${REPORT_URL}"
     - cp -TRv build/reports/allure-report/ "${REPORT_URL}/" > /dev/null
@@ -324,16 +324,21 @@ test_e2e_prod:
   allow_failure: true
 
 #Instruments
-zephyr_sync_ns:
+zephyr_link:
   stage: instrumental
-  dependencies:
-    - test_ns_auto
-    - test_ns_regression_dev
-    - test_ns_regression_sit
-    - test_cm_auto
   script:
     - chown gradle:gradle ./ -R
-    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Ptest_cycle=$CYCLE
+    - gradle zephyrLinkTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER
+    - gradle --stop
+  when: manual
+  allow_failure: true
+  
+#Instruments
+zephyr_sync:
+  stage: instrumental
+  script:
+    - chown gradle:gradle ./ -R
+    - gradle zephyrSyncTaskNS -Penv=$ENV -Dtest_cycle=$CYCLE -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER
     - gradle --stop
   when: manual
   allow_failure: true

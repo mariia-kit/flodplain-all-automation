@@ -142,28 +142,44 @@ task allureAggregatedReportNS {
     finalizedBy 'allureReport'
 }
 
-task zephyrSyncTaskNS(type: JavaExec) {
+task zephyrLinkTaskNS(type: JavaExec) {
     doFirst {
-        def serviceName = System.getProperty("SERVICE") ?: 'null'
-        def serviceVersion = System.getProperty('IMAGE_TAG') ?: 'null'
 
-        def cycleValue = "$serviceName:$serviceVersion"
-
-        if (cycleValue == "null:null") {
-            cycleValue = "CM:latest"
-        }
+        def cycleValue = hasProperty('test_cycle') ? test_cycle : 'latest'
+        def folderValue = hasProperty('test_folder') ? test_folder : 'NSPOSTMVP'
 
         println "Current user and service: $jira_login $cycleValue"
         args = [
                 "--username=${jira_login}", "--password=${jira_pass}", "--reportType=allure", "--projectKey=NS",
-                "--releaseVersion=NSPOSTMVP",
+                "--releaseVersion=${folderValue}",
                 "--testCycle=${cycleValue}",
                 "--jiraUrl=https://saeljira.it.here.com/rest/",
                 "--reportPath=build/allure-results/",
                 "--autoCreateTestCycle=true"
         ]
     }
-    main = "com.here.platform.ns.instruments.Zephyroth"
+    main = "com.here.platform.ns.instruments.ZephyrothLinker"
+    description = "Run NS Link test results into Zephyr test cycle"
+    classpath sourceSets.main.runtimeClasspath
+}
+
+task zephyrSyncTaskNS(type: JavaExec) {
+    doFirst {
+
+        def cycleValue = hasProperty('test_cycle') ? test_cycle : 'latest'
+        def folderValue = hasProperty('test_folder') ? test_folder : 'NSPOSTMVP'
+
+        println "Current user and service: $jira_login $cycleValue"
+        args = [
+                "--username=${jira_login}", "--password=${jira_pass}", "--reportType=allure", "--projectKey=NS",
+                "--releaseVersion=${folderValue}",
+                "--testCycle=${cycleValue}",
+                "--jiraUrl=https://saeljira.it.here.com/rest/",
+                "--reportPath=build/allure-results/",
+                "--autoCreateTestCycle=true"
+        ]
+    }
+    main = "com.here.platform.ns.instruments.ZephyrothSyncer"
     description = "Run NS Sync test results into Zephyr test cycle"
     classpath sourceSets.main.runtimeClasspath
 }

@@ -58,6 +58,8 @@ public class BaseUITests extends BaseCMTest {
     @AfterEach
     public void tearDownBrowser() {
         WebDriverRunner.closeWebDriver();
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        SeleniumContainerHandler.close(testId);
     }
 
     public static String getUICmToken() {
