@@ -21,7 +21,7 @@ public class SeleniumContainerHandler {
         }
         String basePath = "build/tmp";
         for (int i=0; i<=20; i++) {
-            File marker = new File(basePath + "/seleniumHost" + i + ".txt");
+            File marker = new File(basePath + "/selenium" + i + ".txt");
             if (marker.exists()) {
                 continue;
             } else {
@@ -31,6 +31,14 @@ public class SeleniumContainerHandler {
             }
         }
         throw new RuntimeException("No free selenium containers detected!");
+    }
+
+    public static void close(String testName) {
+        String containerName = containerMap.get(testName);
+        String basePath = "build/tmp";
+        File marker = new File(basePath + "/" + containerName + ".txt");
+        marker.delete();
+        containerMap.remove(testName);
     }
 }
 

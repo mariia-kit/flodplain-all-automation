@@ -11,11 +11,14 @@ import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.rules.TestName;
 
 
 @Tag("consent_management")
 @ZephyrComponent("CM-Service")
+@Execution(ExecutionMode.CONCURRENT)
 public class BaseCMTest {
     @RegisterExtension
     AllRemoveExtension allRemoveExtension = new AllRemoveExtension();

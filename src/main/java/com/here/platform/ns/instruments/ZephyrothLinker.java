@@ -4,16 +4,19 @@ import static com.here.platform.common.strings.SBB.sbb;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import lv.ctco.zephyr.Config;
 import lv.ctco.zephyr.Runner.CliConfigLoader;
 import lv.ctco.zephyr.beans.TestCase;
 import lv.ctco.zephyr.beans.TestStep;
 import lv.ctco.zephyr.beans.jira.Issue;
+import lv.ctco.zephyr.beans.zapi.Execution;
 import lv.ctco.zephyr.service.AuthService;
 import lv.ctco.zephyr.service.MetaInfo;
 import lv.ctco.zephyr.service.MetaInfoRetrievalService;
@@ -21,13 +24,12 @@ import lv.ctco.zephyr.service.TestCaseResolutionService;
 import lv.ctco.zephyr.service.ZephyrService;
 
 
-public class Zephyroth {
+public class ZephyrothLinker {
 
     public static void main(String[] args) throws Exception {
         Config config = new Config(new CliConfigLoader(args));
         execute(config);
     }
-
 
     public static void execute(Config config) throws IOException, InterruptedException {
         AuthService authService = new AuthService(config);
@@ -53,7 +55,7 @@ public class Zephyroth {
             convertTestCaseStepsToDescription(testCase);
             hereJiraService.createTestIssue(testCase);
         }
-        Thread.sleep(60000);
+        Thread.sleep(testCasesToCreate.size() * 20000L);
         
         //todo implement description and summary updating of the test cases
 
@@ -74,6 +76,13 @@ public class Zephyroth {
         MetaInfo metaInfo = metaInfoRetrievalService.retrieve();
 
         zephyrService.linkExecutionsToTestCycle(metaInfo, testCasesFromTestRun);
+
+//        Map<String, Execution> executions = zephyrService.getAllExecutions(config);
+//        while (executions.size() < testCasesFromTestRun.size()) {
+//            Thread.sleep(30000);
+//            System.out.println("Wait for linking of test cases:" + testCasesFromTestRun.size() + " from " + executions.size());
+//        }
+        Thread.sleep(10000);
         zephyrService.updateExecutionStatuses(testCasesFromTestRun);
     }
 
@@ -102,7 +111,7 @@ public class Zephyroth {
                 .collect(Collectors.toSet());
     }
 
-    private static Map<String, String> getIssuesMapKeyToSummary(List<Issue> issues) {
+    protected static Map<String, String> getIssuesMapKeyToSummary(List<Issue> issues) {
         Map<String, String> issuesSet = new HashMap<>(issues.size());
         for (Issue issue : issues) {
             issuesSet.put(issue.getKey(), issue.getFields().getSummary());
