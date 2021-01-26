@@ -33,7 +33,7 @@ public class ConsentRequestController extends BaseConsentService<ConsentRequestC
             if (StringUtils.isEmpty(consentId)) {
                 throw new RuntimeException("Consent request id not found!" + response.getBody().prettyPrint());
             }
-            DataForRemoveCollector.addConsent(response.getBody().jsonPath().get("consentRequestId").toString());
+            DataForRemoveCollector.addConsent(consentId);
         }
         return response;
     }

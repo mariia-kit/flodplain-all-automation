@@ -26,15 +26,14 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
     @Step("Sign in user to CM by authorization code: '{authorizationCode}'")
     public Response userAccountSignIn(String authorizationCode) {
         return consentServiceClient(StringUtils.EMPTY)
-                //.noFilters()
                 .body(new HereAccountRequestTokenData().authorizationCode(authorizationCode))
                 .redirects().follow(false)
                 .post("/sign-in");
     }
 
-    @Step("Get CM user account info with CM token")
     public Response userAccountGetInfo(String privateBearerToken) {
         return consentServiceClient(userBasePath)
+                .noFilters()
                 .header("Authorization", privateBearerToken)
                 .get("/info");
     }

@@ -23,6 +23,7 @@ public class ReferenceProviderController {
     protected RequestSpecification referenceProviderClient(final String targetPath) {
         var baseService = given()
                 .baseUri(Conf.ns().getRefProviderUrl())
+                .filters(new AllureRestAssured())
                 .basePath(targetPath);
 
         return baseService;

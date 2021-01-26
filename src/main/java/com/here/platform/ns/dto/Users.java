@@ -27,7 +27,7 @@ public enum Users {
             "HERE",
             StringUtils.EMPTY)
             .withUserType(UserType_NS.CM)),
-    CM_CONSUMER(Conf.mpUsers().getMpConsumer());
+    CM_CONSUMER(new User("CmToken_" + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.CMCONS));
 
     private final User user;
 

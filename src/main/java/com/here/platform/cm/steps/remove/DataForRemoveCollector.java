@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
 public class DataForRemoveCollector {
-    private static Map<String, List<String>> cridsToRemove = new HashMap<>();
+    private static Map<String, List<String>> cridsToRemove = new ConcurrentHashMap<>();
     private static Map<String, List<PairValue>> cridsVinsToRemove = new HashMap<>();
     private static Map<String, List<ProviderApplication>> applications = new HashMap<>();
     private static Map<String, List<String>> consumer = new HashMap<>();
@@ -30,7 +31,8 @@ public class DataForRemoveCollector {
     private static Map<String, List<PairValue>> artificialPolicy = new HashMap<>();
 
     public void addConsent(String crid) {
-        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        String testId = Allure.getLifecycle().getCurrentTestCase()
+                .orElseThrow(() -> new RuntimeException("Test case not detected while adding crid" + crid));
         if (!cridsToRemove.containsKey(testId)) {
             cridsToRemove.put(testId, new ArrayList<>());
         }
