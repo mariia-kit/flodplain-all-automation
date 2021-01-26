@@ -13,7 +13,8 @@ public enum UserType_NS {
     CM("cm"),
     AA("aa"),
     DAIMLER("dm"),
-    APP("app");
+    APP("app"),
+    CMCONS("cmcons");
 
     private final String prefix;
 }

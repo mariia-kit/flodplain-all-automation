@@ -1,16 +1,22 @@
 package com.here.platform.ns.helpers.authentication;
 
 import static com.here.platform.common.strings.SBB.sbb;
+import static io.qameta.allure.Allure.step;
+import static io.restassured.RestAssured.given;
 
 import com.here.platform.aaa.ApplicationTokenController;
+import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.aaa.PortalTokenController;
 import com.here.platform.cm.controllers.HERETokenController;
+import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.config.Conf;
 import com.here.platform.common.syncpoint.SyncPointIO;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.UserType_NS;
+import io.restassured.response.Response;
 import java.time.Instant;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -37,7 +43,9 @@ public class AuthController {
 
     public synchronized static String getDataSubjectToken(DataSubject dataSubject) {
         String key = getDataSubjectKey(dataSubject.getEmail());
-        return AuthController.loadOrGenerate(key, () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()));
+        return AuthController.loadOrGenerate(key,
+                () -> new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass()),
+                AuthController::verifyCMToken);
     }
 
     public synchronized static void deleteToken(DataSubject dataSubject) {
@@ -92,37 +100,65 @@ public class AuthController {
                             Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken(),
                             Conf.nsUsers().getAaService().getAppKeyId(),
                             Conf.nsUsers().getAaService().getAppKeySecret());
+                case CMCONS:
+                    logger.info("------------- Creating new CM Consumer token ------------");
+                    return BearerAuthorization.init().getCmUserToken();
                 default:
                     return StringUtils.EMPTY;
+            }
+        }, tokenToVerify -> {
+            switch (user.getType()) {
+                case AA:
+                case CMCONS: return true;
+                case CM: return verifyCMToken(tokenToVerify);
+                default: return verifyHEREToken(tokenToVerify);
             }
         });
         return token;
     }
 
     @SneakyThrows
-    public static String loadOrGenerate(String key, Supplier<String> supplier) {
+    public static String loadOrGenerate(String key, Supplier<String> supplier, Function<String, Boolean> verifier) {
         String currentT = SyncPointIO.readSyncToken(key);
-        if (StringUtils.isEmpty(currentT)) {
-            try {
-                String token = supplier.get();
-                if (token.equals("Bearer null")) {
-                    token = supplier.get();
-                }
-                if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
-                    SyncPointIO.unlock(key);
-                    throw new RuntimeException(sbb("Error during generation of new token for sync:")
-                            .append(key).append(" token is ").sQuoted(token).bld());
-                } else {
-                    writeKeyValue(key, token);
-                }
-                return token;
-            } catch (Error er){
-                SyncPointIO.unlock(key);
-                throw new RuntimeException("Error Writing sync entity fro server:", er);
+        if (!StringUtils.isEmpty(currentT) && !currentT.contains("new")) {
+            if (verifier.apply(currentT)) {
+                return currentT;
+            } else {
+                step(sbb().append("Token").w().append(key).w().append(" is corrupted, need to re-generate.").bld());
+                SyncPointIO.deleteEntity(key);
             }
-        } else {
-            return currentT;
+        }
+        try {
+            String token = supplier.get();
+            if (token.equals("Bearer null")) {
+                token = supplier.get();
+            }
+            if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
+                SyncPointIO.unlock(key);
+                throw new RuntimeException(sbb("Error during generation of new token for sync:")
+                        .append(key).append(" token is ").sQuoted(token).bld());
+            } else {
+                writeKeyValue(key, token);
+            }
+            return token;
+        } catch (Error er){
+            SyncPointIO.unlock(key);
+            throw new RuntimeException("Error Writing sync entity fro server:", er);
         }
     }
 
+    public static boolean verifyHEREToken(String token) {
+        String url = Conf.ns().getAuthUrlBase();
+        Response verify = given()
+                .noFilters()
+                .baseUri(url)
+                .header("Authorization", "Bearer " + token)
+                .get("/user/me");
+        return verify.getStatusCode() == 200;
+    }
+
+    public static boolean verifyCMToken(String token) {
+        Response verify = new UserAccountController().userAccountGetInfo("Bearer " + token);
+        return verify.getStatusCode() == 200;
+    }
 }

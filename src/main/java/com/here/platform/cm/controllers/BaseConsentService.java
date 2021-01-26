@@ -4,11 +4,9 @@ import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.HeaderConfig.headerConfig;
 
-import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.enums.ConsentManagementServiceUrl;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
-import com.here.platform.ns.helpers.authentication.AuthController;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -42,9 +40,7 @@ abstract class BaseConsentService<T> {
     }
 
     public T withCMToken() {
-        setAuthorizationToken(AuthController
-                .loadOrGenerate("CmToken_" + System.getProperty("env"),
-                        () -> BearerAuthorization.init().getCmUserToken()));
+        setAuthorizationToken(Users.CM_CONSUMER.getToken());
         return (T) this;
     }
 
