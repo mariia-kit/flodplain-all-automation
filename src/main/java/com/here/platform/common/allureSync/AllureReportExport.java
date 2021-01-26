@@ -23,6 +23,8 @@ public class AllureReportExport {
         String env = System.getProperty("env");
         System.out.println("Current env: " + env);
         System.out.println("Current ci: " + System.getProperty("ci"));
+        System.out.println("Current IMAGE_TAG: " + System.getProperty("IMAGE_TAG"));
+        System.out.println("Current SERVICE: " + System.getProperty("SERVICE"));
         String project_id = System.getProperty("allure_project");
         String executionName = System.getenv("CI_PIPELINE_ID");
         System.out.println("Current allure proj: " + project_id);

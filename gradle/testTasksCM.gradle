@@ -74,14 +74,24 @@ task fePreDevTests(type: TestCM) {
 
         systemProperty "dynamicUrl", dynamicEnvUrl
         systemProperty "env", "dev"
-        allure_project = "consent-management-fe"
+        allure_project = "consent-management-dynamic-fe"
     }
     useJUnitPlatform {
         includeTags "dynamic_ui"
     }
 
     dependsOn "cleanUpCM"
-    //finalizedBy "allureAggregatedReportCM"
+}
+
+task feTests(type: TestCM) {
+    onlyIf { !isHotDeploy }
+    doFirst {
+        systemProperty "env", finalEnv
+        allure_project = "consent-management-fe"
+    }
+    useJUnitPlatform {
+        includeTags "ui"
+    }
 }
 
 task userAccount(type: TestCM) {
