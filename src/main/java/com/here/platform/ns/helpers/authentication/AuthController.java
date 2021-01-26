@@ -125,7 +125,7 @@ public class AuthController {
                 return currentT;
             } else {
                 step(sbb().append("Token").w().append(key).w().append(" is corrupted, need to re-generate.").bld());
-                SyncPointIO.deleteEntity(key);
+                SyncPointIO.lock(key);
             }
         }
         try {
