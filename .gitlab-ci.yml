@@ -13,6 +13,9 @@ variables:
   DOCKER_HOST: "tcp://docker:2375"
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  IMAGE_TAG: ""
+  SERVICE: ""
+  WEBEX_URL: ""
 
 stages:
   - test
@@ -34,8 +37,8 @@ stages:
     - if [[ ! -z ${CM_TEST_BRANCH} && $res == 0 ]]; then echo "Running tests from ${CM_TEST_BRANCH} brach"; fi
     - mkdir -p "${REPORT_URL}"
     - chown gradle:gradle ./ -R
-    - echo "gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER"
-    - gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER
+    - echo "gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER -Pimage_tag=$IMAGE_TAG -Pservice=$SERVICE"
+    - gradle $TASK -Penv=$ENV -Pci=true -Ptest_cycle=$CYCLE -Ptest_folder=$FOLDER -Pimage_tag=$IMAGE_TAG -Pservice=$SERVICE
   after_script:
     - mkdir -p "${REPORT_URL}"
     - cp -TRv build/reports/allure-report/ "${REPORT_URL}/" > /dev/null

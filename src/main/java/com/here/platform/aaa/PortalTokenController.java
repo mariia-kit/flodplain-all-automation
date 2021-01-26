@@ -29,12 +29,14 @@ public class PortalTokenController {
 
         String clientId =
                 "prod".equalsIgnoreCase(System.getProperty("env")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
+        String redirectUrl =
+                "prod".equalsIgnoreCase(System.getProperty("env")) ? "https%3A%2F%2Fplatform.here.com%2F" : "https%3A%2F%2Fportal.platform.in.here.com%2F";
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
         String authorizeUrl = portalUrl + "/authorize?"
                 + "client_id=" + clientId + "&"
                 + "prompt=login&"
                 + "scope=openid%20email%20phone%20profile%20readwrite%3Aha&"
-                + "redirect_uri=https%3A%2F%2Fportal.platform.in.here.com%2FauthHandler&"
+                + "redirect_uri=" + redirectUrl + "authHandler&"
                 + "state=%7B%22redirectUri%22%3A%22https%3A%2F%2Fportal.platform.in.here.com%2FauthHandler%22%2C%22redirect%22%3A%22https%253A%252F%252Fportal.platform.in.here.com%252Fmarketplace%252F%22%7D";
 
         Response authorizeResp = given()
