@@ -103,18 +103,21 @@ public class ReferenceProviderController {
     //@Step("Read sync entity {key}")
     public Response readSyncEntity(String key) {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .get("/entity/" + key);
     }
 
-    @Step
+    //@Step
     public Response readServerTime() {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .get("/now");
     }
 
-    @Step("Write sync entity {key} value {value} exp {expirationTime}")
+    //@Step("Write sync entity {key} value {value} exp {expirationTime}")
     public Response writeSyncEntity(String key, String value, long expirationTime) {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .param("key", key)
                 .param("value", value)
                 .param("expiresIn", expirationTime)
@@ -124,17 +127,20 @@ public class ReferenceProviderController {
     //@Step("Sync entity un-lock {key}")
     public Response unlockSyncEtity(String key) {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .post("/unlock/{key}", key);
     }
 
     //@Step("Sync entity lock {key}")
     public Response lockSyncEtity(String key) {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .post("/lock/{key}", key);
     }
 
     public Response deleteSyncEtity(String key) {
         return referenceProviderClient("/sync")
+                .noFilters()
                 .delete("/entity/{key}", key);
     }
 
