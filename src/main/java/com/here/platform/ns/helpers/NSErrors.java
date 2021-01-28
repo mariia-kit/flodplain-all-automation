@@ -138,7 +138,7 @@ public class NSErrors {
 
     public static NSError getCMNoConsentIdProvided(String consentRequestId) {
         return new NSError("Consent token not found",
-                HttpStatus.SC_NOT_FOUND,
+                HttpStatus.SC_BAD_REQUEST,
                 "E501126",
                 sbb("Token is not provided for consent request id ").sQuoted(consentRequestId).bld(),
                 "Clarify with Consent Management team if requested vehicle id has consent");
