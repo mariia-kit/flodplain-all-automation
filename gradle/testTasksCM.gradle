@@ -20,6 +20,9 @@ class TestCM extends Test {
         ]
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+        systemProperty "service", hasProperty('service') ? service : ''
+        systemProperty "image_tag", hasProperty('image_tag') ? image_tag : ''
+
         finalizedBy "allurePushReport"
     }
 }
@@ -41,6 +44,7 @@ if (targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = hasProperty('env') ? env : 'dev'
     println "Receive env from property ${finalEnv}"
 }
+
 
 println "Run script for CM env >>>>> ${finalEnv}"
 
@@ -86,7 +90,8 @@ task feTests(type: TestCM) {
     onlyIf { !isHotDeploy }
     doFirst {
         systemProperty "env", finalEnv
-        allure_project = "consent-web-client-${finalEnv}"
+        def feEnv = finalEnv.equals("prod") ? "prd" : finalEnv
+        allure_project = "consent-web-client-${feEnv}"
     }
     useJUnitPlatform {
         includeTags "ui"
@@ -105,9 +110,6 @@ task userAccount(type: TestCM) {
 
 task uiTests(type: TestCM) {
     onlyIf { !isHotDeploy }
-
-    maxParallelForks = 20
-    forkEvery = 20
     systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "ui"
@@ -116,24 +118,20 @@ task uiTests(type: TestCM) {
 
 task devTests(type: TestCM, dependsOn: "smokeCMTests") {
     onlyIf { !isHotDeploy }
-
     doFirst {
         systemProperty "env", "dev"
         allure_project = "rest-service-dev"
     }
-
     finalizedBy "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
     onlyIf { !isHotDeploy }
-
     doFirst {
         systemProperty "env", "sit"
         systemProperty "jira_sync", "true"
         allure_project = "rest-service-sit"
     }
-
     finalizedBy "uiTests"
 }
 
@@ -153,7 +151,8 @@ task fabricTests(type: TestCM) {
     group "cm tests"
     doFirst {
         systemProperty "env", finalEnv
-        allure_project = "hyperledger-${finalEnv}"
+        def finalService = hasProperty('service') ? service : "hyperledger"
+        allure_project = "${finalService}-${finalEnv}"
     }
     useJUnitPlatform {
         includeTags "fabric_test"
@@ -173,7 +172,6 @@ task allurePushReport(type: JavaExec) {
     doFirst {
         systemProperty "env", finalEnv
         systemProperty "allure_project", allure_project
-        systemProperty "ci", ci
     }
     classpath sourceSets.main.runtimeClasspath
     main = "com.here.platform.common.allureSync.AllureReportExport"

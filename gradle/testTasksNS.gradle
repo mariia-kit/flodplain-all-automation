@@ -8,7 +8,7 @@ if(targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = hasProperty('env') ? env : 'dev'
     println "Receive env from property ${finalEnv}"
 }
-
+def allure_project = null
 
 println "Run script for NS env >>>>> ${finalEnv}"
 
@@ -47,7 +47,7 @@ class TestNS extends Test {
                 "prod.access.key.secret": System.getenv("ACCESS_KEY_SECRET_PROD"),
         ]
 
-        finalizedBy "cleanUpNS", "allurePushReport"
+        finalizedBy "cleanUpNS", "allurePushReportNS"
     }
 }
 
@@ -99,8 +99,11 @@ task cleanUpNS(type: JavaExec) {
 task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
     dependsOn "testDataGeneration"
     group "ns tests"
+    doFirst {
+        systemProperty "env", finalEnv
+        allure_project = "neutral-server-${finalEnv}"
+    }
 
-    systemProperty "env", finalEnv
     useJUnitPlatform {
         includeTags "neutral_server"
         excludeTags "ignored", "ignored-$finalEnv", "consent_management"
@@ -112,6 +115,7 @@ task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
     doFirst {
         systemProperty "env", finalEnv
+        allure_project = "neutral-server-${finalEnv}"
     }
     useJUnitPlatform {
         includeTags "smoke_ns"
@@ -123,6 +127,7 @@ task nsTestProd(type: TestNS, dependsOn: "initTokensNS") {
     group "ns tests"
     doFirst {
         systemProperty "env", finalEnv
+        allure_project = "neutral-server-${finalEnv}"
     }
     useJUnitPlatform {
         includeTags "prod"
@@ -182,4 +187,13 @@ task zephyrSyncTaskNS(type: JavaExec) {
     main = "com.here.platform.ns.instruments.ZephyrothSyncer"
     description = "Run NS Sync test results into Zephyr test cycle"
     classpath sourceSets.main.runtimeClasspath
+}
+
+task allurePushReportNS(type: JavaExec) {
+    doFirst {
+        systemProperty "env", finalEnv
+        systemProperty "allure_project", allure_project
+    }
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.here.platform.common.allureSync.AllureReportExport"
 }
