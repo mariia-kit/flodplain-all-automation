@@ -238,37 +238,6 @@ class GetResourcesByVehicleAndContainerTest extends BaseNSTest {
     }
 
     @Test
-    @Tag("ignored-dev")
-    @DisplayName("Verify get resources by vehicle Id and container Id with no Campaign Id")
-    void verifyGetContainersDataNoCampaignId() {
-        DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();
-        Container container = Containers.generateNew(provider);
-        String vehicleId = Vehicle.validVehicleId;
-
-        Steps.createRegularContainer(container);
-        Steps.createListingAndSubscription(container);
-        User mpConsumer = Users.MP_CONSUMER.getUser();
-        MPProviders cmProvider = MPProviders.findByProviderId(container.getDataProviderName());
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(cmProvider, container);
-        ConsentObject consentObj = new ConsentObject(mpConsumer, cmProvider, targetContainer);
-
-        var crid = new ConsentRequestSteps(consentObj)
-                .onboardAllForConsentRequest()
-                .createConsentRequest()
-                .addVINsToConsentRequest(vehicleId)
-                .approveConsent(vehicleId)
-                .getId();
-
-        var response = new ContainerDataController()
-                .withToken(CONSUMER)
-                .getContainerForVehicle(provider, vehicleId, container);
-        new NeutralServerResponseAssertion(response)
-                .expectedCode(HttpStatus.SC_NOT_FOUND)
-                .expectedHeaderIsPresent("X-Correlation-ID");
-
-    }
-
-    @Test
     @DisplayName("Verify get resources by vehicle Id and container Id for empty response Reference")
     void verifyGetContainersDataRetrievedEmptyReference() {
         DataProvider provider = Providers.REFERENCE_PROVIDER.getProvider();

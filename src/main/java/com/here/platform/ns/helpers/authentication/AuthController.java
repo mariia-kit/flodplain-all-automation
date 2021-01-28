@@ -130,7 +130,7 @@ public class AuthController {
         }
         try {
             String token = supplier.get();
-            if (token.equals("Bearer null")) {
+            if (token == null || token.equals("Bearer null")) {
                 token = supplier.get();
             }
             if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
