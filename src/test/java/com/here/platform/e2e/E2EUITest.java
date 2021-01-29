@@ -205,11 +205,10 @@ public class E2EUITest extends BaseE2ETest {
     @DisplayName("Simple happy path E2E UI level Reference")
     @SneakyThrows
     void simpleHappyPathTestReference() {
-        MPProviders provider = MPProviders.REFERENCE;
+        MPProviders provider = MPProviders.REFERENCE_PROD;
         User mpConsumer = Users.MP_CONSUMER.getUser();
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
         ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
-        String validVIN = Vehicle.validVehicleId;
         new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest();
 

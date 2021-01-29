@@ -156,5 +156,8 @@ public class ConsentRequestSteps {
     public String getId() {
         return consentObject.getCrid();
     }
+    public void setId(String crid) {
+        consentObject.setCrid(crid);
+    }
 
 }

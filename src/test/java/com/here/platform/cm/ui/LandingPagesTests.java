@@ -3,14 +3,15 @@ package com.here.platform.cm.ui;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.sleep;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.WelcomePage;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,17 +35,18 @@ public class LandingPagesTests extends BaseUITests {
 
     @Test
     @Issue("NS-2760")
-    @Disabled("need to resolve flaky test")
     @DisplayName("Verify Welcome page access though link")
     public void verifyWelcomePage() {
-        String crid = "1234567890";
+        String crid = "1234567890123zsdf32323";
         open(crid);
         landingPage.isLoaded().clickOnSignUp();
         new WelcomePage()
                 .isLoaded()
                 .verifyPage()
-                .pressNext()
-                .verifyHERESignInOpened();
+                .pressNext();
+        //workaround for correct page.
+        Selenide.back();
+        new WelcomePage().pressNext().verifyHERESignInOpened();
     }
 
     @Step("Verify is Sign-Up on landing page is not present")

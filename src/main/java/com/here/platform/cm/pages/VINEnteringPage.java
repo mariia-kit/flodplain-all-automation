@@ -16,7 +16,7 @@ public class VINEnteringPage extends BaseCMPage {
 
     @Step("VIN entering page is loaded")
     public VINEnteringPage isLoaded() {
-        this.vinNumberInput.waitUntil(Condition.visible, 10000);
+        this.vinNumberInput.waitUntil(Condition.visible.because("Vin page expected to be here."), 10000);
         return this;
     }
 
