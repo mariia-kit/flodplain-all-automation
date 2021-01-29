@@ -146,11 +146,11 @@ public class MarketplaceFlowSteps {
     @Step("Create consent request by Data Consumer for {targetContainer.id} {vin}")
     public String createConsentByConsumer(ConsentObject consentObj, String vin) {
         new ConsumerSubscriptionsListPage().isLoaded()
-                .waitSubscriptionWithName(consentObj.getProvider().getName())
+                .waitSubscriptionWithName(consentObj.getContainer().getName())
                 .openSubscriptionWithName(consentObj.getContainer().getName());
         var consumerSubscriptionPage = new ConsumerSubscriptionPage().isLoaded();
         subscriptionId = getSubscriptionIdFromUrl();
-        DataForRemoveCollector.addConsent(subscriptionId);
+        DataForRemoveCollector.addMpSubs(subscriptionId);
         consumerSubscriptionPage
                 .createConsentRequest()
                 .fillConsentRequestTitle(consentObj.getConsentRequestData().getTitle())
@@ -158,10 +158,14 @@ public class MarketplaceFlowSteps {
                 .fillPolicyLinks(consentObj.getConsentRequestData().getPrivacyPolicy())
                 .attachFileWithVINs(new VinsToFile(vin).csv())
                 .saveConsentRequest();
-        DataForRemoveCollector.addVin(subscriptionId, vin);
         consentObj.setCrid(subscriptionId);
         consentObj.addVin(vin);
-        return new ConsumerConsentRequestPage().isLoaded().copyConsentRequestURLViaClipboard();
+        String consUrl = new ConsumerConsentRequestPage().isLoaded().copyConsentRequestURLViaClipboard();
+        var pathSegments = UriComponentsBuilder.fromUriString(consUrl).build().getPathSegments();
+        String consId = pathSegments.get(pathSegments.size() - 1);
+        DataForRemoveCollector.addConsent(consId);
+        DataForRemoveCollector.addVin(consId, vin);
+        return consUrl;
     }
 
     private String getSubscriptionIdFromUrl() {

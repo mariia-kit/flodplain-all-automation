@@ -287,7 +287,7 @@ public class MarketplaceSteps {
 
     public void waitForAsyncTask(int taskId, Supplier<String> token) {
         String url = baseMpUrl + "/tasks/" + taskId;
-        int maxCount = 60;
+        int maxCount = 20;
         do {
             maxCount--;
             Response resp = RestHelper
@@ -311,7 +311,7 @@ public class MarketplaceSteps {
             }
         } while (maxCount > 1);
         throw new RuntimeException("Error waiting for MP async task " + taskId
-                + " to complete! Status not success after wait for 30 min.");
+                + " to complete! Status not success after wait for 10 min.");
     }
 
     @SneakyThrows

@@ -269,7 +269,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         var addVins = marketplaceTunnelController
                 .withConsumerToken()
                 .addVinNumbers(consentRequestId, subs, FILE_TYPE.JSON, Vehicle.validVehicleId);
-
+        consentSteps.setId(consentRequestId);
         consentSteps.approveConsent(Vehicle.validVehicleId);
 
 

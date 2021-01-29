@@ -7,7 +7,7 @@ if(targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = hasProperty('env') ? env : 'dev'
     println "Receive env from property ${finalEnv}"
 }
-
+def allure_project = null
 println "Run script for E2E env >>>>> ${finalEnv}"
 
 class TestE2E extends Test {
