@@ -147,11 +147,15 @@ task allureAggregatedReportNS {
     finalizedBy 'allureReport'
 }
 
+def getDate() {
+    return new Date().format('dd-MM-yyyy')
+}
+
 task zephyrLinkTaskNS(type: JavaExec) {
     doFirst {
 
-        def cycleValue = hasProperty('test_cycle') ? test_cycle : 'latest'
-        def folderValue = hasProperty('test_folder') ? test_folder : 'NSPOSTMVP'
+        def cycleValue = hasProperty('test_cycle') ? test_cycle : "${getDate()}-testing-cycle"
+        def folderValue = 'NS_CM_Test'
 
         println "Current user and service: $jira_login $cycleValue"
         args = [
@@ -171,8 +175,8 @@ task zephyrLinkTaskNS(type: JavaExec) {
 task zephyrSyncTaskNS(type: JavaExec) {
     doFirst {
 
-        def cycleValue = hasProperty('test_cycle') ? test_cycle : 'latest'
-        def folderValue = hasProperty('test_folder') ? test_folder : 'NSPOSTMVP'
+        def cycleValue = hasProperty('test_cycle') ? test_cycle : "${getDate()}-testing-cycle"
+        def folderValue = 'NS_CM_Test'
 
         println "Current user and service: $jira_login $cycleValue"
         args = [
