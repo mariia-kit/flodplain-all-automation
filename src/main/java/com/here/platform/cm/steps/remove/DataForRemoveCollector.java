@@ -16,19 +16,19 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DataForRemoveCollector {
     private static Map<String, List<String>> cridsToRemove = new ConcurrentHashMap<>();
-    private static Map<String, List<PairValue>> cridsVinsToRemove = new HashMap<>();
-    private static Map<String, List<ProviderApplication>> applications = new HashMap<>();
-    private static Map<String, List<String>> consumer = new HashMap<>();
-    private static Map<String, List<String>> provider = new HashMap<>();
-    private static Map<String, List<HereUser>> hereAccounts = new HashMap<>();
+    private static Map<String, List<PairValue>> cridsVinsToRemove = new ConcurrentHashMap<>();
+    private static Map<String, List<ProviderApplication>> applications = new ConcurrentHashMap<>();
+    private static Map<String, List<String>> consumer = new ConcurrentHashMap<>();
+    private static Map<String, List<String>> provider = new ConcurrentHashMap<>();
+    private static Map<String, List<HereUser>> hereAccounts = new ConcurrentHashMap<>();
 
-    private static Map<String, List<Container>> nsContainers = new HashMap<>();
-    private static Map<String, List<DataProvider>> nsProviders = new HashMap<>();
+    private static Map<String, List<Container>> nsContainers = new ConcurrentHashMap<>();
+    private static Map<String, List<DataProvider>> nsProviders = new ConcurrentHashMap<>();
 
-    private static Map<String, List<String>> mpListings = new HashMap<>();
-    private static Map<String, List<String>> mpSubs = new HashMap<>();
+    private static Map<String, List<String>> mpListings = new ConcurrentHashMap<>();
+    private static Map<String, List<String>> mpSubs = new ConcurrentHashMap<>();
 
-    private static Map<String, List<PairValue>> artificialPolicy = new HashMap<>();
+    private static Map<String, List<PairValue>> artificialPolicy = new ConcurrentHashMap<>();
 
     public void addConsent(String crid) {
         String testId = Allure.getLifecycle().getCurrentTestCase()
