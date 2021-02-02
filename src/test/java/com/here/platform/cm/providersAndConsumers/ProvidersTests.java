@@ -30,7 +30,7 @@ class ProvidersTests extends BaseCMTest {
     @DisplayName("Verify success on-boarding of a Data Provider")
     void onboardDataProvider() {
         var testDataProvider = new Provider()
-                .name(faker.commerce().department())
+                .name("daimler")
                 .id(crypto.md5())
                 .properties(Map.of());
 

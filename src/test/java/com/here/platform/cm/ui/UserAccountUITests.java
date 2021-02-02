@@ -157,8 +157,9 @@ public class UserAccountUITests extends BaseUITests {
 
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
-        new OopsPage().isLoaded();
-
+        new OopsPage().isLoaded()
+                .verifyError("404", "Couldn't find that record", "Check the URL and try again")
+                .verifyRetryButton(false);
     }
 
 }

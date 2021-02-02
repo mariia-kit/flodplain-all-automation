@@ -36,6 +36,8 @@ boolean isHotDeploy = System.getenv("hot_deploy")
 def allure_project = null
 def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
 def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
+println "DYNAMIC_ENV_URL = ${dynamicEnvUrl}"
+println "CI_ENVIRONMENT_SLUG = ${targetEnv}"
 def finalEnv = "dev"
 if (targetEnv != null && !targetEnv.isEmpty()) {
     finalEnv = targetEnv
@@ -43,6 +45,7 @@ if (targetEnv != null && !targetEnv.isEmpty()) {
 } else {
     finalEnv = hasProperty('env') ? env : 'dev'
     println "Receive env from property ${finalEnv}"
+
 }
 
 
