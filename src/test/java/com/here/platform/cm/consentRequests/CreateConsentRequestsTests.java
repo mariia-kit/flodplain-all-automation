@@ -98,4 +98,26 @@ public class CreateConsentRequestsTests extends BaseCMTest {
                 .expectedErrorCause("Property 'consentRequestData.privacyPolicy' must not be blank");
     }
 
+    @Test
+    @Issue("NS-3512")
+    @DisplayName("Is possible to create consent request without additional links")
+    void isPossibleToCreateConsentRequestWithoutAdditionalLinks() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        consentObj.getConsentRequestData()
+                .additionalLinks(null);
+        new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest();
+
+        var consentRequestResponse = consentRequestController
+                .withConsumerToken()
+                .createConsentRequest(consentObj.getConsentRequestData());
+
+        new ResponseAssertion(consentRequestResponse)
+                .statusCodeIsEqualTo(StatusCode.CREATED);
+    }
+
 }

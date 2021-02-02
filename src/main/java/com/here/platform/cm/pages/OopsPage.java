@@ -20,4 +20,26 @@ public class OopsPage extends BaseCMPage {
         return this;
     }
 
+    @Step
+    public OopsPage verifyError(String code, String title, String description) {
+        $(".container-content h1").shouldHave(Condition
+                .text(code).because("Error code is not as expected!"));
+        $(".container-content h2").shouldHave(Condition
+                .text(title).because("Error title is not as expected!"));
+        $(".container-content .container-content-details").shouldHave(Condition
+                .text(description).because("Error description is not as expected!"));
+        return this;
+    }
+
+    @Step
+    public OopsPage verifyRetryButton(boolean isPresent) {
+        if (isPresent) {
+            $(byText("Go back")).shouldBe(Condition.visible.because("Back button expected to be present!"));
+        } else {
+            $(byText("Go back"))
+                    .shouldBe(Condition.not(Condition.visible.because("Back button is not expected to be present!")));
+        }
+        return this;
+    }
+
 }
