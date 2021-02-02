@@ -6,11 +6,11 @@ import com.here.platform.ns.dto.Container;
 import com.here.platform.ns.dto.DataProvider;
 import io.qameta.allure.Allure;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.experimental.UtilityClass;
+import org.springframework.util.StringUtils;
 
 
 @UtilityClass
@@ -74,19 +74,23 @@ public class DataForRemoveCollector {
     }
 
     public void addNSContainer(Container container) {
-        String testId = Allure.getLifecycle().getCurrentTestCase().get();
-        if (!nsContainers.containsKey(testId)) {
-            nsContainers.put(testId, new ArrayList<>());
+        String testId = Allure.getLifecycle().getCurrentTestCase().orElse(null);
+        if (!StringUtils.isEmpty(testId)) {
+            if (!nsContainers.containsKey(testId)) {
+                nsContainers.put(testId, new ArrayList<>());
+            }
+            nsContainers.get(testId).add(container);
         }
-        nsContainers.get(testId).add(container);
     }
 
     public void addNSProvider(DataProvider provider) {
-        String testId = Allure.getLifecycle().getCurrentTestCase().get();
-        if (!nsProviders.containsKey(testId)) {
-            nsProviders.put(testId, new ArrayList<>());
+        String testId = Allure.getLifecycle().getCurrentTestCase().orElse(null);
+        if (!StringUtils.isEmpty(testId)) {
+            if (!nsProviders.containsKey(testId)) {
+                nsProviders.put(testId, new ArrayList<>());
+            }
+            nsProviders.get(testId).add(provider);
         }
-        nsProviders.get(testId).add(provider);
     }
 
     public void addMpListing(String listing) {
