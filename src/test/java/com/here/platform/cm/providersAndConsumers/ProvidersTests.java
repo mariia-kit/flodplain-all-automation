@@ -101,4 +101,23 @@ class ProvidersTests extends BaseCMTest {
                 .responseIsEmpty();
     }
 
+    @Test
+    @DisplayName("Verify on-boarding of a Data Provider with invalid name")
+    void onboardDataProviderNotValidName() {
+        var testDataProvider = new Provider()
+                .name(crypto.md5())
+                .id(crypto.md5())
+                .properties(Map.of());
+
+        var onboardDataProvider = providerController
+                .withCMToken()
+                .onboardDataProvider(testDataProvider);
+
+        new ResponseAssertion(onboardDataProvider)
+                .expectedErrorResponse(CMErrorResponse.PARAMETER_VALIDATION);
+        new ResponseAssertion(onboardDataProvider)
+                .expectedErrorCause("Property 'provider.name' has not supported provider name");
+
+    }
+
 }

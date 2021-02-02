@@ -20,8 +20,6 @@ class TestCM extends Test {
         ]
 
         def dynamicEnvUrl = System.getenv("DYNAMIC_ENV_URL")
-        systemProperty "service", hasProperty('service') ? service : ''
-        systemProperty "image_tag", hasProperty('image_tag') ? image_tag : ''
 
         finalizedBy "allurePushReport"
     }
@@ -154,7 +152,8 @@ task fabricTests(type: TestCM) {
     group "cm tests"
     doFirst {
         systemProperty "env", finalEnv
-        def finalService = hasProperty('service') ? service : "hyperledger"
+        def externalService = System.getenv("SERVICE")
+        def finalService = externalService != null ? externalService : "hyperledger"
         allure_project = "${finalService}-${finalEnv}"
     }
     useJUnitPlatform {
