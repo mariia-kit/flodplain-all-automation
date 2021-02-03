@@ -20,6 +20,7 @@ import lombok.ToString;
 @ToString
 public class DataProvider {
 
+    private String id;
     private String name;
     private String url;
     @EqualsAndHashCode.Exclude
@@ -27,6 +28,7 @@ public class DataProvider {
 
     @ConstructorProperties({"name", "url"})
     public DataProvider(String name, String url) {
+        this.id = name;
         this.name = name;
         this.url = url;
         this.resources = new ArrayList<>();

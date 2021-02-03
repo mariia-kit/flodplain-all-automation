@@ -67,8 +67,11 @@ public class AllureReportExport {
                 Thread.sleep(500);
             }
             System.out.println("Init report render for:" + report.size() + " files.");
-            int res = allureSyncController.initReportGeneration(project_id, executionName).getStatusCode();
-            System.out.println("Report render complete with code:" + res);
+            Response res = allureSyncController.initReportGeneration(project_id, executionName);
+            System.out.println("Report render complete with code:" + res.getStatusCode());
+            if (res.getStatusCode() == 200) {
+                System.out.println("Report URL: " + res.getBody().jsonPath().getString("data.report_url"));
+            }
             Thread.sleep(5000);
             Response remove = allureSyncController.clearReportData(project_id);
             System.out.println("Remove old data:" + remove.getStatusCode());
