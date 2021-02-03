@@ -19,6 +19,7 @@ import lombok.Setter;
 public class Container {
 
     private String id;
+    private String dataProviderId;
     private String name;
     private String dataProviderName;
     private String description;
@@ -31,6 +32,7 @@ public class Container {
             "consentRequired", "scope"})
     public Container(String id, String name, String dataProviderName, String description,
             String resourceNames, Boolean consentRequired, String scope) {
+        this.dataProviderId = dataProviderName;
         this.name = name;
         this.id = id;
         this.dataProviderName = dataProviderName;

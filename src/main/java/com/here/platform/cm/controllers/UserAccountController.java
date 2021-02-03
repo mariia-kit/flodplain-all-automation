@@ -2,12 +2,13 @@ package com.here.platform.cm.controllers;
 
 import com.here.platform.cm.rest.model.HereAccountRequestTokenData;
 import com.here.platform.common.strings.VIN;
-import com.here.platform.hereAccount.controllers.HereUserManagerController.HereUser;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 
 
 //todo implement UserCleanUpExtension
@@ -23,12 +24,21 @@ public class UserAccountController extends BaseConsentService<UserAccountControl
                 .get("/oauth/sign-in");
     }
 
+    @SneakyThrows
     @Step("Sign in user to CM by authorization code: '{authorizationCode}'")
     public Response userAccountSignIn(String authorizationCode) {
-        return consentServiceClient(StringUtils.EMPTY)
+        Response resp = consentServiceClient(StringUtils.EMPTY)
                 .body(new HereAccountRequestTokenData().authorizationCode(authorizationCode))
                 .redirects().follow(false)
                 .post("/sign-in");
+        if (resp.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+            Thread.sleep(1000);
+            return consentServiceClient(StringUtils.EMPTY)
+                    .body(new HereAccountRequestTokenData().authorizationCode(authorizationCode))
+                    .redirects().follow(false)
+                    .post("/sign-in");
+        }
+        return resp;
     }
 
     public Response userAccountGetInfo(String privateBearerToken) {
