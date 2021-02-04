@@ -38,5 +38,16 @@ public class VINEnteringPage extends BaseCMPage {
                 .shouldHave(Condition.text("Provided VIN already used by this account"));
     }
 
+    @Step("Verify Vin page type is Free")
+    public VINEnteringPage verifyIsFree() {
+        $(byText("Back")).shouldBe(Condition.visible.because("Vin page for free adding of vin expected."));
+        return this;
+    }
+
+    @Step("Verify Vin page type is Obligatory")
+    public VINEnteringPage verifyIsMandatory() {
+        $(byText("Back")).shouldBe(Condition.not(Condition.visible.because("Vin page for mandatory adding of vin expected.")));
+        return this;
+    }
 
 }

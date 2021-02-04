@@ -7,13 +7,16 @@ import static com.here.platform.cm.rest.model.ConsentInfo.StateEnum.APPROVED;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.here.platform.cm.enums.ConsentObject;
+import com.here.platform.cm.enums.ConsentPageUrl;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.ActualOffersPage;
+import com.here.platform.cm.pages.BaseCMPage.Header;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.OopsPage;
+import com.here.platform.cm.pages.UserProfilePage;
 import com.here.platform.cm.pages.VINEnteringPage;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
@@ -108,6 +111,7 @@ public class UserAccountUITests extends BaseUITests {
 
         new ActualOffersPage().isLoaded().clickAddNewVin();
         new VINEnteringPage().fillVINAndContinue(secondVIN);
+        new Header().openDashboardNewTab().openConsentRequestOfferBox(consentObj.getConsent(secondVIN));
         OfferDetailsPageSteps.verifyConsentDetailsPage(consentObj.getConsent(secondVIN));
     }
 
@@ -141,6 +145,21 @@ public class UserAccountUITests extends BaseUITests {
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
         $(".vin-code", 1).shouldHave(Condition.not(Condition.visible).because("No vin page if vin already attached"));
+    }
+
+    @Test
+    @Issue("NS-3506")
+    @Feature("VIN Page")
+    @DisplayName("Verify Vin Page validation no consent")
+    void verifyVinPageWithNoConsent() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        open(ConsentPageUrl.getEnvUrlRoot());
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+
+        new UserProfilePage().isLoaded().verifyUserProfileVinDetails(dataSubjectIm.getVin());
     }
 
     @Test
