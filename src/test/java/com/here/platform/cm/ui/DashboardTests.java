@@ -115,9 +115,6 @@ public class DashboardTests extends BaseUITests {
         new VINEnteringPage().isLoaded();
     }
 
-    //todo mark tests with @Feature(or some other) annotation specific user flow that is checked
-    // https://confluence.in.here.com/display/OLP/Consent+Management+User+Flows
-
     @Test
     @Issue("NS-2744")
     @Feature("Profile info page")

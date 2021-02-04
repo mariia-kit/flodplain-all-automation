@@ -2,17 +2,24 @@ package com.here.platform.cm.ui;
 
 import static com.codeborne.selenide.Selenide.open;
 
+import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentPageUrl;
+import com.here.platform.cm.enums.ConsentRequestContainer;
+import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
 import com.here.platform.cm.pages.BaseCMPage.Header;
 import com.here.platform.cm.pages.DashBoardPage;
 import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.UserProfilePage;
 import com.here.platform.cm.pages.VINEnteringPage;
+import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.annotations.CMFeatures.UserAccount;
+import com.here.platform.common.strings.VIN;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
+import com.here.platform.ns.dto.User;
+import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import org.junit.jupiter.api.DisplayName;
@@ -226,6 +233,41 @@ public class UserProfileTests extends BaseUITests{
         new UserProfilePage().clickProfileInfo();
 
         new UserProfilePage().verifyNoVehiclesText();
+    }
+
+    @Test
+    @Issue("NS-3506")
+    @Feature("VIN Page")
+    @Feature("Profile info page")
+    @DisplayName("Verify Profile all vins are removed")
+    void verifyVinPageWithRemovedAllVin() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
+
+        open(crid);
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        new VINEnteringPage().isLoaded().verifyIsMandatory().fillVINAndContinue(dataSubjectIm.getVin());
+
+        new Header().openDashboardUserAvatarTab();
+        UserProfilePage userProfilePage = new UserProfilePage();
+        userProfilePage.clickProfileInfo();
+        userProfilePage.clickDeleteVehicle(new VIN(dataSubjectIm.getVin()).label());
+        userProfilePage.clickConfirmDelete();
+        new Header().openDashboardAcceptedTab();
+        new VINEnteringPage()
+                .isLoaded()
+                .verifyIsFree()
+                .fillVINAndContinue(VIN.generate(17));
     }
 
 }

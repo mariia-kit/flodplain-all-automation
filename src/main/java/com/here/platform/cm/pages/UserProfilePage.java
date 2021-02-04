@@ -84,6 +84,13 @@ public class UserProfilePage  extends BaseCMPage {
         return new UserProfilePage();
     }
 
+    @Step("Click on the 'Delete vehicle' icon on the User Profile tab for vin {vinLabel}")
+    public UserProfilePage clickDeleteVehicle(String vinLabel) {
+        //*********F0A18910
+        $(By.xpath("//tr[//td/span[contains(text(),'*********" + vinLabel + "')]]/td[5]")).click();
+        return new UserProfilePage();
+    }
+
     @Step("Click on the 'Add new vehicle' button on the User Profile tab")
     public UserProfilePage clickAddNewVehicle() {
         $(byText("Add new vehicle")).click();
