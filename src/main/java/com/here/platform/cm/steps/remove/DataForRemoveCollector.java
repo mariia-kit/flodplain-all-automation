@@ -125,6 +125,14 @@ public class DataForRemoveCollector {
         hereAccounts.get(testId).add(hereUser);
     }
 
+    public void removeHereUser(String userMail) {
+        String testId = Allure.getLifecycle().getCurrentTestCase().get();
+        if (!hereAccounts.containsKey(testId)) {
+            hereAccounts.put(testId, new ArrayList<>());
+        }
+        hereAccounts.get(testId).removeIf(user -> user.getEmail().equals(userMail));
+    }
+
     public List<String> getAllConsents(String testId) {
         return cridsToRemove.getOrDefault(testId, new ArrayList<>());
     }

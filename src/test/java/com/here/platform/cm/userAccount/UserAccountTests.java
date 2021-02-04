@@ -1,15 +1,19 @@
 package com.here.platform.cm.userAccount;
 
 import com.here.platform.cm.BaseCMTest;
+import com.here.platform.cm.controllers.HERETokenController;
 import com.here.platform.cm.controllers.UserAccountController;
 import com.here.platform.cm.enums.CMErrorResponse;
 import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
 import com.here.platform.cm.enums.MPProviders;
+import com.here.platform.cm.rest.model.ConsentRequestStatus;
 import com.here.platform.cm.rest.model.UserAccountData;
 import com.here.platform.cm.steps.api.ConsentRequestSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
+import com.here.platform.cm.steps.remove.AllRemoveExtension;
+import com.here.platform.cm.steps.remove.DataForRemoveCollector;
 import com.here.platform.common.DataSubject;
 import com.here.platform.common.ResponseAssertion;
 import com.here.platform.common.ResponseExpectMessages.StatusCode;
@@ -19,6 +23,7 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -75,4 +80,36 @@ public class UserAccountTests extends BaseCMTest {
                 .expectedErrorResponse(CMErrorResponse.SIGNATURE_INVALID);
     }
 
+    @Test
+    @Issue("NS-3453")
+    @Disabled("Wait for implementation of callback by HERE")
+    @DisplayName("Verify auto revoke of ConsentRequest after HERE acc disable")
+    void autoRevokeAfterAccountDisable() {
+        MPProviders provider = MPProviders.DAIMLER_REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+
+        DataSubject dataSubject = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+        //Login to attach user acc
+        new HERETokenController().loginAndGenerateCMToken(dataSubject.getEmail(), dataSubject.getPass());
+        UserAccountSteps.attachVINToUserAccount(dataSubject, dataSubject.getVin());
+
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        var step = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubject.getVin());
+        var crid = step.getId();
+
+        UserAccountSteps.removeHereAccount(dataSubject);
+        DataForRemoveCollector.removeHereUser(dataSubject.getEmail());
+        fuSleep();fuSleep();fuSleep();fuSleep();
+        final var expectedStatusesForConsent = new ConsentRequestStatus()
+                .approved(0)
+                .pending(0)
+                .revoked(1)
+                .expired(0)
+                .rejected(0);
+        step.verifyConsentStatus(expectedStatusesForConsent);
+    }
 }

@@ -218,5 +218,4 @@ class RevokeConsentTests extends BaseConsentStatusTests {
 
         Assertions.assertThat(errorResponse.getCause()).isEqualTo("Consent already revoked");
     }
-
 }
