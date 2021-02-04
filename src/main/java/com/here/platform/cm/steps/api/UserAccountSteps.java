@@ -61,6 +61,12 @@ public class UserAccountSteps {
         AuthController.deleteToken(dataSubjectIm);
     }
 
+    public void removeHereAccount(DataSubject dataSubject) {
+        HereUser hereUser = new HereUser(dataSubject.getEmail(), dataSubject.getPass(), "here");
+        new HereUserManagerController().deleteHereUser(hereUser);
+        AuthController.deleteToken(dataSubject);
+    }
+
     public Response initHereCallback(DataSubject dataSubjectIm) {
         HereUser hereUser = new HereUser(
                 dataSubjectIm.getEmail(),
