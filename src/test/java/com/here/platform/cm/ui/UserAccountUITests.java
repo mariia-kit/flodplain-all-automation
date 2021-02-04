@@ -181,4 +181,53 @@ public class UserAccountUITests extends BaseUITests {
                 .verifyRetryButton(false);
     }
 
+    @Test
+    @Issue("NS-3501")
+    @Feature("Actual offers page")
+    @DisplayName("Verify there is no Accepted offer after the connected vin was deleted and add vin again")
+    void verifyAcceptedOfferWasRemovedAfterDeletingConnectedVin() {
+        MPProviders provider = MPProviders.REFERENCE;
+        User mpConsumer = Users.MP_CONSUMER.getUser();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(provider);
+        ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
+        DataSubject dataSubjectIm = UserAccountSteps.generateNewHereAccount(provider.getVinLength());
+
+        var crid = new ConsentRequestSteps(consentObj)
+                .onboardAllForConsentRequest()
+                .createConsentRequest()
+                .addVINsToConsentRequest(dataSubjectIm.getVin())
+                .getId();
+
+        open(crid);
+        new LandingPage().isLoaded().clickSignIn();
+        HereLoginSteps.loginNewDataSubjectWithHEREConsentApprove(dataSubjectIm);
+        new VINEnteringPage().isLoaded().fillVINAndContinue(dataSubjectIm.getVin());
+
+        OfferDetailsPageSteps.verifyConsentDetailsPageAndCountinue(consentObj.getConsent());
+
+        ReferenceApprovePage.approveReferenceScopesAndSubmit(dataSubjectIm.getVin());
+
+        SuccessConsentPageSteps.verifyFinalPage(consentObj.getConsent());
+
+        new Header().openDashboardUserAvatarTab();
+
+        new UserProfilePage()
+                .clickProfileInfo();
+
+        new UserProfilePage()
+                .clickDeleteVehicle()
+                .clickConfirmDelete()
+                .verifyNoVehiclesText();
+
+        new Header().openDashboardAcceptedTab();
+
+        new VINEnteringPage()
+                .isLoaded()
+                .fillVINAndContinue(dataSubjectIm.vin);
+
+        new UserProfilePage()
+                .isLoaded()
+                .verifyUserProfileVinDetails(dataSubjectIm.vin);
+    }
+
 }
