@@ -60,3 +60,5 @@
       alias: selenium28
     - name: selenium/standalone-chrome:latest
       alias: selenium29
+    - name: selenium/standalone-chrome:latest
+      alias: selenium30

@@ -20,7 +20,7 @@ public class SeleniumContainerHandler {
             return containerMap.get(testName);
         }
         String basePath = "build/tmp";
-        for (int i=0; i<=29; i++) {
+        for (int i=0; i<=30; i++) {
             File marker = new File(basePath + "/selenium" + i + ".txt");
             if (marker.exists()) {
                 continue;
