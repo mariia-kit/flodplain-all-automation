@@ -2,9 +2,13 @@ package com.here.platform.cm.pages;
 
 import static com.codeborne.selenide.Selectors.byCssSelector;
 import static com.codeborne.selenide.Selectors.byId;
+import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.byTitle;
+import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
+import static com.codeborne.selenide.Selenide.switchTo;
 
 import com.codeborne.selenide.Condition;
 import com.here.account.oauth2.HereAccount;
@@ -53,8 +57,24 @@ public class UserProfilePage  extends BaseCMPage {
     @Step("Verify HERE Account page")
     public void verifyHEREAccountLink() {
         String userAcc = Conf.ns().getPortalUrl() + "/";
-        $("body  app-root  lui-default-theme  div  app-account-component  div  iframe")
-                .shouldHave(Condition.attribute("src", userAcc));
+        $(byTitle("Manage account"))
+                .shouldHave(Condition.attribute("href", userAcc));
+        switchTo().window(1);
+        $("#basicInformation")
+                .shouldBe(Condition.appear);
+        $("#basicInformation div.logo")
+                .shouldBe(Condition.visible);
+        $("#basicInformation h2:nth-child(2)")
+                .shouldHave(Condition.text("Personal info"));
+        $("#button-basic-information-save")
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Save"));
+        $("#button-deactivate-account")
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Deactivate account"));
+        $("#button-signout")
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Sign out"));
     }
 
     @Step("Verify user profile data")
