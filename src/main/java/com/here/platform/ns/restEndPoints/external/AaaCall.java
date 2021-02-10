@@ -13,11 +13,13 @@ import com.here.platform.ns.helpers.CleanUpHelper;
 import io.qameta.allure.Step;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.path.json.JsonPath;
+import io.restassured.path.json.exception.JsonPathException;
 import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.http.HttpStatus;
@@ -57,7 +59,13 @@ public class AaaCall {
     }
 
     private void parseData(JsonPath res, List<MutablePair<String, String>> policy) {
-        List<JsonNode> data = res.getList("data", JsonNode.class);
+        List<JsonNode> data = new ArrayList<>();
+        try {
+            data = res.getList("data", JsonNode.class);
+        } catch (JsonPathException ex) {
+            System.out.println("Error parsing response " + res.toString());
+            return;
+        }
         data.forEach(p -> {
             String policyId = p.get("id").toString().replace("\"", "");
             p.get("permissions").findValues("resource").stream()
@@ -68,9 +76,9 @@ public class AaaCall {
     }
 
     @Step("Delete policy {id}")
-    public void deletePolicy(String id) {
+    public Response deletePolicy(String id) {
         String url = Conf.ns().getAuthUrlBase() + "/policy/" + id;
-        given()
+        return given()
                 .headers("Content-Type", "application/json",
                         "Authorization", "Bearer " + Users.AAA.getToken())
                 .when()
@@ -82,6 +90,8 @@ public class AaaCall {
 
     public void wipeAllPolicies(String query) {
         String groupId = Conf.nsUsers().getConsumerGroupId();
+        String groupId2 = "GROUP-f905202a-b38c-46ec-b0a1-5ebda7b18389";
+        String groupId3 = "GROUP-9a2cd6e4-299a-432d-a464-e70558bbe8ee";
         List<MutablePair<String, String>> policy = getAllContainersPolicy();
         Map<String, String> pLinks = getAllPolicyLink(groupId);
         policy.stream()
@@ -99,7 +109,8 @@ public class AaaCall {
                         }
                         deletePolicy(p.getLeft());
                     } else {
-                        deletePolicy(p.getLeft());
+                        Response del = deletePolicy(p.getLeft());
+                        System.out.println("Del Policy " + del.getBody().print());
                     }
 
                 });
@@ -296,9 +307,9 @@ public class AaaCall {
             String serviceId = p.get("serviceId").toString().replace("\"", "");
             String policyId = p.get("policyId").toString().replace("\"", "");
             String linkId = p.get("id").toString().replace("\"", "");
-            if (serviceId.equals(Conf.nsUsers().getAaService().getAppId())) {
+            //if (serviceId.equals(Conf.nsUsers().getAaService().getAppId())) {
                 res.put(policyId, linkId);
-            }
+            //}
         });
         return res;
     }

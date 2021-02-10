@@ -44,8 +44,6 @@ public class UserProfileTests extends BaseUITests{
         new LandingPage().isLoaded().clickSignIn();
         HereLoginSteps.loginRegisteredDataSubject(dataSubjectIm);
 
-        new VINEnteringPage().isLoaded();
-
         new Header().openDashboardUserAvatarTab();
 
         new UserProfilePage()

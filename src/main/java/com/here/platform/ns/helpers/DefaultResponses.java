@@ -42,6 +42,22 @@ public class DefaultResponses {
         return false;
     }
 
+    public static boolean isDataProviderPresentInListMP(DataProvider dataProvider,
+            Response response) {
+        if (response.getStatusCode() == 200) {
+            ArrayList<HashMap> dataProviderList = response.getBody().jsonPath().get();
+            for (HashMap dataProviderMap : dataProviderList) {
+                if (dataProviderMap.get("id").toString().equals(dataProvider.getName())
+                        &&
+                        dataProviderMap.get("url").toString()
+                                .equalsIgnoreCase(dataProvider.getUrl())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean isResourceInList(ProviderResource resource,
             Response response) {
         if (response.getStatusCode() == 200) {
