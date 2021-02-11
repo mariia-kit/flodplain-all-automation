@@ -15,14 +15,12 @@ import com.here.platform.ns.dto.Providers;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.DefaultResponses;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'API Tunnelling'")
@@ -44,7 +42,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
-                .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
+                .expected(res -> DefaultResponses.isDataProviderPresentInListMP(provider, res),
                         "No expected container in result!");
     }
 
@@ -68,7 +66,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                         "Expected list should not be empty!")
                 .expectedJsonContains("[0].name", container.getName(),
                         "Name of Container not as expected.")
-                .expectedJsonContains("[0].dataProviderName", container.getDataProviderName(),
+                .expectedJsonContains("[0].dataProviderId", container.getDataProviderId(),
                         "DataProviderName of Container not as expected.")
                 .expectedJsonContains("[0].description", container.getDescription(),
                         "Description of Container not as expected.")
