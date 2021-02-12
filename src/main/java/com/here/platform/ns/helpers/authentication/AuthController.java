@@ -131,6 +131,11 @@ public class AuthController {
         try {
             String token = supplier.get();
             if (token == null || token.equals("Bearer null")) {
+                System.err.println("Error 1 creating token for " + key + ": " + token);
+                token = supplier.get();
+            }
+            if (token == null || token.equals("Bearer null")) {
+                System.err.println("Error 2 creating token for " + key + ": " + token);
                 token = supplier.get();
             }
             if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {
