@@ -106,6 +106,9 @@ public class HereUserManagerController extends BaseHereAccountController {
             this.email = email;
             this.password = password;
             firstname = new Faker().name().firstName();
+            if (firstname.equals("Gaylord")) {
+                firstname = "Some";
+            }
             lastname = new Faker().name().lastName() + "_test";
             countryCode = "USA";
             language = "en";

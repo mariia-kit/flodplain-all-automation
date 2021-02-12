@@ -4,6 +4,8 @@ import static com.here.platform.common.strings.SBB.sbb;
 import static io.restassured.RestAssured.given;
 
 import com.here.platform.common.config.Conf;
+import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.response.Response;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +28,11 @@ public class ReferenceTokenController {
                 .replace(CALLBACK_URL + "?code=", StringUtils.EMPTY);
     }
 
+    @Step("Create consent on reference provider for {clientId}")
     private static String createConsent(String clientId, String scope) {
         String authorize = Conf.ns().getRefProviderUrl() + "/auth/oauth/v2/authorize";
         Response authResp = given()
+                .filters(new AllureRestAssured())
                 .param("client_id", clientId)
                 .param("response_type", "code")
                 .param("scope", scope)
@@ -41,11 +45,13 @@ public class ReferenceTokenController {
         return consentId;
     }
 
+    @Step("Approve consent on reference provider {consentId} for vin {vin}")
     private static Response approve(String consentId, String vin) {
         String makeConsent = Conf.ns().getRefProviderUrl() + "/consent";
         return given()
                 .param("consent_id", consentId)
                 .param("vin", vin)
+                .filters(new AllureRestAssured())
                 .when().post(makeConsent);
     }
 
