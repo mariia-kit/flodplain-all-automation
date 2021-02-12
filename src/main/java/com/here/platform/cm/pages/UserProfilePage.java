@@ -100,7 +100,7 @@ public class UserProfilePage  extends BaseCMPage {
 
     @Step("Click on the 'Delete vehicle' icon on the User Profile tab")
     public UserProfilePage clickDeleteVehicle() {
-        $("body app-root lui-default-theme div app-user-profile section article lui-table table tbody tr td:nth-child(5)").click();
+        $(".ng-star-inserted td:nth-child(5)").click();
         return new UserProfilePage();
     }
 
