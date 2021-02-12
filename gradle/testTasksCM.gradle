@@ -123,7 +123,10 @@ task devTests(type: TestCM, dependsOn: "smokeCMTests") {
         systemProperty "env", "dev"
         allure_project = "rest-service-dev"
     }
-    finalizedBy "uiTests"
+    useJUnitPlatform {
+        includeTags "skip"
+    }
+    //finalizedBy "uiTests"
 }
 
 task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
@@ -133,7 +136,10 @@ task sitTests(type: TestCM, dependsOn: "smokeCMTests") {
         systemProperty "jira_sync", "true"
         allure_project = "rest-service-sit"
     }
-    finalizedBy "uiTests"
+    useJUnitPlatform {
+        includeTags "skip"
+    }
+    //finalizedBy "uiTests"
 }
 
 task prodTests(type: TestCM) {
@@ -145,7 +151,6 @@ task prodTests(type: TestCM) {
     useJUnitPlatform {
         includeTags "cm_prod"
     }
-
 }
 
 task fabricTests(type: TestCM) {
