@@ -1,12 +1,10 @@
 package com.here.platform.cm.steps.remove;
 
-import com.here.platform.aaa.BearerAuthorization;
 import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.steps.api.RemoveEntitiesSteps;
 import com.here.platform.cm.steps.api.UserAccountSteps;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
 import com.here.platform.ns.dto.Providers;
-import com.here.platform.ns.helpers.CleanUpHelper;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import io.qameta.allure.Allure;
