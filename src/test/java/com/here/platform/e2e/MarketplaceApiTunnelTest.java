@@ -42,7 +42,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
-                .expected(res -> DefaultResponses.isDataProviderPresentInListMP(provider, res),
+                .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
                         "No expected container in result!");
     }
 
@@ -66,7 +66,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                         "Expected list should not be empty!")
                 .expectedJsonContains("[0].name", container.getName(),
                         "Name of Container not as expected.")
-                .expectedJsonContains("[0].dataProviderId", container.getDataProviderId(),
+                .expectedJsonContains("[0].dataProviderName", container.getDataProviderId(),
                         "DataProviderName of Container not as expected.")
                 .expectedJsonContains("[0].description", container.getDescription(),
                         "Description of Container not as expected.")
