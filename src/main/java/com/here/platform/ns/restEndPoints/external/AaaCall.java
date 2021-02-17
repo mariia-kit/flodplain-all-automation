@@ -185,7 +185,7 @@ public class AaaCall {
         String policyLink = addGroupToPolicy(groupId, policyId);
         DataForRemoveCollector.addPolicy(policyId, policyLink);
         try {
-            Thread.sleep(60000);
+            Thread.sleep(5*60000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
