@@ -103,13 +103,28 @@ public class AuthController {
                 case CMCONS:
                     logger.info("------------- Creating new CM Consumer token ------------");
                     return BearerAuthorization.init().getCmUserToken();
+                case PROXY_ADM:
+                    logger.info("------------- Creating new AA user token ------------");
+                    return ApplicationTokenController.createConsumerAppToken(
+                            Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken(),
+                            Conf.proxy().getAdminApp().getAppKeyId(),
+                            Conf.proxy().getAdminApp().getAppKeySecret());
+                case PROXY_APP:
+                    logger.info("------------- Creating new AA user token ------------");
+                    return ApplicationTokenController.createConsumerAppToken(
+                            Conf.ns().getAuthUrlBase() + Conf.ns().getAuthUrlGetToken(),
+                            Conf.proxy().getProxyApp().getAppKeyId(),
+                            Conf.proxy().getProxyApp().getAppKeySecret());
                 default:
                     return StringUtils.EMPTY;
             }
         }, tokenToVerify -> {
             switch (user.getType()) {
                 case AA:
-                case CMCONS: return true;
+                case CMCONS:
+                case PROXY_APP:
+                case PROXY_ADM:
+                    return true;
                 case CM: return verifyCMToken(tokenToVerify);
                 default: return verifyHEREToken(tokenToVerify);
             }
@@ -132,10 +147,6 @@ public class AuthController {
             String token = supplier.get();
             if (token == null || token.equals("Bearer null")) {
                 System.err.println("Error 1 creating token for " + key + ": " + token);
-                token = supplier.get();
-            }
-            if (token == null || token.equals("Bearer null")) {
-                System.err.println("Error 2 creating token for " + key + ": " + token);
                 token = supplier.get();
             }
             if (StringUtils.isEmpty(token) || token.equals("Bearer null")) {

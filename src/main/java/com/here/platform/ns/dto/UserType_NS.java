@@ -14,7 +14,9 @@ public enum UserType_NS {
     AA("aa"),
     DAIMLER("dm"),
     APP("app"),
-    CMCONS("cmcons");
+    CMCONS("cmcons"),
+    PROXY_ADM("proxy_admin"),
+    PROXY_APP("proxy_app");
 
     private final String prefix;
 }

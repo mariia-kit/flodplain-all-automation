@@ -10,7 +10,7 @@ class TestCM extends Test {
         forkEvery = 20
 
         useJUnitPlatform() {
-            excludeTags "neutral_server", "e2e", "smoke_cm", "ui"
+            excludeTags "neutral_server", "e2e", "smoke_cm", "ui", "proxy"
         }
         systemProperties = [
                 "stg.access.key.id"     : System.getenv("ACCESS_KEY_ID_STG"),
@@ -182,3 +182,12 @@ task allureAggregatedReportCM {
     finalizedBy 'allureReport'
 }
 
+task proxyTest(type: TestCM) {
+    onlyIf { !isHotDeploy }
+    doFirst {
+        systemProperty "env", "sit"
+    }
+    useJUnitPlatform {
+        includeTags "proxy"
+    }
+}

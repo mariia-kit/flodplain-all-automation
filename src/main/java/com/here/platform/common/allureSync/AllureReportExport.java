@@ -20,17 +20,9 @@ public class AllureReportExport {
 
     @SneakyThrows
     public static void main(String[] args) {
-        String env = System.getProperty("env");
-        System.out.println("Current env: " + env);
-        System.out.println("Current IMAGE_TAG: " + System.getProperty("image_tag"));
-        System.out.println("Current SERVICE: " + System.getProperty("service"));
         String project_id = System.getProperty("allure_project");
         String executionName = System.getenv("CI_PIPELINE_ID");
         System.out.println("Current allure proj: " + project_id);
-        System.out.println("Current CI: " + System.getenv("CI"));
-        System.out.println("Current CI_PIPELINE_URL: " + System.getenv("CI_PIPELINE_URL"));
-        System.out.println("Current CI_PIPELINE_ID: " + executionName);
-        System.out.println("Current CI_PIPELINE_SOURCE: " + System.getenv("CI_PIPELINE_SOURCE"));
         boolean isCi = !StringUtils.isEmpty(System.getenv("CI"));
 
         if (!StringUtils.isEmpty(project_id) && isCi) {

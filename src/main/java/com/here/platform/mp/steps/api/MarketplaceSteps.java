@@ -41,13 +41,27 @@ public class MarketplaceSteps {
         return hrn;
     }
 
+    @Step("Create new Proxy Listing {resHrn}")
+    public String createNewProxyListing(String resHrn) {
+        NeutralServerResponseAssertion listing = createProxyListing(resHrn)
+                .expectedCode(HttpStatus.SC_OK);
+        String hrn = listing.getResponse().getBody().jsonPath()
+                .get("resourceId").toString();
+        int taskId = listing.getResponse().getBody().jsonPath()
+                .getInt("taskId");
+        waitForAsyncTask(taskId, () -> "Bearer " + MP_PROVIDER.getUser().getToken());
+        String invite = inviteConsumer(hrn);
+        inviteClicked(invite);
+        return hrn;
+    }
+
     @Step("Create Subscription for listing:{listingHrn}")
     public String subscribeListing(String listingHrn) {
         String subsId = subscribeStart(listingHrn);
-        negotiate(subsId);
-        ack_prov(subsId);
-        int taskId = ack_cons(subsId);
-        waitForAsyncTask(taskId, () -> "Bearer " + MP_CONSUMER.getToken());
+//        negotiate(subsId);
+//        ack_prov(subsId);
+//        int taskId = ack_cons(subsId);
+//        waitForAsyncTask(taskId, () -> "Bearer " + MP_CONSUMER.getToken());
         mpDelay();
         return subsId;
     }
@@ -121,6 +135,46 @@ public class MarketplaceSteps {
         return new NeutralServerResponseAssertion(resp);
     }
 
+    @Step("Create new Proxy listing for res {resHrn}")
+    public NeutralServerResponseAssertion createProxyListing(String resHrn) {
+        Random r = new Random();
+        String containerTitle = String.format("[Proxy] Listing %s", r.nextInt(10000));
+        String providerToken = "Bearer " + MP_PROVIDER.getUser().getToken();
+        String url = baseMpUrl + "/listings";
+        String body = "{"
+                + "\"artifactIds\":null,"
+                + "\"comment\":\"\","
+                + "\"description\":\"proxy\","
+                + "\"listItems\":["
+                + "{\"resourceHrn\":\"" + resHrn + "\",\"title\":\"Top 50 cities\",\"summary\":\"\",\"description\":\"\"}"
+                + "],"
+                + "\"notifications\":{\"recipientType\":\"OWNER\"},"
+                + "\"state\":\"ACTIVE\","
+                + "\"subscriptionOptions\":["
+                + " {\"type\":\"EVALUATION\","
+                + " \"name\":\"Evaluation\","
+                + " \"description\":\"Eval\","
+                + " \"businessScopeType\":\"GENERIC\","
+                + " \"keyTerms\":[\"For evaluation use only\"],"
+                + " \"renewable\":false,\"termsLink\":\"some.com\",\"pricingType\":\"USAGE_BASED\","
+                + " \"lifecycleState\":\"ACTIVE\",\"resourceHrn\":\"" + resHrn + "\"}],"
+                + "\"title\":\"" + containerTitle + "\","
+                + "\"topic\":\"AUTOMOTIVE\","
+                + "\"type\":\"EXT_SVC\","
+                + "\"visibility\":\"PRIVATE\","
+                + "\"visibleCompanyName\":false,"
+                + "\"visibleCoverageMap\":false,"
+                + "\"visibleDataProps\":false"
+                + "}";
+        Response resp = RestHelper
+                .post("Create new Proxy Listing " + containerTitle, url, providerToken, body);
+        if (resp.getStatusCode() == HttpStatus.SC_OK) {
+            String hrn = resp.getBody().jsonPath().get("resourceId").toString();
+            DataForRemoveCollector.addMpListing(hrn);
+        }
+        return new NeutralServerResponseAssertion(resp);
+    }
+
     @Step("Request access to subscription {subsId}")
     private Response req_access(String subsId) {
         String providerToken = "Bearer " + MP_CONSUMER.getUser().getToken();
@@ -151,7 +205,9 @@ public class MarketplaceSteps {
                 .post("Request subscription for hrn: " + listingHrn, url, providerToken, body);
         Assertions.assertEquals(200, resp.getStatusCode(), "Subscription to listing failed!");
         String subsId = resp.getBody().jsonPath().get("resourceId").toString();
+        int taskId = resp.jsonPath().getInt("taskId");
         DataForRemoveCollector.addMpSubs(subsId);
+        waitForAsyncTask(taskId, () -> providerToken);
         return subsId;
     }
 

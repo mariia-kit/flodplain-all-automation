@@ -30,15 +30,17 @@ public class PortalTokenController {
         String clientId =
                 "prod".equalsIgnoreCase(System.getProperty("env")) ? "YQijV3hAPdxySAVtE6ZT" : "TlZSbQzENfNkUFrOXh8Oag";
         String redirectUrl =
-                "prod".equalsIgnoreCase(System.getProperty("env")) ? "https%3A%2F%2Fplatform.here.com%2F" : "https%3A%2F%2Fportal.platform.in.here.com%2F";
+                "prod".equalsIgnoreCase(System.getProperty("env")) ? "https%3A%2F%2Fplatform.here.com%2F" : "https%3A%2F%2Fplatform.in.here.com%2F";
         String signInWithPassword = portalUrl + "/api/account/sign-in-with-password";
         String authorizeUrl = portalUrl + "/authorize?"
                 + "client_id=" + clientId + "&"
                 + "prompt=login&"
+                + "response_type=code&"
                 + "scope=openid%20email%20phone%20profile%20readwrite%3Aha&"
                 + "redirect_uri=" + redirectUrl + "authHandler&"
-                + "state=%7B%22redirectUri%22%3A%22https%3A%2F%2Fportal.platform.in.here.com%2FauthHandler%22%2C%22redirect%22%3A%22https%253A%252F%252Fportal.platform.in.here.com%252Fmarketplace%252F%22%7D";
-
+                + "state=%7B%22redirectUri%22%3A%22" + redirectUrl + "authHandler%22%2C%22"
+                + "redirect%22%3A%22https%253A%252F%252Fplatform.in.here.com%252Fmarketplace%252F%22%7D&"
+                + "no-sign-up=true&realm-input=true&sign-in-template=olp&sign-in-screen-config=password";
         Response authorizeResp = given()
                 .when()
                 .param("nonce", nonce)
@@ -54,6 +56,7 @@ public class PortalTokenController {
         Response signInResp = given()
                 .when()
                 .cookies(coo)
+                .urlEncodingEnabled(false)
                 .get(portalUrl + location);
         Cookies coo1 = signInResp.getDetailedCookies();
 
