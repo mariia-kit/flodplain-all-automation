@@ -49,9 +49,9 @@ public class HERETokenController {
                 .extract().response();
         Cookies coo = authorizeResp.getDetailedCookies();
         String location = authorizeResp.getHeader("Location");
-
         Response signInResp = given()
                 .noFilters()
+                .urlEncodingEnabled(false)
                 .cookies(coo)
                 .get(portalUrl + location)
                 .then()

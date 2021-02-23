@@ -11,6 +11,7 @@ public class Conf {
     private static CmUserConfig cmUserConfig;
     private static MpConfig mpConfig;
     private static MpUserConfig mpUserConfig;
+    private static ProxyConfig proxyConfig;
 
     public static NsConfig ns() {
         return returnConfig(nsConf, NsConfig.class);
@@ -34,6 +35,10 @@ public class Conf {
 
     public static MpUserConfig mpUsers() {
         return returnConfig(mpUserConfig, MpUserConfig.class);
+    }
+
+    public static ProxyConfig proxy() {
+        return returnConfig(proxyConfig, ProxyConfig.class);
     }
 
     private static <T> T returnConfig(T conf, Class<T> type) {

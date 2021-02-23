@@ -27,7 +27,9 @@ public enum Users {
             "HERE",
             StringUtils.EMPTY)
             .withUserType(UserType_NS.CM)),
-    CM_CONSUMER(new User("CmToken_" + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.CMCONS));
+    CM_CONSUMER(new User("CmToken_" + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.CMCONS)),
+    PROXY_ADMIN(new User("proxy_admin_" + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.PROXY_ADM)),
+    PROXY_APP(new User("proxy_app_" + System.getProperty("env"), StringUtils.EMPTY).withUserType(UserType_NS.PROXY_APP));
 
     private final User user;
 
