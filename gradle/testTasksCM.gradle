@@ -185,7 +185,7 @@ task allureAggregatedReportCM {
 task proxyTest(type: TestCM) {
     onlyIf { !isHotDeploy }
     doFirst {
-        systemProperty "env", "sit"
+        systemProperty "env", finalEnv
     }
     useJUnitPlatform {
         includeTags "proxy"

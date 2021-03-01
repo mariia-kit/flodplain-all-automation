@@ -1,5 +1,6 @@
 package com.here.platform.proxy.admin;
 
+import com.here.platform.mp.steps.api.MarketplaceSteps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
@@ -7,100 +8,206 @@ import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
+import com.here.platform.proxy.steps.ProxySteps;
+import io.qameta.allure.Issue;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
-@Tag("Tunnel")
+@Tag("Proxy Admin")
 @DisplayName("Verify Service Providers Management")
 public class ServiceProvidersTest extends BaseProxyTests {
 
     @Test
-    @DisplayName("Verify retrieve all service providers")
+    @DisplayName("[External Proxy] Verify retrieve all service providers")
     void verifyGetAllProxyProviderById() {
         var response = new ServiceProvidersController()
-                .withAppToken()
+                .withAdminToken()
                 .getAllProviders();
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
     }
 
     @Test
-    @DisplayName("Verify retrieve proxy service provider by Id")
+    @Issue("NS-3576")
+    @DisplayName("[External Proxy] Create new External Proxy provider mock and validate provider resource")
     void verifyGetProxyProviderById() {
+        ProxyProvider proxyProvider = new ProxyProvider(
+                "Auto-testing-1",
+                "olp-here-realm-1",
+                "someService1.test.mock",
+                CredentialsAuthMethod.NONE);
+        ProxyProviderResource resource = new ProxyProviderResource("Auto-testing","/forecasts/v1");
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
         var response = new ServiceProvidersController()
-                .withAppToken()
-                .getProviderById("6");
-        ProxyProvider expected = new ProxyProvider(
-                "Manual-testing",
-                "olp-here-mrkt-prov-6",
-                "dataservice.test.mock",
-                null);
-        ProxyProviderResource expectedResource = new ProxyProviderResource(37L,
-                "Manual-testing",
-                "/forecasts/v1",
-                "hrn:here-dev:extsvc::olp-here-mrkt-prov-6:9256ddb5-dataservice_test_mock-forecasts_v1");
+                .withAdminToken()
+                .getProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
-                .expectedEqualsProvider(expected)
-                .expectedResourceInProvider(expectedResource);
+                .expectedEqualsProvider(proxyProvider)
+                .expectedResourceInProvider(resource);
     }
 
     @Test
-    @DisplayName("Verify delete proxy service provider by Id")
+    @Issue("NS-3580")
+    @DisplayName("[External Proxy] Success flow of deleting provider resource")
     void verifyDeleteProxyProviderById() {
         ProxyProvider proxyProvider = new ProxyProvider(
-                "Manual-testing-2",
-                "olp-here-mrkt-prov-6",
-                "dataservice2.test.mock",
+                "Auto-testing-2",
+                "olp-here-realm-2",
+                "someService2.test.mock",
                 CredentialsAuthMethod.NONE);
-        var response = new ServiceProvidersController()
-                .withAppToken()
-                .addProvider(proxyProvider);
-        new ProxyProviderAssertion(response)
-                .expectedCode(HttpStatus.SC_OK);
-        String id = String.valueOf(response.getBody().jsonPath().getLong("id"));
+
+        ProxySteps.createProxyProvider(proxyProvider);
+
         var delete = new ServiceProvidersController()
-                .withAppToken()
-                .deleteProviderById(id);
+                .withAdminToken()
+                .deleteProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
         var verifyAbsence = new ServiceProvidersController()
-                .withAppToken()
-                .getProviderById(id);
+                .withAdminToken()
+                .getProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(verifyAbsence)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test
-    @DisplayName("Verify delete proxy resource by Id")
+    @Issue("NS-3579")
+    @DisplayName("[External Proxy] Provider cannot be deleted if there are attached resources")
+    void verifyDeleteProxyProviderWithResource() {
+        ProxyProvider proxyProvider = new ProxyProvider(
+                "Auto-testing-3",
+                "olp-here-realm-3",
+                "someService3.test.mock",
+                CredentialsAuthMethod.NONE);
+
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Manual-testing-auto",
+                "/forecasts/v2");
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        var delete = new ServiceProvidersController()
+                .withAdminToken()
+                .deleteProviderById(proxyProvider.getId());
+        new ProxyProviderAssertion(delete)
+                .expectedCode(HttpStatus.SC_CONFLICT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify delete proxy resource by Id")
     void verifyDeleteProxyResourceById() {
         ProxyProvider proxyProvider = new ProxyProvider(
-                "Manual-testing-3",
-                "olp-here-mrkt-prov-6",
-                "dataservice3.test.mock",
+                "Auto-testing-4",
+                "olp-here-realm-4",
+                "someService4.test.mock",
                 CredentialsAuthMethod.NONE);
         ProxyProviderResource resource = new ProxyProviderResource(
                 "Manual-testing-auto",
                 "/forecasts/v2");
-        var response = new ServiceProvidersController()
-                .withAppToken()
-                .addProvider(proxyProvider);
-        new ProxyProviderAssertion(response)
-                .expectedCode(HttpStatus.SC_OK);
-        String id = String.valueOf(response.getBody().jsonPath().getLong("id"));
-        var responseRes = new ServiceProvidersController()
-                .withAppToken()
-                .addResourceListToProvider(id, resource);
-        new ProxyProviderAssertion(responseRes)
-                .expectedCode(HttpStatus.SC_OK);
-        String resId = String.valueOf(responseRes.getBody().jsonPath().getLong("resources[0].id"));
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
 
         var delete = new ServiceProvidersController()
-                .withAppToken()
-                .deleteResourceFromProvider(resId);
+                .withAdminToken()
+                .deleteResourceFromProvider(resource.getId());
+        new ProxyProviderAssertion(delete)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify retrieve proxy service resource by Id")
+    void verifyGetProxyResourceById() {
+        ProxyProvider proxyProvider = new ProxyProvider(
+                "Auto-testing-5",
+                "olp-here-realm-5",
+                "someService5.test.mock",
+                CredentialsAuthMethod.NONE);
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Manual-testing-auto",
+                "/forecasts/v2");
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        var get = new ServiceProvidersController()
+                .withAdminToken()
+                .getResourceByHRN(resource.getHrn());
+        new ProxyProviderAssertion(get)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProvider(proxyProvider)
+                .expectedResourceInProvider(resource);
+    }
+
+    @Test
+    @Issue("NS-3577")
+    @DisplayName("[External Proxy] Update external resource and validate provider resource")
+    void verifyUpdateProxyResource() {
+        ProxyProvider proxyProvider = new ProxyProvider(
+                "Auto-testing-6",
+                "olp-here-realm-6",
+                "someService6.test.mock",
+                CredentialsAuthMethod.NONE);
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Manual-testing-auto",
+                "/forecasts/v2");
+
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxyProviderResource newResource = new ProxyProviderResource(
+                "Manual-testing-auto-update",
+                "/forecasts/v2");
+        newResource.setHrn(resource.getHrn());
+
+        var update = new ServiceProvidersController()
+                .withAdminToken()
+                .updateResourceById(resource.getId(), newResource);
+        new ProxyProviderAssertion(update)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
+
+        var get = new ServiceProvidersController()
+                .withAdminToken()
+                .getResourceByHRN(resource.getHrn());
+        new ProxyProviderAssertion(get)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProvider(proxyProvider)
+                .expectedResourceInProvider(newResource);
+    }
+
+    @Test
+    @Issue("NS-3578")
+    @Disabled("Cant delete resource after subscription cancel")
+    @DisplayName("[External Proxy] Deactivate created subscription and delete provider resource")
+    void verifyNewProxyAfterSubscriptionCancel() {
+        ProxyProvider proxyProvider = new ProxyProvider(
+                "Manual-testing-9",
+                "olp-here-mrkt-prov-9",
+                "dataservice9.test.mock",
+                CredentialsAuthMethod.NONE);
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Manual-testing-auto",
+                "/forecasts/v2");
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        MarketplaceSteps marketplaceSteps = new MarketplaceSteps();
+        String listingHrn = marketplaceSteps.createNewProxyListing(resource.getHrn());
+        String subsId = marketplaceSteps.subscribeListing(listingHrn);
+        marketplaceSteps.beginCancellation(subsId);
+        marketplaceSteps.deleteListing(listingHrn);
+
+        var delete = new ServiceProvidersController()
+                .withAdminToken()
+                .deleteResourceFromProvider(resource.getId());
         new ProxyProviderAssertion(delete)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
     }

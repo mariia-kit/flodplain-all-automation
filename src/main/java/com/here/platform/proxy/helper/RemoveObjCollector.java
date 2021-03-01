@@ -1,21 +1,22 @@
 package com.here.platform.proxy.helper;
 
-import com.here.platform.cm.steps.remove.PairValue;
 import io.qameta.allure.Allure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.experimental.UtilityClass;
 
 
 @UtilityClass
 public class RemoveObjCollector {
-    private static Map<String, List<String>> proxyProviders = new ConcurrentHashMap<>();
-    private static Map<String, List<PairValue>> proxyResource = new ConcurrentHashMap<>();
+    private static Map<String, List<Long>> proxyProviders = new ConcurrentHashMap<>();
+    private static Map<String, List<PairIdValue>> proxyResource = new ConcurrentHashMap<>();
 
-    public void addProxyProvider(String id) {
+    public void addProxyProvider(Long id) {
         String testId = Allure.getLifecycle().getCurrentTestCase()
                 .orElseThrow(() -> new RuntimeException("Test case not detected while adding id" + id));
         if (!proxyProviders.containsKey(testId)) {
@@ -24,33 +25,40 @@ public class RemoveObjCollector {
         proxyProviders.get(testId).add(id);
     }
 
-    public void addResourceToProxyProvider(String providerId, String... resIds) {
+    public void addResourceToProxyProvider(String providerId, Long... resIds) {
         String testId = Allure.getLifecycle().getCurrentTestCase().get();
         if (!proxyResource.containsKey(testId)) {
             proxyResource.put(testId, new ArrayList<>());
         }
-        for (String resId: resIds) {
-            proxyResource.get(testId).add(new PairValue(providerId, resId));
+        for (Long resId: resIds) {
+            proxyResource.get(testId).add(new PairIdValue(providerId, resId));
         };
     }
 
-    public void removeResourceFromProxyProvider(String... resIds) {
+    public void removeResourceFromProxyProvider(Long... resIds) {
         String testId = Allure.getLifecycle().getCurrentTestCase().get();
         if (!proxyResource.containsKey(testId)) {
             proxyResource.put(testId, new ArrayList<>());
         }
-        for (String resId: resIds) {
+        for (Long resId: resIds) {
             proxyResource.put(testId, proxyResource.get(testId).stream()
-                    .filter(r -> !r.getValue().equals(resId))
+                    .filter(r -> !r.getId().equals(resId))
                     .collect(Collectors.toList()));
         };
     }
 
-    public List<String> getAllProxyProviders(String testId) {
+    public List<Long> getAllProxyProviders(String testId) {
         return proxyProviders.getOrDefault(testId, new ArrayList<>());
     }
 
-    public List<PairValue> getAllProxyProvidersWithResources(String testId) {
+    public List<PairIdValue> getAllProxyProvidersWithResources(String testId) {
         return proxyResource.getOrDefault(testId, new ArrayList<>());
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class PairIdValue {
+        private String key;
+        private Long id;
     }
 }

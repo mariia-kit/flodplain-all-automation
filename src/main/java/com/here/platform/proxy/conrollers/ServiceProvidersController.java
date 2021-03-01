@@ -22,9 +22,15 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     }
 
     @Step("Get proxy service provider {serviceProviderId}")
-    public Response getProviderById(String serviceProviderId) {
+    public Response getProviderById(Long serviceProviderId) {
         return consentServiceClient(basePath)
                 .get("/{serviceProviderId}", serviceProviderId);
+    }
+
+    @Step("Get proxy service provider resource by hrn {resourceHrn}")
+    public Response getResourceByHRN(String resourceHrn) {
+        return consentServiceClient(basePath)
+                .get("/resources/{resourceHrn}", resourceHrn);
     }
 
     @Step("Add proxy service provider {proxyProvider.serviceName}")
@@ -33,14 +39,14 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
                 .body(proxyProvider)
                 .put();
         if (response.getStatusCode() == HttpStatus.SC_OK) {
-            String id = String.valueOf(response.getBody().jsonPath().getLong("id"));
+            Long id = response.getBody().jsonPath().getLong("id");
             RemoveObjCollector.addProxyProvider(id);
         }
         return response;
     }
 
     @Step("Remove proxy service provider with id {serviceProviderId}")
-    public Response deleteProviderById(String serviceProviderId) {
+    public Response deleteProviderById(Long serviceProviderId) {
         return consentServiceClient(basePath)
                 .delete("/{serviceProviderId}", serviceProviderId);
     }
@@ -54,7 +60,7 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
         if (response.getStatusCode() == HttpStatus.SC_OK) {
             List<ProxyProviderResource> result = response.getBody().jsonPath()
                     .getList("resources", ProxyProviderResource.class);
-            result.forEach(res -> RemoveObjCollector.addResourceToProxyProvider(serviceProviderId, String.valueOf(res.getId())));
+            result.forEach(res -> RemoveObjCollector.addResourceToProxyProvider(serviceProviderId, res.getId()));
         }
         return response;
     }
@@ -66,7 +72,7 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     }
 
     @Step("Delete Proxy resource with id {resourceId}")
-    public Response deleteResourceFromProvider(String resourceId) {
+    public Response deleteResourceFromProvider(Long resourceId) {
         Response response = consentServiceClient(basePath)
                 .delete("/resources/{resourceId}", resourceId);
         if (response.getStatusCode() == HttpStatus.SC_NO_CONTENT) {
@@ -75,4 +81,10 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
         return response;
     }
 
+    @Step("Update service provider resource {newResource.title}")
+    public Response updateResourceById(Long resourceId, ProxyProviderResource newResource) {
+        return consentServiceClient(basePath)
+                .body(newResource)
+                .post("/resources/{resourceId}", resourceId);
+    }
 }

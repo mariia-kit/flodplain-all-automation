@@ -1,6 +1,4 @@
 host: https://p.stg.hereapi.com/
-#https://p.stg.hereapi.com/tunnel/dataservice.accuweather.mock/locations/v1/topcities/100
-#https://api.accuweather.com/alerts/v1/334907.json?apiKey=a76032ba3f9240099518154f6a398a25
 accuProtocol: dataservice.accuweather.mock
 accuApiKey: a76032ba3f9240099518154f6a398a25
 
