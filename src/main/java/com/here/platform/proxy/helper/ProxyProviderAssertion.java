@@ -19,15 +19,16 @@ public class ProxyProviderAssertion {
 
     @Step("Expected response code equals to '{responseCode}'")
     public ProxyProviderAssertion expectedCode(int responseCode) {
-//        Assertions.assertEquals(responseCode, response.getStatusCode(),
-//                new ResponseExpectMessages(response).expectedStatuesCode(responseCode));
+        Assertions.assertThat(response.getStatusCode())
+                .withFailMessage("Response code not as expected! Expected "+ responseCode + " but found " + response.getStatusCode())
+                .isEqualTo(responseCode);
         return this;
     }
 
     @Step("Expected response value equals to ProxyProvider: '{expected.serviceName}'")
     public ProxyProviderAssertion expectedEqualsProvider(ProxyProvider expected) {
         var actual = response.getBody().as(ProxyProvider.class);
-        Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected, "id", "scbeId", "resources");
+        Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected, "id", "scbeId", "resources", "authMethod");
         return this;
     }
 
@@ -36,7 +37,7 @@ public class ProxyProviderAssertion {
         var provider = response.getBody().as(ProxyProvider.class);
         ProxyProviderResource actual = provider.getResources().stream().filter(res -> expected.getTitle().equals(res.getTitle()))
                 .findAny().orElseThrow(() -> new RuntimeException("No resource with title "
-                + expected.getTitle() + "found in current proxy provider!"));
+                + expected.getTitle() + " found in current proxy provider!"));
         Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected, "id");
         return this;
     }

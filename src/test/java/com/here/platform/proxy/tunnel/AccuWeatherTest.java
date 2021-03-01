@@ -18,7 +18,7 @@ public class AccuWeatherTest extends BaseProxyTests {
     void verifyAccDataNotExist() {
         var response = new TunnelController()
                 .withConsumerToken()
-                .getData("dataservice.accuweather.mock", "locations/v1/topcities/400");
+                .getData("dataservice.accuweather.mock", "/locations/v1/topcities/400");
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
@@ -28,7 +28,7 @@ public class AccuWeatherTest extends BaseProxyTests {
     void verifyAccDataNoSubs() {
         var response = new TunnelController()
                 .withConsumerToken()
-                .getData("dataservice.accuweather.mock", "locations/v1/topcities/100");
+                .getData("dataservice.accuweather.mock", "/locations/v1/topcities/100");
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
     }
@@ -38,7 +38,7 @@ public class AccuWeatherTest extends BaseProxyTests {
     void verifyAccDataCanBeRetrieved() {
         var response = new TunnelController()
                 .withConsumerToken()
-                .getData("dataservice.accuweather.mock", "locations/v1/topcities/50");
+                .getData("dataservice.accuweather.mock", "/locations/v1/topcities/50");
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_OK);
     }

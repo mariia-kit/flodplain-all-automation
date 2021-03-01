@@ -43,7 +43,7 @@ public class BaseProxyService<T> {
         return (T) this;
     }
 
-    public T withAppToken() {
+    public T withAdminToken() {
         String token = Users.PROXY_ADMIN.getToken();
         setAuthorizationToken(token);
         return (T) this;
