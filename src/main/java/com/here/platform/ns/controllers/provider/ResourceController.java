@@ -16,7 +16,7 @@ public class ResourceController extends BaseNeutralService<ResourceController> {
     @Step
     public Response getResource(DataProvider dataProvider, String resourceId) {
         return neutralServerClient(providersBasePath)
-                .get("/{providerId}/resources/{resourceId}", dataProvider.getName(), resourceId);
+                .get("/{providerId}/resources/{resourceId}", dataProvider.getId(), resourceId);
 
     }
 
@@ -27,7 +27,7 @@ public class ResourceController extends BaseNeutralService<ResourceController> {
         }
         return neutralServerClient(providersBasePath)
                 .body(resource.generateBody())
-                .put("/{providerId}/resources/{resourceId}", dataProvider.getName(), resource.getName());
+                .put("/{providerId}/resources/{resourceId}", dataProvider.getId(), resource.getName());
     }
 
     @Step
@@ -38,7 +38,7 @@ public class ResourceController extends BaseNeutralService<ResourceController> {
 
     @Step
     public Response deleteResource(DataProvider dataProvider, ProviderResource resource) {
-        return deleteResource(dataProvider.getName(), resource.getName());
+        return deleteResource(dataProvider.getId(), resource.getName());
     }
 
     @Step
@@ -49,7 +49,7 @@ public class ResourceController extends BaseNeutralService<ResourceController> {
 
     @Step
     public Response getResourceList(DataProvider dataProvider) {
-        return getResourceList(dataProvider.getName());
+        return getResourceList(dataProvider.getId());
     }
 
 }

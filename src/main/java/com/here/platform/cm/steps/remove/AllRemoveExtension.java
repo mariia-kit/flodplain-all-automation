@@ -55,7 +55,7 @@ public class AllRemoveExtension implements AfterEachCallback {
                 .forEach(Steps::removeRegularContainer);
         DataForRemoveCollector
                 .getNsProviders(testId)
-                .stream().filter(prov -> prov.getName().contains(Providers.getDataProviderNamePrefix()))
+                .stream().filter(prov -> prov.getId().contains(Providers.getDataProviderNamePrefix()))
                 .forEach(Steps::removeRegularProvider);
         DataForRemoveCollector
                 .getHereAccounts(testId)

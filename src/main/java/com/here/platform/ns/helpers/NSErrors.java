@@ -24,7 +24,7 @@ public class NSErrors {
                 HttpStatus.SC_NOT_FOUND,
                 "E502116",
                 String.format("Container name '%s' for data provider '%s' not found",
-                        container.getId(), container.getDataProviderName()),
+                        container.getId(), container.getDataProviderId()),
                 "Request a valid container");
     }
 
@@ -49,7 +49,7 @@ public class NSErrors {
                 HttpStatus.SC_BAD_REQUEST,
                 "E502118",
                 "Couldn't save resource '" + resource.getName() + "' for data provider: '"
-                        + provider.getName() + "'",
+                        + provider.getId() + "'",
                 "Provide correct data");
     }
 
@@ -92,7 +92,7 @@ public class NSErrors {
         return new NSError("Incorrect input data",
                 HttpStatus.SC_NOT_FOUND,
                 "E502123",
-                String.format("Data provider '%s' not found", provider.getName()),
+                String.format("Data provider '%s' not found", provider.getId()),
                 "Create request with valid data provider");
     }
 
@@ -100,7 +100,7 @@ public class NSErrors {
         return new NSError("Data manipulation failed",
                 HttpStatus.SC_BAD_REQUEST,
                 "E502118",
-                "Couldn't save data provider: " + provider.getName(),
+                "Couldn't save data provider: " + provider.getId(),
                 "Provide correct data");
     }
 
@@ -160,7 +160,7 @@ public class NSErrors {
                 "E502109",
                 sbb("You can't delete container").w().sQuoted(container.getId()).w()
                         .append("for provider").w()
-                        .sQuoted(container.getDataProviderName()).append(", because it has subscriptions").bld(),
+                        .sQuoted(container.getDataProviderId()).append(", because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
 
@@ -169,7 +169,7 @@ public class NSErrors {
                 HttpStatus.SC_CONFLICT,
                 "E502109",
                 sbb("You can't update container").w().sQuoted(container.getId()).w()
-                        .append("for provider").w().sQuoted(container.getDataProviderName())
+                        .append("for provider").w().sQuoted(container.getDataProviderId())
                         .append(", because it has subscriptions").bld(),
                 "Delete subscriptions and try again.");
     }
@@ -180,7 +180,7 @@ public class NSErrors {
                 "E502113",
                 String.format(
                         "You can't delete resource '%s' for provider '%s', because it has subscriptions",
-                        resource.getName(), provider.getName()),
+                        resource.getName(), provider.getId()),
                 "Delete resource relations mentioned above and try again");
     }
 
@@ -216,7 +216,7 @@ public class NSErrors {
                 HttpStatus.SC_BAD_REQUEST,
                 "E502107",
                 String.format("Resource '%s' is missing in provider '%s'", res.getName(),
-                        provider.getName()),
+                        provider.getId()),
                 "Please use resources which belongs to specified provider");
     }
 

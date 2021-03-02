@@ -36,7 +36,7 @@ public class UrlBuilder {
 
     public UrlBuilder withContainer(Container container) {
         return withContainerName(container.getName())
-                .withProviderName(container.getDataProviderName());
+                .withProviderName(container.getDataProviderId());
     }
 
     public UrlBuilder withVehicleId(String id) {

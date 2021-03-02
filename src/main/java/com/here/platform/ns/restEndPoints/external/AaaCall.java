@@ -204,12 +204,12 @@ public class AaaCall {
 
     @Step("Create policy for {container.name} with resource {res.name}")
     public void createContainerPolicyWithRes(Container container, ProviderResource res) {
-        createResourcePermissionForResource(res, container.getDataProviderName());
+        createResourcePermissionForResource(res, container.getDataProviderId());
     }
 
     @Step("Update policy for {container.name}")
     public void createContainerPolicyWithGeneralAccess(Container container) {
-        String resHrn = new ProviderResource("general").generateGeneralResourceHrn(container.getDataProviderName());
+        String resHrn = new ProviderResource("general").generateGeneralResourceHrn(container.getDataProviderId());
         createResourcePermission(resHrn);
     }
 

@@ -21,15 +21,13 @@ import lombok.ToString;
 public class DataProvider {
 
     private String id;
-    private String name;
     private String url;
     @EqualsAndHashCode.Exclude
     private List<ProviderResource> resources;
 
-    @ConstructorProperties({"name", "url"})
-    public DataProvider(String name, String url) {
-        this.id = name;
-        this.name = name;
+    @ConstructorProperties({"id", "url"})
+    public DataProvider(String id, String url) {
+        this.id = id;
         this.url = url;
         this.resources = new ArrayList<>();
     }
@@ -51,11 +49,11 @@ public class DataProvider {
     }
 
     public DataProvider clone() {
-        return new DataProvider(name, url);
+        return new DataProvider(id, url);
     }
 
-    public DataProvider withName(String name) {
-        this.name = name;
+    public DataProvider withId(String id) {
+        this.id = id;
         return this;
     }
 
@@ -75,7 +73,7 @@ public class DataProvider {
     }
 
     public String generateHrn() {
-        return "hrn:" + Conf.ns().getRealm() + ":neutral::" + PROVIDER.getUser().getRealm() + ":" + name;
+        return "hrn:" + Conf.ns().getRealm() + ":neutral::" + PROVIDER.getUser().getRealm() + ":" + id;
     }
 
 }

@@ -50,7 +50,7 @@ public class RegularSubsAndConsent {
         Steps.createRegularContainer(container);
         Steps.createListingAndSubscription(container);
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        MPProviders cmProvider = MPProviders.findByProviderId(container.getDataProviderName());
+        MPProviders cmProvider = MPProviders.findByProviderId(container.getDataProviderId());
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(cmProvider, container);
         ConsentObject consentObj = new ConsentObject(mpConsumer, cmProvider, targetContainer);
 

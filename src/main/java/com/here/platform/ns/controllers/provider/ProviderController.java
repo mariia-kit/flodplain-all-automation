@@ -17,12 +17,12 @@ public class ProviderController extends BaseNeutralService<ProviderController> {
         DataForRemoveCollector.addNSProvider(provider);
         return neutralServerClient(providersBasePath)
                 .body(provider.generateBody())
-                .put("/{providerId}", provider.getName());
+                .put("/{providerId}", provider.getId());
     }
 
     @Step
     public Response deleteProvider(DataProvider provider) {
-        return deleteProvider(provider.getName());
+        return deleteProvider(provider.getId());
     }
 
     @Step

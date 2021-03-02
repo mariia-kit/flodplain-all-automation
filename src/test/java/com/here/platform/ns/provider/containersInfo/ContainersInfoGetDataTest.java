@@ -101,7 +101,7 @@ class ContainersInfoGetDataTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        Container container2 = container.clone().withDataProviderName("no_such_provider");
+        Container container2 = container.clone().withDataProviderId("no_such_provider");
 
         var response = new ContainerController()
                 .withToken(PROVIDER)

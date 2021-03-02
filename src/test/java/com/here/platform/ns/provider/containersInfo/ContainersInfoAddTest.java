@@ -320,7 +320,7 @@ class ContainersInfoAddTest extends BaseNSTest {
 
         var data = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(data)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 3,

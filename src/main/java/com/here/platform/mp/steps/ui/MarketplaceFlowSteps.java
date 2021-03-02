@@ -73,7 +73,7 @@ public class MarketplaceFlowSteps {
                 .clickCreateListing();
         new CreateListingPage()
                 .selectListingType(ListingType.NEUTRAL_SERVER)
-                .selectManufacturer(targetContainer.getDataProviderName())
+                .selectManufacturer(targetContainer.getDataProviderId())
                 .selectDataContainer(targetContainer.getName())
                 .fillListingName(listingName)
                 .fillListingDescription(faker.company().buzzword())

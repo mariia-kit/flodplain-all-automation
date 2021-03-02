@@ -49,11 +49,11 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
 
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
-                .expectedError(NSErrors.getContainersForProviderNotFoundError(provider.getName()));
+                .expectedError(NSErrors.getContainersForProviderNotFoundError(provider.getId()));
     }
 
     @Test
@@ -65,7 +65,7 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(StringUtils.EMPTY)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(response)
                 .expectedCode(HttpStatus.SC_UNAUTHORIZED)
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
@@ -100,9 +100,9 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName().toLowerCase());
+                .getContainersList(provider.getId().toLowerCase());
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getName().toLowerCase())));
+                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getId().toLowerCase())));
     }
 
     @Test
@@ -120,9 +120,9 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getName())));
+                .expectedError(NSErrors.getContainersForProviderNotFoundError((provider.getId())));
     }
 
     @Test
@@ -137,7 +137,7 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(response)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
@@ -158,7 +158,7 @@ class ContainersInfoGetListTest extends BaseNSTest {
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(response)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")

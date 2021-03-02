@@ -88,7 +88,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider);
         Steps.createRegularContainer(container);
 
-        Container container2 = container.clone().withDataProviderName("no_such_provider");
+        Container container2 = container.clone().withDataProviderId("no_such_provider");
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
@@ -126,7 +126,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Steps.createRegularProvider(provider2);
         Steps.createRegularContainer(container);
 
-        Container container2 = container.clone().withDataProviderName(provider2.getName());
+        Container container2 = container.clone().withDataProviderId(provider2.getId());
 
         var response = new ContainerController()
                 .withToken(PROVIDER)
@@ -177,7 +177,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
 
         var verify = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider.getName());
+                .getContainersList(provider.getId());
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
@@ -195,7 +195,7 @@ class ContainersInfoDeleteTest extends BaseNSTest {
         Container container1 = Containers.generateNew(provider1);
         Container container2 = container1
                 .clone()
-                .withDataProviderName(provider2.getName());
+                .withDataProviderId(provider2.getId());
 
         Steps.createRegularProvider(provider1);
         Steps.createRegularProvider(provider2);
@@ -211,14 +211,14 @@ class ContainersInfoDeleteTest extends BaseNSTest {
 
         var verify = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider1.getName());
+                .getContainersList(provider1.getId());
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
-                .expectedError(NSErrors.getContainersForProviderNotFoundError(provider1.getName()));
+                .expectedError(NSErrors.getContainersForProviderNotFoundError(provider1.getId()));
 
         var verify2 = new ContainerController()
                 .withToken(PROVIDER)
-                .getContainersList(provider2.getName());
+                .getContainersList(provider2.getId());
         new NeutralServerResponseAssertion(verify2)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.extractAsList(res).size() == 1,
