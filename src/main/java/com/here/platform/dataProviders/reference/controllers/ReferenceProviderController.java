@@ -89,7 +89,7 @@ public class ReferenceProviderController {
                 .post("/apps");
     }
 
-    @Step("Add Reference Provider container {container.id} for {container.dataProviderName}")
+    @Step("Add Reference Provider container {container.id} for {container.dataProviderId}")
     public Response addContainer(Container container) {
         return referenceProviderClient("/admin")
                 .header("Content-Type", "application/json")

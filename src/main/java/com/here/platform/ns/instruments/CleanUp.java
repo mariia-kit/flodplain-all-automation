@@ -85,7 +85,7 @@ public class CleanUp {
 
     private boolean bruteCleanContainer(Container container) {
         String token = "Bearer " + PROVIDER.getToken();
-        System.out.println("Delete container " + container.getName() + " for " + container.getDataProviderName());
+        System.out.println("Delete container " + container.getName() + " for " + container.getDataProviderId());
         Response delete = new ContainerController().withToken(token).deleteContainer(container);
         if (delete.getStatusCode() == 409) {
             new AaaCall().wipeAllPolicies(container.getId());
@@ -124,8 +124,8 @@ public class CleanUp {
     }
 
     public void deleteAllTestContainersForProvider(DataProvider provider) {
-        Response allContainers = new ContainerController().withToken(PROVIDER).getContainersList(provider.getName());
-        System.out.println("Containers of " + provider.getName() + ": " + allContainers.getBody().print());
+        Response allContainers = new ContainerController().withToken(PROVIDER).getContainersList(provider.getId());
+        System.out.println("Containers of " + provider.getId() + ": " + allContainers.getBody().print());
         if (allContainers.getStatusCode() == HttpStatus.SC_OK) {
             Arrays.stream(allContainers.getBody().as(Container[].class))
                     .parallel()

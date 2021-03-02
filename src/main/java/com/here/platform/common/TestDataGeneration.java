@@ -58,9 +58,9 @@ public class TestDataGeneration {
     public static void createBaseContainersIfNecessaryProd() {
         Arrays.stream(Containers.values())
                 .filter(container ->
-                        container.getContainer().getDataProviderName().equals(Providers.DAIMLER_EXPERIMENTAL.getName())
+                        container.getContainer().getDataProviderId().equals(Providers.DAIMLER_EXPERIMENTAL.getName())
                                 ||
-                                container.getContainer().getDataProviderName().equals(Providers.DAIMLER_REAL.getName()))
+                                container.getContainer().getDataProviderId().equals(Providers.DAIMLER_REAL.getName()))
                 .forEach(containers ->
                         Steps.createRegularContainer(containers.getContainer())
                 );

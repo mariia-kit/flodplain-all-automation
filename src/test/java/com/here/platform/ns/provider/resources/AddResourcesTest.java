@@ -120,7 +120,7 @@ public class AddResourcesTest extends BaseNSTest {
 
         var verifyAll = new ResourceController()
                 .withToken(PROVIDER)
-                .getResourceList(provider.getName());
+                .getResourceList(provider.getId());
         new NeutralServerResponseAssertion(verifyAll)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(resp -> DefaultResponses.extractAsList(resp).size() == 1,
@@ -165,7 +165,7 @@ public class AddResourcesTest extends BaseNSTest {
 
         var verifyAll = new ResourceController()
                 .withToken(PROVIDER)
-                .getResourceList(provider.getName());
+                .getResourceList(provider.getId());
         new NeutralServerResponseAssertion(verifyAll)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(resp -> DefaultResponses.extractAsList(resp).size() == 2,
@@ -223,7 +223,7 @@ public class AddResourcesTest extends BaseNSTest {
 
         var verifyAll = new ResourceController()
                 .withToken(PROVIDER)
-                .getResourceList(provider.getName());
+                .getResourceList(provider.getId());
         new NeutralServerResponseAssertion(verifyAll)
                 .expected(DefaultResponses::isResponseListEmpty,
                         "Expected list should be empty!");

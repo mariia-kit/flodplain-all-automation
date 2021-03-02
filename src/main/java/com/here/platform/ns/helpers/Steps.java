@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 
 public class Steps {
 
-    @Step("Create regular Data Provider: {provider.name}")
+    @Step("Create regular Data Provider: {provider.id}")
     public static void createRegularProvider(DataProvider provider) {
         String token = PROVIDER.getToken();
         var response = new ProviderController()
@@ -44,7 +44,7 @@ public class Steps {
         );
     }
 
-    @Step("Add resource {res.name} to Data Provider: {provider.name}")
+    @Step("Add resource {res.name} to Data Provider: {provider.id}")
     public static void addResourceToProvider(DataProvider provider, ProviderResource res) {
         var response = new ResourceController()
                 .withToken(PROVIDER)
@@ -54,12 +54,12 @@ public class Steps {
                 "Creation of resource was not successful! " + response.getBody().print());
     }
 
-    @Step("Remove resources of Data Provider: {provider.name}")
+    @Step("Remove resources of Data Provider: {provider.id}")
     public static void clearProviderResources(DataProvider provider) {
         provider.getResources().forEach(res -> {
                     var response = new ResourceController()
                             .withToken(PROVIDER)
-                            .deleteResource(provider.getName(), res.getName());
+                            .deleteResource(provider.getId(), res.getName());
                     new NeutralServerResponseAssertion(response)
                             .expected(result -> result.getStatusCode() == HttpStatus.SC_NO_CONTENT ||
                                             result.getStatusCode() == HttpStatus.SC_NOT_FOUND,
@@ -68,7 +68,7 @@ public class Steps {
         );
     }
 
-    @Step("Remove regular Data Provider: {provider.name}")
+    @Step("Remove regular Data Provider: {provider.id}")
     public static void removeRegularProvider(DataProvider provider) {
         clearProviderResources(provider);
         var response = new ProviderController()
@@ -80,11 +80,11 @@ public class Steps {
                         "DataProvider deletion result not as expected!" + response.getBody().print());
     }
 
-    @Step("Create regular Container {container.name} of provider {container.dataProviderName}")
+    @Step("Create regular Container {container.name} of provider {container.dataProviderId}")
     public static void createRegularContainer(Container container) {
         if (Stream.of(Providers.DAIMLER_REFERENCE, Providers.REFERENCE_PROVIDER, Providers.REFERENCE_PROVIDER_PROD,
                 Providers.BMW_TEST)
-                .anyMatch(prov -> prov.getProvider().getName().equals(container.getDataProviderName()))) {
+                .anyMatch(prov -> prov.getProvider().getId().equals(container.getDataProviderId()))) {
             new ReferenceProviderController().addContainer(container);
         }
         var response = new ContainerController()
@@ -109,7 +109,7 @@ public class Steps {
         createRegularContainer(cont);
     }
 
-    @Step("Remove regular Container {container.name} of provider {container.dataProviderName}")
+    @Step("Remove regular Container {container.name} of provider {container.dataProviderId}")
     public static void removeRegularContainer(Container container) {
         var response = new ContainerController()
                 .withToken(PROVIDER)

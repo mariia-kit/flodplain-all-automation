@@ -106,11 +106,11 @@ public enum Providers {
 
     public static Providers getByProviderId(String providerId) {
         return Stream.of(Providers.values())
-                .filter(prov -> prov.getProvider().getName().equals(providerId))
+                .filter(prov -> prov.getProvider().getId().equals(providerId))
                 .findFirst().orElseThrow(() -> new RuntimeException("No provider with id found:" + providerId));
     }
 
     public String getName() {
-        return this.getProvider().getName();
+        return this.getProvider().getId();
     }
 }

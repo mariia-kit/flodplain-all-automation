@@ -43,7 +43,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should not be present!");
+                        "Provider " + provider.getId() + "should not be present!");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should be present!");
+                        "Provider " + provider.getId() + "should be present!");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should be present!");
+                        "Provider " + provider.getId() + "should be present!");
     }
 
     @Test
@@ -102,7 +102,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .deleteProvider(provider);
         new NeutralServerResponseAssertion(response)
-                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getName(), container.getId()));
+                .expectedError(NSErrors.getCouldntDeleteProviderError(provider.getId(), container.getId()));
 
         var verify = new ProviderController()
                 .withToken(PROVIDER)
@@ -110,7 +110,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should be present!");
+                        "Provider " + provider.getId() + "should be present!");
     }
 
     @Test
@@ -136,7 +136,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should not be present!");
+                        "Provider " + provider.getId() + "should not be present!");
     }
 
     @Test
@@ -194,7 +194,7 @@ public class DataProvidersDeleteTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> !DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should not be present!");
+                        "Provider " + provider.getId() + "should not be present!");
     }
 
 }

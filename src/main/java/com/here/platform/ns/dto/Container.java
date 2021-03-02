@@ -21,21 +21,19 @@ public class Container {
     private String id;
     private String dataProviderId;
     private String name;
-    private String dataProviderName;
     private String description;
     private String resourceNames;
     private Boolean consentRequired;
     private String scope;
 
 
-    @ConstructorProperties({"id", "name", "dataProviderName", "description", "resourceNames",
+    @ConstructorProperties({"id", "name", "dataProviderId", "description", "resourceNames",
             "consentRequired", "scope"})
-    public Container(String id, String name, String dataProviderName, String description,
+    public Container(String id, String name, String dataProviderId, String description,
             String resourceNames, Boolean consentRequired, String scope) {
-        this.dataProviderId = dataProviderName;
+        this.dataProviderId = dataProviderId;
         this.name = name;
         this.id = id;
-        this.dataProviderName = dataProviderName;
         this.description = description;
         this.resourceNames = resourceNames;
         this.consentRequired = consentRequired;
@@ -46,7 +44,7 @@ public class Container {
         return String.format("hrn:%s:neutral::%s:%s/containers/%s",
                 envHrn,
                 realm,
-                getDataProviderName(),
+                getDataProviderId(),
                 getId());
     }
 
@@ -55,7 +53,7 @@ public class Container {
     }
 
     public String generateScope() {
-        if (this.getDataProviderName().toLowerCase().equals("daimler") || this.getDataProviderName()
+        if (this.getDataProviderId().toLowerCase().equals("daimler") || this.getDataProviderId()
                 .equals(Providers.DAIMLER_EXPERIMENTAL.getName())) {
             return "mb:user:pool:reader mb:vehicle:status:general offline_access";
         } else {
@@ -96,9 +94,9 @@ public class Container {
         return this;
     }
 
-    @Step("Set Data Provider name value for container to '{0}'")
-    public Container withDataProviderName(String dataProviderName) {
-        this.dataProviderName = dataProviderName;
+    @Step("Set Data Provider id value for container to '{0}'")
+    public Container withDataProviderId(String dataProviderId) {
+        this.dataProviderId = dataProviderId;
         return this;
     }
 
@@ -128,18 +126,18 @@ public class Container {
     }
 
     public Container clone() {
-        return new Container(id, name, dataProviderName, description, resourceNames, consentRequired, scope);
+        return new Container(id, name, dataProviderId, description, resourceNames, consentRequired, scope);
     }
 
     @Override
     public String toString() {
         return String.format(
                 "ContainerInfo(id=%s, name=%s, dataProviderName=%s, description=%s, resourceNames=%s, consentRequired=%s, scope=%s)",
-                id, name, dataProviderName, description, resourceNames, consentRequired, scope);
+                id, name, dataProviderId, description, resourceNames, consentRequired, scope);
     }
 
     public DataProvider getDataProviderByName() {
-        return Arrays.stream(Providers.values()).filter(p -> p.getProvider().getName().equals(this.dataProviderName))
+        return Arrays.stream(Providers.values()).filter(p -> p.getProvider().getId().equals(this.dataProviderId))
                 .findFirst().get()
                 .getProvider();
     }

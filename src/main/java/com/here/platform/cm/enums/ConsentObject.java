@@ -87,10 +87,10 @@ public class ConsentObject {
     }
 
     public ConsentObject(Container nsContainer) {
-        MPProviders cmProvider = MPProviders.findByProviderId(nsContainer.getDataProviderName());
+        MPProviders cmProvider = MPProviders.findByProviderId(nsContainer.getDataProviderId());
         ConsentRequestContainer targetContainer = ConsentRequestContainers.generateNew(cmProvider, nsContainer);
         this.consumer = Users.MP_CONSUMER.getUser();
-        this.provider = MPProviders.findByProviderId(nsContainer.getDataProviderName());
+        this.provider = MPProviders.findByProviderId(nsContainer.getDataProviderId());
         this.container = targetContainer;
 
         consentRequestData = new ConsentRequestData()

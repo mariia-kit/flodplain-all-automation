@@ -42,7 +42,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
-                .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
+                .expected(res -> DefaultResponses.isDataProviderPresentInListMP(provider, res),
                         "No expected container in result!");
     }
 
@@ -60,7 +60,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         var verify = marketplaceTunnelController
                 .withProviderToken()
-                .getProviderContainers(provider.getName());
+                .getProviderContainers(provider.getId());
         new NeutralServerResponseAssertion(verify)
                 .expected(res -> !DefaultResponses.isResponseListEmpty(res),
                         "Expected list should not be empty!")
@@ -77,7 +77,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
                         "ConsentRequired of Container not as expected.")
                 .expectedJsonContains("[0].hrn",
                         "hrn:here-dev:neutral::" + PROVIDER.getUser().getRealm() + ":" + container
-                                .getDataProviderName() + "/containers/" + container.getId(),
+                                .getDataProviderId() + "/containers/" + container.getId(),
                         "HRN of Container not as expected.");
 
     }
@@ -95,7 +95,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
         Steps.createRegularContainer(container);
         var hrn = marketplaceTunnelController
                 .withConsumerToken()
-                .getProviderContainers(provider.getName()).getBody().jsonPath().get("hrn").toString()
+                .getProviderContainers(provider.getId()).getBody().jsonPath().get("hrn").toString()
                 .replace("[", "").replace("]", "");
 
         var verify = marketplaceTunnelController
@@ -120,7 +120,7 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         var verify = marketplaceTunnelController
                 .withBearerToken(CONSUMER.getToken())
-                .getProviderContainers(provider.getName());
+                .getProviderContainers(provider.getId());
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_FORBIDDEN);
@@ -134,14 +134,14 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         var verify = marketplaceTunnelController
                 .withProviderToken()
-                .getProviderContainers(provider.getName());
+                .getProviderContainers(provider.getId());
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedJsonContains("errorCode", "error_external_service",
                         "Field not as expected!")
                 .expectedJsonContains("externalServiceError.cause",
-                        "Containers for data provider '" + provider.getName() + "' not found",
+                        "Containers for data provider '" + provider.getId() + "' not found",
                         "Field not as expected!")
                 .expectedJsonContains("externalServiceError.status", "404",
                         "Field not as expected!");
@@ -156,14 +156,14 @@ public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
         var verify = marketplaceTunnelController
                 .withProviderToken()
-                .getProviderContainers(provider.getName());
+                .getProviderContainers(provider.getId());
 
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_NOT_FOUND)
                 .expectedJsonContains("errorCode", "error_external_service",
                         "Field not as expected!")
                 .expectedJsonContains("externalServiceError.cause",
-                        "Containers for data provider '" + provider.getName() + "' not found",
+                        "Containers for data provider '" + provider.getId() + "' not found",
                         "Field not as expected!")
                 .expectedJsonContains("externalServiceError.status", "404",
                         "Field not as expected!");

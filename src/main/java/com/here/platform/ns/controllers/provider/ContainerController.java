@@ -15,16 +15,16 @@ public class ContainerController extends BaseNeutralService<ContainerController>
     @Step
     public Response getContainer(Container container) {
         return neutralServerClient(containersBasePath)
-                .get("/{providerId}/containers_info/{containerId}", container.getDataProviderName(), container.getId());
+                .get("/{providerId}/containers_info/{containerId}", container.getDataProviderId(), container.getId());
 
     }
 
-    @Step("Add neutral server container {container.id} for {container.dataProviderName}")
+    @Step("Add neutral server container {container.id} for {container.dataProviderId}")
     public Response addContainer(Container container) {
         DataForRemoveCollector.addNSContainer(container);
         return neutralServerClient(containersBasePath)
                 .body(container.generateContainerBody())
-                .put("/{providerId}/containers_info/{containerId}", container.getDataProviderName(), container.getId());
+                .put("/{providerId}/containers_info/{containerId}", container.getDataProviderId(), container.getId());
     }
 
     @Step
@@ -32,7 +32,7 @@ public class ContainerController extends BaseNeutralService<ContainerController>
         return neutralServerClient(containersBasePath)
                 .delete(
                         "/{providerId}/containers_info/{containerId}",
-                        container.getDataProviderName(),
+                        container.getDataProviderId(),
                         container.getId()
                 );
     }

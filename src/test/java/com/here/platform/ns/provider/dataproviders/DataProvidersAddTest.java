@@ -90,7 +90,7 @@ class DataProvidersAddTest extends BaseNSTest {
     @DisplayName("Verify create new DataProvider invalid Name")
     void verifyDataProviderCreationEmptyName() {
         DataProvider provider = Providers.generateNew();
-        provider.setName(StringUtils.EMPTY);
+        provider.setId(StringUtils.EMPTY);
 
         var response = new ProviderController()
                 .withToken(PROVIDER)
@@ -144,7 +144,7 @@ class DataProvidersAddTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should be present!");
+                        "Provider " + provider.getId() + "should be present!");
     }
 
     @Test
@@ -171,7 +171,7 @@ class DataProvidersAddTest extends BaseNSTest {
         new NeutralServerResponseAssertion(verify)
                 .expectedCode(HttpStatus.SC_OK)
                 .expected(res -> DefaultResponses.isDataProviderPresentInList(provider, res),
-                        "Provider " + provider.getName() + "should be present!");
+                        "Provider " + provider.getId() + "should be present!");
     }
 
 
@@ -179,7 +179,7 @@ class DataProvidersAddTest extends BaseNSTest {
     @DisplayName("Verify create new DataProvider invalid long Name")
     void verifyDataProviderCreationInvalidName() {
         DataProvider provider = Providers.generateNew();
-        provider.setName(provider.getName() + StringUtils
+        provider.setId(provider.getId() + StringUtils
                 .repeat("ACEFGHJKLMNPQRUVWXYabcdefhijkprstuvwx", 3));
 
         var response = new ProviderController()

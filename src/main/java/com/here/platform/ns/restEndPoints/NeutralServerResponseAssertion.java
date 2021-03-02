@@ -54,7 +54,7 @@ public class NeutralServerResponseAssertion {
         return this;
     }
 
-    @Step("Expected response value equals to DataProvider: '{expected.name}'")
+    @Step("Expected response value equals to DataProvider: '{expected.id}'")
     public NeutralServerResponseAssertion expectedEqualsProvider(DataProvider expected, String message) {
         Assertions.assertEquals(expected, DefaultResponses.extractAsProvider(response), message);
         return this;

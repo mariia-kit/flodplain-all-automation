@@ -184,7 +184,7 @@ public enum Containers {
     }
 
     public static Container generateNew(DataProvider provider) {
-        return generateNew(provider.getName());
+        return generateNew(provider.getId());
     }
 
 }

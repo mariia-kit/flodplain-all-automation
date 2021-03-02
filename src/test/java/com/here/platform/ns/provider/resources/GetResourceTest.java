@@ -121,7 +121,7 @@ public class GetResourceTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .getResource(provider, res.getName());
         new NeutralServerResponseAssertion(getResource)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getId(),
                         res.getName()));
     }
 
@@ -141,7 +141,7 @@ public class GetResourceTest extends BaseNSTest {
                 .addResource(provider, res);
         new NeutralServerResponseAssertion(addResource)
                 .expectedCode(HttpStatus.SC_OK);
-        provider.setName("no_such_provider");
+        provider.setId("no_such_provider");
         var getResource = new ResourceController()
                 .withToken(PROVIDER)
                 .getResource(provider, res.getName());
@@ -170,7 +170,7 @@ public class GetResourceTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .getResource(provider, "no_such_res");
         new NeutralServerResponseAssertion(getResource)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getId(),
                         "no_such_res"));
     }
 

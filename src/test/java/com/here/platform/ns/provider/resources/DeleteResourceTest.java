@@ -137,7 +137,7 @@ public class DeleteResourceTest extends BaseNSTest {
         new NeutralServerResponseAssertion(add)
                 .expectedCode(HttpStatus.SC_OK);
 
-        provider.setName("no_such_provider");
+        provider.setId("no_such_provider");
         var delete = new ResourceController()
                 .withToken(PROVIDER)
                 .deleteResource(provider, res);
@@ -168,7 +168,7 @@ public class DeleteResourceTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .deleteResource(provider, res2);
         new NeutralServerResponseAssertion(delete)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(), res2.getName()));
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getId(), res2.getName()));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class DeleteResourceTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .deleteResource(provider2, res);
         new NeutralServerResponseAssertion(delete)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider2.getName(),
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider2.getId(),
                         res.getName()));
     }
 
@@ -229,7 +229,7 @@ public class DeleteResourceTest extends BaseNSTest {
                 .withToken(PROVIDER)
                 .deleteResource(provider, res);
         new NeutralServerResponseAssertion(delete2)
-                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getName(),
+                .expectedError(NSErrors.getProviderResourceNotFoundError(provider.getId(),
                         res.getName()));
     }
 
