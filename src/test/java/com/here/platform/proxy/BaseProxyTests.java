@@ -12,6 +12,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 @ZephyrComponent("Proxy")
 @Execution(ExecutionMode.CONCURRENT)
 public class BaseProxyTests {
-    //@RegisterExtension
-    //ProxyRemoveExtension proxyRemoveExtension = new ProxyRemoveExtension();
+    @RegisterExtension
+    ProxyRemoveExtension proxyRemoveExtension = new ProxyRemoveExtension();
 }
