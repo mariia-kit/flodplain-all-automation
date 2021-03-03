@@ -75,7 +75,7 @@ public class MarketplaceSteps {
         return listingHrn;
     }
 
-    @Step("Create new listing for container {container.id} of provider {container.dataProviderName}")
+    @Step("Create new listing for container {container.id} of provider {container.dataProviderId}")
     public NeutralServerResponseAssertion createListing(Container container, String resRealm) {
         Random r = new Random();
         String containerTitle = String.format("[NS] Container Listing %s %s", container.getName(), r.nextInt(10000));
