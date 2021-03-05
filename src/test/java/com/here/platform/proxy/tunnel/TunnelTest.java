@@ -8,6 +8,7 @@ import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.dto.ProxyProviderResources;
 import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.helper.RemoveObjCollector;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Disabled;
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("Proxy Tunnel")
-@DisplayName("Verify Proxy service e2e")
+@DisplayName("[External Proxy] Verify Proxy service e2e")
 public class TunnelTest extends BaseProxyTests {
 
     @Test
@@ -27,13 +28,13 @@ public class TunnelTest extends BaseProxyTests {
         ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.readProxyProviderResource(resource);
-
+        RemoveObjCollector.addProxyResHrn(resource.getHrn());
         String listingHrn = new MarketplaceSteps().createNewProxyListing(resource.getHrn());
         String subsId = new MarketplaceSteps().subscribeListing(listingHrn);
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData("reference-data-provider.ost.solo-experiments.com", "/proxy/data");
+                .getData(proxyProvider, resource);
         new NeutralServerResponseAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
     }
@@ -45,18 +46,19 @@ public class TunnelTest extends BaseProxyTests {
     void verifyNewProxyCanBeRetrieved() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource resource = new ProxyProviderResource(
-                "Auto-testing-reference",
-                "/proxy/data");
+                "Auto-testing-reference-2",
+                "/proxy/data?query=none");
 
-        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
+        RemoveObjCollector.addProxyResHrn(resource.getHrn());
 
         String listingHrn = new MarketplaceSteps().createNewProxyListing(resource.getHrn());
         String subsId = new MarketplaceSteps().subscribeListing(listingHrn);
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData("reference-data-provider.ost.solo-experiments.com", "/proxy/data");
+                .getData(proxyProvider, resource);
         new NeutralServerResponseAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
     }

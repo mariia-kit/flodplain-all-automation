@@ -7,6 +7,7 @@ import static io.qameta.allure.Allure.step;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.here.platform.cm.controllers.PrivateController;
 import com.here.platform.cm.enums.ConsentObject;
 import com.here.platform.cm.enums.ConsentRequestContainer;
 import com.here.platform.cm.enums.ConsentRequestContainers;
@@ -42,6 +43,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -91,14 +93,17 @@ public class E2EUITest extends BaseE2ETest {
     @BeforeEach
     @SneakyThrows
     void setUpBrowserContainer() {
-        DesiredCapabilities capability = DesiredCapabilities.chrome();
-        String testId = Allure.getLifecycle().getCurrentTestCase().get();
-        String seleniumHost = SeleniumContainerHandler.get(testId);
-        step("Start selenium host" + seleniumHost);
-        RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + seleniumHost + ":4444/wd/hub/"),
-                capability);
-        WebDriverRunner.setWebDriver(driver);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+        boolean isCi = !StringUtils.isEmpty(System.getenv("CI"));
+        if (isCi) {
+            DesiredCapabilities capability = DesiredCapabilities.chrome();
+            String testId = Allure.getLifecycle().getCurrentTestCase().get();
+            String seleniumHost = SeleniumContainerHandler.get(testId);
+            step("Start selenium host" + seleniumHost);
+            RemoteWebDriver driver = new RemoteWebDriver(new URL("http://" + seleniumHost + ":4444/wd/hub/"),
+                    capability);
+            WebDriverRunner.setWebDriver(driver);
+            WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(1366, 1000));
+        }
     }
 
     @AfterEach
@@ -115,9 +120,9 @@ public class E2EUITest extends BaseE2ETest {
     void simpleHappyPathTest() {
         MPProviders provider = MPProviders.DAIMLER_EXPERIMENTAL;
         User mpConsumer = Users.MP_CONSUMER.getUser();
-        ConsentRequestContainer targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_CHARGE.getConsentContainer();
+        ConsentRequestContainer targetContainer = ConsentRequestContainers.DAIMLER_EXPERIMENTAL_FUEL.getConsentContainer();
         ConsentObject consentObj = new ConsentObject(mpConsumer, provider, targetContainer);
-
+        //new PrivateController().hardDeleteConsentRequest()
         new ConsentRequestSteps(consentObj)
                 .onboardAllForConsentRequest();
 

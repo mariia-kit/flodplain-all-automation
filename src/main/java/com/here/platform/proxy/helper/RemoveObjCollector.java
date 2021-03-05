@@ -15,6 +15,7 @@ import lombok.experimental.UtilityClass;
 public class RemoveObjCollector {
     private static Map<String, List<Long>> proxyProviders = new ConcurrentHashMap<>();
     private static Map<String, List<PairIdValue>> proxyResource = new ConcurrentHashMap<>();
+    private static Map<String, List<String>> proxyHrn = new ConcurrentHashMap<>();
 
     public void addProxyProvider(Long id) {
         String testId = Allure.getLifecycle().getCurrentTestCase()
@@ -47,12 +48,25 @@ public class RemoveObjCollector {
         };
     }
 
+    public void addProxyResHrn(String hrn) {
+        String testId = Allure.getLifecycle().getCurrentTestCase()
+                .orElseThrow(() -> new RuntimeException("Test case not detected while adding hrn" + hrn));
+        if (!proxyHrn.containsKey(testId)) {
+            proxyHrn.put(testId, new ArrayList<>());
+        }
+        proxyHrn.get(testId).add(hrn);
+    }
+
     public List<Long> getAllProxyProviders(String testId) {
         return proxyProviders.getOrDefault(testId, new ArrayList<>());
     }
 
     public List<PairIdValue> getAllProxyProvidersWithResources(String testId) {
         return proxyResource.getOrDefault(testId, new ArrayList<>());
+    }
+
+    public List<String> getAllProxyResHrn(String testId) {
+        return proxyHrn.getOrDefault(testId, new ArrayList<>());
     }
 
     @Data

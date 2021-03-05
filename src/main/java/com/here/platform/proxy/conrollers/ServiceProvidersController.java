@@ -37,7 +37,7 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     public Response addProvider(ProxyProvider proxyProvider) {
         Response response = consentServiceClient(basePath)
                 .body(proxyProvider)
-                .put();
+                .post();
         if (response.getStatusCode() == HttpStatus.SC_OK) {
             Long id = response.getBody().jsonPath().getLong("id");
             RemoveObjCollector.addProxyProvider(id);
@@ -56,7 +56,7 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
         ProxyResourceRequest proxyResourceRequest = new ProxyResourceRequest(resources);
         Response response = consentServiceClient(basePath)
                 .body(proxyResourceRequest)
-                .put("/{serviceProviderId}/resources", serviceProviderId);
+                .post("/{serviceProviderId}/resources", serviceProviderId);
         if (response.getStatusCode() == HttpStatus.SC_OK) {
             List<ProxyProviderResource> result = response.getBody().jsonPath()
                     .getList("resources", ProxyProviderResource.class);
