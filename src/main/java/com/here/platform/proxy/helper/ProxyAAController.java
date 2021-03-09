@@ -13,7 +13,9 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.path.json.exception.JsonPathException;
 import io.restassured.response.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.http.HttpStatus;
@@ -132,8 +134,8 @@ public class ProxyAAController {
     public void removeGroupFromPolicy(String groupId, String policyLinkId) {
         String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId + "/policies/" + policyLinkId;
         given()
-
                 .headers("Authorization", "Bearer " + Users.PROXY_APP.getToken())
+                .filters(new AllureRestAssured())
                 .when()
                 .delete(url)
                 .then()
@@ -166,5 +168,51 @@ public class ProxyAAController {
                 .then()
                 .statusCode(HttpStatus.SC_CREATED)
                 .extract().response().jsonPath().get("id");
+    }
+
+    public Map<String, String> getAllPolicyLink(String groupId) {
+        String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId;
+        JsonPath responce = given()
+
+                .headers("Content-Type", "application/json",
+                        "Authorization", "Bearer " + Users.PROXY_APP.getToken())
+                .when()
+                .get(url)
+                .then()
+                .extract().response().jsonPath();
+        List<JsonNode> data = responce.getList("policies", JsonNode.class);
+        Map<String, String> res = new HashMap<>();
+        data.forEach(p -> {
+            String serviceId = p.get("serviceId").toString().replace("\"", "");
+            String policyId = p.get("policyId").toString().replace("\"", "");
+            String linkId = p.get("id").toString().replace("\"", "");
+            res.put(policyId, linkId);
+        });
+        return res;
+    }
+
+    public void wipeAllPolicies(String hrn) {
+        String groupId = Conf.nsUsers().getConsumerGroupId();
+        List<MutablePair<String, String>> policy = getAllContainersPolicy();
+        Map<String, String> pLinks = getAllPolicyLink(groupId);
+        policy.stream()
+                .filter(p -> p.getRight().toLowerCase().contains(hrn))
+                .parallel()
+                .forEach(p -> {
+                    String policyLink = pLinks.get(p.getLeft());
+                    if (policyLink != null) {
+                        removeGroupFromPolicy(groupId, policyLink);
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        deletePolicy(p.getLeft());
+                    } else {
+                        Response del = deletePolicy(p.getLeft());
+                        System.out.println("Del Policy " + del.getBody().print());
+                    }
+
+                });
     }
 }

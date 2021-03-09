@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 
 @Tag("Tunnel")
-@DisplayName("Verify AccuWeather service")
+@DisplayName("[External Proxy] Verify AccuWeather service")
 public class AccuWeatherTest extends BaseProxyTests {
 
     @Test

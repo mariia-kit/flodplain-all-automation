@@ -1,9 +1,11 @@
 package com.here.platform.proxy.admin;
 
+import com.here.platform.common.config.Conf;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
+import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import com.here.platform.proxy.dto.ProxyProviderResource;
@@ -18,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 
 @Tag("Proxy Admin")
-@DisplayName("Verify Service Providers Management")
+@DisplayName("[External Proxy] Verify Service Providers Management")
 public class ServiceProvidersTest extends BaseProxyTests {
 
     @Test
@@ -80,6 +82,7 @@ public class ServiceProvidersTest extends BaseProxyTests {
 
     @Test
     @Issue("NS-3579")
+    @Issue("OLPDFTS-24918")
     @DisplayName("[External Proxy] Provider cannot be deleted if there are attached resources")
     void verifyDeleteProxyProviderWithResource() {
         ProxyProvider proxyProvider = new ProxyProvider(
@@ -98,7 +101,8 @@ public class ServiceProvidersTest extends BaseProxyTests {
                 .withAdminToken()
                 .deleteProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(delete)
-                .expectedCode(HttpStatus.SC_CONFLICT);
+                .expectedCode(HttpStatus.SC_FORBIDDEN)
+                .expectedError(ProxyErrorList.getDeleteConflictError(proxyProvider.getId()));
     }
 
     @Test
@@ -188,9 +192,9 @@ public class ServiceProvidersTest extends BaseProxyTests {
     @DisplayName("[External Proxy] Deactivate created subscription and delete provider resource")
     void verifyNewProxyAfterSubscriptionCancel() {
         ProxyProvider proxyProvider = new ProxyProvider(
-                "Manual-testing-9",
-                "olp-here-mrkt-prov-9",
-                "dataservice9.test.mock",
+                "Manual-testing-10",
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "dataservice10.test.mock",
                 CredentialsAuthMethod.NONE);
         ProxyProviderResource resource = new ProxyProviderResource(
                 "Manual-testing-auto",

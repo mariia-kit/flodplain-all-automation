@@ -1,5 +1,6 @@
 package com.here.platform.proxy.helper;
 
+import com.here.platform.proxy.dto.ProxyError;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import io.qameta.allure.Step;
@@ -42,4 +43,21 @@ public class ProxyProviderAssertion {
         return this;
     }
 
+    @Step("Expected response contains Proxy error {error.status} {error.title}")
+    public ProxyProviderAssertion expectedError(ProxyError error) {
+        if (response.getStatusCode() == error.getStatus()) {
+            try {
+                ProxyError actual = response.getBody().as(ProxyError.class);
+                Assertions.assertThat(actual)
+                        .withFailMessage("Proxy Error not as expected!")
+                        .isEqualTo(error);
+            } catch (ClassCastException e) {
+                Assertions.fail("No sign of error " + error.getStatus() + " detected!");
+            }
+        } else {
+            Assertions.fail("Expected error code " + error.getStatus() +
+                    " not detected, " + response.getStatusCode() + " found!");
+        }
+        return this;
+    }
 }
