@@ -33,6 +33,12 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
                 .get("/resources/{resourceHrn}", resourceHrn);
     }
 
+    @Step("Get proxy service provider resources by id {providerId}")
+    public Response getResourceOfProvider(Long providerId) {
+        return consentServiceClient(basePath)
+                .get("/{providerId}/resources", providerId);
+    }
+
     @Step("Add proxy service provider {proxyProvider.serviceName}")
     public Response addProvider(ProxyProvider proxyProvider) {
         Response response = consentServiceClient(basePath)
@@ -52,7 +58,7 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     }
 
     @Step("Add resources list to proxy provider {serviceProviderId}")
-    public Response addResourceListToProvider(String serviceProviderId, List<ProxyProviderResource> resources) {
+    public Response addResourceListToProvider(Long serviceProviderId, List<ProxyProviderResource> resources) {
         ProxyResourceRequest proxyResourceRequest = new ProxyResourceRequest(resources);
         Response response = consentServiceClient(basePath)
                 .body(proxyResourceRequest)
@@ -60,12 +66,12 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
         if (response.getStatusCode() == HttpStatus.SC_OK) {
             List<ProxyProviderResource> result = response.getBody().jsonPath()
                     .getList("resources", ProxyProviderResource.class);
-            result.forEach(res -> RemoveObjCollector.addResourceToProxyProvider(serviceProviderId, res.getId()));
+            result.forEach(res -> RemoveObjCollector.addResourceToProxyProvider(String.valueOf(serviceProviderId), res.getId()));
         }
         return response;
     }
 
-    public Response addResourceListToProvider(String serviceProviderId, ProxyProviderResource resources) {
+    public Response addResourceListToProvider(Long serviceProviderId, ProxyProviderResource resources) {
         List<ProxyProviderResource> resList = new LinkedList<>();
         resList.add(resources);
         return addResourceListToProvider(serviceProviderId, resList);
@@ -85,6 +91,12 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     public Response updateResourceById(Long resourceId, ProxyProviderResource newResource) {
         return consentServiceClient(basePath)
                 .body(newResource)
-                .post("/resources/{resourceId}", resourceId);
+                .put("/resources/{resourceId}", resourceId);
+    }
+
+    @Step("Get List of all Providers wit realm {providerRealm}")
+    public Response getProvidersByRealm(String providerRealm) {
+        return consentServiceClient(basePath)
+                .get("/realms/{providerRealm}", providerRealm);
     }
 }

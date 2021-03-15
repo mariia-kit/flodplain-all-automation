@@ -21,9 +21,10 @@ public class ProxyRemoveExtension implements AfterEachCallback {
         DataForRemoveCollector
                 .getAllMpListings(testId)
                 .forEach(id -> new MarketplaceSteps().deleteListing(id));
-
-        RemoveObjCollector.getAllProxyResHrn(testId)
-                .forEach(hrn -> new ProxyAAController().wipeAllPolicies(hrn));
+        if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
+            RemoveObjCollector.getAllProxyResHrn(testId)
+                    .forEach(hrn -> new ProxyAAController().wipeAllPolicies(hrn));
+        }
 
         RemoveObjCollector
                 .getAllProxyProvidersWithResources(testId)

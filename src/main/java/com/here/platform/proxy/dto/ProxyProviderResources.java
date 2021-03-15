@@ -1,5 +1,8 @@
 package com.here.platform.proxy.dto;
 
+import com.here.platform.common.config.Conf;
+import com.here.platform.ns.helpers.UniqueId;
+import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,4 +19,16 @@ public enum ProxyProviderResources {
     ACCU_FORECASTS(new ProxyProviderResource("Accuweather Forecasts","/airquality/v2/forecasts/hourly/12hour/201655"));
 
     private ProxyProviderResource resource;
+
+    public static String getResourceNamePrefix() {
+        return "Auto-Resource";
+    }
+
+    public static ProxyProviderResource generate() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProviderResource(
+                getResourceNamePrefix() + id,
+                "/proxy/data/d" + id);
+    }
+
 }

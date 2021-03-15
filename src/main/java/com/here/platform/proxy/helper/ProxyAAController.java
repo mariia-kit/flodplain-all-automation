@@ -131,6 +131,7 @@ public class ProxyAAController {
                 .extract().response().jsonPath().get("policies.find {it.policyId == '" + policyId + "'}.id");
     }
 
+    @Step("Remove group from policy {groupId} {policyLinkId}")
     public void removeGroupFromPolicy(String groupId, String policyLinkId) {
         String url = Conf.ns().getAuthUrlBase() + "/group/" + groupId + "/policies/" + policyLinkId;
         given()
@@ -147,7 +148,7 @@ public class ProxyAAController {
         String body = "{\n"
                 + "    \"name\": \"EXT_SVC Policy\",\n"
                 + "    \"scope\": {\n"
-                + "        \"serviceId\": \"" + Conf.nsUsers().getAaService().getAppId() + "\"\n"
+                + "        \"serviceId\": \"" + Conf.proxy().getProxyApp().getAppId() + "\"\n"
                 + "    },\n"
                 + "    \"permissions\": [\n"
                 + "        {\n"
@@ -191,6 +192,7 @@ public class ProxyAAController {
         return res;
     }
 
+    @Step("Delete policy for hrn:{hrn}")
     public void wipeAllPolicies(String hrn) {
         String groupId = Conf.nsUsers().getConsumerGroupId();
         List<MutablePair<String, String>> policy = getAllContainersPolicy();
