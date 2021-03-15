@@ -2,6 +2,7 @@ host: https://p.stg.hereapi.com/
 accuProtocol: dataservice.accuweather.mock
 accuApiKey: a76032ba3f9240099518154f6a398a25
 
+marketplaceMock: true
 
 #------------------App Credentials--------------------------------------------------
 adminApp:

@@ -3,6 +3,7 @@ package com.here.platform.proxy.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.here.platform.common.config.Conf;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;

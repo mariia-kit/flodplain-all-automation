@@ -10,6 +10,7 @@ public class ProxyConfig {
     private String host;
     private String accuProtocol;
     private String accuApiKey;
+    private Boolean marketplaceMock;
 
     private HereApplication adminApp;
     private HereApplication proxyApp;

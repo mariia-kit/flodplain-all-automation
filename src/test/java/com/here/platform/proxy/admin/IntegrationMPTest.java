@@ -1,0 +1,102 @@
+package com.here.platform.proxy.admin;
+
+import com.here.platform.proxy.BaseProxyTests;
+import com.here.platform.proxy.conrollers.ServiceProvidersController;
+import com.here.platform.proxy.dto.ProxyProvider;
+import com.here.platform.proxy.dto.ProxyProviderResource;
+import com.here.platform.proxy.dto.ProxyProviderResources;
+import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.helper.ProxyProviderAssertion;
+import com.here.platform.proxy.steps.ProxySteps;
+import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("Proxy Admin")
+@Tag("proxy_admin")
+@DisplayName("[External Proxy] Verify Service Resource Management with Subscriptions")
+public class IntegrationMPTest extends BaseProxyTests {
+
+    @Test
+    @DisplayName("[External Proxy] Delete resource if Subs removed")
+    void verifyDeleteProxyAfterSubscriptionCancel() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxySteps.createAndRemoveListingAndSubscription(resource);
+
+        var delete = new ServiceProvidersController()
+                .withAdminToken()
+                .deleteResourceFromProvider(resource.getId());
+        new ProxyProviderAssertion(delete)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Delete resource if Subs exist")
+    void verifyDeleteProxyAfterSubscriptionExist() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var delete = new ServiceProvidersController()
+                .withAdminToken()
+                .deleteResourceFromProvider(resource.getId());
+        new ProxyProviderAssertion(delete)
+                .expectedCode(HttpStatus.SC_FORBIDDEN);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Update Service resource if subs exist")
+    void verifyUpdateProxyResourceSubs() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        newResource.setHrn(resource.getHrn());
+        //path is not updated!!
+        newResource.setPath(resource.getPath());
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var update = new ServiceProvidersController()
+                .withAdminToken()
+                .updateResourceById(resource.getId(), newResource);
+        new ProxyProviderAssertion(update)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Update Service resource if subs removed")
+    void verifyUpdateProxyResourceSubsRemoved() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        newResource.setHrn(resource.getHrn());
+        //path is not updated!!
+        newResource.setPath(resource.getPath());
+
+        ProxySteps.createAndRemoveListingAndSubscription(resource);
+
+        var update = new ServiceProvidersController()
+                .withAdminToken()
+                .updateResourceById(resource.getId(), newResource);
+        new ProxyProviderAssertion(update)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+}

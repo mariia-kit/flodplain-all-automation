@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Getter
@@ -30,5 +31,4 @@ public class ProxyProviderResource {
         this.id = id;
         return this;
     }
-
 }

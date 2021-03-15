@@ -110,6 +110,7 @@ task nsTestRegression(type: TestNS, dependsOn: "initTokensNS") {
 }
 
 task nsTestsSmoke(type: TestNS, dependsOn: "initTokensNS") {
+    dependsOn "testDataGeneration"
     group "ns tests"
     doFirst {
         systemProperty "env", finalEnv

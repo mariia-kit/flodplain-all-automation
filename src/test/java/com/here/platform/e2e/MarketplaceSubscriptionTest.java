@@ -15,14 +15,12 @@ import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.helpers.Steps;
-import com.here.platform.ns.instruments.MarketAfterCleanUp;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @DisplayName("Marketplace integration Tests: 'Subscription'")

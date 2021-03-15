@@ -1,6 +1,7 @@
 package com.here.platform.proxy.dto;
 
 import com.here.platform.common.config.Conf;
+import com.here.platform.ns.helpers.UniqueId;
 import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +23,17 @@ public enum ProxyProviders {
             .withAuthMethod(CredentialsAuthMethod.API_KEY_IN_QUERY, "apikey", Conf.proxy().getAccuApiKey()));
 
     private ProxyProvider proxyProvider;
+
+    public static String getProviderNamePrefix() {
+        return "Auto-Provider";
+    }
+
+    public static ProxyProvider generate() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProvider(
+                getProviderNamePrefix() + id,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "someService." + id + ".mock",
+                CredentialsAuthMethod.NONE);
+    }
 }
