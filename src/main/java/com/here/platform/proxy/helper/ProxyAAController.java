@@ -81,6 +81,8 @@ public class ProxyAAController {
                 .then()
                 .extract().response();
     }
+
+    @Step("Create artificial policy for resource hrn {resHrn}")
     public void createResourcePermission(String resHrn) {
         String policyId = createPolicy(resHrn);
         try {
@@ -93,7 +95,7 @@ public class ProxyAAController {
         String policyLink = addGroupToPolicy(groupId, policyId);
         DataForRemoveCollector.addPolicy(policyId, policyLink);
         try {
-            Thread.sleep(60000);
+            Thread.sleep(90000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -198,7 +200,7 @@ public class ProxyAAController {
         List<MutablePair<String, String>> policy = getAllContainersPolicy();
         Map<String, String> pLinks = getAllPolicyLink(groupId);
         policy.stream()
-                .filter(p -> p.getRight().toLowerCase().contains(hrn))
+                .filter(p -> p.getRight().contains(hrn))
                 .parallel()
                 .forEach(p -> {
                     String policyLink = pLinks.get(p.getLeft());

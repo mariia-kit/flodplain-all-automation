@@ -181,13 +181,3 @@ task allurePushReport(type: JavaExec) {
 task allureAggregatedReportCM {
     finalizedBy 'allureReport'
 }
-
-task proxyTest(type: TestCM) {
-    onlyIf { !isHotDeploy }
-    doFirst {
-        systemProperty "env", finalEnv
-    }
-    useJUnitPlatform {
-        includeTags "proxy"
-    }
-}

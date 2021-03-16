@@ -50,6 +50,25 @@ public class ProxyProviderAssertion {
         return this;
     }
 
+    @Step("Expected response value equals to ProxyProvider: '{proxyProvider.serviceName}' with resource {resource.title}")
+    public ProxyProviderAssertion expectedProviderInList(ProxyProvider proxyProvider, ProxyProviderResource resource) {
+        ProxyProvider[] actual = response.getBody().as(ProxyProvider[].class);
+        Arrays.stream(actual).filter(prov -> prov.getId().equals(proxyProvider.getId()))
+                .findAny().ifPresentOrElse(prov -> {
+                    Assertions.assertThat(prov).isEqualToIgnoringGivenFields(proxyProvider,
+                            "id", "scbeId", "resources", "authMethod", "apiKey",
+                            "apiKeyQueryParamName", "authUsername", "authPassword");
+                    prov.getResources().stream()
+                            .filter(res -> res.getTitle().equals(resource.getTitle()))
+                            .findAny()
+                            .ifPresentOrElse(res ->
+                                    Assertions.assertThat(res).isEqualToIgnoringGivenFields(resource,"id"),
+                                    () -> Assertions.fail("No resource with title " + resource.getTitle() + " found in response!"));
+                },
+                () -> Assertions.fail("No provider with id " + proxyProvider.getId() + " found in response!"));
+        return this;
+    }
+
     @Step("Expected response value equals to ProxyProvider resource: '{expected.title}'")
     public ProxyProviderAssertion expectedResourceInProvider(ProxyProviderResource expected) {
         var provider = response.getBody().as(ProxyProvider.class);

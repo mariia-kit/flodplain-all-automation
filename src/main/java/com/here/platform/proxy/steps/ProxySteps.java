@@ -7,6 +7,7 @@ import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.helper.ProxyAAController;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
+import com.here.platform.proxy.helper.RemoveObjCollector;
 import io.qameta.allure.Step;
 import java.util.Arrays;
 import lombok.experimental.UtilityClass;
@@ -92,23 +93,26 @@ public class ProxySteps {
         });
     }
 
-    @Step("Create Listing and Subscription for resource {proxyProviderResource.title}")
+    @Step("Create Listing and Subscription for resource {resource.title}")
     public void createListingAndSubscription(ProxyProviderResource resource) {
         if (Conf.proxy().getMarketplaceMock()) {
             if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
                 new ProxyAAController().createResourcePermission(resource.getHrn());
+                RemoveObjCollector.addProxyResHrn(resource.getHrn());
             }
         } else {
             MarketplaceSteps marketplaceSteps = new MarketplaceSteps();
             String listingHrn = marketplaceSteps.createNewProxyListing(resource.getHrn());
             marketplaceSteps.subscribeListing(listingHrn);
+            RemoveObjCollector.addProxyResHrn(resource.getHrn());
         }
     }
 
-    @Step("Create Listing and Subscription for resource {proxyProviderResource.title}")
+    @Step("Create Listing and Subscription for resource {resource.title}")
     public void createAndRemoveListingAndSubscription(ProxyProviderResource resource) {
         if (Conf.proxy().getMarketplaceMock()) {
             if (!"prod".equalsIgnoreCase(System.getProperty("env"))) {
+                new ProxyAAController().createResourcePermission(resource.getHrn());
                 new ProxyAAController().wipeAllPolicies(resource.getHrn());
             }
         } else {
