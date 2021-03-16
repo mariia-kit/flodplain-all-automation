@@ -31,7 +31,7 @@ public class TunnelTest extends BaseProxyTests {
         ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.readProxyProviderResource(resource);
-        RemoveObjCollector.addProxyResHrn(resource.getHrn());
+
         ProxySteps.createListingAndSubscription(resource);
 
         var tunnel = new TunnelController()
@@ -113,7 +113,6 @@ public class TunnelTest extends BaseProxyTests {
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
-        RemoveObjCollector.addProxyResHrn(resource.getHrn());
 
         ProxySteps.createListingAndSubscription(resource);
 
@@ -226,7 +225,6 @@ public class TunnelTest extends BaseProxyTests {
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
-        RemoveObjCollector.addProxyResHrn(resource.getHrn());
 
         ProxySteps.createListingAndSubscription(resource);
 
@@ -235,5 +233,41 @@ public class TunnelTest extends BaseProxyTests {
                 .getData(proxyProvider.getDomain(), resource.getPath() + "?query=someData");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify retrieve new proxy data Error from Provider")
+    void verifyNewProxyCanBeRetrievedErrorExpected() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider.getDomain(), resource.getPath() + "?error=error");
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify retrieve new proxy data Empty response from Provider")
+    void verifyNewProxyCanBeRetrievedEmptyResponse() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider.getDomain(), resource.getPath() + "?empty=true");
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_NO_CONTENT);
     }
 }

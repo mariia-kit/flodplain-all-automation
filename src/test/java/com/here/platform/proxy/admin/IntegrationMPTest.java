@@ -1,5 +1,6 @@
 package com.here.platform.proxy.admin;
 
+import com.here.platform.mp.controllers.MarketplaceTunnelController;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
@@ -98,5 +99,20 @@ public class IntegrationMPTest extends BaseProxyTests {
                 .updateResourceById(resource.getId(), newResource);
         new ProxyProviderAssertion(update)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Marketplace can get list of Providers and Resources")
+    void verifyMPCanGetProvidersList() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+
+        ProxySteps.createProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+        var verify = new MarketplaceTunnelController()
+                .withProviderToken()
+                .getProxyServiceProviders();
+        new ProxyProviderAssertion(verify)
+                .expectedProviderInList(proxyProvider, resource);
     }
 }

@@ -17,6 +17,7 @@ public class MarketplaceTunnelController extends BaseMPController<MarketplaceTun
 
     private final String neutralServer = "/neutralServer";
     private final String consentManager = "/consent";
+    private final String externalProxy = "/mktproxy";
 
     @Step("Perform MP call to gather NS Data Providers info")
     public Response getProvidersList() {
@@ -88,5 +89,10 @@ public class MarketplaceTunnelController extends BaseMPController<MarketplaceTun
                 .put("/subscriptions/{subsId}/request", subsId);
     }
 
+    @Step("Perform MP call to get list of Proxy service providers")
+    public Response getProxyServiceProviders() {
+        return mpClient(externalProxy)
+                .get("serviceProviders");
+    }
 
 }
