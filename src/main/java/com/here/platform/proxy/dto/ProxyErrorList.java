@@ -44,6 +44,16 @@ public class ProxyErrorList {
                 "service_provider_resource_not_found");
     }
 
+    public static ProxyError getDeletedResourceNotFoundError(Long resourceId) {
+        return new ProxyError(
+                404,
+                "Service provider resource not found",
+                "E504013",
+                "Attempt to access service provider resource not registered or accessible (resourceId=" + resourceId + ")",
+                "Use service provider resource register for access",
+                "service_provider_resource_not_found");
+    }
+
     public static ProxyError getSQLError() {
         return new ProxyError(
                 500,
@@ -72,5 +82,15 @@ public class ProxyErrorList {
                 "Missing JSON field <\"authMethod\":com.here.platform.mktproxy.backend.db.model.CredentialAuthMethod>",
                 "Verify JSON payload for missing/wrong fields",
                 "missing_required_json_field");
+    }
+
+    public static ProxyError getProviderResourceAlreadyExistsError(String title, String path) {
+        return new ProxyError(
+                409,
+                "Service provider resource already exists",
+                "E504019",
+                "Attempt to add resources when the same resources already exists [title='" + title + "', path='" + path + "']",
+                "Use unique Resource title and path",
+                "service_provider_resource_already_exists");
     }
 }

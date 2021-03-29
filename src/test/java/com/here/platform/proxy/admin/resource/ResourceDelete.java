@@ -3,6 +3,7 @@ package com.here.platform.proxy.admin.resource;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
+import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.dto.ProxyProviderResources;
@@ -58,7 +59,7 @@ public class ResourceDelete extends BaseProxyTests {
                 .withAdminToken()
                 .deleteResourceFromProvider(-1L);
         new ProxyProviderAssertion(delete)
-                .expectedCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test
@@ -80,6 +81,6 @@ public class ResourceDelete extends BaseProxyTests {
                 .withAdminToken()
                 .deleteResourceFromProvider(resource.getId());
         new ProxyProviderAssertion(delete2)
-                .expectedCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
 }

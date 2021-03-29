@@ -39,7 +39,7 @@ public class ResourceUpdate extends BaseProxyTests {
                 .withAdminToken()
                 .updateResourceById(resource.getId(), newResource);
         new ProxyProviderAssertion(update)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expectedCode(HttpStatus.SC_OK);
 
         var get = new ServiceProvidersController()
                 .withAdminToken()

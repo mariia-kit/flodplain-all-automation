@@ -69,7 +69,7 @@ public class ProviderDelete extends BaseProxyTests {
                 .withAdminToken()
                 .deleteProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(delete2)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test
