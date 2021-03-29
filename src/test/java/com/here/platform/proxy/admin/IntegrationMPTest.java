@@ -75,7 +75,7 @@ public class IntegrationMPTest extends BaseProxyTests {
                 .withAdminToken()
                 .updateResourceById(resource.getId(), newResource);
         new ProxyProviderAssertion(update)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expectedCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -98,7 +98,8 @@ public class IntegrationMPTest extends BaseProxyTests {
                 .withAdminToken()
                 .updateResourceById(resource.getId(), newResource);
         new ProxyProviderAssertion(update)
-                .expectedCode(HttpStatus.SC_NO_CONTENT);
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedResourceInProvider(resource);
     }
 
     @Test

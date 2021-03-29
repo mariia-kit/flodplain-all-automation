@@ -101,7 +101,7 @@ public class ResourceAdd extends BaseProxyTests {
                 .addResourceListToProvider(proxyProvider.getId(), resource);
 
         new ProxyProviderAssertion(responseRes2)
-                .expectedError(ProxyErrorList.getSQLError());
+                .expectedError(ProxyErrorList.getProviderResourceAlreadyExistsError(resource.getTitle(), resource.getPath()));
     }
 
     @Test
