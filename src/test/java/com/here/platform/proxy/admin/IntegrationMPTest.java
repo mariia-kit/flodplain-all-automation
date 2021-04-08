@@ -10,6 +10,7 @@ import com.here.platform.proxy.dto.ProxyProviders;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -79,6 +80,7 @@ public class IntegrationMPTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Update Service resource if subs removed")
     void verifyUpdateProxyResourceSubsRemoved() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
