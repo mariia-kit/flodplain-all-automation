@@ -15,6 +15,7 @@ import com.here.platform.proxy.helper.RemoveObjCollector;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -42,6 +43,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Subscription")
     void verifyProxyCanBeRetrievedNoSubs() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -62,6 +64,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource No Policy")
     void verifyProxyCanBeRetrievedNoResourceNoPolicy() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -71,6 +74,7 @@ public class TunnelTest extends BaseProxyTests {
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
+        //ProxySteps.createProxyResource(proxyProvider, resource);
         ProxySteps.deleteProxyResource(resource.getId());
 
         var tunnel = new TunnelController()
@@ -105,6 +109,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource on Data Provider")
     void verifyProxyCanBeRetrievedNoResourceOnDP() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();

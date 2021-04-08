@@ -1,4 +1,4 @@
-host: https://proxy-direct.consent.api.platform.here.com/
+host: https://p.hereapi.com/
 accuProtocol: dataservice.accuweather.mock
 accuApiKey: a76032ba3f9240099518154f6a398a25
 

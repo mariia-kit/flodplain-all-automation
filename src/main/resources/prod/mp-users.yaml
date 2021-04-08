@@ -1,6 +1,6 @@
 #------------------MP Consumer Credentials---------------------------------------------
 mpConsumer:
-  email: ext-valerii.sushkov@here.com
+  email: ext-mariia-liliia.z.kit@here.com
   pass: Vpnojs001#
   realm: olp-here-mrkt-cons-1
   userId: HERE-b7affc38-10d3-40bb-a98e-651d9106a054
@@ -11,7 +11,7 @@ mpConsumer:
 
 #------------------MP Providers Credentials---------------------------------------------
 mpProvider:
-  email: ext-valerii.sushkov@here.com
+  email: ext-mariia-liliia.z.kit@here.com
   pass: Vpnojs002#
   realm: olp-here-nstest
   userId: HERE-a2eceb23-74a8-462c-8222-aa254d88b2f6

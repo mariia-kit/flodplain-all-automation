@@ -354,6 +354,20 @@ test_e2e_prod:
     - when: never
   allow_failure: true
 
+test_proxy_prod:
+  extends: .test_run
+  stage: test_prod
+  variables:
+    ENV: "prod"
+    TASK: "proxyTest"
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+  rules:
+    - if: '$TASK_NS == null && $TASK_CM == null'
+      when: manual
+    - when: never
+  allow_failure: true
+
 #Instruments
 zephyr_link:
   stage: instrumental
