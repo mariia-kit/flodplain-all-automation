@@ -17,11 +17,13 @@ import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-ContainerInfo")
+@Disabled
 @DisplayName("Verify creation of Container")
 class ContainersInfoAddTest extends BaseNSTest {
 

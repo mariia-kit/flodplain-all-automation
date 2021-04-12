@@ -22,11 +22,13 @@ import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @UpdateConsentRequest
+@Disabled
 @DisplayName("Update consent request")
 public class UpdateConsentRequestTests extends BaseCMTest {
 

@@ -21,12 +21,14 @@ import io.qameta.allure.Issue;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @Feature("On-boarding")
+@Disabled
 @DisplayName("Onboard Application")
 @Tag("CM-Provider Application")
 public class ProviderApplicationTests extends BaseCMTest {

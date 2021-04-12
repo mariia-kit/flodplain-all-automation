@@ -18,12 +18,14 @@ import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
+@Disabled
 @DisplayName("Marketplace integration Tests: 'API Tunnelling'")
+
 public class MarketplaceApiTunnelTest extends BaseE2ETest {
 
     private MarketplaceTunnelController marketplaceTunnelController = new MarketplaceTunnelController();

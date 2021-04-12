@@ -19,9 +19,11 @@ import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 @DisplayName("Add vin's to consent request")
 @UpdateConsentRequest
 public class AddingVinsToConsentRequestTests extends BaseCMTest {

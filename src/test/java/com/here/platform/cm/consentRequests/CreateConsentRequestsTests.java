@@ -16,12 +16,14 @@ import com.here.platform.common.strings.VIN;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Create consent request")
+@Disabled
 @CreateConsentRequest
 @Tag("smoke_cm")
 public class CreateConsentRequestsTests extends BaseCMTest {

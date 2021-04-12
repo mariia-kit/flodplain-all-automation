@@ -20,6 +20,7 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.ns.helpers.authentication.AuthController;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @ApproveConsent
+@Disabled
 @DisplayName("Approve consent Pending Consent list")
 @Execution(ExecutionMode.SAME_THREAD)
 public class ApproveConsentBodyTests extends BaseConsentStatusTests {

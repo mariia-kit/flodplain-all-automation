@@ -5,12 +5,14 @@ import com.here.platform.ns.BaseNSTest;
 import com.here.platform.ns.controllers.provider.ProviderServiceController;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Verify Provider health check")
+@Disabled
 class ProviderHealthCheckTest extends BaseNSTest {
 
     @Test

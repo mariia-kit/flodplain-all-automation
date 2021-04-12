@@ -26,11 +26,13 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("dynamic_ui")
+@Disabled
 @Dashboard
 @DisplayName("[UI] Dashboard with consents")
 public class DashboardWithConsentRequest extends BaseUITests {

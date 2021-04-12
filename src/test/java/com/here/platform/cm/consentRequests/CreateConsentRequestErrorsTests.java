@@ -18,10 +18,11 @@ import com.here.platform.common.annotations.Sentry;
 import com.here.platform.ns.dto.User;
 import io.qameta.allure.Issue;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-
+@Disabled
 @DisplayName("Create consent request")
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {

@@ -62,6 +62,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @Tag("e2e_ui")
+@Disabled
 @Execution(ExecutionMode.SAME_THREAD)
 public class E2EUITest extends BaseE2ETest {
 
