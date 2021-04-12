@@ -23,12 +23,14 @@ import com.here.platform.dataProviders.reference.controllers.ReferenceTokenContr
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @GetAccessToken
+@Disabled
 @DisplayName("Get Access token")
 class AccessTokenTests extends BaseConsentStatusTests {
 

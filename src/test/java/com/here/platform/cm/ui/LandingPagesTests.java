@@ -11,12 +11,14 @@ import com.here.platform.cm.pages.LandingPage;
 import com.here.platform.cm.pages.WelcomePage;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @DisplayName("[UI] Verify Landing Pages")
+@Disabled
 @Tag("dynamic_ui")
 public class LandingPagesTests extends BaseUITests {
 

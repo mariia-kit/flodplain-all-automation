@@ -18,12 +18,14 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("NS-DataProvider")
+@Disabled
 @DisplayName("Get date for single resources for vehicle")
 @ExtendWith({MarketAfterCleanUp.class})
 public class GetSingleResourceByVehicleTest extends BaseNSTest {

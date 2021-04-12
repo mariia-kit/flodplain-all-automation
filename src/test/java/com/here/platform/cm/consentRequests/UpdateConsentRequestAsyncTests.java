@@ -31,11 +31,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Update consent request Async")
+@Disabled
 @UpdateConsentRequest
 public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 

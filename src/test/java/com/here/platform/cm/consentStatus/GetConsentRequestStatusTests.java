@@ -17,11 +17,13 @@ import com.here.platform.common.annotations.Sentry;
 import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @GetConsentRequestStatus
+@Disabled
 @DisplayName("Get Consent status")
 public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
 

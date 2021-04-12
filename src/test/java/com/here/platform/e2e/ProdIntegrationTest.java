@@ -13,12 +13,14 @@ import com.here.platform.ns.dto.Vehicle;
 import com.here.platform.ns.helpers.Steps;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Prod Integration Tests")
+@Disabled
 class ProdIntegrationTest extends BaseE2ETest {
 
     @Test

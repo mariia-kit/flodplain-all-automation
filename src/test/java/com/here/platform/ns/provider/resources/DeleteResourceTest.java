@@ -24,12 +24,14 @@ import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import com.here.platform.ns.restEndPoints.external.AaaCall;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("NS-Resources")
+@Disabled
 @DisplayName("Verify deletion of ContainerResources of Data Provider")
 @ExtendWith({MarketAfterCleanUp.class})
 public class DeleteResourceTest extends BaseNSTest {

@@ -15,11 +15,13 @@ import com.here.platform.ns.helpers.NSErrors;
 import com.here.platform.ns.restEndPoints.NeutralServerResponseAssertion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-Resources")
+@Disabled
 @DisplayName("Verify creating new ContainerResources for DataProvider")
 public class AddResourcesTest extends BaseNSTest {
 

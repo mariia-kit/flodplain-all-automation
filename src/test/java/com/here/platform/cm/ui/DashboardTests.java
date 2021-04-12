@@ -26,6 +26,7 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("dynamic_ui")
 @Dashboard
+@Disabled
 @DisplayName("[UI] Dashboard")
 public class DashboardTests extends BaseUITests {
 

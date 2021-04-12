@@ -11,6 +11,7 @@ import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 
 @GetAccessToken
+@Disabled
 @DisplayName("Getting of access tokens for consents")
 public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
 

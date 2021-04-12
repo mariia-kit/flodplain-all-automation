@@ -23,11 +23,12 @@ import com.here.platform.dataProviders.reference.steps.ReferenceApprovePage;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
+@Disabled
 @DisplayName("[UI] Approve and get access token E2E")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 

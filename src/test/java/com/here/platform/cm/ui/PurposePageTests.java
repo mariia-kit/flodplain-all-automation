@@ -15,11 +15,13 @@ import com.here.platform.dataProviders.daimler.DataSubjects;
 import com.here.platform.hereAccount.ui.HereLoginSteps;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @Purpose
+@Disabled
 @DisplayName("[UI] Purpose for consent request")
 public class PurposePageTests extends BaseUITests {
 

@@ -31,11 +31,13 @@ import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 @UserAccount
+@Disabled
 @DisplayName("[UI] User account UI")
 public class UserAccountUITests extends BaseUITests {
 

@@ -21,6 +21,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
@@ -38,6 +39,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Execution(ExecutionMode.CONCURRENT)
 @Tag("ui")
+@Disabled
 @ZephyrComponent("CM-UI")
 public class BaseUITests extends BaseCMTest {
 

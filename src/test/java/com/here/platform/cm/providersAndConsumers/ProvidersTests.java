@@ -16,12 +16,14 @@ import com.here.platform.common.annotations.CMFeatures.OnBoardProvider;
 import com.here.platform.ns.dto.User;
 import com.here.platform.ns.dto.Users;
 import java.util.Map;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @OnBoardProvider
+@Disabled
 @DisplayName("Onboard Provider")
 class ProvidersTests extends BaseCMTest {
 

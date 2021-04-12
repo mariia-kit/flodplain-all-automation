@@ -30,6 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 
 @RevokeConsent
+
 @DisplayName("Revoke consent")
 @Execution(ExecutionMode.SAME_THREAD)
 public class RevokeConsentErrorHandlerTests extends BaseConsentStatusTests {

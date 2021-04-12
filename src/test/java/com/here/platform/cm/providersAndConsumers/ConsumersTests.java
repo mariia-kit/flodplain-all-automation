@@ -10,12 +10,14 @@ import com.here.platform.common.ResponseExpectMessages.StatusCode;
 import com.here.platform.common.annotations.CMFeatures.OnBoardConsumer;
 import com.here.platform.common.annotations.ErrorHandler;
 import com.here.platform.common.annotations.Sentry;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 
 @OnBoardConsumer
+@Disabled
 @DisplayName("Onboard Consumer")
 class ConsumersTests extends BaseCMTest {
 
