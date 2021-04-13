@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 
 @Tag("CM-UserAccount")
-@Disabled
 @Feature("Profile info page")
 @DisplayName("[UI] User Profile Tests")
 public class UserProfileTests extends BaseUITests{

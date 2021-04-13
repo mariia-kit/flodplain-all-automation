@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Service status")
-@Disabled
 @BaseService
 @Tag("smoke_cm")
 class ServiceTests extends BaseCMTest {

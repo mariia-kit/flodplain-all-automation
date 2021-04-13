@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Prod Integration Tests")
-@Disabled
 class ProdIntegrationTest extends BaseE2ETest {
 
     @Test

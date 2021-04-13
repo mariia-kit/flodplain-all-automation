@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 
 @Purpose
-@Disabled
 @DisplayName("[UI] Purpose for consent request")
 public class PurposePageTests extends BaseUITests {
 

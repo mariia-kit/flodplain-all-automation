@@ -23,7 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+
 @DisplayName("Marketplace integration Tests: 'API Tunnelling'")
 
 public class MarketplaceApiTunnelTest extends BaseE2ETest {

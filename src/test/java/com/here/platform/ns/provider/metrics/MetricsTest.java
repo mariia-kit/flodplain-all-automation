@@ -30,7 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @Tag("NS-TechnicalAccountingService")
-@Disabled
 @DisplayName("Verify Provider Technical Accounting Service")
 @ExtendWith({MarketAfterCleanUp.class})
 public class MetricsTest extends BaseNSTest {

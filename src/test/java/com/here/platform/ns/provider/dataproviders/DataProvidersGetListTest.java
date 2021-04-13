@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-Provider")
-@Disabled
 @DisplayName("Verify receive list of DataProviders ")
 class DataProvidersGetListTest extends BaseNSTest {
 

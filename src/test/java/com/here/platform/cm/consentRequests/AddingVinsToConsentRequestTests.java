@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+
 @DisplayName("Add vin's to consent request")
 @UpdateConsentRequest
 public class AddingVinsToConsentRequestTests extends BaseCMTest {

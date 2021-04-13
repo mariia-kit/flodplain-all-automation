@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Create consent request")
-@Disabled
 @CreateConsentRequest
 @Tag("smoke_cm")
 public class CreateConsentRequestsTests extends BaseCMTest {

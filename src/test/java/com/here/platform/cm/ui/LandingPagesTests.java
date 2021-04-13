@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("[UI] Verify Landing Pages")
-@Disabled
 @Tag("dynamic_ui")
 public class LandingPagesTests extends BaseUITests {
 

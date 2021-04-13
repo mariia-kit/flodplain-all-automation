@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("NS-DataProvider")
-@Disabled
 @DisplayName("Get resources by vehicle Id Pagination, Filtering...")
 @ExtendWith({MarketAfterCleanUp.class})
 public class GetResourcesNonDaimlerFunc extends BaseNSTest {

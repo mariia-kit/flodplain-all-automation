@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("NS-DataProvider")
-@Disabled
 @DisplayName("Get resources by vehicle Id and container Id")
 @ExtendWith({MarketAfterCleanUp.class})
 class GetResourcesByVehicleAndContainerTest extends BaseNSTest {

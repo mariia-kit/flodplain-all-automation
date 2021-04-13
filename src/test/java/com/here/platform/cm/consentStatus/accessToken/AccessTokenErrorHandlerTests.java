@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 
 
 @GetAccessToken
-@Disabled
 @DisplayName("Getting of access tokens for consents")
 public class AccessTokenErrorHandlerTests extends BaseConsentStatusTests {
 

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 
 @OnBoardConsumer
-@Disabled
 @DisplayName("Onboard Consumer")
 class ConsumersTests extends BaseCMTest {
 

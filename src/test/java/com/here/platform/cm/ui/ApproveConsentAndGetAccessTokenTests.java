@@ -28,7 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+
 @DisplayName("[UI] Approve and get access token E2E")
 class ApproveConsentAndGetAccessTokenTests extends BaseUITests {
 

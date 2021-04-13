@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-Resources")
-@Disabled
 @DisplayName("Verify get all Resources for DataProvider")
 public class GetResourceListTest extends BaseNSTest {
 

@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-ContainerInfo")
-@Disabled
 @DisplayName("Verify deletion of Container")
 class ContainersInfoDeleteTest extends BaseNSTest {
 

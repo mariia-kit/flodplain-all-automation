@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 @Purpose
 @DisplayName("Purpose for consent request")
-@Disabled
 @Tag("CM-Consent")
 public class PurposeTests extends BaseCMTest {
 

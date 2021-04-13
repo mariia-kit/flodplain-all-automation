@@ -50,6 +50,9 @@ public class AllureReportExport {
                 Response resp = allureSyncController.uploadReportData(project_id, body, executionName);
                 if (resp.getStatusCode() != HttpStatus.SC_OK) {
                     System.out.println("Error uploading report:" + resp.getStatusCode());
+                    System.out.println("Error uploading report http response status:" + resp.getStatusCode());
+                    System.out.println("Error uploading report http response body:");
+                    resp.prettyPrint();
                     System.exit(resp.getStatusCode());
                 }
                 caret = caret + 100;
@@ -61,6 +64,9 @@ public class AllureReportExport {
             System.out.println("Init report render for:" + report.size() + " files.");
             Response res = allureSyncController.initReportGeneration(project_id, executionName);
             System.out.println("Report render complete with code:" + res.getStatusCode());
+            System.out.println("Report render complete with response code:" + res.getStatusCode());
+            System.out.println("Report render complete with response body:");
+            res.prettyPrint();
             if (res.getStatusCode() == 200) {
                 System.out.println("Report URL: " + res.getBody().jsonPath().getString("data.report_url"));
             }

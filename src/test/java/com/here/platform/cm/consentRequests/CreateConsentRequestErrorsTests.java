@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@Disabled
+
 @DisplayName("Create consent request")
 @CreateConsentRequest
 class CreateConsentRequestErrorsTests extends BaseCMTest {
