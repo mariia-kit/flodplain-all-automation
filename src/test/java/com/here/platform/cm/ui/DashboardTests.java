@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 
 @Tag("dynamic_ui")
 @Dashboard
-@Disabled
 @DisplayName("[UI] Dashboard")
 public class DashboardTests extends BaseUITests {
 

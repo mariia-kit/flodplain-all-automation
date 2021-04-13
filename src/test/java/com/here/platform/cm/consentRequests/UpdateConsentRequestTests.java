@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 
 @UpdateConsentRequest
-@Disabled
 @DisplayName("Update consent request")
 public class UpdateConsentRequestTests extends BaseCMTest {
 

@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-Provider")
-@Disabled
 @DisplayName("Verify creating new DataProvider")
 class DataProvidersAddTest extends BaseNSTest {
 

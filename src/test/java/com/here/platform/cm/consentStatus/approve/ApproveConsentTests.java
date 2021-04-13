@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Approve consent")
-@Disabled
 @ApproveConsent
 class ApproveConsentTests extends BaseConsentStatusTests {
 

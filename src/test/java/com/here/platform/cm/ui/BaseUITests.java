@@ -39,7 +39,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Execution(ExecutionMode.CONCURRENT)
 @Tag("ui")
-@Disabled
 @ZephyrComponent("CM-UI")
 public class BaseUITests extends BaseCMTest {
 

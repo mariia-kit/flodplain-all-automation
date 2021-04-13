@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@Disabled
 @DisplayName("User Account")
 public class UserAccountTests extends BaseCMTest {
 

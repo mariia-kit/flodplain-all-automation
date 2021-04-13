@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 
 @GetConsentRequestStatus
-@Disabled
 @DisplayName("Get Consent status")
 public class GetConsentRequestStatusTests extends BaseConsentStatusTests {
 

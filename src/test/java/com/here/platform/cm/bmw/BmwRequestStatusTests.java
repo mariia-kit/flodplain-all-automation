@@ -38,7 +38,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.runners.MethodSorters;
 
-@Disabled
+
 @DisplayName("Verify and Set Consent Clearance status by BMW Provider")
 @Tag("bmw_cm")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

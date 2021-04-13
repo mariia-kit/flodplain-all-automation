@@ -28,7 +28,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @ApproveConsent
-@Disabled
 @DisplayName("Approve consent Pending Consent list")
 @Execution(ExecutionMode.SAME_THREAD)
 public class ApproveConsentBodyTests extends BaseConsentStatusTests {

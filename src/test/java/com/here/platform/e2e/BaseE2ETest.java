@@ -11,7 +11,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @Tag("e2e")
-@Disabled
 @ZephyrComponent("NS-CM-E2E-Test")
 @Execution(ExecutionMode.CONCURRENT)
 public class BaseE2ETest {

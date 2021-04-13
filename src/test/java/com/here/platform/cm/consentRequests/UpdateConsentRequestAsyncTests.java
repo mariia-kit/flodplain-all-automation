@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Update consent request Async")
-@Disabled
 @UpdateConsentRequest
 public class UpdateConsentRequestAsyncTests extends BaseCMTest {
 

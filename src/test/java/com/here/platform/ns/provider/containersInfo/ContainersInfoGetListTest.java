@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-ContainerInfo")
-@Disabled
 @DisplayName("Verify receive list of Containers")
 class ContainersInfoGetListTest extends BaseNSTest {
 

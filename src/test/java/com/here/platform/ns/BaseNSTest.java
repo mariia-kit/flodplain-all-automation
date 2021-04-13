@@ -10,7 +10,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 
 @Tag("ignored-prod")
-@Disabled
 @Tag("neutral_server")
 @ZephyrComponent("NS-Service")
 @Execution(ExecutionMode.CONCURRENT)

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Verify Access health check")
-@Disabled
 class AccessHealthCheckTest extends BaseNSTest {
 
     @Test

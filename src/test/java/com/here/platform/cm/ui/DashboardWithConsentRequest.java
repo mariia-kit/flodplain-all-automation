@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("dynamic_ui")
-@Disabled
 @Dashboard
 @DisplayName("[UI] Dashboard with consents")
 public class DashboardWithConsentRequest extends BaseUITests {

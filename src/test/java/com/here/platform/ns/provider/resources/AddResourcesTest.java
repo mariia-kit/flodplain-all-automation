@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("NS-Resources")
-@Disabled
 @DisplayName("Verify creating new ContainerResources for DataProvider")
 public class AddResourcesTest extends BaseNSTest {
 

@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@Disabled
 @DisplayName("[UI] User account UI")
 public class UserAccountUITests extends BaseUITests {
 

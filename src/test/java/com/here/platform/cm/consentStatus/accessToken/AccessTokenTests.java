@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 
 @GetAccessToken
-@Disabled
 @DisplayName("Get Access token")
 class AccessTokenTests extends BaseConsentStatusTests {
 

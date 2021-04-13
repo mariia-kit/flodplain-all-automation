@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 
 
 @DisplayName("Marketplace integration Tests: 'Subscription'")
-@Disabled
 @Tag("ignored-dev")
 public class MarketplaceSubscriptionTest extends BaseE2ETest {
 

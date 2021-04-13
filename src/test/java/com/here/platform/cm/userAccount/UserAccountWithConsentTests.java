@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 
 @UserAccount
-@Disabled
 @DisplayName("User Account with Consents")
 public class UserAccountWithConsentTests extends BaseCMTest {
 

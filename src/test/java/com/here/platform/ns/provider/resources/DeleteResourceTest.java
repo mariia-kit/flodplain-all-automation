@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @Tag("NS-Resources")
-@Disabled
 @DisplayName("Verify deletion of ContainerResources of Data Provider")
 @ExtendWith({MarketAfterCleanUp.class})
 public class DeleteResourceTest extends BaseNSTest {

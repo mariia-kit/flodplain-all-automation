@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 
 @OnBoardProvider
-@Disabled
 @DisplayName("Onboard Provider")
 class ProvidersTests extends BaseCMTest {
 
