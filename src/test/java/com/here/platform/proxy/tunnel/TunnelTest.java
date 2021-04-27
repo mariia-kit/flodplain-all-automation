@@ -3,6 +3,7 @@ package com.here.platform.proxy.tunnel;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.proxy.BaseProxyTests;
+import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.conrollers.TunnelController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
@@ -13,9 +14,9 @@ import com.here.platform.proxy.dto.ProxyProviders;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.helper.RemoveObjCollector;
 import com.here.platform.proxy.steps.ProxySteps;
+import io.qameta.allure.Issue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -44,13 +45,10 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Subscription")
     void verifyProxyCanBeRetrievedNoSubs() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = new ProxyProviderResource(
-                "Auto-testing-reference-no-subs",
-                "/proxy/data/nosubs");
+        ProxyProviderResource resource = ProxyProviderResources.generate();
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -84,6 +82,7 @@ public class TunnelTest extends BaseProxyTests {
                 .expectedError(ProxyErrorList.getResourceNotFoundError(resource.getPath().replaceFirst("/", StringUtils.EMPTY)));
     }
 
+    @Test
     @DisplayName("[External Proxy] Verify retrieve proxy data Res names intersects with deleted one")
     void verifyProxyCanBeRetrievedResNamesIntersectsDeleted() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -92,7 +91,7 @@ public class TunnelTest extends BaseProxyTests {
                 "/proxy/data/123456nores");
         ProxyProviderResource resource2 = new ProxyProviderResource(
                 "Auto-testing-reference-no-res",
-                "/proxy/data/123456");
+                "/proxy/data/123456nores");
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -176,6 +175,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Currently there is only one Auth implementation")
     @DisplayName("[External Proxy] Verify retrieve new proxy data Auth not implemented")
     void verifyNewProxyCanBeRetrievedNoAuth() {
         ProxyProvider proxyProvider = ProxyProviders.generate()
@@ -235,9 +235,95 @@ public class TunnelTest extends BaseProxyTests {
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "?query=someData");
+                .getData(proxyProvider.getDomain(), resource.getPath() + "?language=en-us");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify retrieve proxy data with Generic resource path")
+    void verifyProxyCanBeRetrievedWithGenericPath() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.readProxyProviderResource(resource);
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider, resource);
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK);
+        new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider.getDomain(), resource.getPath() + "/123321");
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK);
+
+    }
+
+    @Test
+    @Issue("NS-3745")
+    @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when using slash in resource path")
+    void verifyProxyResourceCannotBeCreatedWithGenericPathWithSlash() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Auto-testing-reference-Generic-Path-With-Slash",
+                "/proxy/dataPath/");
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.addProxyProviderResource(proxyProvider, resource);
+
+        var responseRes = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), resource);
+        new ProxyProviderAssertion(responseRes)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @Issue("NS-3745")
+    @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when slash doesn't exist before path")
+    void verifyProxyResourceCannotBeCreatedWithGenericPathWithoutSlash() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = new ProxyProviderResource(
+                "Auto-testing-reference-Generic-Path-Without-Slash",
+                "proxy/dataPath");
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.addProxyProviderResource(proxyProvider, resource);
+
+        var responseRes = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), resource);
+        new ProxyProviderAssertion(responseRes)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @Disabled("Reproduced on prod with Alerts where apiKey is returned")
+    @DisplayName("[External Proxy] Verify retrieve proxy data with invalid path")
+    void verifyProxyCanBeRetrievedWithInvalidPath() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.readProxyProviderResource(resource);
+
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider, resource);
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK);
+        new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider.getDomain(), resource.getPath() + "/4534%gtg66676");
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
