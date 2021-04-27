@@ -53,6 +53,13 @@ public class ProxySteps {
         proxyProviderResource.setHrn(resHrn);
     }
 
+    @Step("Add proxy provider resource {proxyProvider.serviceName} {proxyProviderResource.title}")
+    public void addProxyProviderResource(ProxyProvider proxyProvider, ProxyProviderResource proxyProviderResource) {
+        var responseRes = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), proxyProviderResource);
+    }
+
     @Step("Delete proxy resource {resourceId}")
     public void deleteProxyResource(Long resourceId) {
         var delete = new ServiceProvidersController()

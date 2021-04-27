@@ -122,7 +122,7 @@ public class ResourceAdd extends BaseProxyTests {
     void verifyAddResourcesToProviderWithQuery() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
         ProxyProviderResource resource = ProxyProviderResources.generate();
-        resource.setPath(resource.getPath() + "?query=someData");
+        resource.setPath(resource.getPath() + "?language=en-uk");
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()

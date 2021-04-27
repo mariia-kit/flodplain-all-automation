@@ -31,4 +31,11 @@ public enum ProxyProviderResources {
                 "/proxy/data/d" + id);
     }
 
+    public static ProxyProviderResource generateGenericPath() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProviderResource (
+                getResourceNamePrefix() + id,
+                "/proxy/data" + id);
+    }
+
 }
