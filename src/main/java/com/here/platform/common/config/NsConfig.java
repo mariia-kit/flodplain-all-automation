@@ -7,7 +7,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/ns.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_NS")
 public class NsConfig {
 
     private String nsUrlBaseAccess;

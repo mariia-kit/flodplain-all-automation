@@ -5,7 +5,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/mp-users.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_MP_USER")
 public class MpUserConfig {
 
     private User mpConsumer;

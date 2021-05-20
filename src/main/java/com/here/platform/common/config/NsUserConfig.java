@@ -7,7 +7,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/ns-users.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_NS_USER")
 public class NsUserConfig {
 
     private User consumer;

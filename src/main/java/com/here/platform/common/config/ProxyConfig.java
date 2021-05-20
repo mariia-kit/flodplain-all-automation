@@ -5,7 +5,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/proxy.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_PROXY")
 public class ProxyConfig {
     private String host;
     private String accuProtocol;

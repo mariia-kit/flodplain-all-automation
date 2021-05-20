@@ -14,55 +14,54 @@ public class Conf {
     private static ProxyConfig proxyConfig;
 
     public static NsConfig ns() {
-        return returnConfig(nsConf, NsConfig.class);
+        return getConfig(nsConf, NsConfig.class);
     }
 
     public static NsUserConfig nsUsers() {
-        return returnConfig(hereUser, NsUserConfig.class);
+        return getConfig(hereUser, NsUserConfig.class);
     }
 
     public static CmConfig cm() {
-        return returnConfig(cmConfig, CmConfig.class);
+        return getConfig(cmConfig, CmConfig.class);
     }
 
     public static CmUserConfig cmUsers() {
-        return returnConfig(cmUserConfig, CmUserConfig.class);
+        return getConfig(cmUserConfig, CmUserConfig.class);
     }
 
     public static MpConfig mp() {
-        return returnConfig(mpConfig, MpConfig.class);
+        return getConfig(mpConfig, MpConfig.class);
     }
 
     public static MpUserConfig mpUsers() {
-        return returnConfig(mpUserConfig, MpUserConfig.class);
+        return getConfig(mpUserConfig, MpUserConfig.class);
     }
 
     public static ProxyConfig proxy() {
-        return returnConfig(proxyConfig, ProxyConfig.class);
+        return getConfig(proxyConfig, ProxyConfig.class);
     }
 
-    private static <T> T returnConfig(T conf, Class<T> type) {
+    private static <T> T getConfig(T conf, Class<T> type) {
         if (conf == null) {
-            conf = getConfig(type);
+            conf = loadConfig(type);
         }
         return conf;
     }
 
-    public static <T> T getConfig(Class<T> type) {
+    private static <T> T loadConfig(Class<T> type) {
         YamlConfUrl annotation = Optional.ofNullable(type.getAnnotation(YamlConfUrl.class))
-                .orElseThrow(
-                        () -> new RuntimeException("Config class " + type.getName() + " not properly configured!"));
-        String env = System.getProperty("env");
-        if ("stg".equalsIgnoreCase(env)) {
-            env = "sit";
-        }
-        String url = annotation.configUrl().replace("{env}", env);
+                .orElseThrow(() -> new RuntimeException(type.getName() + " not configured"));
 
-        if (ConfigLoader.isConfigExist(url)) {
-            return ConfigLoader.yamlLoadConfig(url, type);
-        } else {
-            return ConfigLoader.yamlLoadConfig(annotation.configUrl().replace("{env}", "dev"), type);
+        String environment = System.getProperty("env", "dev");
+        if ("stg".equalsIgnoreCase(environment)) {
+            environment = "sit";
         }
+
+        String partFileName = System.getenv(annotation.propertyName());
+        String fileName = environment + "_" + partFileName;
+        String filePath = System.getenv(fileName);
+
+        return ConfigLoader.yamlLoadConfig(filePath, type);
     }
 
 }

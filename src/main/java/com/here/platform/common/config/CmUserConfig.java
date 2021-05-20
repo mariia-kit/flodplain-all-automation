@@ -6,7 +6,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/cm-users.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_CM_USER")
 public class CmUserConfig {
 
     private DaimlerApp daimlerApp;
