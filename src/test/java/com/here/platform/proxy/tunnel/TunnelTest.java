@@ -83,6 +83,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data Res names intersects with deleted one")
     void verifyProxyCanBeRetrievedResNamesIntersectsDeleted() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -128,6 +129,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Token")
     void verifyProxyCanBeRetrievedNoToken() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -241,6 +243,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data with Generic resource path")
     void verifyProxyCanBeRetrievedWithGenericPath() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();

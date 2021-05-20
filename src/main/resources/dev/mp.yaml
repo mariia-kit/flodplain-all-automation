@@ -1,5 +1,0 @@
-#------------------Marketplace target Endpoint--------------------
-marketplaceUrl: https://marketplace-dev.api.platform.in.here.com/v2
-marketplaceUiBaseUrl: https://portal.platform.in.here.com/
-marketplaceUiUrl: https://portal.platform.in.here.com/marketplace/
-marketplaceCallbackUrl: https://portal.platform.in.here.com/marketplace/consumer

@@ -9,19 +9,17 @@ import org.yaml.snakeyaml.Yaml;
 
 public class ConfigLoader {
 
-    private static final String RES_FOLDER = "src/main/resources/";
-
-    public static <T> T yamlLoadConfig(String configPath, Class<T> configuredClass) {
+    public static <T> T yamlLoadConfig(String filePath, Class<T> configuredClass) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new RuntimeException(String.format("File '%s' not exist", file.getPath()));
+        }
         Yaml yaml = new Yaml();
-        try (InputStream in = Files.newInputStream(new File(RES_FOLDER + configPath).toPath())) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return yaml.loadAs(in, configuredClass);
         } catch (IOException ex) {
-            throw new RuntimeException("Error reading yml config " + configPath, ex);
+            throw new RuntimeException("Error while reading yaml config file " + file.getPath(), ex);
         }
-    }
-
-    public static boolean isConfigExist(String configPath) {
-        return new File(RES_FOLDER + configPath).exists();
     }
 
 }

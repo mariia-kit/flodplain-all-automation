@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/mp.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_MP")
 public class MpConfig {
 
     private String marketplaceUrl;

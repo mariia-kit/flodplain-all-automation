@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-@YamlConfUrl(configUrl = "{env}/cm.yaml")
+@YamlConfUrl(propertyName = "CREDENTIAL_FILE_CM")
 public class CmConfig {
 
     private String serviceUrl;
