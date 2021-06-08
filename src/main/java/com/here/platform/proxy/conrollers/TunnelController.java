@@ -19,6 +19,6 @@ public class TunnelController extends BaseProxyService<TunnelController> {
     @Step("Get proxy: {provider.domain} {resource.path}")
     public Response getData(ProxyProvider provider, ProxyProviderResource resource) {
         return consentServiceClient(basePath)
-                .get(provider.getDomain() + resource.getPath());
+                .get(provider.getIdentifier() + resource.getPath());
     }
 }

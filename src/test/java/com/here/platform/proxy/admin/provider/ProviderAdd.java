@@ -68,7 +68,7 @@ public class ProviderAdd extends BaseProxyTests {
     void verifyAddProxyProviderSameDomain() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
         ProxyProvider proxyProvider2 = ProxyProviders.generate();
-        proxyProvider2.setDomain(proxyProvider.getDomain());
+        proxyProvider2.setIdentifier(proxyProvider.getIdentifier());
 
         var response = new ServiceProvidersController()
                 .withAdminToken()

@@ -35,7 +35,7 @@ public enum ProxyProviderResources {
         String id = UniqueId.getUniqueKey();
         return new ProxyProviderResource (
                 getResourceNamePrefix() + id,
-                "/proxy/data" + id);
+                "/proxy/data/*" + id);
     }
 
 }
