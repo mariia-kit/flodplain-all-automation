@@ -16,12 +16,14 @@ import lombok.Setter;
 public class ProxyProvider {
     @JsonProperty("id")
     Long id;
+    @JsonProperty("providerType")
+    String providerType;
     @JsonProperty("serviceName")
     String serviceName;
     @JsonProperty("providerRealm")
     String providerRealm;
-    @JsonProperty("domain")
-    String domain;
+    @JsonProperty("identifier")
+    String identifier;
     @JsonProperty("authMethod")
     CredentialsAuthMethod authMethod;
 
@@ -43,10 +45,11 @@ public class ProxyProvider {
 
     };
 
-    public ProxyProvider(String serviceName, String providerRealm, String domain, CredentialsAuthMethod authMethod) {
+    public ProxyProvider(String providerType, String serviceName, String providerRealm, String identifier, CredentialsAuthMethod authMethod) {
+        this.providerType = providerType;
         this.serviceName = serviceName;
         this.providerRealm = providerRealm;
-        this.domain = domain;
+        this.identifier = identifier;
         this.authMethod = authMethod;
     }
 

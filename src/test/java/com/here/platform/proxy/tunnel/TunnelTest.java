@@ -63,7 +63,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource No Policy")
     void verifyProxyCanBeRetrievedNoResourceNoPolicy() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -109,7 +108,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource on Data Provider")
     void verifyProxyCanBeRetrievedNoResourceOnDP() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -167,7 +165,7 @@ public class TunnelTest extends BaseProxyTests {
                 .verifyResponseTime(10000L);
         new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "?query=none");
+                .getData(proxyProvider.getIdentifier(), resource.getPath() + "?query=none");
         var tunnel2 = new TunnelController()
                 .withConsumerToken()
                 .getData(proxyProvider, resource);
@@ -237,7 +235,7 @@ public class TunnelTest extends BaseProxyTests {
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "?language=en-us");
+                .getData(proxyProvider.getIdentifier(), resource.getPath() + "?language=en-us");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
     }
@@ -247,10 +245,12 @@ public class TunnelTest extends BaseProxyTests {
     @DisplayName("[External Proxy] Verify retrieve proxy data with Generic resource path")
     void verifyProxyCanBeRetrievedWithGenericPath() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
+        ProxyProviderResource genericResource = ProxyProviderResources.generateGenericPath();
 
         ProxySteps.readProxyProvider(proxyProvider);
-        ProxySteps.readProxyProviderResource(resource);
+        ProxySteps.createProxyResource(proxyProvider, genericResource);
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxySteps.createProxyResource(proxyProvider, resource);
 
         ProxySteps.createListingAndSubscription(resource);
 
@@ -261,7 +261,7 @@ public class TunnelTest extends BaseProxyTests {
                 .expectedCode(HttpStatus.SC_OK);
         new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "/123321");
+                .getData(proxyProvider.getIdentifier(), resource.getPath());
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
 
@@ -324,7 +324,7 @@ public class TunnelTest extends BaseProxyTests {
                 .expectedCode(HttpStatus.SC_OK);
         new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "/4534%gtg66676");
+                .getData(proxyProvider.getIdentifier(), resource.getPath() + "/4534%gtg66676");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_BAD_REQUEST);
     }
@@ -342,7 +342,7 @@ public class TunnelTest extends BaseProxyTests {
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "?error=error");
+                .getData(proxyProvider.getIdentifier(), resource.getPath() + "?error=error");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_NOT_FOUND);
     }
@@ -360,7 +360,7 @@ public class TunnelTest extends BaseProxyTests {
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-                .getData(proxyProvider.getDomain(), resource.getPath() + "?empty=true");
+                .getData(proxyProvider.getIdentifier(), resource.getPath() + "?empty=true");
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
     }
