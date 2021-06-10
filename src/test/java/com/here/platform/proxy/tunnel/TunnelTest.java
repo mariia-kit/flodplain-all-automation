@@ -364,4 +364,34 @@ public class TunnelTest extends BaseProxyTests {
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_NO_CONTENT);
     }
+
+    @Test
+    @DisplayName("[External Proxy] Verify retrieve proxy data Successful when resource with generic path exists")
+    void verifyProxyCanBeRetrievedWithGenericResourcePath() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+
+        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProviderResource secondResource = ProxyProviderResources.generate();
+        ProxyProviderResource genericPathResource = new ProxyProviderResource(
+                "Auto-testing-reference-Generic-Path",
+                "/proxy/data/*");
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+        ProxySteps.createProxyResource(proxyProvider, secondResource);
+        ProxySteps.readProxyProviderResource(genericPathResource);
+
+        ProxySteps.createListingAndSubscription(genericPathResource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider, resource);
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK);
+        var tunnel2 = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider, secondResource);
+        new ProxyProviderAssertion(tunnel2)
+                .expectedCode(HttpStatus.SC_OK);
+    }
 }
