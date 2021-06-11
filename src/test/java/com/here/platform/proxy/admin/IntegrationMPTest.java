@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 public class IntegrationMPTest extends BaseProxyTests {
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Delete resource if Subs removed")
     void verifyDeleteProxyAfterSubscriptionCancel() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -39,6 +40,7 @@ public class IntegrationMPTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Delete resource if Subs exist")
     void verifyDeleteProxyAfterSubscriptionExist() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -57,6 +59,7 @@ public class IntegrationMPTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Update Service resource if subs exist")
     void verifyUpdateProxyResourceSubs() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -105,6 +108,7 @@ public class IntegrationMPTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Marketplace can get list of Providers and Resources")
     void verifyMPCanGetProvidersList() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
