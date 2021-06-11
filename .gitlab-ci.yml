@@ -194,11 +194,11 @@ test_proxy_dev:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
     - if: $TASK == 'test_proxy_dev'
       when: delayed
       start_in: 5 minutes
+    - if: '$TASK_NS == null && $TASK_CM == null'
+      when: manual
     - when: never
   allow_failure: true
 
