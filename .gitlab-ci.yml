@@ -196,6 +196,9 @@ test_proxy_dev:
   rules:
     - if: '$TASK_NS == null && $TASK_CM == null'
       when: manual
+    - if: $TASK == 'test_proxy_dev'
+      when: delayed
+      start_in: 5 minutes
     - when: never
   allow_failure: true
 
