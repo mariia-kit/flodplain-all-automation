@@ -12,6 +12,7 @@ import com.here.platform.proxy.dto.ProxyProviders;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import java.util.List;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,7 @@ public class ProviderAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Add new Service Provider same domain")
     void verifyAddProxyProviderSameDomain() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -148,6 +150,7 @@ public class ProviderAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Add new Service Provider Auth is missing")
     void verifyAddProxyProviderAuthMissing() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
