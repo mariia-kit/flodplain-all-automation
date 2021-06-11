@@ -64,6 +64,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource No Policy")
     void verifyProxyCanBeRetrievedNoResourceNoPolicy() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -109,6 +110,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource on Data Provider")
     void verifyProxyCanBeRetrievedNoResourceOnDP() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -372,6 +374,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data Successful when resource with generic path exists")
     void verifyProxyCanBeRetrievedWithGenericResourcePath() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
