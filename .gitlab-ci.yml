@@ -194,7 +194,7 @@ test_proxy_dev:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: $TASK == 'test_proxy_dev'
+    - if: $TASK_PROXY == 'test_proxy_dev'
       when: delayed
       start_in: 5 minutes
     - if: '$TASK_NS == null && $TASK_CM == null'
@@ -310,6 +310,9 @@ test_proxy_sit:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
+    - if: $TASK_PROXY == 'test_proxy_sit'
+      when: delayed
+      start_in: 5 minutes
     - if: '$TASK_NS == null && $TASK_CM == null'
       when: manual
     - when: never
@@ -366,6 +369,9 @@ test_proxy_prod:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
+    - if: $TASK_PROXY == 'test_proxy_prod'
+      when: delayed
+      start_in: 5 minutes
     - if: '$TASK_NS == null && $TASK_CM == null'
       when: manual
     - when: never
