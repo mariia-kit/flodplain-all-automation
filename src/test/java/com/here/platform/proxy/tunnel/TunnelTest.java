@@ -45,6 +45,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Subscription")
     void verifyProxyCanBeRetrievedNoSubs() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -146,6 +147,7 @@ public class TunnelTest extends BaseProxyTests {
 
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Successful")
     void verifyNewProxyCanBeRetrieved() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -182,7 +184,6 @@ public class TunnelTest extends BaseProxyTests {
                 .withAuthMethod(CredentialsAuthMethod.BASIC_AUTH, "root", "qwerty");
         ProxyProviderResource resource = ProxyProviderResources.generate();
 
-        ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
         RemoveObjCollector.addProxyResHrn(resource.getHrn());
 
@@ -223,6 +224,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data with query")
     void verifyNewProxyCanBeRetrievedWithQuery() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -268,6 +270,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @Issue("NS-3745")
     @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when using slash in resource path")
     void verifyProxyResourceCannotBeCreatedWithGenericPathWithSlash() {
@@ -287,6 +290,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @Issue("NS-3745")
     @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when slash doesn't exist before path")
     void verifyProxyResourceCannotBeCreatedWithGenericPathWithoutSlash() {
@@ -330,6 +334,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Error from Provider")
     void verifyNewProxyCanBeRetrievedErrorExpected() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -348,6 +353,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Empty response from Provider")
     void verifyNewProxyCanBeRetrievedEmptyResponse() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
