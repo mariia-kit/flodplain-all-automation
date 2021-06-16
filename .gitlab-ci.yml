@@ -76,17 +76,6 @@ test_cm_auto:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
 
-test_proxy_auto:
-  extends: .test_run
-  rules:
-    - if: $TASK_PROXY
-      when: delayed
-      start_in: 5 minutes
-  variables:
-    TASK: $TASK_PROXY
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-
 test_e2e_auto:
   extends: .test_run
   rules:
