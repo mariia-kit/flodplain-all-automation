@@ -22,12 +22,21 @@ public enum ProxyProviders {
             "REST_API",
             "Accuweather", Conf.mpUsers().getMpProvider().getRealm(), "api.accuweather.com",
             CredentialsAuthMethod.NONE)
+            .withAuthMethod(CredentialsAuthMethod.API_KEY_IN_QUERY, "apikey", Conf.proxy().getAccuApiKey())),
+    AWS(new ProxyProvider(
+            "AWS",
+            "AWS_S3", Conf.mpUsers().getMpProvider().getRealm(), "s3extproxytest",
+    CredentialsAuthMethod.NONE)
             .withAuthMethod(CredentialsAuthMethod.API_KEY_IN_QUERY, "apikey", Conf.proxy().getAccuApiKey()));
 
     private ProxyProvider proxyProvider;
 
     public static String getProviderNamePrefix() {
         return "Auto-Provider";
+    }
+
+    public static String getAWSProviderNamePrefix() {
+        return "Auto-AWS-Provider";
     }
 
     public static String getProviderType(){
@@ -42,5 +51,15 @@ public enum ProxyProviders {
                 Conf.mpUsers().getMpProvider().getRealm(),
                 "someService." + id + ".mock",
                 CredentialsAuthMethod.NONE);
+    }
+        public static ProxyProvider generateAWS() {
+            String awsId = UniqueId.getUniqueKey();
+            return new ProxyProvider(
+                    "AWS",
+                    getAWSProviderNamePrefix() + awsId,
+                    Conf.mpUsers().getMpProvider().getRealm(),
+                    "s3extproxytest" + awsId,
+                    CredentialsAuthMethod.NONE);
+
     }
 }

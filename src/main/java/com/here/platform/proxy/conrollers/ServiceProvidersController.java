@@ -51,6 +51,18 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
         return response;
     }
 
+    @Step("Add AWS S3 service provider {awsS3Provider.serviceName}")
+    public Response addAwsS3Provider(AwsS3Provider awsS3Provider) {
+        Response response = consentServiceClient(basePath)
+                .body(awsS3Provider)
+                .post();
+        if (response.getStatusCode() == HttpStatus.SC_OK) {
+            Long id = response.getBody().jsonPath().getLong("id");
+            RemoveObjCollector.addProxyProvider(id);
+        }
+        return response;
+    }
+
     @Step("Remove proxy service provider with id {serviceProviderId}")
     public Response deleteProviderById(Long serviceProviderId) {
         return consentServiceClient(basePath)
