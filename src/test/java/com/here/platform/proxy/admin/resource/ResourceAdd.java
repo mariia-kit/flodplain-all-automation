@@ -44,6 +44,20 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @DisplayName("[External Proxy] Add Resources to Proxy Provider with '/' at the beginning of the path")
+    void verifyAddResourcesToProviderWithSlashBeforePath() {
+        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProviderResource resource = ProxyProviderResources.generateResourceWithSlash();
+        ProxySteps.createProxyProvider(proxyProvider);
+
+        var responseRes = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), resource);
+        new ProxyProviderAssertion(responseRes)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider No Token")
     void verifyAddResourcesToProviderNoToken() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
