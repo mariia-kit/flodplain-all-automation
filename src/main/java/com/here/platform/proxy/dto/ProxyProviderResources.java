@@ -38,4 +38,11 @@ public enum ProxyProviderResources {
                 "/proxy/data/*" + id);
     }
 
+    public static ProxyProviderResource generateResourceWithSlash() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProviderResource (
+                getResourceNamePrefix() + id,
+                "/proxy/data" + id);
+    }
+
 }
