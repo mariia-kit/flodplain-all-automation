@@ -3,6 +3,7 @@ package com.here.platform.proxy.helper;
 import static io.qameta.allure.Allure.step;
 
 import com.here.platform.ns.dto.SentryError;
+import com.here.platform.proxy.conrollers.AwsS3Provider;
 import com.here.platform.proxy.dto.ProxyError;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
@@ -36,6 +37,14 @@ public class ProxyProviderAssertion {
         var actual = response.getBody().as(ProxyProvider.class);
         Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected,
                 "id", "scbeId", "resources", "authMethod", "apiKey", "apiKeyQueryParamName", "authUsername", "authPassword");
+        return this;
+    }
+
+    @Step("Expected response value equals to AWSProvider: '{expected.serviceName}'")
+    public ProxyProviderAssertion expectedEqualsAwsS3Provider(AwsS3Provider expected) {
+        var actual = response.getBody().as(AwsS3Provider.class);
+        Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected,
+                "id", "resources", "serviceName", "providerRealm", "identifier", "providerType");
         return this;
     }
 

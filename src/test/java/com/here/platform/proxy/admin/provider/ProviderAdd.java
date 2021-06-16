@@ -1,7 +1,10 @@
 package com.here.platform.proxy.admin.provider;
 
 import com.here.platform.ns.dto.SentryErrorsList;
+import com.here.platform.ns.instruments.CleanUp;
 import com.here.platform.proxy.BaseProxyTests;
+import com.here.platform.proxy.conrollers.AwsS3Provider;
+import com.here.platform.proxy.conrollers.AwsS3Providers;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
@@ -10,6 +13,7 @@ import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.dto.ProxyProviderResources;
 import com.here.platform.proxy.dto.ProxyProviders;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
+import com.here.platform.proxy.steps.ProxySteps;
 import java.util.List;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Disabled;
@@ -65,7 +69,6 @@ public class ProviderAdd extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Add new Service Provider same domain")
     void verifyAddProxyProviderSameDomain() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -176,6 +179,36 @@ public class ProviderAdd extends BaseProxyTests {
         new ProxyProviderAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEqualsProvider(proxyProvider);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify if AWS Service Provider can be onboarded with REST provider requested body")
+    void verifyAddAwsProviderWithRestProviderRequestedBody() {
+        ProxyProvider proxyProvider = ProxyProviders.generateAWS();
+        ProxySteps.createProxyProvider(proxyProvider);
+
+        var verifyGetProviderById = new ServiceProvidersController()
+                .withAdminToken()
+                .getProviderById(proxyProvider.getId());
+        new ProxyProviderAssertion(verifyGetProviderById)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProvider(proxyProvider);
+
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify if AWS provider type can be onboarded")
+    void verifyAddAwsProxyProvider() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        var verifyGetProviderById = new ServiceProvidersController()
+                .withAdminToken()
+                .getProviderById(awsS3Provider.getId());
+        new ProxyProviderAssertion(verifyGetProviderById)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsAwsS3Provider(awsS3Provider);
+
     }
 
 }

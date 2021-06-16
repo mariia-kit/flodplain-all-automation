@@ -2,6 +2,7 @@ package com.here.platform.proxy.steps;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
+import com.here.platform.proxy.conrollers.AwsS3Provider;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
@@ -29,6 +30,19 @@ public class ProxySteps {
         String scbeId = response.getBody().jsonPath().getString("scbeId");
         proxyProvider.setId(id);
         proxyProvider.setScbeId(scbeId);
+    }
+
+    @Step("Create AWS S3 provider {proxyProvider.serviceName}")
+    public void createAWSProxyProvider(AwsS3Provider awsS3Provider) {
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addAwsS3Provider(awsS3Provider);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_OK);
+        Long id = response.getBody().jsonPath().getLong("id");
+        String scbeId = response.getBody().jsonPath().getString("scbeId");
+        awsS3Provider.setId(id);
+        awsS3Provider.setScbeId(scbeId);
     }
 
     @Step("Delete proxy provider {providerId}")
