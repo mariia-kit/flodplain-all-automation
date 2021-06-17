@@ -45,7 +45,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Subscription")
     void verifyProxyCanBeRetrievedNoSubs() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -64,7 +63,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource No Policy")
     void verifyProxyCanBeRetrievedNoResourceNoPolicy() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -80,7 +78,8 @@ public class TunnelTest extends BaseProxyTests {
                 .withConsumerToken()
                 .getData(proxyProvider, resource);
         new ProxyProviderAssertion(tunnel)
-                .expectedError(ProxyErrorList.getResourceNotFoundError(resource.getPath().replaceFirst("/", StringUtils.EMPTY)));
+                .expectedError(ProxyErrorList.getNoAccessError( Users.MP_CONSUMER.getUser().getUserId(),
+                        resource.getHrn()));
     }
 
     @Test
@@ -118,6 +117,7 @@ public class TunnelTest extends BaseProxyTests {
         resource.setPath("/nosuch/url");
 
         ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
 
         ProxySteps.createListingAndSubscription(resource);
@@ -130,7 +130,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data No Token")
     void verifyProxyCanBeRetrievedNoToken() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -149,7 +148,6 @@ public class TunnelTest extends BaseProxyTests {
 
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Successful")
     void verifyNewProxyCanBeRetrieved() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -226,7 +224,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data with query")
     void verifyNewProxyCanBeRetrievedWithQuery() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -245,7 +242,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve proxy data with Generic resource path")
     void verifyProxyCanBeRetrievedWithGenericPath() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -293,13 +289,12 @@ public class TunnelTest extends BaseProxyTests {
 
     @Test
     @Disabled
-    @Issue("NS-3745")
     @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when slash doesn't exist before path")
     void verifyProxyResourceCannotBeCreatedWithGenericPathWithoutSlash() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource resource = new ProxyProviderResource(
                 "Auto-testing-reference-Generic-Path-Without-Slash",
-                "proxy/dataPath");
+                "/proxy/dataPath");
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.addProxyProviderResource(proxyProvider, resource);
@@ -336,7 +331,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Error from Provider")
     void verifyNewProxyCanBeRetrievedErrorExpected() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -355,7 +349,6 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Verify retrieve new proxy data Empty response from Provider")
     void verifyNewProxyCanBeRetrievedEmptyResponse() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
@@ -385,6 +378,7 @@ public class TunnelTest extends BaseProxyTests {
                 "Auto-testing-reference-Generic-Path",
                 "/proxy/data/*");
 
+        ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
         ProxySteps.createProxyResource(proxyProvider, secondResource);
