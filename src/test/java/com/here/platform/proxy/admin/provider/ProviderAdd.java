@@ -180,7 +180,7 @@ public class ProviderAdd extends BaseProxyTests {
                 .expectedCode(HttpStatus.SC_OK)
                 .expectedEqualsProvider(proxyProvider);
     }
-
+    
     @Test
     @DisplayName("[External Proxy] Verify if AWS Service Provider can be onboarded with REST provider requested body")
     void verifyAddAwsProviderWithRestProviderRequestedBody() {
@@ -211,4 +211,51 @@ public class ProviderAdd extends BaseProxyTests {
 
     }
 
+    @Test
+    @DisplayName("[External Proxy] Add new AWS Service Provider Empty Provider Type with REST provider requested body")
+    void verifyAddAwsProxyProviderEmptyProviderTypeWithRestProviderRequestedBody() {
+        ProxyProvider proxyProvider = ProxyProviders.generateAWSEmptyProviderType();
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addProvider(proxyProvider);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Add new AWS Service Provider Empty Provider Type")
+    void verifyAddAwsProxyProviderEmptyProviderType() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProviderEmptyProviderType();
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addAwsS3Provider(awsS3Provider);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Add new AWS Service Provider No Provider Type with REST provider requested body")
+    void verifyAddAwsProxyProviderNoProviderTypeWithRestProviderRequestedBody() {
+        ProxyProvider proxyProvider = ProxyProviders.generateAWSNoProviderType();
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addProvider(proxyProvider);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Add new AWS Service Provider No Provider Type")
+    void verifyAddAwsProxyProviderNoProviderType() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProviderNoProviderType();
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addAwsS3Provider(awsS3Provider);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
 }

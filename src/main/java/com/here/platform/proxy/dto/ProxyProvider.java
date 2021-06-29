@@ -53,6 +53,13 @@ public class ProxyProvider {
         this.authMethod = authMethod;
     }
 
+    public ProxyProvider(String serviceName, String providerRealm, String identifier, CredentialsAuthMethod authMethod) {
+        this.serviceName = serviceName;
+        this.providerRealm = providerRealm;
+        this.identifier = identifier;
+        this.authMethod = authMethod;
+    }
+
     public ProxyProvider withAuthMethod(CredentialsAuthMethod authMethod, String key, String value) {
         this.authMethod = authMethod;
         switch (authMethod) {

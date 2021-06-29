@@ -31,4 +31,20 @@ public enum AwsS3Providers {
 
     }
 
+    public static AwsS3Provider generateAwsProviderEmptyProviderType() {
+        String awsId = UniqueId.getUniqueKey();
+        return new AwsS3Provider(
+                "",
+                getAWSProviderNamePrefix() + awsId,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "s3extproxytest" + awsId);
+    }
+
+    public static AwsS3Provider generateAwsProviderNoProviderType() {
+        String awsId = UniqueId.getUniqueKey();
+        return new AwsS3Provider(
+                getAWSProviderNamePrefix() + awsId,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "s3extproxytest" + awsId);
+    }
 }

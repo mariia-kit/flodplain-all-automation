@@ -62,4 +62,24 @@ public enum ProxyProviders {
                     CredentialsAuthMethod.NONE);
 
     }
+
+    public static ProxyProvider generateAWSEmptyProviderType() {
+        String awsId = UniqueId.getUniqueKey();
+        return new ProxyProvider(
+                "",
+                getAWSProviderNamePrefix() + awsId,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "s3extproxytest" + awsId,
+                CredentialsAuthMethod.NONE);
+
+    }
+
+    public static ProxyProvider generateAWSNoProviderType() {
+        String awsId = UniqueId.getUniqueKey();
+        return new ProxyProvider(
+                getAWSProviderNamePrefix() + awsId,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "s3extproxytest" + awsId,
+                CredentialsAuthMethod.NONE);
+    }
 }
