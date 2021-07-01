@@ -316,7 +316,7 @@ test_proxy_sit:
     - if: '$TASK_NS == null && $TASK_CM == null'
       when: manual
     - when: never
-  allow_failure: true
+  allow_failure: false
 
 test_ns_prod:
   extends: .test_run
@@ -375,7 +375,7 @@ test_proxy_prod:
     - if: '$TASK_NS == null && $TASK_CM == null'
       when: manual
     - when: never
-  allow_failure: true
+  allow_failure: false
 
 #Instruments
 zephyr_link:

@@ -105,6 +105,7 @@ public class IntegrationMPTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled
     @DisplayName("[External Proxy] Marketplace can get list of Providers and Resources")
     void verifyMPCanGetProvidersList() {
         ProxyProvider proxyProvider = ProxyProviders.generate();

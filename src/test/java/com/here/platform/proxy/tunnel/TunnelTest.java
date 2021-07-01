@@ -114,7 +114,7 @@ public class TunnelTest extends BaseProxyTests {
     void verifyProxyCanBeRetrievedNoResourceOnDP() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource resource = ProxyProviderResources.generate();
-        resource.setPath("/nosuch/url");
+        resource.setPath("nosuch/url");
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.readProxyProvider(proxyProvider);
@@ -146,7 +146,6 @@ public class TunnelTest extends BaseProxyTests {
                 .expectedSentryError(SentryErrorsList.TOKEN_NOT_FOUND.getError());
     }
 
-
     @Test
     @DisplayName("[External Proxy] Verify retrieve new proxy data Successful")
     void verifyNewProxyCanBeRetrieved() {
@@ -177,7 +176,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled("Currently there is only one Auth implementation")
+    @Disabled("Currently one method implemented")
     @DisplayName("[External Proxy] Verify retrieve new proxy data Auth not implemented")
     void verifyNewProxyCanBeRetrievedNoAuth() {
         ProxyProvider proxyProvider = ProxyProviders.generate()
@@ -194,33 +193,6 @@ public class TunnelTest extends BaseProxyTests {
                 .getData(proxyProvider, resource);
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-    }
-
-    @Test
-    @Disabled("Reproduced on mp only")
-    @DisplayName("[External Proxy] Verify retrieve proxy data Res names intersects")
-    void verifyProxyCanBeRetrievedResNamesIntersects() {
-        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
-        ProxyProviderResource resource2 = ProxyProviderResources.generate();
-        resource2.setPath(resource.getPath() + "/more");
-
-        ProxySteps.readProxyProvider(proxyProvider);
-        ProxySteps.createProxyResource(proxyProvider, resource);
-        ProxySteps.createProxyResource(proxyProvider, resource2);
-
-        ProxySteps.createListingAndSubscription(resource);
-
-        new TunnelController()
-                .withConsumerToken()
-                .getData(proxyProvider, resource2);
-        var tunnel = new TunnelController()
-                .withConsumerToken()
-                .getData(proxyProvider, resource);
-        new ProxyProviderAssertion(tunnel)
-                .expectedError(ProxyErrorList.getNoAccessError(
-                        Users.MP_CONSUMER.getUser().getUserId(),
-                        resource2.getHrn()));
     }
 
     @Test
@@ -265,45 +237,6 @@ public class TunnelTest extends BaseProxyTests {
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK);
 
-    }
-
-    @Test
-    @Disabled
-    @Issue("NS-3745")
-    @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when using slash in resource path")
-    void verifyProxyResourceCannotBeCreatedWithGenericPathWithSlash() {
-        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = new ProxyProviderResource(
-                "Auto-testing-reference-Generic-Path-With-Slash",
-                "/proxy/dataPath/");
-
-        ProxySteps.readProxyProvider(proxyProvider);
-        ProxySteps.addProxyProviderResource(proxyProvider, resource);
-
-        var responseRes = new ServiceProvidersController()
-                .withAdminToken()
-                .addResourceListToProvider(proxyProvider.getId(), resource);
-        new ProxyProviderAssertion(responseRes)
-                .expectedCode(HttpStatus.SC_BAD_REQUEST);
-    }
-
-    @Test
-    @Disabled("Outdated")
-    @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when slash doesn't exist before path")
-    void verifyProxyResourceCannotBeCreatedWithGenericPathWithoutSlash() {
-        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = new ProxyProviderResource(
-                "Auto-testing-reference-Generic-Path-Without-Slash",
-                "/proxy/dataPath");
-
-        ProxySteps.readProxyProvider(proxyProvider);
-        ProxySteps.addProxyProviderResource(proxyProvider, resource);
-
-        var responseRes = new ServiceProvidersController()
-                .withAdminToken()
-                .addResourceListToProvider(proxyProvider.getId(), resource);
-        new ProxyProviderAssertion(responseRes)
-                .expectedCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
