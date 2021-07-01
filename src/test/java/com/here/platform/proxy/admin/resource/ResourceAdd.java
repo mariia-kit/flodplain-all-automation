@@ -1,8 +1,10 @@
 package com.here.platform.proxy.admin.resource;
 
 import com.here.platform.ns.dto.SentryErrorsList;
+import com.here.platform.ns.dto.Users;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
+import com.here.platform.proxy.conrollers.TunnelController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
@@ -10,8 +12,10 @@ import com.here.platform.proxy.dto.ProxyProviderResources;
 import com.here.platform.proxy.dto.ProxyProviders;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
+import io.qameta.allure.Issue;
 import java.util.List;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,6 +48,7 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @Issue("NS-3668")
     @DisplayName("[External Proxy] Add Resources to Proxy Provider with '/' at the beginning of the path")
     void verifyAddResourcesToProviderWithSlashBeforePath() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
@@ -151,5 +156,45 @@ public class ResourceAdd extends BaseProxyTests {
 
         new ProxyProviderAssertion(responseRes)
                 .expectedResourceInProvider(resource);
+    }
+
+    @Test
+    @Issue("NS-3668")
+    @DisplayName("[External Proxy] Verify two resources cannot be added with the same path")
+    void verifyTwoProxyResourcesCannotBeAddedWithTheSamePath() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-1",
+                "proxy/data/test");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-2",
+                "proxy/data/test");
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), List.of(firstResource, secondResource));
+        new ProxyProviderAssertion(response)
+                .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourcePath());
+    }
+
+    @Test
+    @Issue("NS-3668")
+    @DisplayName("[External Proxy] Verify two resources cannot be added with the same Title")
+    void verifyTwoProxyResourcesCannotBeAddedWithTheSameTitle() {
+        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource",
+                "proxy/data/d-test1");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource",
+                "proxy/data/d-test2");
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(proxyProvider.getId(), List.of(firstResource, secondResource));
+        new ProxyProviderAssertion(response)
+                .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourceTitle());
     }
 }
