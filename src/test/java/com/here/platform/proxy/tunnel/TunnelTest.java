@@ -27,13 +27,12 @@ import org.junit.jupiter.api.Test;
 public class TunnelTest extends BaseProxyTests {
 
     @Test
-    @Disabled("Outdated according to tested functionality")
     @DisplayName("[External Proxy] Verify retrieve proxy data Successful")
     void verifyProxyCanBeRetrieved() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
-        ProxyProviderResource resource = ProxyProviderResources.REFERENCE_RESOURCE.getResource();
+        ProxyProviderResource resource = ProxyProviderResources.generate();
         ProxySteps.readProxyProvider(proxyProvider);
-        ProxySteps.readProxyProviderResource(resource);
+        ProxySteps.createProxyResource(proxyProvider, resource);
 
         ProxySteps.createListingAndSubscription(resource);
 
@@ -62,13 +61,14 @@ public class TunnelTest extends BaseProxyTests {
                         resource.getHrn()));
     }
 
+
     @Test
     @DisplayName("[External Proxy] Verify retrieve proxy data No Resource No Policy")
     void verifyProxyCanBeRetrievedNoResourceNoPolicy() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource resource = new ProxyProviderResource(
                 "Auto-testing-reference-no-policy",
-                "/proxy/data/nopolicy");
+                "proxy/data/nopolicy");
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -135,7 +135,7 @@ public class TunnelTest extends BaseProxyTests {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource resource = new ProxyProviderResource(
                 "Auto-testing-reference-no-token",
-                "/proxy/data/123456notoken");
+                "proxy/data/123456notoken");
 
         ProxySteps.readProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -288,7 +288,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
+    @Disabled("Outdated")
     @DisplayName("[External Proxy] Verify proxy resource cannot be created with Generic resource path when slash doesn't exist before path")
     void verifyProxyResourceCannotBeCreatedWithGenericPathWithoutSlash() {
         ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();

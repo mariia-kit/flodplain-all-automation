@@ -153,7 +153,7 @@ public class ProviderAdd extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
+    @Disabled("NS-3888 need to be fixed")
     @DisplayName("[External Proxy] Add new Service Provider Auth is missing")
     void verifyAddProxyProviderAuthMissing() {
         ProxyProvider proxyProvider = ProxyProviders.generate();
