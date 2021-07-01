@@ -84,6 +84,26 @@ public class ProxyErrorList {
                 "missing_required_json_field");
     }
 
+    public static ProxyError getNotValidFieldNotUniqueResourcePath() {
+        return new ProxyError(
+                400,
+                "Invalid JSON field",
+                "E504003",
+                "<path> field must be distinct",
+                "Field <path> must comply with expected format",
+                "invalid_json_field");
+    }
+
+    public static ProxyError getNotValidFieldNotUniqueResourceTitle() {
+        return new ProxyError(
+                400,
+                "Invalid JSON field",
+                "E504003",
+                "<title> field must be distinct",
+                "Field <title> must comply with expected format",
+                "invalid_json_field");
+    }
+
     public static ProxyError getProviderResourceAlreadyExistsError(String title, String path) {
         return new ProxyError(
                 409,
