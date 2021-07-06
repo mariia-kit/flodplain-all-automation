@@ -113,4 +113,24 @@ public class ProxyErrorList {
                 "Use unique Resource title and path",
                 "service_provider_resource_already_exists");
     }
+
+    public static ProxyError getWrongPoviderType(String providerType) {
+        return new ProxyError(
+                400,
+                "Missing required JSON field",
+                "E504002",
+                "Wrong format of field <\"providerType\":class com.here.platform.mktproxy.backend.rest.model.ProviderType> - Cannot deserialize value of type `com.here.platform.mktproxy.backend.rest.model.ProviderType` from String \"" + providerType + "\": not one of the values accepted for Enum class: [AWS, REST_API]\n at [Source: (InputStreamReader); line: 1, column: 32] (through reference chain: com.here.platform.mktproxy.backend.rest.model.AddServiceProviderRequest[\"providerType\"])",
+                "Verify JSON payload for missing/wrong fields",
+                "missing_required_json_field");
+    }
+
+    public static ProxyError getNoPoviderType() {
+        return new ProxyError(
+                400,
+                "Missing required JSON field",
+                "E504002",
+                "Missing JSON field <\"providerType\":com.here.platform.mktproxy.backend.rest.model.ProviderType>",
+                "Verify JSON payload for missing/wrong fields",
+                "missing_required_json_field");
+    }
 }
