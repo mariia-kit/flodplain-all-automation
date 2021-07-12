@@ -45,4 +45,10 @@ public enum ProxyProviderResources {
                 "/proxy/data" + id);
     }
 
+    public static ProxyProviderResource generateAws() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProviderResource(
+                getResourceNamePrefix() + id,
+                "dir/subdir" + id + "/");
+    }
 }

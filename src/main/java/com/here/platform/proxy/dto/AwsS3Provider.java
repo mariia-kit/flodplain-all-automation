@@ -1,11 +1,8 @@
-package com.here.platform.proxy.conrollers;
+package com.here.platform.proxy.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.here.platform.proxy.dto.ProxyProvider;
-import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
-import com.here.platform.proxy.dto.ProxyProviderResource;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;

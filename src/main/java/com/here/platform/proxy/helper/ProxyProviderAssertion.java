@@ -3,7 +3,7 @@ package com.here.platform.proxy.helper;
 import static io.qameta.allure.Allure.step;
 
 import com.here.platform.ns.dto.SentryError;
-import com.here.platform.proxy.conrollers.AwsS3Provider;
+import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.dto.ProxyError;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;

@@ -2,7 +2,7 @@ package com.here.platform.proxy.steps;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.mp.steps.api.MarketplaceSteps;
-import com.here.platform.proxy.conrollers.AwsS3Provider;
+import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;

@@ -1,5 +1,6 @@
 package com.here.platform.proxy.conrollers;
 
+import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.dto.ProxyResourceRequest;

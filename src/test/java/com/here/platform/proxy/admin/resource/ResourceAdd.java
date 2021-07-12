@@ -1,10 +1,10 @@
 package com.here.platform.proxy.admin.resource;
 
 import com.here.platform.ns.dto.SentryErrorsList;
-import com.here.platform.ns.dto.Users;
 import com.here.platform.proxy.BaseProxyTests;
+import com.here.platform.proxy.dto.AwsS3Provider;
+import com.here.platform.proxy.dto.AwsS3Providers;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
-import com.here.platform.proxy.conrollers.TunnelController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
@@ -15,7 +15,6 @@ import com.here.platform.proxy.steps.ProxySteps;
 import io.qameta.allure.Issue;
 import java.util.List;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -196,5 +195,133 @@ public class ResourceAdd extends BaseProxyTests {
                 .addResourceListToProvider(proxyProvider.getId(), List.of(firstResource, secondResource));
         new ProxyProviderAssertion(response)
                 .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourceTitle());
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Add Resources to AWS Proxy Provider")
+    void verifyAddResourcesToAWSProvider() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxyProviderResource resource = ProxyProviderResources.generateAws();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        var verifyGetProviderById = new ServiceProvidersController()
+                .withAdminToken()
+                .getProviderById(awsS3Provider.getId());
+        new ProxyProviderAssertion(verifyGetProviderById)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsAwsS3Provider(awsS3Provider);
+
+        var responseRes = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), resource);
+        new ProxyProviderAssertion(responseRes)
+                .expectedCode(HttpStatus.SC_OK);
+        Long resId = responseRes.getBody().jsonPath().getLong("resources[0].id");
+        String resHrn = responseRes.getBody().jsonPath().getString("resources[0].hrn");
+        resource.setId(resId);
+        resource.setHrn(resHrn);
+
+        new ProxyProviderAssertion(responseRes)
+                .expectedResourceInProvider(resource);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify two resources with the same path cannot be added to AWS Proxy Provider" )
+    void verifyTwoAWSProxyResourcesCannotBeAddedWithTheSamePath() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-1",
+                "proxy/dir1/subdir1");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-2",
+                "proxy/dir1/subdir1");
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), List.of(firstResource, secondResource));
+        new ProxyProviderAssertion(response)
+                .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourcePath())
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
+            + "if another resource with the same path already exists" )
+    void verifyAWSProxyResourceCannotBeAddedWithExistingPath() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-1",
+                "proxy/dir2/subdir1");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-res-2",
+                "proxy/dir2/subdir1");
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), firstResource);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_OK);
+
+        var responseSecond = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), secondResource);
+        new ProxyProviderAssertion(responseSecond)
+                .expectedError(ProxyErrorList.getProviderResourceAlreadyExistsError(
+                        "Auto-testing-reference-res-1", "proxy/dir2/subdir1"))
+                .expectedCode(HttpStatus.SC_CONFLICT);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify two resources with the same Title cannot be added to AWS Proxy Provider" )
+    void verifyTwoAWSProxyResourcesCannotBeAddedWithTheSameTitle() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource",
+                "proxy/dir21/subdir1");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource",
+                "proxy/dir21/subdir2");
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), List.of(firstResource, secondResource));
+        new ProxyProviderAssertion(response)
+                .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourceTitle())
+                .expectedCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
+            + "if another resource with the same Title already exists" )
+    void verifyAWSProxyResourceCannotBeAddedWithTheExistingTitle() {
+        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        ProxyProviderResource firstResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource-2",
+                "proxy/dir22/subdir1");
+        ProxyProviderResource secondResource = new ProxyProviderResource(
+                "Auto-testing-reference-resource-2",
+                "proxy/dir22/subdir2");
+
+        var response = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), firstResource);
+        new ProxyProviderAssertion(response)
+                .expectedCode(HttpStatus.SC_OK);
+
+        var responseSecond = new ServiceProvidersController()
+                .withAdminToken()
+                .addResourceListToProvider(awsS3Provider.getId(), secondResource);
+        new ProxyProviderAssertion(responseSecond)
+                .expectedError(ProxyErrorList.getProviderResourceAlreadyExistsError(
+                        "Auto-testing-reference-resource-2", "proxy/dir22/subdir1"))
+                .expectedCode(HttpStatus.SC_CONFLICT);
     }
 }

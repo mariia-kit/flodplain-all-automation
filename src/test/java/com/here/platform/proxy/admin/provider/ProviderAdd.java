@@ -1,10 +1,9 @@
 package com.here.platform.proxy.admin.provider;
 
 import com.here.platform.ns.dto.SentryErrorsList;
-import com.here.platform.ns.instruments.CleanUp;
 import com.here.platform.proxy.BaseProxyTests;
-import com.here.platform.proxy.conrollers.AwsS3Provider;
-import com.here.platform.proxy.conrollers.AwsS3Providers;
+import com.here.platform.proxy.dto.AwsS3Provider;
+import com.here.platform.proxy.dto.AwsS3Providers;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
