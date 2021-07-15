@@ -3,14 +3,14 @@ package com.here.platform.proxy.admin.provider;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.dto.AwsS3Provider;
-import com.here.platform.proxy.dto.AwsS3Providers;
+import com.here.platform.proxy.dto.AwsS3ProviderEnum;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider")
     void verifyAddProxyProvider() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -41,7 +41,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider No Token")
     void verifyAddProxyProviderNoToken() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         var response = new ServiceProvidersController()
                 .addProvider(proxyProvider);
@@ -52,7 +52,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider same domain and name")
     void verifyAddProxyProviderSameData() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -70,8 +70,8 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider same domain")
     void verifyAddProxyProviderSameDomain() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProvider proxyProvider2 = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProvider proxyProvider2 = ProxyProviderEnum.generate();
         proxyProvider2.setIdentifier(proxyProvider.getIdentifier());
 
         var response = new ServiceProvidersController()
@@ -90,8 +90,8 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider same name")
     void verifyAddProxyProviderSameName() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProvider proxyProvider2 = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProvider proxyProvider2 = ProxyProviderEnum.generate();
         proxyProvider2.setServiceName(proxyProvider.getServiceName());
 
         var response = new ServiceProvidersController()
@@ -110,7 +110,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider Not implemented Auth")
     void verifyAddProxyProviderNotImplemented() {
-        ProxyProvider proxyProvider = ProxyProviders.generate()
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate()
                 .withAuthMethod(CredentialsAuthMethod.BASIC_AUTH,
                         "root", "qwerty");
 
@@ -125,7 +125,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider Header Auth")
     void verifyAddProxyProviderHeaderAuth() {
-        ProxyProvider proxyProvider = ProxyProviders.generate()
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate()
                 .withAuthMethod(CredentialsAuthMethod.API_KEY_IN_QUERY,
                         "Authorization", "1f8647f3-5f86-4b5e-8687-982fd620ef78");
 
@@ -140,7 +140,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider None Auth")
     void verifyAddProxyProviderNoneAuth() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
         proxyProvider.setAuthMethod(CredentialsAuthMethod.NONE);
 
         var response = new ServiceProvidersController()
@@ -155,7 +155,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Disabled
     @DisplayName("[External Proxy] Add new Service Provider Auth is missing")
     void verifyAddProxyProviderAuthMissing() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
         proxyProvider.setAuthMethod(null);
 
         var response = new ServiceProvidersController()
@@ -168,8 +168,8 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new Service Provider with Resource")
     void verifyAddProxyProviderWithResource() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
         proxyProvider.setResources(List.of(resource));
 
         var response = new ServiceProvidersController()
@@ -183,7 +183,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify if AWS Service Provider can be onboarded with REST provider requested body")
     void verifyAddAwsProviderWithRestProviderRequestedBody() {
-        ProxyProvider proxyProvider = ProxyProviders.generateAWS();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generateAWS();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var verifyGetProviderById = new ServiceProvidersController()
@@ -197,7 +197,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify if AWS provider type can be onboarded")
     void verifyAddAwsProxyProvider() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         var verifyGetProviderById = new ServiceProvidersController()
@@ -212,7 +212,7 @@ public class ProviderAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Add new AWS Service Provider Empty Provider Type with REST provider requested body")
     void verifyAddAwsProxyProviderEmptyProviderTypeWithRestProviderRequestedBody() {
         String providerType = "";
-        ProxyProvider proxyProvider = ProxyProviders.generateAWS(providerType);
+        ProxyProvider proxyProvider = ProxyProviderEnum.generateAWS(providerType);
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -226,7 +226,7 @@ public class ProviderAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Add new AWS Service Provider Empty Provider Type")
     void verifyAddAwsProxyProviderEmptyProviderType() {
         String providerType = "";
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider(providerType);
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider(providerType);
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -239,7 +239,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new AWS Service Provider No Provider Type with REST provider requested body")
     void verifyAddAwsProxyProviderNoProviderTypeWithRestProviderRequestedBody() {
-        ProxyProvider proxyProvider = ProxyProviders.generateAWSNoProviderType();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generateAWSNoProviderType();
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -252,7 +252,7 @@ public class ProviderAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add new AWS Service Provider No Provider Type")
     void verifyAddAwsProxyProviderNoProviderType() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProviderNoProviderType();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProviderNoProviderType();
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -266,7 +266,7 @@ public class ProviderAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Add new AWS Service Provider Non Existent Provider Type with REST provider requested body")
     void verifyAddAwsProxyProviderWrongProviderTypeWithRestProviderRequestedBody() {
         String providerType = "REST";
-        ProxyProvider proxyProvider = ProxyProviders.generateAWS(providerType);
+        ProxyProvider proxyProvider = ProxyProviderEnum.generateAWS(providerType);
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -280,7 +280,7 @@ public class ProviderAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Add new AWS Service Provider with Non Existent Provider Type")
     void verifyAddAwsProxyProviderNonExistentProviderType() {
         String providerType = "REST";
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider(providerType);
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider(providerType);
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -289,4 +289,6 @@ public class ProviderAdd extends BaseProxyTests {
                 .expectedCode(HttpStatus.SC_BAD_REQUEST)
                 .expectedError(ProxyErrorList.getWrongPoviderType(providerType));
     }
+
+
 }

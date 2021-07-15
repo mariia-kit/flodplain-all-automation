@@ -3,11 +3,10 @@ package com.here.platform.proxy.admin.resource;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
-import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
@@ -24,8 +23,8 @@ public class ResourceDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify delete proxy resource by Id")
     void verifyDeleteProxyResourceById() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -40,8 +39,8 @@ public class ResourceDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify delete proxy resource by Id No Token")
     void verifyDeleteProxyResourceByIdNoToken() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -65,8 +64,8 @@ public class ResourceDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify delete proxy resource by Id Already Deleted")
     void verifyDeleteProxyResourceByIdAlreadyDeleted() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);

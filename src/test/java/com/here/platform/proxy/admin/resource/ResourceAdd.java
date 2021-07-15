@@ -3,13 +3,13 @@ package com.here.platform.proxy.admin.resource;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.dto.AwsS3Provider;
-import com.here.platform.proxy.dto.AwsS3Providers;
+import com.here.platform.proxy.dto.AwsS3ProviderEnum;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import io.qameta.allure.Issue;
@@ -28,8 +28,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider")
     void verifyAddResourcesToProvider() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()
@@ -50,8 +50,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Issue("NS-3668")
     @DisplayName("[External Proxy] Add Resources to Proxy Provider with '/' at the beginning of the path")
     void verifyAddResourcesToProviderWithSlashBeforePath() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generateResourceWithSlash();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generateResourceWithSlash();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()
@@ -64,8 +64,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider No Token")
     void verifyAddResourcesToProviderNoToken() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()
@@ -77,9 +77,9 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider Multiple")
     void verifyAddResourcesToProviderMultiple() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
-        ProxyProviderResource resource2 = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
+        ProxyProviderResource resource2 = ProxyProviderResourceEnum.generate();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()
@@ -105,8 +105,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider Already Exist")
     void verifyAddResourcesToProviderAlreadyExist() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
         ProxySteps.createProxyProvider(proxyProvider);
 
         var responseRes = new ServiceProvidersController()
@@ -125,7 +125,7 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider No Provider")
     void verifyAddResourcesToProviderNoProvider() {
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         var responseRes = new ServiceProvidersController()
                 .withAdminToken()
@@ -138,8 +138,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to Proxy Provider with Query")
     void verifyAddResourcesToProviderWithQuery() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
         resource.setPath(resource.getPath() + "?language=en-uk");
         ProxySteps.createProxyProvider(proxyProvider);
 
@@ -161,7 +161,7 @@ public class ResourceAdd extends BaseProxyTests {
     @Issue("NS-3668")
     @DisplayName("[External Proxy] Verify two resources cannot be added with the same path")
     void verifyTwoProxyResourcesCannotBeAddedWithTheSamePath() {
-        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProvider proxyProvider = ProxyProviderEnum.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource firstResource = new ProxyProviderResource(
                 "Auto-testing-reference-res-1",
                 "proxy/data/test");
@@ -181,7 +181,7 @@ public class ResourceAdd extends BaseProxyTests {
     @Issue("NS-3668")
     @DisplayName("[External Proxy] Verify two resources cannot be added with the same Title")
     void verifyTwoProxyResourcesCannotBeAddedWithTheSameTitle() {
-        ProxyProvider proxyProvider = ProxyProviders.REFERENCE_PROXY.getProxyProvider();
+        ProxyProvider proxyProvider = ProxyProviderEnum.REFERENCE_PROXY.getProxyProvider();
         ProxyProviderResource firstResource = new ProxyProviderResource(
                 "Auto-testing-reference-resource",
                 "proxy/data/d-test1");
@@ -200,8 +200,8 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Add Resources to AWS Proxy Provider")
     void verifyAddResourcesToAWSProvider() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
-        ProxyProviderResource resource = ProxyProviderResources.generateAws();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generateAws();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         var verifyGetProviderById = new ServiceProvidersController()
@@ -228,7 +228,7 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify two resources with the same path cannot be added to AWS Proxy Provider" )
     void verifyTwoAWSProxyResourcesCannotBeAddedWithTheSamePath() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         ProxyProviderResource firstResource = new ProxyProviderResource(
@@ -250,7 +250,7 @@ public class ResourceAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
             + "if another resource with the same path already exists" )
     void verifyAWSProxyResourceCannotBeAddedWithExistingPath() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         ProxyProviderResource firstResource = new ProxyProviderResource(
@@ -278,7 +278,7 @@ public class ResourceAdd extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Verify two resources with the same Title cannot be added to AWS Proxy Provider" )
     void verifyTwoAWSProxyResourcesCannotBeAddedWithTheSameTitle() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         ProxyProviderResource firstResource = new ProxyProviderResource(
@@ -300,7 +300,7 @@ public class ResourceAdd extends BaseProxyTests {
     @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
             + "if another resource with the same Title already exists" )
     void verifyAWSProxyResourceCannotBeAddedWithTheExistingTitle() {
-        AwsS3Provider awsS3Provider = AwsS3Providers.generateAwsProvider();
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
         ProxyProviderResource firstResource = new ProxyProviderResource(

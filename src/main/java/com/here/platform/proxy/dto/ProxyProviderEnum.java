@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum ProxyProviders {
+public enum ProxyProviderEnum {
 
     REFERENCE_PROXY(new ProxyProvider(
             "REST_API",

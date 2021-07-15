@@ -11,9 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProxyResourceRequest {
     private List<ProxyProviderResource> resources;
-
-    public ProxyResourceRequest() {
-
-    }
-
 }

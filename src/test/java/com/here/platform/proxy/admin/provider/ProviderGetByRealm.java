@@ -4,9 +4,7 @@ import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
-import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
@@ -24,7 +22,7 @@ public class ProviderGetByRealm extends BaseProxyTests {
     @DisplayName("[External Proxy] Get Provider by realm")
     void verifyGetProxyProviderByRealm() {
         String realm = "special-realm";
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
         proxyProvider.setProviderRealm(realm);
 
         ProxySteps.createProxyProvider(proxyProvider);
@@ -41,7 +39,7 @@ public class ProviderGetByRealm extends BaseProxyTests {
     @DisplayName("[External Proxy] Get Provider by realm No Token")
     void verifyGetProxyProviderByRealmNoToken() {
         String realm = "special-realm";
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
         proxyProvider.setProviderRealm(realm);
 
         ProxySteps.createProxyProvider(proxyProvider);
