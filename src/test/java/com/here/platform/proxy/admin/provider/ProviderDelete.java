@@ -6,8 +6,8 @@ import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyErrorList;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
@@ -24,7 +24,7 @@ public class ProviderDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Deleting provider by Id")
     void verifyDeleteProxyProviderById() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
 
@@ -43,7 +43,7 @@ public class ProviderDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Deleting provider by Id no Token")
     void verifyDeleteProxyProviderByIdNoToken() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
 
@@ -56,7 +56,7 @@ public class ProviderDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Deleting provider by Id Already Deleted")
     void verifyDeleteProxyProviderByIdAlreadyDeleted() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
 
@@ -75,8 +75,8 @@ public class ProviderDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Provider cannot be deleted if there are attached resources")
     void verifyDeleteProxyProviderWithResource() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -92,8 +92,8 @@ public class ProviderDelete extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Delete provider by id with removed resources")
     void verifyDeleteProxyProviderByIdWithHistory() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);

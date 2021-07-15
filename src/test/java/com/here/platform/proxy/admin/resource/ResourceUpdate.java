@@ -5,8 +5,8 @@ import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
@@ -23,14 +23,14 @@ public class ResourceUpdate extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Update Service resource")
     void verifyUpdateProxyResource() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
 
-        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        ProxyProviderResource newResource = ProxyProviderResourceEnum.generate();
         newResource.setHrn(resource.getHrn());
         //path is not updated!!
         newResource.setPath(resource.getPath());
@@ -53,14 +53,14 @@ public class ResourceUpdate extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Update Service resource No Token")
     void verifyUpdateProxyResourceNoToken() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
 
-        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        ProxyProviderResource newResource = ProxyProviderResourceEnum.generate();
         newResource.setHrn(resource.getHrn());
 
         var update = new ServiceProvidersController()

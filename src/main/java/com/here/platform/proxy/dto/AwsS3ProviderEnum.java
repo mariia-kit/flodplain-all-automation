@@ -4,7 +4,7 @@ import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.UniqueId;
 
 
-public enum AwsS3Providers {
+public enum AwsS3ProviderEnum {
 
     AWS(new AwsS3Provider(
             "AWS",
@@ -12,7 +12,7 @@ public enum AwsS3Providers {
 
     private AwsS3Provider awsS3Provider;
 
-    AwsS3Providers(AwsS3Provider withAuthMethod) {
+    AwsS3ProviderEnum(AwsS3Provider withAuthMethod) {
     }
 
     public static String getAWSProviderNamePrefix() {

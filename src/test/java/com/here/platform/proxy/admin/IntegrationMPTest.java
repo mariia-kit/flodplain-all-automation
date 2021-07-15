@@ -5,8 +5,8 @@ import com.here.platform.proxy.BaseProxyTests;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
-import com.here.platform.proxy.dto.ProxyProviderResources;
-import com.here.platform.proxy.dto.ProxyProviders;
+import com.here.platform.proxy.dto.ProxyProviderResourceEnum;
+import com.here.platform.proxy.dto.ProxyProviderEnum;
 import com.here.platform.proxy.helper.ProxyProviderAssertion;
 import com.here.platform.proxy.steps.ProxySteps;
 import org.apache.http.HttpStatus;
@@ -23,8 +23,8 @@ public class IntegrationMPTest extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Delete resource if Subs removed")
     void verifyDeleteProxyAfterSubscriptionCancel() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -41,8 +41,8 @@ public class IntegrationMPTest extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Delete resource if Subs exist")
     void verifyDeleteProxyAfterSubscriptionExist() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -59,13 +59,13 @@ public class IntegrationMPTest extends BaseProxyTests {
     @Test
     @DisplayName("[External Proxy] Update Service resource if subs exist")
     void verifyUpdateProxyResourceSubs() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
 
-        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        ProxyProviderResource newResource = ProxyProviderResourceEnum.generate();
         newResource.setHrn(resource.getHrn());
         //path is not updated!!
         newResource.setPath(resource.getPath());
@@ -83,13 +83,13 @@ public class IntegrationMPTest extends BaseProxyTests {
     @Disabled
     @DisplayName("[External Proxy] Update Service resource if subs removed")
     void verifyUpdateProxyResourceSubsRemoved() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
 
-        ProxyProviderResource newResource = ProxyProviderResources.generate();
+        ProxyProviderResource newResource = ProxyProviderResourceEnum.generate();
         newResource.setHrn(resource.getHrn());
         //path is not updated!!
         newResource.setPath(resource.getPath());
@@ -108,8 +108,8 @@ public class IntegrationMPTest extends BaseProxyTests {
     @Disabled
     @DisplayName("[External Proxy] Marketplace can get list of Providers and Resources")
     void verifyMPCanGetProvidersList() {
-        ProxyProvider proxyProvider = ProxyProviders.generate();
-        ProxyProviderResource resource = ProxyProviderResources.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyProvider(proxyProvider);
         ProxySteps.createProxyResource(proxyProvider, resource);
