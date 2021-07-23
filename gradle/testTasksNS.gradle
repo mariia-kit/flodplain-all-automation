@@ -154,7 +154,7 @@ task zephyrLinkTaskNS(type: JavaExec) {
     doFirst {
 
         def cycleValue = hasProperty('test_cycle') ? test_cycle : "${getDate()}-testing-cycle"
-        def folderValue = 'ExtSvcProxy_PROD'
+        def folderValue = 'Roshen_2.29.0'
 
         println "Current user and service: $jira_login $cycleValue"
         args = [
@@ -175,7 +175,7 @@ task zephyrSyncTaskNS(type: JavaExec) {
     doFirst {
 
         def cycleValue = hasProperty('test_cycle') ? test_cycle : "${getDate()}-testing-cycle"
-        def folderValue = 'ExtSvcProxy_PROD'
+        def folderValue = 'Roshen_2.29.0'
 
         println "Current user and service: $jira_login $cycleValue"
         args = [
