@@ -247,18 +247,13 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
-    @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
-            + "if another resource with the same path already exists" )
+    @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider if another resource with the same path already exists" )
     void verifyAWSProxyResourceCannotBeAddedWithExistingPath() {
         AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
         ProxySteps.createAWSProxyProvider(awsS3Provider);
 
-        ProxyProviderResource firstResource = new ProxyProviderResource(
-                "Auto-testing-reference-res-1",
-                "proxy/dir2/subdir1");
-        ProxyProviderResource secondResource = new ProxyProviderResource(
-                "Auto-testing-reference-res-2",
-                "proxy/dir2/subdir1");
+        ProxyProviderResource firstResource = ProxyProviderResourceEnum.generateAws();
+        ProxyProviderResource secondResource = firstResource;
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -270,8 +265,8 @@ public class ResourceAdd extends BaseProxyTests {
                 .withAdminToken()
                 .addResourceListToProvider(awsS3Provider.getId(), secondResource);
         new ProxyProviderAssertion(responseSecond)
-                .expectedError(ProxyErrorList.getProviderResourceAlreadyExistsError(
-                        "Auto-testing-reference-res-1", "proxy/dir2/subdir1"))
+                .expectedError(ProxyErrorList.getProviderResourceAlreadyExistsError(secondResource.getTitle(),
+                        secondResource.getPath()))
                 .expectedCode(HttpStatus.SC_CONFLICT);
     }
 
