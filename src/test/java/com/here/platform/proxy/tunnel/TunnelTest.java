@@ -392,4 +392,22 @@ public class TunnelTest extends BaseProxyTests {
         new ProxyProviderAssertion(tunnel2)
                 .expectedCode(HttpStatus.SC_OK);
     }
+
+    @Test
+    @DisplayName("[External Proxy] Verify GET Tunnel call response with valid on-boarded path")
+    void verifyProxyCanBeRetrievedWithValidPath() {
+        ProxyProvider proxyProvider = ProxyProviderEnum.REFERENCE_PROXY.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.createProxyResource(proxyProvider, resource);
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new TunnelController()
+                .withConsumerToken()
+                .getData(proxyProvider, resource);
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProviderNotIgnoringFields(resource.getPath());
+    }
 }

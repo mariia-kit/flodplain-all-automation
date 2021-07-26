@@ -1,6 +1,9 @@
 package com.here.platform.proxy.helper;
 
 import static io.qameta.allure.Allure.step;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.here.platform.ns.dto.SentryError;
 import com.here.platform.proxy.dto.AwsS3Provider;
@@ -128,7 +131,7 @@ public class ProxyProviderAssertion {
                 String errorName = response.jsonPath().getString("error");
                 String errorDescr = response.jsonPath().getString("error_description");
                 SentryError actual = new SentryError(code, errorName, errorDescr);
-                org.junit.jupiter.api.Assertions.assertEquals(error, actual, "Sentry Error not as expected!");
+                assertEquals(error, actual, "Sentry Error not as expected!");
             } catch (ClassCastException e) {
                 org.junit.jupiter.api.Assertions.fail("No sign of error " + error.getStatus() + " detected!");
             }
@@ -146,6 +149,39 @@ public class ProxyProviderAssertion {
                 .isLessThanOrEqualTo(maxThreshold)
                 .withFailMessage("Response time " + response.getTime() +
                         " is more than expected threshold " + maxThreshold + " ms!");
+        return this;
+    }
+
+    @Step("Expected response value equals to ProxyProvider: '{expected.serviceName}'")
+    public ProxyProviderAssertion expectedEqualsProviderNotIgnoringFields(String resourcePath) {
+
+        //TODO: refactor this
+        assertNotNull(response.jsonPath().getString("resId"));
+        assertNotNull(response.jsonPath().getString("x-forwarded-for"));
+        assertNotNull(response.jsonPath().getString("x-forwarded-proto"));
+        assertNotNull(response.jsonPath().getString("x-forwarded-port"));
+        assertNotNull(response.jsonPath().getString("host"));
+        assertNotNull(response.jsonPath().getString("x-amzn-trace-id"));
+
+        assertNotNull(response.jsonPath().getString("authorization-claims"));
+        assertNotNull(response.jsonPath().getString("rlm"));
+        assertNotNull(response.jsonPath().getString("x-gdpr-subp"));
+        assertNotNull(response.jsonPath().getString("x-request-id"));
+        assertNotNull(response.jsonPath().getString("x-correlation-id"));
+        assertNotNull(response.jsonPath().getString("accept"));
+
+        assertNotNull(response.jsonPath().getString("accept-encoding"));
+        assertNotNull(response.jsonPath().getString("user-agent"));
+        assertNotNull(response.jsonPath().getString("x-auth-source"));
+        assertNotNull(response.jsonPath().getString("x-auth-time"));
+        assertNotNull(response.jsonPath().getString("if-modified-since"));
+        assertNotNull(response.jsonPath().getString("Authorization"));
+
+        assertTrue(response.jsonPath().getString("host").contains("reference-data-provider.ost.solo-experiments.com"));
+
+        //TODO: refactor this
+        assertEquals("[" + resourcePath.substring(11) + ", null, null]", response.jsonPath().getString("resId"));
+
         return this;
     }
 }
