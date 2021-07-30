@@ -4,9 +4,9 @@ include: '.gitlab-ci-service.yml'
 
 
 variables:
-  ENV: "dev"
-  #TASK_CM: "smokeCMTests"
-  #TASK_NS: "nsTestsSmoke"
+  ENV:
+    value: "dev" # Deploy to dev by default
+    description: "Run tests agains environment."
   CYCLE: "latest"
   #SPARK_URL: "https://outlook.office.com/webhook/6371821a-7221-4e98-bfaa-a6f309aa9fe6@8a68f26d-b270-4ef3-ae78-bd695a909445/IncomingWebhook/1bdcdbaeb9c648758f7a9676a239dfb5/d45cc121-c9d1-44d9-893d-51382613cf7a"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -19,18 +19,12 @@ variables:
 
 stages:
   - test
-  - test_dev
-  - test_sit
-  - test_prod
   - instrumental
   - pages
 
 .test_run:
-  extends: .servisable
   stage: test
-  # variables:
-  #   TASK: "smoke"
-  #   REPORT_URL: "build/reports_ns"
+  extends: .servisable
   script:
     - set GROOVY_TURN_OFF_JAVA_WARNINGS=true
     - if [ ! -z ${CM_TEST_BRANCH} ] && git branch -a | egrep "remotes/origin/${CM_TEST_BRANCH}"; then git checkout origin/${CM_TEST_BRANCH}; res=$?; fi
@@ -54,27 +48,8 @@ stages:
     expire_in: 1 week
   allow_failure: false
 
-test_ns_auto:
-  extends: .test_run
-  rules:
-    - if: $TASK_NS
-      when: delayed
-      start_in: 5 minutes
-  variables:
-    TASK: $TASK_NS
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-
-test_cm_auto:
-  extends: .test_run
-  rules:
-    - if: $TASK_CM
-      when: delayed
-      start_in: 5 minutes
-  variables:
-    TASK: $TASK_CM
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
+##################### COMMON #####################
+# Create manual job for every CM & NS pipelines
 
 test_e2e_auto:
   extends: .test_run
@@ -100,284 +75,238 @@ test_e2e_ui_auto:
     HISTORY_URL: "history_e2e"
   allow_failure: true
 
-#dev operations
-test_ns_smoke_dev:
-  extends: .test_run
-  stage: test_dev
-  variables:
-    ENV: "dev"
-    TASK: "nsTestsSmoke"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
+##################### CM #####################
 
-test_cm_smoke_dev:
+# Creates CM test job depending on task passed in TASK_CM variable
+test_cm_auto:
   extends: .test_run
-  stage: test_dev
+  rules:
+    - if: $TASK_CM
+      when: delayed
+      start_in: 5 minutes
   variables:
-    ENV: "dev"
-    TASK: "smokeCMTests"
+    TASK: $TASK_CM
+    REPORT_URL: "build/reports_cm"
+    HISTORY_URL: "history_cm"
+
+##################### MANUAL CM #####################
+
+test_cm_smoke:
+  extends: .test_run
+  stage: test
+  variables:
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
       when: manual
+      variables:
+        TASK: "smokeCMTests"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "smokeCMTests"
     - when: never
   allow_failure: true
 
-test_ns_regression_dev:
+test_cm_regression:
   extends: .test_run
-  stage: test_dev
+  stage: test
   variables:
-    ENV: "dev"
-    TASK: "nsTestRegression"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_cm_regression_dev:
-  extends: .test_run
-  stage: test_dev
-  variables:
-    ENV: "dev"
-    TASK: "devTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
       when: manual
+      variables:
+        TASK: "devTests"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "sitTests"
     - when: never
   allow_failure: true
 
-test_e2e_dev:
+test_e2e:
   extends: .test_run
-  stage: test_dev
+  stage: test
   variables:
-    ENV: "dev"
     TASK: "e2eTests"
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
       when: manual
+      variables:
+        TASK: "e2eTests"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "e2eTests"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "prod"
+      when: manual
+      variables:
+        TASK: "e2eProdTests"
     - when: never
   allow_failure: true
 
 test_ui_dev:
   extends: .test_run
-  stage: test_dev
+  stage: test
   variables:
-    ENV: "dev"
     TASK: "uiTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_proxy_dev:
-  extends: .test_run
-  stage: test_dev
-  variables:
-    ENV: "dev"
-    TASK: "proxyTest"
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-  rules:
-    - if: $TASK_PROXY == 'test_proxy_dev'
-      when: delayed
-      start_in: 5 minutes
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-#sit operations
-test_ns_smoke_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "nsTestsSmoke"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_cm_smoke_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "smokeCMTests"
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_ns_regression_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "nsTestRegression"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_cm_regression_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "sitTests"
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_e2e_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "e2eTests"
-    REPORT_URL: "build/reports_e2e"
-    HISTORY_URL: "history_e2e"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
       when: manual
     - when: never
   allow_failure: true
 
 test_e2e_ui_sit:
   extends: .test_run
-  stage: test_sit
+  stage: test
   variables:
-    ENV: "sit"
     TASK: "e2eTestsUI"
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_mp_contract_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "e2eTestsUiContract"
-    REPORT_URL: "build/reports_e2e"
-    HISTORY_URL: "history_e2e"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_proxy_sit:
-  extends: .test_run
-  stage: test_sit
-  variables:
-    ENV: "sit"
-    TASK: "proxyTest"
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-  rules:
-    - if: $TASK_PROXY == 'test_proxy_sit'
-      when: delayed
-      start_in: 5 minutes
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-test_ns_prod:
-  extends: .test_run
-  stage: test_prod
-  variables:
-    ENV: "prod"
-    TASK: "nsTestProd"
-    REPORT_URL: "build/reports_ns"
-    HISTORY_URL: "history_ns"
-  rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
       when: manual
     - when: never
   allow_failure: true
 
 test_cm_prod:
   extends: .test_run
-  stage: test_prod
+  stage: test
   variables:
-    ENV: "prod"
     TASK: "prodTests"
     REPORT_URL: "build/reports_cm"
     HISTORY_URL: "history_cm"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "prod"
       when: manual
     - when: never
   allow_failure: true
 
-test_e2e_prod:
+##################### NS #####################
+
+# Creates NS test job depending on task passed in TASK_NS variable
+test_ns_auto:
   extends: .test_run
-  stage: test_prod
+  rules:
+    - if: $TASK_NS
+      when: delayed
+      start_in: 5 minutes
   variables:
-    ENV: "prod"
-    TASK: "e2eProdTests"
+    TASK: $TASK_NS
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+
+##################### MANUAL NS #####################
+
+test_ns_smoke:
+  extends: .test_run
+  stage: test
+  variables:
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
+      when: manual
+      variables:
+        TASK: "nsTestsSmoke"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "smokeCMTestssit"
+    - when: never
+  allow_failure: true
+
+test_ns_regression:
+  extends: .test_run
+  stage: test
+  variables:
+    TASK: "nsTestRegression"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
+      when: manual
+      variables:
+        TASK: "nsTestRegression"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "nsTestRegression"
+    - when: never
+  allow_failure: true
+
+test_ns_prod:
+  extends: .test_run
+  stage: test
+  variables:
+    TASK: "nsTestProd"
+    REPORT_URL: "build/reports_ns"
+    HISTORY_URL: "history_ns"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "prod"
+      when: manual
+    - when: never
+  allow_failure: true
+
+##################### PROXY #####################
+
+# Creates PROXY test job depending on task passed in TASK_PROXY variable
+test_proxy_auto:
+  extends: .test_run
+  rules:
+    - if: $TASK_PROXY
+      when: delayed
+      start_in: 5 minutes
+  variables:
+    TASK: $TASK_PROXY
+    REPORT_URL: "build/reports_proxy"
+    HISTORY_URL: "history_proxy"
+
+##################### PROXY MANUAL #####################
+
+test_proxy:
+  extends: .test_run
+  stage: test
+  variables:
+    REPORT_URL: "build/reports_proxy"
+    HISTORY_URL: "history_proxy"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "dev"
+      when: manual
+      variables:
+        TASK: "proxyTest"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "sit"
+      when: manual
+      variables:
+        TASK: "proxyTest"
+    - if: $CI_PIPELINE_SOURCE == "web" && $ENV == "prod"
+      when: manual
+      variables:
+        TASK: "proxyTest"
+    - when: never
+  allow_failure: true
+
+##################### MarketPlace #####################
+
+test_mp_contract_sit:
+  extends: .test_run
+  stage: test
+  variables:
     REPORT_URL: "build/reports_e2e"
     HISTORY_URL: "history_e2e"
   rules:
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
+    - if: $CI_PIPELINE_SOURCE == "pipeline" && $ENV == "sit" && $TASK_CM == "e2eTestsUiContract"
     - when: never
   allow_failure: true
 
-test_proxy_prod:
-  extends: .test_run
-  stage: test_prod
-  variables:
-    ENV: "prod"
-    TASK: "proxyTest"
-    REPORT_URL: "build/reports_cm"
-    HISTORY_URL: "history_cm"
-  rules:
-    - if: $TASK_PROXY == 'test_proxy_prod'
-      when: delayed
-      start_in: 5 minutes
-    - if: '$TASK_NS == null && $TASK_CM == null'
-      when: manual
-    - when: never
-  allow_failure: true
-
-#Instruments
+##################### Instruments #####################
 zephyr_link:
   stage: instrumental
   script:
