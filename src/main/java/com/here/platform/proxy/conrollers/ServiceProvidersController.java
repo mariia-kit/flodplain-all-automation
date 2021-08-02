@@ -15,6 +15,7 @@ import org.apache.http.HttpStatus;
 public class ServiceProvidersController extends BaseProxyService<ServiceProvidersController> {
 
     private final String basePath = "/admin/serviceProviders";
+    private final String baseAwsPath = "/aws/s3/buckets/s3extproxytest";
 
     @Step("Get proxy all service providers")
     public Response getAllProviders() {
@@ -38,6 +39,12 @@ public class ServiceProvidersController extends BaseProxyService<ServiceProvider
     public Response getResourceOfProvider(Long providerId) {
         return consentServiceClient(basePath)
                 .get("/{providerId}/resources", providerId);
+    }
+
+    @Step("Get proxy service AWS provider resources")
+    public Response getResourceOfAwsProvider(String dirPath) {
+        return consentServiceClient(baseAwsPath)
+                .get("/resources" + dirPath);
     }
 
     @Step("Add proxy service provider {proxyProvider.serviceName}")
