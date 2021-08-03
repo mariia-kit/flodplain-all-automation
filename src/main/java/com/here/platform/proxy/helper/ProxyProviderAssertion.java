@@ -211,4 +211,31 @@ public class ProxyProviderAssertion {
 
         return this;
     }
+
+    @Step("Expected user can access AWS subdirectory")
+    public ProxyProviderAssertion expectedCanAccessAwsSubdirectory() {
+        assertEquals("false", response.jsonPath().getString("isNextPage"));
+        assertEquals("3", response.jsonPath().getString("objectsCount"));
+        assertNotNull(response.getBody().jsonPath().getString("subDirectories"));
+
+        assertEquals("dir_3/subdir_2/sub_3/", response.jsonPath().getString("subDirectories[0].key"));
+        assertEquals("https://p.dev.hereapi.com/aws/s3/buckets/s3extproxytest/resources?path=dir_3/subdir_2/sub_3/",
+                response.jsonPath().getString("subDirectories[0].directoryApiUrl"));
+
+        assertNotNull(response.jsonPath().getString("directoryContent"));
+        assertEquals("s3extproxytest", response.jsonPath().getString("directoryContent[0].bucketName"));
+        assertEquals("dir_3/subdir_2/PowerShell-7.0.0-preview.3-win-x64.msi", response.jsonPath().getString("directoryContent[0].key"));
+        assertEquals("https://p.dev.hereapi.com/aws/s3/buckets/s3extproxytest/resources/object?path=dir_3/subdir_2/PowerShell-7.0.0-preview.3-win-x64.msi",
+                response.jsonPath().getString("directoryContent[0].resourceApiUrl"));
+        assertEquals("92053504", response.jsonPath().getString("directoryContent[0].size"));
+
+        assertEquals("s3extproxytest", response.jsonPath().getString("directoryContent[1].bucketName"));
+        assertEquals("dir_3/subdir_2/sqldeveloper-4.1.0.19.07-no-jre.zip", response.jsonPath().getString("directoryContent[1].key"));
+        assertEquals("342569227", response.jsonPath().getString("directoryContent[1].size"));
+
+        assertEquals("s3extproxytest", response.jsonPath().getString("directoryContent[2].bucketName"));
+        assertEquals("dir_3/subdir_2/ubuntu-20.04.2.0-desktop-amd64.iso", response.jsonPath().getString("directoryContent[2].key"));
+        assertEquals("2877227008", response.jsonPath().getString("directoryContent[2].size"));
+        return this;
+    }
 }
