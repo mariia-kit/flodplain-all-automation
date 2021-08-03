@@ -184,4 +184,31 @@ public class ProxyProviderAssertion {
 
         return this;
     }
+
+    @Step("Expected user can access AWS directory")
+    public ProxyProviderAssertion expectedCanAccessAwsDirectory() {
+        //TODO: refactor this
+        assertEquals("false", response.jsonPath().getString("isNextPage"));
+        assertEquals("2", response.jsonPath().getString("objectsCount"));
+        assertNotNull(response.getBody().jsonPath().getString("subDirectories"));
+
+        assertEquals("dir_3/subdir_1/", response.jsonPath().getString("subDirectories[0].key"));
+        assertEquals("https://p.dev.hereapi.com/aws/s3/buckets/s3extproxytest/resources?path=dir_3/subdir_1/",
+                response.jsonPath().getString("subDirectories[0].directoryApiUrl"));
+
+        assertEquals("dir_3/subdir_2/", response.jsonPath().getString("subDirectories[1].key"));
+        assertEquals("https://p.dev.hereapi.com/aws/s3/buckets/s3extproxytest/resources?path=dir_3/subdir_2/",
+                response.jsonPath().getString("subDirectories[1].directoryApiUrl"));
+
+        assertNotNull(response.jsonPath().getString("directoryContent"));
+        assertEquals("s3extproxytest", response.jsonPath().getString("directoryContent[0].bucketName"));
+        assertEquals("dir_3/9d082a50d473e1fe266d173084698b1c95225a2c.jpg", response.jsonPath().getString("directoryContent[0].key"));
+        assertEquals("5880416", response.jsonPath().getString("directoryContent[0].size"));
+
+        assertEquals("s3extproxytest", response.jsonPath().getString("directoryContent[1].bucketName"));
+        assertEquals("dir_3/9fdb285d503ce28c87901666c18a2583143f5e6d.jpg", response.jsonPath().getString("directoryContent[1].key"));
+        assertEquals("1650574", response.jsonPath().getString("directoryContent[1].size"));
+
+        return this;
+    }
 }

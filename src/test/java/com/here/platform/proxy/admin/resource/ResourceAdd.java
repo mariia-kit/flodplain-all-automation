@@ -319,4 +319,20 @@ public class ResourceAdd extends BaseProxyTests {
                         "Auto-testing-reference-resource-2", "proxy/dir22/subdir1"))
                 .expectedCode(HttpStatus.SC_CONFLICT);
     }
+
+    @Test
+    @DisplayName("[External Proxy] Verify a user can access a directory on AWS S3 Proxy Provider")
+    void verifyAWSDirectoryAccess() {
+        final String awsDir = "?path=dir_3/";
+
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        var getDirectory = new ServiceProvidersController()
+                .withConsumerToken()
+                .getResourceOfAwsProvider(awsDir);
+        new ProxyProviderAssertion(getDirectory)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedCanAccessAwsDirectory();
+    }
 }
