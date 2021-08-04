@@ -337,6 +337,22 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @DisplayName("[External Proxy] Verify a user can access subdirectory on AWS S3 Proxy Provider")
+    void verifyAWSSubdirectoryAccess() {
+        final String awsDir = "?path=dir_3/subdir_2/";
+
+        AwsS3Provider awsS3Provider = AwsS3ProviderEnum.generateAwsProvider();
+        ProxySteps.createAWSProxyProvider(awsS3Provider);
+
+        var getDirectory = new ServiceProvidersController()
+                .withConsumerToken()
+                .getResourceOfAwsProvider(awsDir);
+        new ProxyProviderAssertion(getDirectory)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedCanAccessAwsSubdirectory();
+    }
+
+    @Test
     @DisplayName("[External Proxy] Verify a user can access object url on AWS S3 Proxy Provider and download that object")
     void verifyAWSObjectDownload() {
         final String awsDir = "/object?path=dir_1/subdir_1/6ea6e3dcfeae9fbdf2f4999fd61b4ca35740630e.jpg";
