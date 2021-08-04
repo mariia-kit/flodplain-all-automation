@@ -238,4 +238,11 @@ public class ProxyProviderAssertion {
         assertEquals("2877227008", response.jsonPath().getString("directoryContent[2].size"));
         return this;
     }
+
+    @Step("Expected user can access object url on AWS S3 Proxy Provider and download that object")
+    public ProxyProviderAssertion expectedCanDownloadAwsObject() {
+        assertTrue(response.print().contains("/dir_1/subdir_1/6ea6e3dcfeae9fbdf2f4999fd61b4ca35740630e.jpg"));
+        assertTrue(response.print().contains("https://s3extproxytest.s3.eu-central-1.amazonaws.com"));
+        return this;
+    }
 }
