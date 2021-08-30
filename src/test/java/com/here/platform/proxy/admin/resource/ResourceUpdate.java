@@ -46,7 +46,6 @@ public class ResourceUpdate extends BaseProxyTests {
                 .getResourceByHRN(resource.getHrn());
         new ProxyProviderAssertion(get)
                 .expectedCode(HttpStatus.SC_OK)
-                .expectedEqualsProvider(proxyProvider)
                 .expectedResourceInProvider(newResource);
     }
 

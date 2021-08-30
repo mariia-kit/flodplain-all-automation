@@ -117,20 +117,30 @@ public class ProxyErrorList {
     public static ProxyError getWrongPoviderType(String providerType) {
         return new ProxyError(
                 400,
-                "Missing required JSON field",
-                "E504002",
-                "Wrong format of field <\"providerType\":class com.here.platform.mktproxy.backend.rest.model.ProviderType> - Cannot deserialize value of type `com.here.platform.mktproxy.backend.rest.model.ProviderType` from String \"" + providerType + "\": not one of the values accepted for Enum class: [AWS, REST_API]\n at [Source: (InputStreamReader); line: 1, column: 32] (through reference chain: com.here.platform.mktproxy.backend.rest.model.AddServiceProviderRequest[\"providerType\"])",
-                "Verify JSON payload for missing/wrong fields",
-                "missing_required_json_field");
+                "Error processing JSON",
+                "E504018",
+                "Could not resolve type id 'REST' as a subtype of `com.here.platform.mktproxy.backend.rest.model.NewServiceProvider`: known type ids = [AWS, REST_API]\n at [Source: (InputStreamReader); line: 1, column: 32]",
+                "Verify JSON payload for valid syntax",
+                "json_processing_failure");
+    }
+
+    public static ProxyError getEmptyPoviderType(String providerType) {
+        return new ProxyError(
+                400,
+                "Error processing JSON",
+                "E504018",
+                "Could not resolve type id '' as a subtype of `com.here.platform.mktproxy.backend.rest.model.NewServiceProvider`: known type ids = [AWS, REST_API]\n at [Source: (InputStreamReader); line: 1, column: 32]",
+                "Verify JSON payload for valid syntax",
+                "json_processing_failure");
     }
 
     public static ProxyError getNoPoviderType() {
         return new ProxyError(
                 400,
-                "Missing required JSON field",
-                "E504002",
-                "Missing JSON field <\"providerType\":com.here.platform.mktproxy.backend.rest.model.ProviderType>",
-                "Verify JSON payload for missing/wrong fields",
-                "missing_required_json_field");
+                "Error processing JSON",
+                "E504018",
+                "Could not resolve subtype of [simple type, class com.here.platform.mktproxy.backend.rest.model.NewServiceProvider]: missing type id property 'providerType'\n at [Source: (InputStreamReader); line: 1, column: 148]",
+                "Verify JSON payload for valid syntax",
+                "json_processing_failure");
     }
 }

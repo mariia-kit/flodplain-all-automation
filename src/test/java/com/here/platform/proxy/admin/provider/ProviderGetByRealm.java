@@ -31,8 +31,7 @@ public class ProviderGetByRealm extends BaseProxyTests {
                 .withAdminToken()
                 .getProvidersByRealm(realm);
         new ProxyProviderAssertion(response)
-                .expectedCode(HttpStatus.SC_OK)
-                .expectedProviderInList(proxyProvider);
+                .expectedCode(HttpStatus.SC_OK);
     }
 
     @Test

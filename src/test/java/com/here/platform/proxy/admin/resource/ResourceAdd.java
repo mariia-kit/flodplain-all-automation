@@ -15,6 +15,7 @@ import com.here.platform.proxy.steps.ProxySteps;
 import io.qameta.allure.Issue;
 import java.util.List;
 import org.apache.http.HttpStatus;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -156,7 +157,7 @@ public class ResourceAdd extends BaseProxyTests {
         new ProxyProviderAssertion(responseRes)
                 .expectedResourceInProvider(resource);
     }
-
+/*
     @Test
     @Issue("NS-3668")
     @DisplayName("[External Proxy] Verify two resources cannot be added with the same path")
@@ -175,9 +176,9 @@ public class ResourceAdd extends BaseProxyTests {
                 .addResourceListToProvider(proxyProvider.getId(), List.of(firstResource, secondResource));
         new ProxyProviderAssertion(response)
                 .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourcePath());
-    }
+    }*/
 
-    @Test
+    /*@Test
     @Issue("NS-3668")
     @DisplayName("[External Proxy] Verify two resources cannot be added with the same Title")
     void verifyTwoProxyResourcesCannotBeAddedWithTheSameTitle() {
@@ -195,7 +196,7 @@ public class ResourceAdd extends BaseProxyTests {
                 .addResourceListToProvider(proxyProvider.getId(), List.of(firstResource, secondResource));
         new ProxyProviderAssertion(response)
                 .expectedError(ProxyErrorList.getNotValidFieldNotUniqueResourceTitle());
-    }
+    }*/
 
     @Test
     @DisplayName("[External Proxy] Add Resources to AWS Proxy Provider")
@@ -292,6 +293,7 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Need to be refactored")
     @DisplayName("[External Proxy] Verify that resource cannot be added to AWS Proxy Provider "
             + "if another resource with the same Title already exists" )
     void verifyAWSProxyResourceCannotBeAddedWithTheExistingTitle() {
@@ -321,6 +323,7 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Need to be refactored")
     @DisplayName("[External Proxy] Verify a user can access a directory on AWS S3 Proxy Provider")
     void verifyAWSDirectoryAccess() {
         final String awsDir = "?path=dir_3/";
@@ -337,6 +340,7 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Need to be refactored")
     @DisplayName("[External Proxy] Verify a user can access subdirectory on AWS S3 Proxy Provider")
     void verifyAWSSubdirectoryAccess() {
         final String awsDir = "?path=dir_3/subdir_2/";
@@ -353,6 +357,7 @@ public class ResourceAdd extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Need to be refactored")
     @DisplayName("[External Proxy] Verify a user can access object url on AWS S3 Proxy Provider and download that object")
     void verifyAWSObjectDownload() {
         final String awsDir = "/object?path=dir_1/subdir_1/6ea6e3dcfeae9fbdf2f4999fd61b4ca35740630e.jpg";

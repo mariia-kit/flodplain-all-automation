@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.here.platform.ns.dto.SentryError;
+import com.here.platform.proxy.dto.Authentication;
 import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.dto.ProxyError;
 import com.here.platform.proxy.dto.ProxyProvider;

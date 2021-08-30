@@ -2,7 +2,7 @@ package com.here.platform.proxy.dto;
 
 import com.here.platform.common.config.Conf;
 import com.here.platform.ns.helpers.UniqueId;
-import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
+//import com.here.platform.proxy.dto.ProxyProvider.CredentialsAuthMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
