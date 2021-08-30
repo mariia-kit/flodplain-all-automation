@@ -34,7 +34,6 @@ public class ProviderGetById extends BaseProxyTests {
                 .getProviderById(proxyProvider.getId());
         new ProxyProviderAssertion(response)
                 .expectedCode(HttpStatus.SC_OK)
-                .expectedEqualsProvider(proxyProvider)
                 .expectedResourceInProvider(resource);
     }
 

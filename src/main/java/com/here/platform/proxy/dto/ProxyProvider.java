@@ -3,7 +3,6 @@ package com.here.platform.proxy.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.here.platform.common.config.Conf;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -24,19 +23,27 @@ public class ProxyProvider {
     String providerRealm;
     @JsonProperty("identifier")
     String identifier;
-    @JsonProperty("authMethod")
-    CredentialsAuthMethod authMethod;
-
-    @JsonProperty("apiKey")
-    String apiKey;
-    @JsonProperty("apiKeyQueryParamName")
-    String apiKeyQueryParamName;
-    @JsonProperty("apiKeyHeaderName")
-    String apiKeyHeaderName;
     @JsonProperty("authUsername")
     String authUsername;
     @JsonProperty("authPassword")
     String authPassword;
+
+    @JsonProperty("authentication")
+    public Authentication authentication;
+
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyProvider [id=" + id + ", providerType=" + providerType + ", serviceName=" + serviceName
+                +  ", providerRealm=" + providerRealm + ", identifier=" + identifier + ", authentication=" + authentication + "]";
+    }
+
 
     String scbeId;
     List<ProxyProviderResource> resources = new ArrayList<>();
@@ -45,40 +52,40 @@ public class ProxyProvider {
 
     };
 
-    public ProxyProvider(String providerType, String serviceName, String providerRealm, String identifier, CredentialsAuthMethod authMethod) {
+    public ProxyProvider(String providerType, String serviceName, String providerRealm, String identifier, Authentication authentication) {
         this.providerType = providerType;
         this.serviceName = serviceName;
         this.providerRealm = providerRealm;
         this.identifier = identifier;
-        this.authMethod = authMethod;
+        this.authentication = authentication;
     }
 
-    public ProxyProvider(String serviceName, String providerRealm, String identifier, CredentialsAuthMethod authMethod) {
+    public ProxyProvider(String serviceName, String providerRealm, String identifier, Authentication authenticatio) {
         this.serviceName = serviceName;
         this.providerRealm = providerRealm;
         this.identifier = identifier;
-        this.authMethod = authMethod;
+        this.authentication = authentication;
     }
 
-    public ProxyProvider withAuthMethod(CredentialsAuthMethod authMethod, String key, String value) {
-        this.authMethod = authMethod;
-        switch (authMethod) {
+    public ProxyProvider withAuthMethod(AuthMethodPlaceholder authMethodPlaceholder, String key, String value) {
+        this.authentication = authentication;
+        Authentication authentication1 = new Authentication();
+        authentication1.setAuthMethod("NONE");
+        authentication1.setAuthMethodPlaceholder("IN_QUERY");
+        authentication1.setApiKeyParamName(key);
+        authentication1.setApiKeyValue(value);
+
+        switch (authMethodPlaceholder) {
             case NONE: return this;
-            case API_KEY_IN_QUERY:
-                setApiKeyQueryParamName(key);
-                setApiKey(value);
-                return this;
-            case API_KEY_IN_HEADER:
-                setApiKeyHeaderName(key);
-                setApiKey(value);
-                return this;
             case BASIC_AUTH:
                 setAuthUsername(key);
                 setAuthPassword(getAuthPassword());
                 return this;
+
         }
         return this;
     }
+
 
     public ProxyProvider withResource(ProxyProviderResource resource) {
         resources.add(resource);
@@ -90,10 +97,10 @@ public class ProxyProvider {
         return this;
     }
 
-    public enum CredentialsAuthMethod {
+    public enum AuthMethodPlaceholder {
+        IN_QUERY,
+        IN_HEADER,
         NONE,
-        API_KEY_IN_QUERY,
-        API_KEY_IN_HEADER,
         BASIC_AUTH
     }
 

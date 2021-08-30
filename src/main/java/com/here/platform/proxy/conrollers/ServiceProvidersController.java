@@ -1,11 +1,13 @@
 package com.here.platform.proxy.conrollers;
 
+import com.here.platform.proxy.dto.Authentication;
 import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.dto.ProxyProvider;
 import com.here.platform.proxy.dto.ProxyProviderResource;
 import com.here.platform.proxy.dto.ProxyResourceRequest;
 import com.here.platform.proxy.helper.RemoveObjCollector;
 import io.qameta.allure.Step;
+import io.restassured.mapper.ObjectMapper;
 import io.restassured.response.Response;
 import java.util.LinkedList;
 import java.util.List;

@@ -37,7 +37,7 @@ public class AwsS3Provider {
             this.providerRealm = providerRealm;
             this.identifier = identifier;
         }
-    public AwsS3Provider(String serviceName, String providerRealm, String identifier) {
+      public AwsS3Provider(String serviceName, String providerRealm, String identifier) {
         this.serviceName = serviceName;
         this.providerRealm = providerRealm;
         this.identifier = identifier;
