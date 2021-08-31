@@ -332,6 +332,7 @@ public class TunnelTest extends BaseProxyTests {
    }
 
     @Test
+    @Disabled("Issue with BAM service OLPDFTS-29759")
     @DisplayName("[External Proxy] Verify GET Tunnel call response with valid on-boarded path")
     void verifyProxyCanBeRetrievedWithValidPath() {
         ProxyProvider proxyProvider = ProxyProviderEnum.REFERENCE_PROXY.getProxyProvider();
@@ -343,11 +344,11 @@ public class TunnelTest extends BaseProxyTests {
 
         var tunnel = new TunnelController()
                 .withConsumerToken()
-               .getData(proxyProvider, resource);
+                .getData(proxyProvider, resource);
+
         new ProxyProviderAssertion(tunnel)
                 .expectedCode(HttpStatus.SC_OK)
-
-               .expectedEqualsProviderNotIgnoringFields(resource.getPath());
+                .expectedEqualsProviderNotIgnoringFields(resource.getPath());
 
    }
 }
