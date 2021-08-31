@@ -282,6 +282,7 @@ public class TunnelTest extends BaseProxyTests {
     }
 
     @Test
+    @Disabled("Issue with BAM service OLPDFTS-29759")
     @DisplayName("[External Proxy] Verify retrieve new proxy data Empty response from Provider")
     void verifyNewProxyCanBeRetrievedEmptyResponse() {
         ProxyProvider proxyProvider = ProxyProviderEnum.REFERENCE_PROXY.getProxyProvider();
