@@ -12,7 +12,7 @@ Valid values for "env" variable: ["dev", "sit", "prod"]
 
 ###Swagger documentations for environments:
 - DEV - https://dev.consent.api.platform.in.here.com/consent-service/swagger-ui.html
-- SIT - https://sit.consent.api.platform.in.here.com/consent-service/swagger-ui.html
+- SIT - https://consent.platform.sit.here.com/consent-service/swagger-ui.html
 - PROD - https://consent.api.platform.here.com/consent-service/swagger-ui.html
 
 ###Structure of the CM tests (packages):
