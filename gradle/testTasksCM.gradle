@@ -84,7 +84,7 @@ task fePreDevTests(type: TestCM) {
         includeTags "dynamic_ui"
     }
 
-    dependsOn "cleanUpCM"
+    //dependsOn "cleanUpCM"
 }
 
 task feTests(type: TestCM) {
