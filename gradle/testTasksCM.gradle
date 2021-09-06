@@ -71,12 +71,13 @@ task smokeCMTests(type: TestCM) {
 
 task fePreDevTests(type: TestCM) {
     doFirst {
-        def dynamicUIUrl = System.getenv("DYNAMIC_ENV_URL")
+        def dynamicUIUrl = System.getenv("DYNAMIC_FE_ENV_URL")
 
         println "Will be used dynamic url: $dynamicEnvUrl"
         println "Will be used dynamic ui url: $dynamicUIUrl"
 
         systemProperty "dynamicUrl", dynamicEnvUrl
+        systemProperty "dynamicUIUrl", dynamicUIUrl
         systemProperty "env", "dev"
         allure_project = "consent-web-client-dynamic"
     }
