@@ -53,6 +53,18 @@ task proxyTest(type: TestPX) {
     }
 }
 
+task proxyAwsPreDevTest(type: TestPX) {
+    doFirst {
+
+        println "Will be used Proxy AWS dynamic url: $dynamicEnvUrl"
+        systemProperty "env", finalEnv
+        allure_project = "external-proxy-aws-pre-${finalEnv}"
+    }
+    useJUnitPlatform {
+        includeTags "proxyAws"
+    }
+}
+
 task allurePushReportPX(type: JavaExec) {
     doFirst {
         systemProperty "env", finalEnv
