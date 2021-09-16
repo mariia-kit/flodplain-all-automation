@@ -78,14 +78,13 @@ public class ProxyProvider {
         switch (authMethodPlaceholder) {
             case NONE: return this;
             case BASIC_AUTH:
-                setAuthUsername(key);
+                setAuthUsername("username");
                 setAuthPassword(getAuthPassword());
                 return this;
 
         }
         return this;
     }
-
 
     public ProxyProvider withResource(ProxyProviderResource resource) {
         resources.add(resource);

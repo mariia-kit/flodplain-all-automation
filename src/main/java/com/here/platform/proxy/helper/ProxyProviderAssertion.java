@@ -40,7 +40,7 @@ public class ProxyProviderAssertion {
     public ProxyProviderAssertion expectedEqualsProvider(ProxyProvider expected) {
         var actual = response.getBody().as(ProxyProvider.class);
         Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected,
-                "id", "scbeId", "resources", "authMethod", "apiKey", "apiKeyQueryParamName", "authUsername", "authPassword");
+                "id", "scbeId", "authentication", "resources", "authMethod", "authMethodPlaceholder", "apiKey", "apiKeyQueryParamName", "authUsername", "authPassword");
         return this;
     }
 

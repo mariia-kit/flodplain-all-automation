@@ -51,4 +51,11 @@ public enum ProxyProviderResourceEnum {
                 getResourceNamePrefix() + id,
                 "dir/subdir" + id + "/");
     }
+
+    public static ProxyProviderResource generateAwsExistingSubdirectory() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProviderResource(
+                getResourceNamePrefix() + id,
+                "dir_1/subdir_5/");
+    }
 }

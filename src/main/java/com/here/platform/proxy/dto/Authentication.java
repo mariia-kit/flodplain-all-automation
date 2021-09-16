@@ -63,6 +63,14 @@ public class Authentication {
       return this;
     }
 
+    public Authentication withHeaderAuth() {
+        setAuthMethod("API_KEY");
+        setAuthMethodPlaceholder("IN_HEADER");
+        setApiKeyParamName("apiKey");
+        setApiKeyValue("56746746");
+        return this;
+    }
+
     public Authentication withNullAuthMethod() {
         setAuthMethod(null);
         setAuthMethodPlaceholder("IN_QUERY");

@@ -25,7 +25,9 @@ public enum ProxyProviderEnum {
             .withAuthMethod(CredentialsAuthMethod.API_KEY_IN_QUERY, "apikey", Conf.proxy().getAccuApiKey()))*/,
     AWS(new ProxyProvider(
             "AWS",
-            "AWS_S3", Conf.mpUsers().getMpProvider().getRealm(), "s3extproxytest",
+            "AWS S3 Proxy Test On-boarding",
+            Conf.mpUsers().getMpProvider().getRealm(),
+            "s3extproxytest",
             new Authentication().withAuth()));
 
     private ProxyProvider proxyProvider;
@@ -51,6 +53,16 @@ public enum ProxyProviderEnum {
                 Conf.mpUsers().getMpProvider().getRealm(),
                 "someService." + id + ".mock",
                 new Authentication().withAuth());
+    }
+
+    public static ProxyProvider generateHeaderAuth() {
+        String id = UniqueId.getUniqueKey();
+        return new ProxyProvider(
+                "REST_API",
+                getProviderNamePrefix() + id,
+                Conf.mpUsers().getMpProvider().getRealm(),
+                "someService." + id + ".mock",
+                new Authentication().withHeaderAuth());
     }
 
     public static ProxyProvider generateNullAuth() {
