@@ -3,6 +3,7 @@ package com.here.platform.proxy.tunnel;
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.ns.dto.Users;
 import com.here.platform.proxy.BaseProxyTests;
+import com.here.platform.proxy.conrollers.AwsS3Conroller;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
 import com.here.platform.proxy.conrollers.TunnelController;
 import com.here.platform.proxy.dto.ProxyErrorList;
@@ -134,8 +135,7 @@ public class TunnelTest extends BaseProxyTests {
     @Disabled("Implement Basic auth happy path")
     @DisplayName("[External Proxy] Verify retrieve new proxy data Auth not implemented")
     void verifyNewProxyCanBeRetrievedNoAuth() {
-        ProxyProvider proxyProvider = ProxyProviderEnum.generate()
-                .withAuthMethod(AuthMethodPlaceholder.BASIC_AUTH, "root", "qwerty");
+        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
         ProxyProviderResource resource = ProxyProviderResourceEnum.generate();
 
         ProxySteps.createProxyResource(proxyProvider, resource);
@@ -352,4 +352,25 @@ public class TunnelTest extends BaseProxyTests {
                 .expectedEqualsProviderNotIgnoringFields(resource.getPath());
 
    }
+
+    @Test
+    @Disabled
+    @DisplayName("[External Proxy] Verify GET Tunnel call response with valid on-boarded path")
+    void verifyAWSS3ProxyProviderSubdirectoryResourceCanBeRetrieved() {
+        ProxyProvider proxyProvider = ProxyProviderEnum.AWS.getProxyProvider();
+        ProxyProviderResource resource = ProxyProviderResourceEnum.generateAwsExistingSubdirectory();
+
+        ProxySteps.readProxyProvider(proxyProvider);
+        ProxySteps.readProxyProviderResource(resource);
+        ProxySteps.createListingAndSubscription(resource);
+
+        var tunnel = new AwsS3Conroller()
+                .withConsumerToken()
+                .getData(proxyProvider, resource);
+
+        new ProxyProviderAssertion(tunnel)
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProviderNotIgnoringFields(resource.getPath());
+
+    }
 }

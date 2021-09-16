@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 public class IntegrationMPTest extends BaseProxyTests {
 
     @Test
+    @Disabled("Cannot be verified due to BAM issue")
     @DisplayName("[External Proxy] Delete resource if Subs removed")
     void verifyDeleteProxyAfterSubscriptionCancel() {
         ProxyProvider proxyProvider = ProxyProviderEnum.generate();

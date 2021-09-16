@@ -2,7 +2,6 @@ package com.here.platform.proxy.admin.provider;
 
 import com.here.platform.ns.dto.SentryErrorsList;
 import com.here.platform.proxy.BaseProxyTests;
-import com.here.platform.proxy.dto.Authentication;
 import com.here.platform.proxy.dto.AwsS3Provider;
 import com.here.platform.proxy.dto.AwsS3ProviderEnum;
 import com.here.platform.proxy.conrollers.ServiceProvidersController;
@@ -34,7 +33,8 @@ public class ProviderAdd extends BaseProxyTests {
                 .withAdminToken()
                 .addProvider(proxyProvider);
         new ProxyProviderAssertion(response)
-                .expectedCode(HttpStatus.SC_OK);
+                .expectedCode(HttpStatus.SC_OK)
+                .expectedEqualsProvider(proxyProvider);
     }
 
     @Test
@@ -131,10 +131,9 @@ public class ProviderAdd extends BaseProxyTests {
     }
 
     @Test
-    @Disabled
     @DisplayName("[External Proxy] Add new Service Provider Header Auth")
     void verifyAddProxyProviderHeaderAuth() {
-        ProxyProvider proxyProvider = ProxyProviderEnum.generate();
+        ProxyProvider proxyProvider = ProxyProviderEnum.generateHeaderAuth();
 
         var response = new ServiceProvidersController()
                 .withAdminToken()
@@ -144,7 +143,7 @@ public class ProviderAdd extends BaseProxyTests {
                 .expectedEqualsProvider(proxyProvider);
     }
 
-  @Test
+    @Test
     @DisplayName("[External Proxy] Add new Service Provider None Auth")
     void verifyAddProxyProviderNoneAuth() {
       ProxyProvider proxyProvider = ProxyProviderEnum.generate();
