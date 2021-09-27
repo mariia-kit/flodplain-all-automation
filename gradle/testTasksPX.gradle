@@ -45,31 +45,37 @@ if (targetEnv != null && !targetEnv.isEmpty()) {
 
 task proxyTest(type: TestPX) {
     doFirst {
-        systemProperty "env", finalEnv
-        allure_project = "external-proxy-${finalEnv}"
+        if (finalEnv = "DYNAMIC_ENV_URL") {
+            println "Will be used dynamic url: $dynamicEnvUrl"
+            systemProperty "dynamicUrl", dynamicEnvUrl
+        } else {
+            systemProperty "env", finalEnv
+            println "Will be used url: $finalEnv"
+            allure_project = "external-proxy-${finalEnv}"
+        }
+        useJUnitPlatform {
+            includeTags "proxy"
+        }
     }
-    useJUnitPlatform {
-        includeTags "proxy"
-    }
-}
 
-task proxyAwsPreDevTest(type: TestPX) {
-    doFirst {
+    task proxyAwsPreDevTest(type: TestPX) {
+        doFirst {
 
-        println "Will be used Proxy AWS dynamic url: $dynamicEnvUrl"
-        systemProperty "env", finalEnv
-        allure_project = "external-proxy-aws-pre-${finalEnv}"
+            println "Will be used Proxy AWS dynamic url: $dynamicEnvUrl"
+            systemProperty "env", finalEnv
+            allure_project = "external-proxy-aws-pre-${finalEnv}"
+        }
+        useJUnitPlatform {
+            includeTags "proxyAws"
+        }
     }
-    useJUnitPlatform {
-        includeTags "proxyAws"
-    }
-}
 
-task allurePushReportPX(type: JavaExec) {
-    doFirst {
-        systemProperty "env", finalEnv
-        systemProperty "allure_project", allure_project
+    task allurePushReportPX(type: JavaExec) {
+        doFirst {
+            systemProperty "env", finalEnv
+            systemProperty "allure_project", allure_project
+        }
+        classpath sourceSets.main.runtimeClasspath
+        main = "com.here.platform.common.allureSync.AllureReportExport"
     }
-    classpath sourceSets.main.runtimeClasspath
-    main = "com.here.platform.common.allureSync.AllureReportExport"
 }
