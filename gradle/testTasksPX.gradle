@@ -45,7 +45,7 @@ if (targetEnv != null && !targetEnv.isEmpty()) {
 
 task proxyTest(type: TestPX) {
     doFirst {
-        if (finalEnv = "DYNAMIC_ENV_URL") {
+        if (finalEnv == "DYNAMIC_ENV_URL") {
             println "Will be used dynamic url: $dynamicEnvUrl"
             systemProperty "dynamicUrl", dynamicEnvUrl
         } else {
