@@ -14,10 +14,7 @@ version = "0.6"
 
 apply from: "gradle/swagger.gradle"
 apply from: "gradle/dependencies.gradle"
-apply from: "gradle/testTasksCM.gradle"
-apply from: "gradle/testTasksNS.gradle"
-apply from: "gradle/testTasksE2E.gradle"
-apply from: "gradle/testTasksPX.gradle"
+apply from: "gradle/testTasksCustomerData.gradle"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

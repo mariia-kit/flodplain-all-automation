@@ -1,0 +1,34 @@
+class TestCustomerData extends Test {
+    TestCustomerData() {
+        group "proxy tests"
+
+        ignoreFailures = false
+
+        minHeapSize = '32m'
+        maxHeapSize = '256m'
+        maxParallelForks = 20
+        forkEvery = 20
+
+        def targetEnv = System.getenv("CI_ENVIRONMENT_SLUG")
+        def finalEnv = "dev"
+        if (targetEnv != null && !targetEnv.isEmpty()) {
+            finalEnv = targetEnv
+            println "Receive env from CI_ENVIRONMENT_SLUG ${targetEnv}"
+        } else {
+            finalEnv = hasProperty('env') ? env : 'dev'
+            println "Receive env from property ${finalEnv}"
+
+        }
+
+
+        task customerDataTest(type: TestCustomerData) {
+            doFirst {
+
+                systemProperty "env", finalEnv
+            }
+            useJUnitPlatform {
+                includeTags "customerdata"
+            }
+        }
+    }
+}
