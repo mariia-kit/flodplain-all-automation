@@ -9,12 +9,12 @@ plugins {
     id "de.undercouch.download" version "4.0.4"
 }
 
-group = "com.here.platform"
+group = "flodplain.com"
 version = "0.6"
 
 apply from: "gradle/swagger.gradle"
 apply from: "gradle/dependencies.gradle"
-apply from: "gradle/testTasksCustomerData.gradle"
+apply from: "gradle/testTasksPX.gradle"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11

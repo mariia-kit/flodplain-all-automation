@@ -5,6 +5,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.config.HeaderConfig.headerConfig;
 
 import flodplain.com.common.config.Conf;
+import flodplain.com.customerdatamaster.dto.UserEnum;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.config.RestAssuredConfig;
 import io.restassured.http.ContentType;
@@ -20,7 +21,7 @@ public class BaseService<T> {
         var baseService = given()
                 .config(RestAssuredConfig.config()
                         .headerConfig(headerConfig().overwriteHeadersWithName("Authorization", "Content-Type")))
-                .baseUri(Conf.flodplain().getHost())
+                .baseUri(Conf.ns().getHost())
                 .basePath(targetPath)
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -39,6 +40,16 @@ public class BaseService<T> {
 
     public T withToken(String authorizationTokenValue) {
         setAuthorizationToken(authorizationTokenValue);
+        return (T) this;
+    }
+
+    public T withMerchantToken() {
+        setAuthorizationToken(UserEnum.WEB.getToken());
+        return (T) this;
+    }
+
+    public T withAdminToken(String token) {
+        setAuthorizationToken(token);
         return (T) this;
     }
 

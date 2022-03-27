@@ -6,16 +6,18 @@ import java.util.Optional;
 
 public class Conf {
 
-    private static FlodplainConfig flodplainConfig;
+    private static NsConfig nsConf;
+    private static NsUserConfig nsUsers;
 
-    public static FlodplainConfig flodplain() {
-        return getConfig(flodplainConfig, FlodplainConfig.class);
-    }
+    public static NsConfig ns() { return getConfig(nsConf, NsConfig.class); }
+    public static NsUserConfig nsUsers() { return getConfig(nsUsers, NsUserConfig.class); }
+
 
     private static <T> T getConfig(T conf, Class<T> type) {
         if (conf == null) {
             conf = loadConfig(type);
         }
+        System.out.println("Conf = load");
         return conf;
     }
 
@@ -25,7 +27,7 @@ public class Conf {
 
         String environment = System.getProperty("env", "dev");
         if ("stg".equalsIgnoreCase(environment)) {
-            environment = "stage";
+            environment = "sit";
         }
         String basePath = System.getenv("CREDENTIAL_BASE_PATH");
         String fileName = System.getenv(annotation.propertyName());

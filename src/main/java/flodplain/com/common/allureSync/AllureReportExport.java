@@ -1,6 +1,6 @@
 package flodplain.com.common.allureSync;
 
-import flodplains.com.common.strings.JConvert;
+import flodplain.com.common.strings.JConvert;
 import io.restassured.response.Response;
 import java.io.File;
 import java.io.IOException;
